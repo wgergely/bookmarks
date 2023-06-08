@@ -919,7 +919,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         from .teams import message
 
-        db = database.get_db(*common.active('root', args=True))
+        db = database.get(*common.active('root', args=True))
         webhook = db.value(db.source(), 'teamstoken', database.BookmarkTable)
         if not webhook:
             return

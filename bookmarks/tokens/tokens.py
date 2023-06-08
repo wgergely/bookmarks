@@ -593,7 +593,7 @@ class TokenConfig(QtCore.QObject):
             return self._data
 
         try:
-            db = database.get_db(self.server, self.job, self.root)
+            db = database.get(self.server, self.job, self.root)
             v = db.value(
                 db.source(),
                 TOKENS_DB_KEY,
@@ -626,7 +626,7 @@ class TokenConfig(QtCore.QObject):
         """
         common.check_type(data, dict)
 
-        db = database.get_db(self.server, self.job, self.root)
+        db = database.get(self.server, self.job, self.root)
         db.set_value(
             db.source(),
             TOKENS_DB_KEY,
@@ -789,7 +789,7 @@ class TokenConfig(QtCore.QObject):
             tokens[k] = v
 
         # We can also use bookmark item properties as tokens
-        db = database.get_db(self.server, self.job, self.root)
+        db = database.get(self.server, self.job, self.root)
         for _k in ('width', 'height', 'framerate', 'prefix', 'startframe', 'duration'):
             if _k not in kwargs or not kwargs[_k]:
                 _v = db.value(db.source(), _k, database.BookmarkTable)

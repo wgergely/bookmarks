@@ -381,11 +381,11 @@
 <p>The module contains the classes and methods needed to provide linkage
 with ShotGrid.</p>
 <p>In the simplest of cases (e.g. when a bookmark item is active and have already been
-linked with ShotGrid) we can initiate a connection using a <a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties" title="bookmarks.shotgun.shotgun.ShotgunProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShotgunProperties</span></code></a>
+linked with ShotGrid) we can initiate a connection using a <a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties" title="bookmarks.shotgun.shotgun.SGProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">SGProperties</span></code></a>
 instance:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">bookmarks.shotgun.shotgun</span> <span class="k">as</span> <span class="nn">shotgun</span>
 <span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos"> 3</span><span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="linenos"> 4</span><span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span> <span class="c1"># loads data from the bookmark database</span>
 <span class="linenos"> 5</span>
 <span class="linenos"> 6</span><span class="c1"># Verify properties before connecting</span>
@@ -412,7 +412,7 @@ These values must be set in the bookmark database before initiating a connection
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel" title="bookmarks.shotgun.shotgun.EntityModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EntityModel</span></code></a>(items[, parent])</p></td>
 <td><p>Our custom model used to store ShotGrid entities.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties" title="bookmarks.shotgun.shotgun.ShotgunProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShotgunProperties</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties" title="bookmarks.shotgun.shotgun.SGProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SGProperties</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Returns all ShotGrid properties saved in the bookmark item database.</p></td>
 </tr>
 </tbody>
@@ -613,8 +613,8 @@ and list of entities.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.shotgun.</span></span><span class="sig-name descname"><span class="pre">ShotgunProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#ShotgunProperties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.shotgun.</span></span><span class="sig-name descname"><span class="pre">SGProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#SGProperties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Returns all ShotGrid properties saved in the bookmark item database.</p>
 <p>These properties define the linkage between ShotGrid entities and local assets
@@ -636,13 +636,13 @@ from the bookmark database.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.init" title="bookmarks.shotgun.shotgun.ShotgunProperties.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>([db])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.init" title="bookmarks.shotgun.shotgun.SGProperties.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>([db])</p></td>
 <td><p>Load all current shotgun values from the bookmark item database.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.urls" title="bookmarks.shotgun.shotgun.ShotgunProperties.urls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">urls</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.urls" title="bookmarks.shotgun.shotgun.SGProperties.urls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">urls</span></code></a>()</p></td>
 <td><p>Returns a list of available urls based on the sg_properties provided.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.verify" title="bookmarks.shotgun.shotgun.ShotgunProperties.verify"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify</span></code></a>([connection, bookmark, asset])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.verify" title="bookmarks.shotgun.shotgun.SGProperties.verify"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify</span></code></a>([connection, bookmark, asset])</p></td>
 <td><p>Checks the validity of the current configuration.</p></td>
 </tr>
 </tbody>
@@ -652,30 +652,30 @@ from the bookmark database.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.asset" title="bookmarks.shotgun.shotgun.ShotgunProperties.asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asset</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.asset" title="bookmarks.shotgun.shotgun.SGProperties.asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asset</span></code></a></p></td>
 <td><p><cite>Asset</cite> path segment.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.job" title="bookmarks.shotgun.shotgun.ShotgunProperties.job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">job</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.job" title="bookmarks.shotgun.shotgun.SGProperties.job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">job</span></code></a></p></td>
 <td><p><cite>Job</cite> path segment.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.root" title="bookmarks.shotgun.shotgun.ShotgunProperties.root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.root" title="bookmarks.shotgun.shotgun.SGProperties.root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root</span></code></a></p></td>
 <td><p><cite>Root</cite> path segment.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.server" title="bookmarks.shotgun.shotgun.ShotgunProperties.server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">server</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.server" title="bookmarks.shotgun.shotgun.SGProperties.server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">server</span></code></a></p></td>
 <td><p><cite>Server</cite> path segment.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.init">
-<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#ShotgunProperties.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.init" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#SGProperties.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.init" title="Permalink to this definition">#</a></dt>
 <dd><p>Load all current shotgun values from the bookmark item database.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.urls">
-<span class="sig-name descname"><span class="pre">urls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#ShotgunProperties.urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.urls" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.urls">
+<span class="sig-name descname"><span class="pre">urls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#SGProperties.urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.urls" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of available urls based on the sg_properties provided.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -688,8 +688,8 @@ from the bookmark database.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.verify">
-<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bookmark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#ShotgunProperties.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.verify" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bookmark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#SGProperties.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.verify" title="Permalink to this definition">#</a></dt>
 <dd><p>Checks the validity of the current configuration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -709,26 +709,26 @@ from the bookmark database.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.asset">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">asset</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.asset" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.asset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">asset</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.asset" title="Permalink to this definition">#</a></dt>
 <dd><p><cite>Asset</cite> path segment.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.job">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">job</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.job" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.job">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">job</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.job" title="Permalink to this definition">#</a></dt>
 <dd><p><cite>Job</cite> path segment.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.root">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.root" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.root">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.root" title="Permalink to this definition">#</a></dt>
 <dd><p><cite>Root</cite> path segment.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.ShotgunProperties.server">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">server</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.server" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.SGProperties.server">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">server</span></span><a class="headerlink" href="#bookmarks.shotgun.shotgun.SGProperties.server" title="Permalink to this definition">#</a></dt>
 <dd><p><cite>Server</cite> path segment.</p>
 </dd></dl>
 
@@ -873,14 +873,14 @@ backed by a cache.</p>
 <li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.entityDataRequested"><code class="docutils literal notranslate"><span class="pre">EntityModel.entityDataRequested</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.init"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.init()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.urls"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.urls()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.verify"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.verify()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.asset"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.asset</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.job"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.job</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.root"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.root</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.server"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.server</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties"><code class="docutils literal notranslate"><span class="pre">SGProperties</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.init"><code class="docutils literal notranslate"><span class="pre">SGProperties.init()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.urls"><code class="docutils literal notranslate"><span class="pre">SGProperties.urls()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.verify"><code class="docutils literal notranslate"><span class="pre">SGProperties.verify()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.asset"><code class="docutils literal notranslate"><span class="pre">SGProperties.asset</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.job"><code class="docutils literal notranslate"><span class="pre">SGProperties.job</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.root"><code class="docutils literal notranslate"><span class="pre">SGProperties.root</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SGProperties.server"><code class="docutils literal notranslate"><span class="pre">SGProperties.server</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.shotgun.shotgun.connection"><code class="docutils literal notranslate"><span class="pre">connection()</span></code></a></li>

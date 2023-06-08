@@ -287,7 +287,7 @@ class PrefixEditor(QtWidgets.QDialog):
         """Initializes data.
 
         """
-        db = database.get_db(*common.active('root', args=True))
+        db = database.get(*common.active('root', args=True))
 
         v = db.value(
             db.source(),
@@ -309,7 +309,7 @@ class PrefixEditor(QtWidgets.QDialog):
 
         self.parent().prefix_editor.setText(self.editor.text())
 
-        db = database.get_db(*common.active('root', args=True))
+        db = database.get(*common.active('root', args=True))
         db.set_value(
             db.source(),
             'prefix',

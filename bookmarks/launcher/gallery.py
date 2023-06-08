@@ -54,7 +54,7 @@ class LauncherGallery(ui.GalleryWidget):
         if not all((server, job, root)):
             return
 
-        db = database.get_db(server, job, root)
+        db = database.get(server, job, root)
         v = db.value(
             db.source(),
             'applications',

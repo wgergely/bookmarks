@@ -483,7 +483,7 @@
     <span class="n">thread</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">get_thread</span><span class="p">(</span><span class="n">threads</span><span class="o">.</span><span class="n">QueuedDatabaseTransaction</span><span class="p">)</span>
     <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="n">_threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
-    <span class="n">thread</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">get_thread</span><span class="p">(</span><span class="n">threads</span><span class="o">.</span><span class="n">QueuedShotgunQuery</span><span class="p">)</span>
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">get_thread</span><span class="p">(</span><span class="n">threads</span><span class="o">.</span><span class="n">QueuedSGQuery</span><span class="p">)</span>
     <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="n">_threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
 

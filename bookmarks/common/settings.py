@@ -66,18 +66,14 @@ SECTIONS = {
     'slack': (
         'slack/user',
     ),
-    'shotgrid': (
-        'shotgrid/link_multiple_filter',
-        'shotgrid/current_user',
-        'shotgrid/current_asset',
-        'shotgrid/current_selection',
-        'shotgrid/sg_user',
-        'shotgrid/sg_storage',
-        'shotgrid/sg_type',
+    'sg_auth': (
+        'sg_auth/login',
+        'sg_auth/password',
+    ),
+    'sg_link_multiple': (
+        'sg_link_multiple/filter',
     ),
     'shotgrid_publish': (
-        'shotgrid_publish/login',
-        'shotgrid_publish/password',
         'shotgrid_publish/task',
         'shotgrid_publish/type',
     ),
@@ -106,6 +102,7 @@ SECTIONS = {
         'maya/push_capture_to_rv',
         'maya/reveal_capture',
         'maya/publish_capture',
+        'maya/set_sg_context'
     ),
     'maya_export': (
         'maya_export/type',
@@ -226,7 +223,7 @@ def active(k, path=False, args=False):
         v = tuple(
             common.active_paths[common.active_mode][k]
             for k in SECTIONS['active'][:idx + 1]
-            )
+        )
 
         if path:
             _path = '/'.join(v) if all(v) else None

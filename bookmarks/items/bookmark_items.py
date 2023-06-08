@@ -157,7 +157,7 @@ class BookmarkItemModel(models.ItemModel):
             job = v['job']
             root = v['root']
 
-            database.get_db(server, job, root)
+            database.get(server, job, root)
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
@@ -240,7 +240,7 @@ class BookmarkItemModel(models.ItemModel):
                     #
                     common.IdRole: idx,
                     #
-                    common.ShotgunLinkedRole: False,
+                    common.SGLinkedRole: False,
                     common.SlackLinkedRole: False
                 }
             )

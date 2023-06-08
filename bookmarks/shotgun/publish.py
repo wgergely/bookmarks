@@ -42,10 +42,10 @@ def close():
 
 def show():
     # Set credentials if not already set
-    if not all((common.settings.value('shotgrid_publish/login'), common.settings.value('shotgrid_publish/password'))):
+    if not all((common.settings.value('sg_auth/login'), common.settings.value('sg_auth/password'))):
         publish_widgets.Credentials().exec_()
         if not all(
-                (common.settings.value('shotgrid_publish/login'), common.settings.value('shotgrid_publish/password'))
+                (common.settings.value('sg_auth/login'), common.settings.value('sg_auth/password'))
         ):
             return
 
@@ -89,7 +89,7 @@ SECTIONS = {
             1: {
                 0: {
                     'name': 'Login',
-                    'key': 'shotgrid_publish_login',
+                    'key': 'sg_auth/login',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': '',
@@ -97,7 +97,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Password',
-                    'key': 'shotgrid_publish_password',
+                    'key': 'sg_auth/password',
                     'validator': None,
                     'protect': True,
                     'widget': ui.LineEdit,
@@ -232,6 +232,9 @@ class PublishWidget(base.BasePropertyEditor):
             return
 
         self.set_path(v)
+
+        self.load_saved_user_settings(common.SECTIONS['sg_auth'])
+        self._connect_settings_save_signals(common.SECTIONS['sg_auth'])
 
     @common.error
     @common.debug
@@ -409,10 +412,10 @@ class PublishWidget(base.BasePropertyEditor):
         kwargs = self.get_publish_args()
 
         # Start version publish
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             active=True,
-            login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password')
+            login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password')
         )
         sg_properties.init()
         if not sg_properties.verify(asset=True):
@@ -420,15 +423,6 @@ class PublishWidget(base.BasePropertyEditor):
 
         with shotgun.connection(sg_properties) as sg:
             kwargs['sg'] = sg
-
-            print (
-                f'ShotGrid properties:\n'
-                f'domain: {sg_properties.domain}\n'
-                f'script: {sg_properties.script}\n'
-                f'key: {sg_properties.key}\n'
-                f'login: {sg_properties.login}\n'
-                f'password: {sg_properties.password}'
-            )
 
             mbox = ui.MessageBox('Creating Version...', no_buttons=True)
             mbox.open()
@@ -579,10 +573,10 @@ class PublishWidget(base.BasePropertyEditor):
         if not all((entity_type, entity_id)):
 
             return
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             active=True,
-            login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password')
+            login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password')
         )
         sg_properties.init()
 
@@ -602,10 +596,10 @@ class PublishWidget(base.BasePropertyEditor):
         if not all((entity_type, entity_id)):
             return
 
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             active=True,
-            login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password')
+            login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password')
         )
         sg_properties.init()
         if not sg_properties.verify():
@@ -624,10 +618,10 @@ class PublishWidget(base.BasePropertyEditor):
         if not all((entity_type, entity_id)):
             return
 
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             active=True,
-            login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password')
+            login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password')
         )
         sg_properties.init()
         if not sg_properties.verify():

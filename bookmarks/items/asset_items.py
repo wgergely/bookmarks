@@ -187,7 +187,7 @@ class AssetItemModel(models.ItemModel):
         source = '/'.join(p)
 
         # Let's get the identifier from the bookmark database
-        db = database.get_db(*p)
+        db = database.get(*p)
         asset_identifier = db.value(
             source,
             'identifier',
@@ -281,7 +281,7 @@ class AssetItemModel(models.ItemModel):
                     #
                     common.IdRole: idx,
                     #
-                    common.ShotgunLinkedRole: False,
+                    common.SGLinkedRole: False,
                     #
                     common.AssetProgressRole: copy.deepcopy(progress.STAGES),
                 }

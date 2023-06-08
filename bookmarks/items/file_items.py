@@ -418,7 +418,7 @@ class FileItemModel(models.ItemModel):
                     #
                     common.IdRole: idx,  # non-mutable
                     #
-                    common.ShotgunLinkedRole: False,
+                    common.SGLinkedRole: False,
                 }
             )
 
@@ -475,7 +475,7 @@ class FileItemModel(models.ItemModel):
                             #
                             common.IdRole: 0,
                             #
-                            common.ShotgunLinkedRole: False,
+                            common.SGLinkedRole: False,
                         }
                     )
 

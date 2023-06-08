@@ -622,7 +622,7 @@
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">entity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">bookmark</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">NOT_CONFIGURED</span>
@@ -648,7 +648,7 @@
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">entity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">asset</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">NOT_CONFIGURED</span>
@@ -728,7 +728,7 @@
         <span class="c1"># Set filtering</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">set_entity_type</span><span class="p">(</span><span class="s1">&#39;Task&#39;</span><span class="p">)</span>
 
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">bookmark</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span>
@@ -826,7 +826,7 @@
         <span class="c1"># Set filtering</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">set_entity_type</span><span class="p">(</span><span class="s1">&#39;LocalStorage&#39;</span><span class="p">)</span>
 
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span>
@@ -895,7 +895,7 @@
         <span class="c1"># Set filtering</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">set_entity_type</span><span class="p">(</span><span class="s1">&#39;PublishedFileType&#39;</span><span class="p">)</span>
 
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">bookmark</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span>

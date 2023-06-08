@@ -1,4 +1,4 @@
-"""Shotgun Entity linker widgets.
+"""ShotGrid Entity linker widgets.
 
 The widgets are used to link a ShotGrid entity with a local bookmark item.
 
@@ -96,7 +96,7 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
                 ['is_template_project', 'is', False],
                 ['archived', 'is', False],
             ],
-            shotgun.fields['Project']
+            shotgun.entity_fields['Project']
         )
 
     @common.error

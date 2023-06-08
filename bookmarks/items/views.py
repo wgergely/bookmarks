@@ -951,7 +951,7 @@ class BaseItemView(QtWidgets.QTableView):
                 pass  # not implemented
 
             elif flag == common.MarkedAsArchived:
-                db = database.get_db(*index.data(common.ParentPathRole)[0:3])
+                db = database.get(*index.data(common.ParentPathRole)[0:3])
 
                 flags = db.value(
                     proxy_k,

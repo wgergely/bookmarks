@@ -1,4 +1,4 @@
-"""Shotgun Entity linker widgets.
+"""ShotGrid Entity linker widgets.
 
 The widgets are used to link a ShotGrid entity with a local asset item.
 
@@ -74,7 +74,7 @@ value_map = {
 
 class LinkAssetWidget(link.BaseLinkWidget):
     def __init__(self, server, job, root, asset, entity_type, parent=None):
-        super(LinkAssetWidget, self).__init__(
+        super().__init__(
             server, job, root, asset, entity_type, value_map, parent=parent
         )
 
@@ -105,7 +105,7 @@ class LinkAssetWidget(link.BaseLinkWidget):
         """Request Loads a list of ShotGrid entities.
 
         """
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
         sg_properties.init()
         if not sg_properties.verify(bookmark=True):
             raise RuntimeError('Bookmark not configured.')
@@ -124,7 +124,7 @@ class LinkAssetWidget(link.BaseLinkWidget):
                     'id': sg_properties.bookmark_id
                 }],
             ],
-            shotgun.fields[self.entity_type]
+            shotgun.entity_fields[self.entity_type]
         )
 
     @common.error

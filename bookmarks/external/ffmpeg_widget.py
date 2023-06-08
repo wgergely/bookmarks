@@ -137,7 +137,7 @@ class SizeComboBox(QtWidgets.QComboBox):
         """Initializes data.
 
         """
-        db = database.get_db(*common.active('root', args=True))
+        db = database.get(*common.active('root', args=True))
         width = db.value(db.source(), 'width', database.BookmarkTable)
         height = db.value(db.source(), 'width', database.BookmarkTable)
         if all((width, height)):

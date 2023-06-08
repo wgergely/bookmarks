@@ -156,6 +156,32 @@ SECTIONS = {
         },
     },
     3: {
+        'name': 'ShotGrid',
+        'icon': 'sg',
+        'color': None,
+        'groups': {
+            0: {
+                0: {
+                    'name': 'Login',
+                    'key': 'sg_auth/login',
+                    'validator': None,
+                    'widget': ui.LineEdit,
+                    'placeholder': '',
+                    'description': 'Your ShotGrid login name',
+                },
+                1: {
+                    'name': 'Password',
+                    'key': 'sg_auth/password',
+                    'validator': None,
+                    'protect': True,
+                    'widget': ui.LineEdit,
+                    'placeholder': '',
+                    'description': 'Your ShotGrid password',
+                },
+            },
+        },
+    },
+    4: {
         'name': 'Maya',
         'icon': 'maya',
         'color': None,
@@ -216,9 +242,20 @@ SECTIONS = {
                                    'above to disable.',
                 },
             },
+            3: {
+                0: {
+                    'name': 'Set ShotGrid context',
+                    'key': 'maya/set_sg_context',
+                    'validator': None,
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                    'placeholder': None,
+                    'description': 'If an asset is associated with a valid ShotGrid task, activating it will'
+                                   'automatically set the ShotGrid context in Maya. Check the box above to disable.',
+                },
+            },
         },
     },
-    4: {
+    5: {
         'name': 'About',
         'icon': None,
         'color': common.color(common.color_secondary_text),
@@ -310,10 +347,12 @@ class PreferenceEditor(base.BasePropertyEditor):
 
         """
         self.thumbnail_editor.setDisabled(True)
-        self.load_saved_user_settings(common.SECTIONS['settings'])
-        self.load_saved_user_settings(common.SECTIONS['maya'])
-        self._connect_settings_save_signals(common.SECTIONS['settings'])
-        self._connect_settings_save_signals(common.SECTIONS['maya'])
+
+        # Make sure to manually activate saving and loading of settings when adding
+        # new sections.
+        for k in ('settings', 'maya', 'sg_auth'):
+            self.load_saved_user_settings(common.SECTIONS[k])
+            self._connect_settings_save_signals(common.SECTIONS[k])
 
     def db_source(self):
         """A file path to use as the source of database values.

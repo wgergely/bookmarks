@@ -1018,7 +1018,7 @@ class CardsWidget(QtWidgets.QDialog):
         elif self.index.data(common.TypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
-        db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        db = database.get(*self.index.data(common.ParentPathRole)[0:3])
         v = db.value(source, 'notes', database.AssetTable)
         if not v:
             return False
@@ -1063,5 +1063,5 @@ class CardsWidget(QtWidgets.QDialog):
         elif self.index.data(common.TypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
-        db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        db = database.get(*self.index.data(common.ParentPathRole)[0:3])
         db.set_value(source, 'notes', self.get_cards_data())

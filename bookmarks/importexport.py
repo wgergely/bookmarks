@@ -45,7 +45,7 @@ def get_properties_as_json(index):
     source = index.data(common.PathRole)
     item_type = index.data(common.ItemTabRole)
 
-    db = database.get_db(*pp[0:3])
+    db = database.get(*pp[0:3])
 
     asset_table_data = db.get_row(source, database.AssetTable)
     asset_table_data = {
@@ -309,7 +309,7 @@ def import_item_properties(index, source=None, prompt=True):
 
         f.close()
 
-    db = database.get_db(*index.data(common.ParentPathRole)[0:3])
+    db = database.get(*index.data(common.ParentPathRole)[0:3])
     source = index.data(common.PathRole)
     with db.connection():
         for k, v in bookmark_table_data.items():
@@ -352,7 +352,7 @@ def import_json_asset_properties(indexes, prompt=True):
     for index in indexes:
 
         path = index.data(common.PathRole)
-        db = database.get_db(*index.data(common.ParentPathRole)[0:3])
+        db = database.get(*index.data(common.ParentPathRole)[0:3])
 
         for item in data:
 

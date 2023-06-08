@@ -437,7 +437,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
 
-        db = database.get_db(server, job, root)
+        db = database.get(server, job, root)
         primary_url = db.value(
             db.source(),
             'url1',
@@ -490,7 +490,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
         asset = self.index.data(common.ParentPathRole)[3]
 
-        db = database.get_db(server, job, root)
+        db = database.get(server, job, root)
         primary_url = db.value(db.source(asset), 'url1', database.AssetTable)
         secondary_url = db.value(db.source(asset), 'url2', database.AssetTable)
 
@@ -1307,7 +1307,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         server, job, root = p[0:3]
         asset = p[3] if len(p) > 3 else None
 
-        sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
+        sg_properties = shotgun.SGProperties(server, job, root, asset)
         sg_properties.init()
         if not sg_properties.verify():
             return
@@ -1352,7 +1352,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         else:
             asset = None
 
-        sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
+        sg_properties = shotgun.SGProperties(server, job, root, asset)
         sg_properties.init()
         if not sg_properties.verify():
             return
@@ -1382,7 +1382,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
 
-        sg_properties = shotgun.ShotgunProperties(server, job, root)
+        sg_properties = shotgun.SGProperties(server, job, root)
         sg_properties.init()
         if not sg_properties.verify(connection=True):
             return
@@ -1409,7 +1409,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if len(self.index.data(common.ParentPathRole)) < 4:
             return
 
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
         sg_properties.init()
         if not sg_properties.verify(bookmark=True):
             return
@@ -1434,7 +1434,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """ShotGrid batch asset linker menu actions.
 
         """
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
         sg_properties.init()
         if not sg_properties.verify(bookmark=True):
             return
@@ -1505,7 +1505,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """ShotGrid publish menu actions.
 
         """
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
         sg_properties.init()
 
         if not sg_properties.verify():
@@ -1528,7 +1528,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """ShotGrid publish menu actions.
 
         """
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
         sg_properties.init()
 
         if not sg_properties.verify():

@@ -300,7 +300,7 @@ class SlackButton(BaseControlButton):
             self.setHidden(True)
             return False
 
-        db = database.get_db(*args)
+        db = database.get(*args)
         slacktoken = db.value(
             db.source(),
             'slacktoken',

@@ -675,7 +675,7 @@ class MayaProperties(object):
 
         """
         # Bookmark properties
-        db = database.get_db(server, job, root)
+        db = database.get(server, job, root)
         for k in DB_KEYS[database.BookmarkTable]:
             self.data[k] = db.value(
                 db.source(),

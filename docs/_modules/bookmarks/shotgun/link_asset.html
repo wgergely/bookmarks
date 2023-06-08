@@ -479,7 +479,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Request Loads a list of ShotGrid entities.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">bookmark</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Bookmark not configured.&#39;</span><span class="p">)</span>

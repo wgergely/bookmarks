@@ -234,7 +234,7 @@ def _get_framerate(server, job, root, fallback_framerate=24.0):
         float: The current framerate.
 
     """
-    db = database.get_db(server, job, root)
+    db = database.get(server, job, root)
     v = db.value(
         db.source(),
         'framerate',

@@ -388,11 +388,11 @@ cache folder as defined by <code class="xref py py-attr docutils literal notrans
 </div>
 <p>The database table layout is defined by <a class="reference internal" href="#bookmarks.database.TABLES" title="bookmarks.database.TABLES"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TABLES</span></code></a>. It maps the SQLite column types
 to the python types used in the application.</p>
-<p>To get and set values use <a class="reference internal" href="#bookmarks.database.get_db" title="bookmarks.database.get_db"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_db()</span></code></a>, the preferred database interface getter.
+<p>To get and set values use <a class="reference internal" href="#bookmarks.database.get" title="bookmarks.database.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a>, the preferred database interface getter.
 This will return cached, thread-specific database controllers. E.g.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">database</span>
 <span class="linenos">2</span>
-<span class="linenos">3</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
 <span class="linenos">4</span><span class="n">v</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -400,7 +400,7 @@ This will return cached, thread-specific database controllers. E.g.:</p>
 You can batch commits together by using the built-in context manager:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">database</span>
 <span class="linenos">2</span>
-<span class="linenos">3</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
 <span class="linenos">4</span><span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
 <span class="linenos">5</span>    <span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
@@ -438,7 +438,7 @@ property, but they don’t and instead use the superfluous bookmark table
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.convert_return_values" title="bookmarks.database.convert_return_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_return_values</span></code></a>(table, key, value)</p></td>
 <td><p>Utility function used enforce data types.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.get_db" title="bookmarks.database.get_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_db</span></code></a>(server, job, root[, force])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.get" title="bookmarks.database.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(server, job, root[, force])</p></td>
 <td><p>Creates a database controller associated with a bookmark item.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.load_json" title="bookmarks.database.load_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_json</span></code></a>(value)</p></td>
@@ -576,7 +576,7 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 <dt class="sig sig-object py" id="bookmarks.database.BookmarkDB.set_value">
 <span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">AssetTable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.set_value" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the given value in the database.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
 <span class="linenos">2</span><span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;//</span><span class="si">{</span><span class="n">server</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">job</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s1">/sh0010/scenes/my_scene.ma&#39;</span>
 <span class="linenos">3</span><span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;hello world&#39;</span><span class="p">)</span>
 </pre></div>
@@ -649,8 +649,8 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.database.get_db">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.database.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#get_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.get_db" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.database.get">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.database.</span></span><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.get" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates a database controller associated with a bookmark item.</p>
 <p>sqlite3 cannot share the same connection instance between threads, hence we
 create and cache controllers per thread. The cached entries are stored
@@ -814,7 +814,7 @@ in <cite>common.db_connections</cite>.</p>
 <li><a class="reference internal" href="#bookmarks.database.b64decode"><code class="docutils literal notranslate"><span class="pre">b64decode()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.b64encode"><code class="docutils literal notranslate"><span class="pre">b64encode()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.convert_return_values"><code class="docutils literal notranslate"><span class="pre">convert_return_values()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.database.get"><code class="docutils literal notranslate"><span class="pre">get()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.load_json"><code class="docutils literal notranslate"><span class="pre">load_json()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.remove_all_connections"><code class="docutils literal notranslate"><span class="pre">remove_all_connections()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.remove_db"><code class="docutils literal notranslate"><span class="pre">remove_db()</span></code></a></li>

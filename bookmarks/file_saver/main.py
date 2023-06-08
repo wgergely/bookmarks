@@ -546,7 +546,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         # Description
         if self._file is not None:
-            db = database.get_db(*common.active('root', args=True))
+            db = database.get(*common.active('root', args=True))
             v = db.value(
                 self.db_source(),
                 'description',

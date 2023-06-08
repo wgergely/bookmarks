@@ -377,7 +377,7 @@
 <span class="sd">with ShotGrid.</span>
 
 <span class="sd">In the simplest of cases (e.g. when a bookmark item is active and have already been</span>
-<span class="sd">linked with ShotGrid) we can initiate a connection using a :class:`ShotgunProperties`</span>
+<span class="sd">linked with ShotGrid) we can initiate a connection using a :class:`SGProperties`</span>
 <span class="sd">instance:</span>
 
 <span class="sd">.. code-block:: python</span>
@@ -385,7 +385,7 @@
 
 <span class="sd">    import bookmarks.shotgun.shotgun as shotgun</span>
 
-<span class="sd">    sg_properties = shotgun.ShotgunProperties(active=True)</span>
+<span class="sd">    sg_properties = shotgun.SGProperties(active=True)</span>
 <span class="sd">    sg_properties.init() # loads data from the bookmark database</span>
 
 <span class="sd">    # Verify properties before connecting</span>
@@ -590,7 +590,7 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{domain}</span><span class="s1">/detail/</span><span class="si">{entity_type}</span><span class="s1">/</span><span class="si">{entity_id}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="n">t</span>
 
 
-<div class="viewcode-block" id="ShotgunProperties"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties">[docs]</a><span class="k">class</span> <span class="nc">ShotgunProperties</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SGProperties"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.SGProperties">[docs]</a><span class="k">class</span> <span class="nc">SGProperties</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns all ShotGrid properties saved in the bookmark item database.</span>
 
 <span class="sd">    These properties define the linkage between ShotGrid entities and local assets</span>
@@ -688,7 +688,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">asset_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s1">&#39;shotgun_id&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">asset_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s1">&#39;shotgun_name&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ShotgunProperties.init"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.init">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+<div class="viewcode-block" id="SGProperties.init"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.SGProperties.init">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load all current shotgun values from the bookmark item database.</span>
@@ -697,10 +697,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_values_from_database</span><span class="p">(</span><span class="n">db</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ShotgunProperties.verify"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bookmark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="SGProperties.verify"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.SGProperties.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bookmark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks the validity of the current configuration.</span>
 
 <span class="sd">        Args:</span>
@@ -734,7 +734,7 @@
 
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="ShotgunProperties.urls"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.urls">[docs]</a>    <span class="k">def</span> <span class="nf">urls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SGProperties.urls"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.SGProperties.urls">[docs]</a>    <span class="k">def</span> <span class="nf">urls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of available urls based on the sg_properties provided.</span>
 
 <span class="sd">        Returns:</span>

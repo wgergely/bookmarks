@@ -121,7 +121,7 @@ def create_entity(
     """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
-    sg_properties = shotgun.ShotgunProperties(active=True)
+    sg_properties = shotgun.SGProperties(active=True)
     sg_properties.init()
 
     if not sg_properties.verify(connection=True):
@@ -153,11 +153,7 @@ def create_entity(
     with shotgun.connection(sg_properties) as sg:
         # We won't allow creating duplicate entites. So. Let's
         # check for before we move on:
-        entities = sg.find(
-            entity_type,
-            request_data,
-            fields=shotgun.fields[entity_type]
-        )
+        entities = sg.find(entity_type, request_data, fields=shotgun.entity_fields[entity_type])
 
         for entity in entities:
             def has(k):
@@ -171,7 +167,7 @@ def create_entity(
         entity = sg.create(
             entity_type,
             create_data,
-            return_fields=shotgun.fields[entity_type]
+            return_fields=shotgun.entity_fields[entity_type]
         )
 
     if not entity:
@@ -186,7 +182,7 @@ def create_project(server, job, root, entity_name):
     """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
-    sg_properties = shotgun.ShotgunProperties(server, job, root)
+    sg_properties = shotgun.SGProperties(server, job, root)
     sg_properties.init()
     if not sg_properties.verify(connection=True):
         raise ValueError('Bookmark not configured.')
@@ -195,15 +191,13 @@ def create_project(server, job, root, entity_name):
         # We won't allow creating duplicate entites. So. Let's
         # check for before we move on:
         entities = sg.find(
-            'Project',
-            [
+            'Project', [
                 ['is_demo', 'is', False],
                 ['is_template', 'is', False],
                 ['is_template_project', 'is', False],
                 ['archived', 'is', False],
-            ],
-            fields=shotgun.fields['Project']
-        )
+            ], fields=shotgun.entity_fields['Project']
+            )
 
         for entity in entities:
             def has(k):
@@ -219,7 +213,7 @@ def create_project(server, job, root, entity_name):
             {
                 'name': entity_name,
             },
-            return_fields=shotgun.fields['Project']
+            return_fields=shotgun.entity_fields['Project']
         )
 
     if not entity:
@@ -239,7 +233,7 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
 
     s = source
     t = table
-    db = database.get_db(server, job, root)
+    db = database.get(server, job, root)
     with db.connection():
 
         # Let's iterate over the value map dictionary to extract data from the
@@ -280,7 +274,7 @@ def get_status_codes(sg):
     """Returns a list of status codes available in the current context.
 
     """
-    sg_properties = shotgun.ShotgunProperties(active=True)
+    sg_properties = shotgun.SGProperties(active=True)
     sg_properties.init()
     if not sg_properties.verify():
         return []
@@ -289,7 +283,7 @@ def get_status_codes(sg):
     if not schema:
         return []
 
-    # Check data intergrity before proceeding
+    # Check data integrity before proceeding
     k = 'sg_status_list'
     if k not in schema or not schema[k]:
         return []
@@ -317,7 +311,7 @@ def get_status_codes(sg):
             [
                 ['code', 'is', code]
             ],
-            fields=shotgun.fields['Status']
+            fields=shotgun.entity_fields['Status']
         )
         if not entity:
             continue
@@ -386,7 +380,7 @@ def create_published_file(
     entity = sg.create(
         'PublishedFile',
         create_data,
-        return_fields=shotgun.fields['PublishedFile']
+        return_fields=shotgun.entity_fields['PublishedFile']
     )
     return entity
 
@@ -450,7 +444,7 @@ def create_version(
     version_entity = sg.create(
         'Version',
         data,
-        return_fields=shotgun.fields['Version']
+        return_fields=shotgun.entity_fields['Version']
     )
 
     if not version_entity:

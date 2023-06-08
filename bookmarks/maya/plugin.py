@@ -17,7 +17,7 @@ except ImportError:
 product = 'bookmarks'
 
 __author__ = 'Gergely Wootsch'
-__version__ = '0.8.1'
+__version__ = '0.8.2'
 
 maya_useNewAPI = True
 

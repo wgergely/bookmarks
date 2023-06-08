@@ -8,33 +8,9 @@ from PySide2 import QtCore, QtWidgets
 from . import delegate
 from . import file_items
 from . import models
-from .. import actions
 from .. import common
 from .. import contextmenu
 from ..threads import threads
-
-
-def _check_sequence(path):
-    # Checking if the dropped item is sequence and if so, is does it have
-    # more than one member
-    seq = common.get_sequence(path)
-    if not seq:
-        return path
-
-    # Let's see if we can find more than one member
-    file_info = QtCore.QFileInfo(path)
-    frames = 0
-    for entry in os.scandir(file_info.dir().path()):
-        p = entry.path.replace('\\', '/')
-        if seq.group(1) in p and seq.group(3) in p:
-            frames += 1
-        if frames >= 2:
-            break
-
-    if frames > 1:
-        return common.proxy_path(path)
-
-    return path
 
 
 class FavouriteItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -83,10 +59,14 @@ class FavouriteItemModel(file_items.FileItemModel):
         """Collects the data needed to populate the favourite item model.
 
         """
-        __p = self.source_path()
-        __k = self.task()
+        p = self.source_path()
+        k = self.task()
         t = common.FileItem
-        data = common.get_data(__p, __k, t)
+
+        if not p or not all(p) or not k or t is None:
+            return
+
+        data = common.get_data(p, k, t)
 
         sequence_data = common.DataDict()
 
@@ -103,24 +83,22 @@ class FavouriteItemModel(file_items.FileItemModel):
             if self._interrupt_requested:
                 break
 
-            sort_by_type_role = 0
-            if len(source_paths) == 3:
-                sort_by_type_role = 0
-            elif len(source_paths) == 4:
-                sort_by_type_role = 1
-            elif len(source_paths) > 4:
-                sort_by_type_role = 2
+            # Skipping directories
+            if entry.is_dir():
+                continue
+
+            filename = entry.name
 
             _source_path = '/'.join(source_paths)
-            filename = entry.name
             filepath, ext, file_root, _dir, sort_by_name_role = file_items.get_path_elements(
-                __p,
-                __k,
+                p,
+                k,
                 filename,
                 entry.path,
                 _source_path
             )
 
+            # Path the sort order
             for idx, _p in enumerate(source_paths):
                 sort_by_name_role[idx] = _p
 
@@ -172,7 +150,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: 0,
                     common.SortBySizeRole: 0,
-                    common.SortByTypeRole: sort_by_type_role,
+                    common.SortByTypeRole: ext,
                     #
                     common.IdRole: idx,  # non-mutable
                     #
@@ -224,7 +202,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                             common.SortByNameRole: sort_by_name_role,
                             common.SortByLastModifiedRole: 0,
                             common.SortBySizeRole: 0,  # Initializing with null-size,
-                            common.SortByTypeRole: sort_by_type_role,
+                            common.SortByTypeRole: ext,
                             #
                             common.IdRole: 0,
                             #
@@ -241,7 +219,7 @@ class FavouriteItemModel(file_items.FileItemModel):
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
-        data = common.get_data(__p, __k, t)
+        data = common.get_data(p, k, t)
 
         # Casting the sequence data back onto the model
         for idx, v in enumerate(sequence_data.values()):
@@ -278,13 +256,12 @@ class FavouriteItemModel(file_items.FileItemModel):
             data[idx][common.DataTypeRole] = common.SequenceItem
 
     def source_path(self):
-        """The model's parent folder path segments.
-
-        Returns:
-            tuple: A tuple of path segments.
+        """The path of the source file.
 
         """
-        return common.pseudo_local_bookmark()
+        return (
+            'favourites',
+        )
 
     def item_generator(self):
         """We're using the saved keys to find and return the DirEntries
@@ -369,66 +346,6 @@ class FavouriteItemView(file_items.FileItemView):
 
         """
         self.reset_timer.start(self.reset_timer.interval())
-
-    def dragEnterEvent(self, event):
-        """Event handler.
-
-        """
-        if event.source() == self:
-            return
-
-        if event.mimeData().hasUrls():
-            self.drop_indicator_widget.show()
-            return event.accept()
-        self.drop_indicator_widget.hide()
-
-    def dragLeaveEvent(self, event):
-        """Paint event handler.
-
-        """
-        self.drop_indicator_widget.hide()
-
-    def dragMoveEvent(self, event):
-        """Event handler.
-
-        """
-        if event.mimeData().hasUrls():
-            event.accept()
-
-    def dropEvent(self, event):
-        """Event handler.
-
-        """
-        self.drop_indicator_widget.hide()
-
-        if event.source() == self:
-            return  # Won't allow dropping an item from itself
-
-        mime = event.mimeData()
-        if not mime.hasUrls():
-            return
-
-        event.accept()
-
-        for url in mime.urls():
-            file_info = QtCore.QFileInfo(url.toLocalFile())
-
-            # Import favourites file
-            if file_info.suffix() == common.favorite_file_ext:
-                actions.import_favourites(source=file_info.filePath())
-                continue
-
-            source = _check_sequence(file_info.filePath())
-
-            # Skip files saved already
-            if source in common.favourites:
-                continue
-
-            # Add the dropped file with dummy server/job/root values
-            actions.add_favourite(
-                common.pseudo_local_bookmark(),
-                source,
-            )
 
     def get_hint_string(self):
         """Returns an informative hint text.

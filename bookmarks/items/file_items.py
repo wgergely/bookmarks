@@ -110,6 +110,7 @@ def get_path_elements(p, k, name, path, source_path):
 
     sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
     _dir = None
+
     if file_root:
         # Save the file's parent folder for the file system watcher
         _dir = source_path + '/' + file_root
@@ -121,7 +122,10 @@ def get_path_elements(p, k, name, path, source_path):
             sort_by_name_role[_idx] = _file_root[idx].lower()
             if _idx == 6:
                 break
+
+    sort_by_name_role[6] = ext
     sort_by_name_role[7] = name.lower()
+
     # Add server, job, root and task folders to the name sort list
     for idx, _p in enumerate(p + (k,)):
         sort_by_name_role[idx] = _p.lower()

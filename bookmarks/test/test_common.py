@@ -91,10 +91,6 @@ class Test(base.BaseCase):
     def test_get_username(self):
         self.assertIsInstance(common.get_username(), str)
 
-    def test_pseudo_local_bookmark(self):
-        self.assertIsInstance(common.pseudo_local_bookmark(), tuple)
-        self.assertTrue(all(common.pseudo_local_bookmark()))
-
     def test_temp_path(self):
         self.assertIsInstance(common.temp_path(), str)
         self.assertTrue(os.path.isdir(common.temp_path()))

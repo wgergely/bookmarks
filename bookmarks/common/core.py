@@ -662,3 +662,62 @@ class Timer(QtCore.QTimer):
             common.timers[k].stop()
             common.timers[k].deleteLater()
             del common.timers[k]
+
+
+def sanitize_hashtags(s):
+    """Sanitize hashtags in a string.
+
+    Args:
+        s (str): String to sanitize.
+
+
+    Returns:
+        str: Sanitized string.
+
+    """
+    s = s if s else ''
+
+    # Remove trailing spaces
+    s = s.strip()
+
+    # Split the string into tokens, remove any empty tokens
+    tokens = s.split(' ')
+
+    # Remove instances of ## or # not followed by characters
+    tokens = [re.sub(r'##+', '#', token) for token in tokens]
+    tokens = [re.sub(r'#\s', '', token) for token in tokens]
+
+    # Filter out the tokens from the non-token text
+    hash_tokens = sorted(set([re.sub(r'(?<=\w)#', '_', token) for token in tokens if token.startswith('#')]))
+    non_hash_tokens = [token for token in tokens if not token.startswith('#')]
+
+    # Rejoin the tokens and non-token text into a single string
+    s = ' '.join(non_hash_tokens + hash_tokens)
+
+    return s
+
+
+def split_text_and_hashtags(s):
+    """Split a string into regular text and hashtags.
+
+    Args:
+        s (str): String to split.
+
+    Returns:
+        str, str: Regular text and hashtags.
+
+    """
+    s = s if s else ''
+
+    # Split the string into tokens
+    tokens = s.split(' ')
+
+    # Filter out the tokens from the non-token text
+    hash_tokens = [token for token in tokens if token.startswith('#')]
+    non_hash_tokens = [token for token in tokens if not token.startswith('#')]
+
+    # Join the tokens and non-token text into separate strings
+    regular_text = ' '.join(non_hash_tokens)
+    tokens_text = ' '.join(hash_tokens)
+
+    return regular_text, tokens_text

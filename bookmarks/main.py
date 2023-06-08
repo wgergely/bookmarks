@@ -188,7 +188,7 @@ class MainWidget(QtWidgets.QWidget):
         a.model().sourceModel().activeChanged.connect(
             l.model().sourceModel().reset_data
         )
-        #####################################################
+
         # Stacked widget navigation
         b.activated.connect(
             lambda: common.signals.tabChanged.emit(common.AssetTab)

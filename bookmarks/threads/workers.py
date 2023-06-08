@@ -187,8 +187,6 @@ class BaseWorker(QtCore.QObject):
 
         self.databaseValueUpdated.connect(self.update_changed_database_value, cnx)
 
-        ###########################################
-
         q = self.queue
         cnx = QtCore.Qt.QueuedConnection
         widget = _widget(q)
@@ -547,6 +545,10 @@ class InfoWorker(BaseWorker):
         flags = ref()[common.FlagsRole]
         item_type = ref()[common.TypeRole]
 
+        # Load values from the database
+        db = database.get(*pp[0:3])
+
+        # Get the sequence proxy path if the item is collapsed
         if len(pp) > 4:
             collapsed = common.is_collapsed(st)
             proxy_k = common.proxy_path(st)
@@ -554,17 +556,16 @@ class InfoWorker(BaseWorker):
         else:
             k = st
 
-        # Load values from the database
-        db = database.get(*pp[0:3])
         asset_row_data = db.get_row(k, database.AssetTable)
         bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
+
         if len(pp) > 4:
             _proxy_flags = db.value(proxy_k, 'flags', database.AssetTable)
 
         # Description
         if len(pp) > 3:
             if asset_row_data:
-                ref()[common.DescriptionRole] = asset_row_data['description']
+                ref()[common.DescriptionRole] = common.sanitize_hashtags(asset_row_data['description'])
         # Asset Progress Data
         if len(pp) == 4 and asset_row_data['progress']:
             ref()[common.AssetProgressRole] = asset_row_data['progress']
@@ -590,6 +591,12 @@ class InfoWorker(BaseWorker):
         self._process_bookmark_item(ref, db.source(), bookmark_row_data, pp)
         self._process_file_item(ref, item_type)
         self._process_sequence_item(ref, item_type)
+
+        # Add sequence tokens to file items
+        if item_type == common.FileItem and len(pp) > 4 and common.get_sequence(st):
+            _, h = common.split_text_and_hashtags(db.value(proxy_k, 'description', database.AssetTable))
+            _v = ref()[common.DescriptionRole]
+            ref()[common.DescriptionRole] = common.sanitize_hashtags(f'{_v if _v else ""}  {h if h else ""}').strip()
 
     def _process_bookmark_item(self, ref, source, bookmark_row_data, pp):
         if not self.is_valid(ref):
@@ -738,7 +745,7 @@ class ThumbnailWorker(BaseWorker):
         # ...and use it to load the resource
         image = images.ImageCache.get_image(
             destination, int(size), force=True  # force=True will refresh the cache
-            )
+        )
 
         # If the image successfully loads we can wrap things up here
         if image and not image.isNull():
@@ -853,7 +860,7 @@ class SGWorker(BaseWorker):
                 common.settings.value('sg_auth/login') if user else sg_properties.script,
                 common.settings.value('sg_auth/password') if user else sg_properties.key,
                 user=user
-                )
+            )
 
             if entity_type == 'Status':
                 from ..shotgun import actions as sg_actions

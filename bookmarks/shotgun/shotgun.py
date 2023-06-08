@@ -2,7 +2,7 @@
 with ShotGrid.
 
 In the simplest of cases (e.g. when a bookmark item is active and have already been
-linked with ShotGrid) we can initiate a connection using a :class:`ShotgunProperties`
+linked with ShotGrid) we can initiate a connection using a :class:`SGProperties`
 instance:
 
 .. code-block:: python
@@ -10,7 +10,7 @@ instance:
 
     import bookmarks.shotgun.shotgun as shotgun
 
-    sg_properties = shotgun.ShotgunProperties(active=True)
+    sg_properties = shotgun.SGProperties(active=True)
     sg_properties.init() # loads data from the bookmark database
 
     # Verify properties before connecting
@@ -48,7 +48,7 @@ NameRole = QtCore.Qt.UserRole + 1003
 ENTITY_URL = '{domain}/detail/{entity_type}/{entity_id}'
 
 #: A list of entity and field definitions used to assist entity data queries
-fields = {
+entity_fields = {
     'LocalStorage': ['type', 'id', 'code', 'description', 'mac_path', 'windows_path', 'linux_path'],
     'PublishedFileType': ['type', 'id', 'code', 'description', 'short_name'],
     'Project': ['type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project', 'archived'],
@@ -101,7 +101,7 @@ def connection(sg_properties):
     connection when exiting.
 
     Args:
-        sg_properties (ShotgunProperties): The shotgun properties saved in the bookmark database.
+        sg_properties (SGProperties): The shotgun properties saved in the bookmark database.
 
     Yields:
         ScriptConnection: A connected shotgun connection instance
@@ -178,7 +178,7 @@ def get_sg(domain, script, key, user=False):
             )
 
     try:
-        sg = shotgun_api3.Shotgun(
+        sg = SG(
             domain, script_name=_script, api_key=_key, login=login, password=password,
             connect=False, convert_datetimes_to_utc=True, http_proxy=None, ensure_ascii=False,
             ca_certs=None, sudo_as_login=None, session_token=None, auth_token=None
@@ -201,7 +201,61 @@ def _get_thread_key(*args):
     return ''.join(args) + t
 
 
-class ShotgunProperties(object):
+class SG(shotgun_api3.Shotgun):
+    """ShotGrid connection class override.
+
+    """
+
+    def find(self, entity_type, filters, fields=None, **kwargs):
+        """Override of the `find` method to ensure that all requested fields are returned.
+
+        Args:
+            entity_type (str): The entity type to search for.
+            filters (list): A list of filters to apply to the query.
+            fields (list): A list of fields to return in the query.
+            **kwargs: Additional keyword arguments to pass to the `shotgun_api3.Shotgun.find` method.
+
+        Returns:
+            list: A list of dictionaries containing the requested fields.
+
+        """
+        fields = fields or []
+        if entity_type in entity_fields:
+            fields.extend(entity_fields[entity_type])
+
+        entities = super().find(entity_type, filters, fields=fields, **kwargs)
+        if not entities:
+            return entities
+
+        # We want to make sure that all the fields we requested are present in the returned entities
+        for entity in entities:
+            missing_fields = list(set(fields) - set(entity.keys()))
+            if missing_fields:
+                _f = '", "'.join(missing_fields)
+                print(f'Missing fields: "{_f}" in return data. Check if you have permission to access these fields.')
+        return entities
+
+    def find_one(self, entity_type, filters, fields=None, **kwargs):
+        """Override of the `find_one` method to ensure that all requested fields are returned.
+
+        Args:
+            entity_type (str): The entity type to search for.
+            filters (list): A list of filters to apply to the query.
+            fields (list): A list of fields to return in the query.
+            **kwargs: Additional keyword arguments to pass to the `shotgun_api3.Shotgun.find_one` method.
+
+        Returns:
+            dict: A dictionary containing the requested fields.
+
+        """
+        kwargs['limit'] = 1
+        entities = self.find(entity_type, filters, fields=fields, **kwargs)
+        if entities:
+            return entities[0]
+        return None
+
+
+class SGProperties(object):
     """Returns all ShotGrid properties saved in the bookmark item database.
 
     These properties define the linkage between ShotGrid entities and local assets
@@ -247,6 +301,9 @@ class ShotgunProperties(object):
         self.asset_cut_in = None
         self.asset_cut_out = None
         self.asset_cut_duration = None
+
+        self.asset_task_name = None
+        self.asset_task_id = None
 
     @property
     def server(self):
@@ -295,6 +352,8 @@ class ShotgunProperties(object):
         self.asset_type = db.value(s, 'shotgun_type', t)
         self.asset_id = db.value(s, 'shotgun_id', t)
         self.asset_name = db.value(s, 'shotgun_name', t)
+        self.asset_task_id = db.value(s, 'sg_task_id', t)
+        self.asset_task_name = db.value(s, 'sg_task_name', t)
 
     @common.debug
     @common.error
@@ -305,10 +364,10 @@ class ShotgunProperties(object):
         if not all((self.server, self.job, self.root)):
             return
         if db is None:
-            db = database.get_db(self.server, self.job, self.root)
+            db = database.get(self.server, self.job, self.root)
         self._load_values_from_database(db)
 
-    def verify(self, connection=False, bookmark=False, asset=False):
+    def verify(self, connection=False, bookmark=False, asset=False, task=False):
         """Checks the validity of the current configuration.
 
         Args:
@@ -346,6 +405,12 @@ class ShotgunProperties(object):
             return True
         if not all((self.asset_type, self.asset_id, self.asset_name)):
             return False
+
+        if not self.asset and task:
+            return False
+        if not all((self.asset_type, self.asset_id, self.asset_name, self.asset_task_id, self.asset_task_name)):
+            return False
+
         return True
 
     def urls(self):
@@ -526,9 +591,9 @@ class EntityModel(QtCore.QAbstractItemModel):
         elif 'content' in v:
             name = v['content']
         elif 'type' in v:
-            name = f'{v["type"]}'
+            name = f'Type {v["type"]}'
         elif 'id' in v:
-            name = f'id{v["id"]}'
+            name = f'Id {v["id"]}'
         else:
             name = str(v)
 

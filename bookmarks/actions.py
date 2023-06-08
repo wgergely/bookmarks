@@ -329,7 +329,7 @@ def export_favourites(*args, destination=None):
 
             # Add description
             k = 'description'
-            db = database.get_db(server, job, root)
+            db = database.get(server, job, root)
             if source == db.source():
                 table = database.BookmarkTable
             else:
@@ -424,7 +424,7 @@ def import_favourites(*args, source=None):
             if not v:
                 continue
 
-            db = database.get_db(server, job, root)
+            db = database.get(server, job, root)
             if source == db.source():
                 table = database.BookmarkTable
             else:
@@ -886,7 +886,7 @@ def show_slack():
     if not all(args):
         return
 
-    db = database.get_db(*args)
+    db = database.get(*args)
     token = db.value(
         db.source(),
         'slacktoken',
@@ -1263,7 +1263,7 @@ def reveal_url(index):
         table = database.AssetTable
 
     source = '/'.join(source_path)
-    db = database.get_db(*source_path[0:3])
+    db = database.get(*source_path[0:3])
 
     if not index.isValid():
         return
@@ -1277,7 +1277,7 @@ def reveal_url(index):
         asset = None
 
     from .shotgun import shotgun
-    sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
+    sg_properties = shotgun.SGProperties(server, job, root, asset)
     sg_properties.init()
     if sg_properties.verify():
         urls = sg_properties.urls()

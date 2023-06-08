@@ -328,7 +328,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
 
         # Write current data to the database
         pp = data[source_index.row()][common.ParentPathRole]
-        db = database.get_db(*pp[0:3])
+        db = database.get(*pp[0:3])
         db.set_value(
             data[source_index.row()][common.PathRole],
             'progress',

@@ -482,15 +482,15 @@ def update_shotgun_configured(pp, b, a, ref):
     b_item_conf = (b['shotgun_id'], b['shotgun_name'], b['shotgun_type'])
     if len(pp) == 3:
         if all(b_conf + b_item_conf):
-            ref()[common.ShotgunLinkedRole] = True
+            ref()[common.SGLinkedRole] = True
             return True
     if len(pp) == 4:
         a_item_conf = (a['shotgun_id'], a['shotgun_name'], a['shotgun_type'])
         if all(b_conf + b_item_conf + a_item_conf):
-            ref()[common.ShotgunLinkedRole] = True
+            ref()[common.SGLinkedRole] = True
             return True
 
-    ref()[common.ShotgunLinkedRole] = False
+    ref()[common.SGLinkedRole] = False
     return False
 
 
@@ -555,7 +555,7 @@ class InfoWorker(BaseWorker):
             k = st
 
         # Load values from the database
-        db = database.get_db(*pp[0:3])
+        db = database.get(*pp[0:3])
         asset_row_data = db.get_row(k, database.AssetTable)
         bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
         if len(pp) > 4:
@@ -822,7 +822,7 @@ class TransactionsWorker(BaseWorker):
             pass  # ignore index errors
 
 
-class ShotgunWorker(BaseWorker):
+class SGWorker(BaseWorker):
     """This worker is used to retrieve data from ShotGrid."""
 
     @common.error
@@ -838,11 +838,11 @@ class ShotgunWorker(BaseWorker):
             args = threads.queue(self.queue).pop()
             idx, server, job, root, asset, user, entity_type, filters, fields = args
 
-            sg_properties = shotgun.ShotgunProperties(
+            sg_properties = shotgun.SGProperties(
                 server, job, root, asset, login=common.settings.value(
-                    'shotgrid_publish/login'
+                    'sg_auth/login'
                 ) if user else None, password=common.settings.value(
-                    'shotgrid_publish/password'
+                    'sg_auth/password'
                 ) if user else None, )
             sg_properties.init()
             if not sg_properties.verify(connection=True):
@@ -850,8 +850,8 @@ class ShotgunWorker(BaseWorker):
 
             sg = shotgun.get_sg(
                 sg_properties.domain,
-                common.settings.value('shotgrid_publish/login') if user else sg_properties.script,
-                common.settings.value('shotgrid_publish/password') if user else sg_properties.key,
+                common.settings.value('sg_auth/login') if user else sg_properties.script,
+                common.settings.value('sg_auth/password') if user else sg_properties.key,
                 user=user
                 )
 
@@ -859,7 +859,7 @@ class ShotgunWorker(BaseWorker):
                 from ..shotgun import actions as sg_actions
                 entities = sg_actions.get_status_codes(sg)
             else:
-                entities = sg.find(entity_type, filters, fields=fields)
+                entities = sg.find(entity_type, filters, fields)
 
             # Sort the entities by code or name
             def key(x):
@@ -869,6 +869,8 @@ class ShotgunWorker(BaseWorker):
                     return x['name']
                 elif 'content' in x:
                     return x['content']
+                elif 'id' in x:
+                    return x['id']
                 else:
                     return str(x)
 

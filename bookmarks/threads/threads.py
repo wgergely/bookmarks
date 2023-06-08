@@ -35,7 +35,7 @@ AssetInfo = 'AssetInfo'
 BookmarkInfo = 'BookmarkInfo'
 QueuedDatabaseTransaction = 'QueuedDatabaseTransaction'
 QueuedSettingsTransaction = 'QueuedSettingsTransaction'
-QueuedShotgunQuery = 'QueuedShotgunQuery'
+QueuedSGQuery = 'QueuedSGQuery'
 
 controllers = {}
 
@@ -155,11 +155,11 @@ THREADS = {
         'role': None,
         'tab': -1,
     },
-    QueuedShotgunQuery: {
+    QueuedSGQuery: {
         'queue': collections.deque([], common.max_list_items),
         'preload': False,
         'data_types': {},
-        'worker': workers.ShotgunWorker,
+        'worker': workers.SGWorker,
         'role': None,
         'tab': -1,
     },
@@ -176,9 +176,9 @@ def queue_database_transaction(*args):
 
 
 def queue_shotgun_query(*args):
-    if args not in queue(QueuedShotgunQuery):
-        queue(QueuedShotgunQuery).append(args)
-    get_thread(QueuedShotgunQuery).startTimer.emit()
+    if args not in queue(QueuedSGQuery):
+        queue(QueuedSGQuery).append(args)
+    get_thread(QueuedSGQuery).startTimer.emit()
 
 
 def reset_all_queues():
@@ -215,7 +215,7 @@ def get_thread(k):
 
     Args:
         k (str): Name of the thread controller to return, e.g.
-            ``threads.QueuedShotgunQuery``.
+            ``threads.QueuedSGQuery``.
 
     If the controller does not yet exist we will create and cache it.
     All threads are associated with worker, defined by `THREADS`.

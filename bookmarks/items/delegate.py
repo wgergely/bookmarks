@@ -922,7 +922,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         # Note that we don't need to set the data directly as
         # the database will emit a value changed signal that will
         # automatically update the views and model data caches
-        db = database.get_db(*source_path[0:3])
+        db = database.get(*source_path[0:3])
         db.set_value(k, 'description', editor.text())
 
     def paint(self, painter, option, index):
@@ -2187,7 +2187,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             return
         if not index.data(common.ParentPathRole):
             return
-        if not index.data(common.ShotgunLinkedRole):
+        if not index.data(common.SGLinkedRole):
             return
 
         rect = QtCore.QRect(
@@ -2255,7 +2255,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             rectangles[ThumbnailRect].bottomRight() - offset
         )
 
-        if index.data(common.ShotgunLinkedRole):
+        if index.data(common.SGLinkedRole):
             rect.moveLeft(
                 rect.left() - (common.size(common.size_margin) * 0.66)
             )
@@ -2295,7 +2295,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if not index.data(common.ParentPathRole):
             return
 
-        db = database.get_db(*index.data(common.ParentPathRole)[0:3])
+        db = database.get(*index.data(common.ParentPathRole)[0:3])
         if db.is_valid():
             return
 
@@ -2813,7 +2813,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
             k = p
 
         # Get the database value
-        db = database.get_db(*source_path[0:3])
+        db = database.get(*source_path[0:3])
         v = db.value(k, 'description', database.BookmarkTable)
 
         editor.setText(v)
@@ -2833,7 +2833,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
             k = p
 
         # Set the database value
-        db = database.get_db(*source_path[0:3])
+        db = database.get(*source_path[0:3])
         with db.connection():
             db.set_value(k, 'description', editor.text(), table=database.BookmarkTable)
             bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)

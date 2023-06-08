@@ -39,9 +39,9 @@ class Credentials(QtWidgets.QDialog):
 
         self.setLayout(layout)
 
-        login = common.settings.value('shotgrid_publish/login')
+        login = common.settings.value('sg_auth/login')
         login = login if login else ''
-        password = common.settings.value('shotgrid_publish/password')
+        password = common.settings.value('sg_auth/password')
         password = password if password else ''
 
         self.username_field.setText(login)
@@ -50,8 +50,8 @@ class Credentials(QtWidgets.QDialog):
         common.set_stylesheet(self)
 
     def accept(self):
-        common.settings.setValue('shotgrid_publish/login', self.username_field.text())
-        common.settings.setValue('shotgrid_publish/password', self.password_field.text())
+        common.settings.setValue('sg_auth/login', self.username_field.text())
+        common.settings.setValue('sg_auth/password', self.password_field.text())
         super().accept()
 
 
@@ -274,9 +274,9 @@ class ProjectEntityEditor(shotgun.EntityComboBox):
     @common.error
     @common.debug
     def entity(self):
-        sg_properties = shotgun.ShotgunProperties(
-            active=True, login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password'), )
+        sg_properties = shotgun.SGProperties(
+            active=True, login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password'), )
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
@@ -301,9 +301,9 @@ class AssetEntityEditor(shotgun.EntityComboBox):
     @common.error
     @common.debug
     def entity(self):
-        sg_properties = shotgun.ShotgunProperties(
-            active=True, login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password'), )
+        sg_properties = shotgun.SGProperties(
+            active=True, login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password'), )
         sg_properties.init()
 
         if not sg_properties.verify(asset=True):
@@ -377,9 +377,9 @@ class TaskEditor(shotgun.EntityComboBox):
 
         # Set filtering
         self.model().set_entity_type('Task')
-        sg_properties = shotgun.ShotgunProperties(
-            active=True, login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password'), )
+        sg_properties = shotgun.SGProperties(
+            active=True, login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password'), )
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
@@ -392,7 +392,7 @@ class TaskEditor(shotgun.EntityComboBox):
                 'type': 'Project',
                 'id': sg_properties.bookmark_id
             }], ],
-            shotgun.fields['Task']
+            shotgun.entity_fields['Task']
         )
 
     @common.error
@@ -472,9 +472,9 @@ class LocalStorageEditor(shotgun.EntityComboBox):
         # Set filtering
         self.model().set_entity_type('LocalStorage')
 
-        sg_properties = shotgun.ShotgunProperties(
-            active=True, login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password'), )
+        sg_properties = shotgun.SGProperties(
+            active=True, login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password'), )
         sg_properties.init()
 
         if not sg_properties.verify(connection=True):
@@ -482,7 +482,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
 
         model.entityDataRequested.emit(
             model.uuid, sg_properties.server, sg_properties.job, sg_properties.root,
-            sg_properties.asset, True, 'LocalStorage', [], shotgun.fields['LocalStorage']
+            sg_properties.asset, True, 'LocalStorage', [], shotgun.entity_fields['LocalStorage']
         )
 
     def select_entity(self):
@@ -539,9 +539,9 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
         # Set filtering
         self.model().set_entity_type('PublishedFileType')
 
-        sg_properties = shotgun.ShotgunProperties(
-            active=True, login=common.settings.value('shotgrid_publish/login'),
-            password=common.settings.value('shotgrid_publish/password'), )
+        sg_properties = shotgun.SGProperties(
+            active=True, login=common.settings.value('sg_auth/login'),
+            password=common.settings.value('sg_auth/password'), )
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
@@ -550,7 +550,7 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
         model.entityDataRequested.emit(
             model.uuid, sg_properties.server, sg_properties.job, sg_properties.root,
             sg_properties.asset, True, 'PublishedFileType', [],
-            shotgun.fields['PublishedFileType']
+            shotgun.entity_fields['PublishedFileType']
         )
 
     @common.error

@@ -703,7 +703,7 @@
 
         <span class="c1"># Write current data to the database</span>
         <span class="n">pp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">source_index</span><span class="o">.</span><span class="n">row</span><span class="p">()][</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">]</span>
-        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="o">*</span><span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
         <span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
             <span class="n">data</span><span class="p">[</span><span class="n">source_index</span><span class="o">.</span><span class="n">row</span><span class="p">()][</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">],</span>
             <span class="s1">&#39;progress&#39;</span><span class="p">,</span>

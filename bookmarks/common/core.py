@@ -73,7 +73,7 @@ SortByNameRole = QtCore.Qt.ItemDataRole(next(n))
 SortByLastModifiedRole = QtCore.Qt.ItemDataRole(next(n))
 SortBySizeRole = QtCore.Qt.ItemDataRole(next(n))
 SortByTypeRole = QtCore.Qt.ItemDataRole(next(n))
-ShotgunLinkedRole = QtCore.Qt.ItemDataRole(next(n))
+SGLinkedRole = QtCore.Qt.ItemDataRole(next(n))
 SlackLinkedRole = QtCore.Qt.ItemDataRole(next(n))
 AssetProgressRole = QtCore.Qt.ItemDataRole(next(n))
 

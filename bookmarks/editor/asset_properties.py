@@ -105,7 +105,7 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
-                    'name': 'Link',
+                    'name': 'ShotGrid Link',
                     'key': 'link',
                     'validator': None,
                     'widget': None,
@@ -114,7 +114,7 @@ SECTIONS = {
                     'button': 'Link with ShotGrid Entity',
                 },
                 1: {
-                    'name': 'Type',
+                    'name': 'ShotGrid Type',
                     'key': 'shotgun_type',
                     'validator': base.int_validator,
                     'widget': base_widgets.SGAssetTypesWidget,
@@ -122,26 +122,44 @@ SECTIONS = {
                     'description': 'Select the item\'s ShotGrid type',
                 },
                 2: {
-                    'name': 'ID',
+                    'name': 'ShotGrid Id',
                     'key': 'shotgun_id',
                     'validator': base.int_validator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
-                    'description': 'The ShotGrid ID number this item is associated '
+                    'placeholder': 'ShotGrid entity id, e.g. \'123\'',
+                    'description': 'The ShotGrid entity id this item is associated '
                                    'with. e.g. \'123\'.',
                 },
                 3: {
-                    'name': 'Name',
+                    'name': 'ShotGrid Name',
                     'key': 'shotgun_name',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid entity name, e.g. \'MyProject\'',
-                    'description': 'The ShotGrid entity name. The entity can be a '
-                                   'shot, sequence or asset.\nClick "Link with '
-                                   'ShotGrid" to get the name and the id from the '
-                                   'ShotGrid server.',
+                    'placeholder': 'ShotGrid entity name, e.g. \'MyAsset\'',
+                    'description': 'The ShotGrid entity name. The name usually corresponds to the "code" field'
+                                   'in ShotGrid.',
                 },
-            }
+            },
+            1: {
+                0: {
+                    'name': 'Task Id',
+                    'key': 'sg_task_id',
+                    'validator': base.int_validator,
+                    'widget': ui.LineEdit,
+                    'placeholder': 'ShotGrid task id, e.g. \'123\'',
+                    'description': 'If the asset is associated with a ShotGrid task, the task entity id can be '
+                                   'entered here. e.g. \'123\'.',
+                },
+                1: {
+                    'name': 'Task Name',
+                    'key': 'sg_task_name',
+                    'validator': None,
+                    'widget': ui.LineEdit,
+                    'placeholder': 'ShotGrid task name, e.g. \'rigging\'',
+                    'description': 'If the asset is associated with a ShotGrid task, the task name can be entered '
+                                   'here. e.g. \'rigging\'.',
+                },
+            },
         }
     },
     2: {
@@ -324,7 +342,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         self._disable_shotgun()
 
     def _disable_shotgun(self):
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             self.server,
             self.job,
             self.root,
@@ -386,10 +404,10 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         """Returns the currently stored ShotGrid properties.
 
         Returns:
-            An initialized :class:`~bookmarks.shotgun.ShotgunProperties` instance.
+            An initialized :class:`~bookmarks.shotgun.SGProperties` instance.
 
         """
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             self.server,
             self.job,
             self.root,

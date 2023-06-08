@@ -1,4 +1,4 @@
-"""Shotgun Entity linker widgets.
+"""ShotGrid Entity linker widgets.
 
 The widgets are used to link a ShotGrid entity with a local item.
 
@@ -20,7 +20,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
     """
 
     def __init__(self, server, job, root, asset, entity_type, value_map, parent=None):
-        super(BaseLinkWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.entity_type = entity_type
 
@@ -103,11 +103,9 @@ class BaseLinkWidget(QtWidgets.QDialog):
         pass
 
     def done(self, result):
-        if result == QtWidgets.QDialog.Rejected:
-            super(BaseLinkWidget, self).done(result)
-            return
-        self.save_data()
-        super(BaseLinkWidget, self).done(result)
+        if result == QtWidgets.QDialog.Accepted:
+            self.save_data()
+        super().done(result)
 
     def candidate(self):
         return 'MyNewEntity'
@@ -175,7 +173,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         if not all((_id, _name, _type)):
             return
 
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             self.server,
             self.job,
             self.root,

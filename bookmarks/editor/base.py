@@ -616,7 +616,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 f'"{self._db_table}" is not a valid database table.'
             )
 
-        db = database.get_db(self.server, self.job, self.root)
+        db = database.get(self.server, self.job, self.root)
         for k in database.TABLES[self._db_table]:
             # Skip items that don't have editors
             if not hasattr(self, f'{k}_editor'):
@@ -714,7 +714,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         if self.db_source() is None:
             return
 
-        db = database.get_db(self.server, self.job, self.root)
+        db = database.get(self.server, self.job, self.root)
         with db.connection():
             for k, v in self.changed_data.copy().items():
                 db.set_value(

@@ -308,7 +308,7 @@ class TaskItemModel(models.ItemModel):
                     #
                     common.IdRole: idx,
                     #
-                    common.ShotgunLinkedRole: False,
+                    common.SGLinkedRole: False,
                 }
             )
 

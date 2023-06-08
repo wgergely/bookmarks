@@ -631,7 +631,7 @@ class TaskPicker(QtWidgets.QDialog):
     @common.error
     @common.debug
     def init_items(self):
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
@@ -644,8 +644,7 @@ class TaskPicker(QtWidgets.QDialog):
                 'Task', [['project', 'is', {
                     'type': 'Project',
                     'id': sg_properties.bookmark_id
-                }], ],
-                fields=shotgun.fields['Task']
+                }], ], fields=shotgun.entity_fields['Task']
                 )
 
         model = TaskModel(entities, parent=self)

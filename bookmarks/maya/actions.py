@@ -60,16 +60,64 @@ def set_workspace(*args, **kwargs):
 
 @common.error
 @common.debug
+def set_sg_context(*args, **kwargs):
+    """Action used to set the Shotgun context.
+
+    """
+    # Get preference
+    v = common.settings.value('maya/set_sg_context')
+    # Set default value if none has been set previously
+    v = QtCore.Qt.Unchecked if v is None else v
+
+    # If context setting has been explicitly disabled return
+    if v == QtCore.Qt.Checked:
+        return
+
+    # Nothing to do if there's no active asset set
+    if not common.active('asset'):
+        return
+
+    from ..shotgun import shotgun
+    sg_properties = shotgun.SGProperties(active=True)
+    sg_properties.init()
+
+    if not sg_properties.verify(task=True):
+        log.debug('No valid ShotGrid context found.')
+        return
+
+    try:
+        import sgtk
+    except:
+        log.debug('sgtk could not be imported')
+        return
+
+    try:
+        engine = sgtk.platform.current_engine()
+
+        # Check if the current context is already the active item
+        if engine.context.entity and int(engine.context.entity['id']) == int(sg_properties.asset_task_id):
+            return
+
+        # Set the current context
+        context = engine.sgtk.context_from_entity('Task', sg_properties.asset_task_id)
+        engine.change_context(context)
+
+    except Exception as e:
+        log.debug(f'Could not set the ShotGrid context:\n{e}')
+        return
+
+
+@common.error
+@common.debug
 def apply_settings(*args, **kwargs):
     """Applies asset and bookmark item properties to the current scene.
 
     """
     props = base.MayaProperties()
     mbox = ui.MessageBox(
-        'Are you sure you want to apply the following settings?',
-        props.get_info(),
-        buttons=[ui.YesButton, ui.CancelButton],
-    )
+        'Are you sure you want to apply the following settings?', props.get_info(), buttons=[ui.YesButton,
+                                                                                             ui.CancelButton], )
+
     res = mbox.exec_()
     if res == QtWidgets.QDialog.Rejected:
         return
@@ -185,9 +233,8 @@ def save_warning(*args):
     if workspace_info.path().lower() not in scene_file.filePath().lower():
         ui.MessageBox(
             f'Looks like you are saving "{scene_file.fileName()}" outside the current project\nThe '
-            f'current project is "{workspace_info.path()}"',
-            'If you didn\'t expect this message, is it possible the project was '
-            'changed by {} from another instance of Maya?'.format(
+            f'current project is "{workspace_info.path()}"', 'If you didn\'t expect this message, is it possible the project was '
+                                                             'changed by {} from another instance of Maya?'.format(
                 common.product
             )
         ).open()
@@ -237,16 +284,14 @@ def update_active_item(*args):
 
             if scene == s and ref():
                 # Set flag to be active
-                ref()[idx][common.FlagsRole] = ref()[idx][common.FlagsRole] | \
-                                               common.MarkedAsActive
+                ref()[idx][common.FlagsRole] = ref()[idx][common.FlagsRole] | common.MarkedAsActive
 
                 if t == t1:
                     # Select and scroll to item
                     source_index = model.index(idx, 0)
                     index = f.model().mapFromSource(source_index)
                     f.selectionModel().setCurrentIndex(
-                        index,
-                        QtCore.QItemSelectionModel.ClearAndSelect
+                        index, QtCore.QItemSelectionModel.ClearAndSelect
                     )
                     f.scrollTo(index)
 
@@ -351,11 +396,7 @@ def import_scene(path, reference=False):
 
     if reference:
         cmds.file(
-            file_info.filePath(),
-            reference=True,
-            ns=ns,
-            rfn=rfn,
-        )
+            file_info.filePath(), reference=True, ns=ns, rfn=rfn, )
         base._add_suffix_attribute(rfn, suffix, reference=reference)
 
         # The reference node is locked by default
@@ -364,9 +405,7 @@ def import_scene(path, reference=False):
         cmds.lockNode(rfn, lock=True)
     else:
         cmds.file(
-            file_info.filePath(),
-            i=True,
-            ns=ns
+            file_info.filePath(), i=True, ns=ns
         )
         base._add_suffix_attribute(ns, suffix, reference=reference)
 
@@ -391,8 +430,7 @@ def capture_viewport(size=1.0):
     scene_info = QtCore.QFileInfo(cmds.file(q=True, expandName=True))
 
     # CAPTURE_DESTINATION
-    capture_folder, workspace, base_destination_path = \
-        base.capture_viewport_destination()
+    capture_folder, workspace, base_destination_path = base.capture_viewport_destination()
 
     _dir = QtCore.QFileInfo(base_destination_path).dir()
     if not _dir.exists():
@@ -445,18 +483,9 @@ def capture_viewport(size=1.0):
 
     try:
         capture.capture(
-            camera=camera,
-            width=width,
-            height=height,
-            display_options=base.DisplayOptions,
-            camera_options=base.CameraOptions,
-            viewport2_options=options['viewport2_options'],
-            viewport_options=options['viewport_options'],
-            format='image',
-            compression=ext,
-            filename=base_destination_path,
-            overwrite=True,
-            viewer=False
+            camera=camera, width=width, height=height, display_options=base.DisplayOptions, camera_options=base.CameraOptions, viewport2_options=
+            options['viewport2_options'], viewport_options=options[
+                'viewport_options'], format='image', compression=ext, filename=base_destination_path, overwrite=True, viewer=False
         )
         log.success(f'Capture saved to {_dir.path()}')
     except:
@@ -488,13 +517,9 @@ def capture_viewport(size=1.0):
 
     # Push and reveal output
     path = base.CAPTURE_FILE.format(
-        workspace=workspace,
-        capture_folder=capture_folder,
-        scene=scene_info.completeBaseName(),
-        frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(
+        workspace=workspace, capture_folder=capture_folder, scene=scene_info.completeBaseName(), frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(
             base.DefaultPadding
-        ),
-        ext=ext
+        ), ext=ext
     )
     push_capture(path)
     reveal_capture(path)
@@ -551,10 +576,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
     duration = (end - start) + 1
 
     publish_folder = base.CAPTURE_PUBLISH_DIR.format(
-        workspace=workspace,
-        capture_folder=capture_folder,
-        asset=asset,
-    )
+        workspace=workspace, capture_folder=capture_folder, asset=asset, )
     _dir = QtCore.QDir(publish_folder)
     if not _dir.exists():
         if not _dir.mkpath('.'):
@@ -572,18 +594,10 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
     for n in range(int(duration)):
         frame = str(n + int(start)).zfill(base.DefaultPadding)
         source = base.CAPTURE_FILE.format(
-            workspace=workspace,
-            capture_folder=capture_folder,
-            scene=scene_info.completeBaseName(),
-            frame=frame,
-            ext=ext
+            workspace=workspace, capture_folder=capture_folder, scene=scene_info.completeBaseName(), frame=frame, ext=ext
         )
         dest = base.AGNOSTIC_CAPTURE_FILE.format(
-            workspace=workspace,
-            capture_folder=capture_folder,
-            asset=asset,
-            frame=frame,
-            ext=ext
+            workspace=workspace, capture_folder=capture_folder, asset=asset, frame=frame, ext=ext
         )
         # Check if the first file exists
         if idx == 0 and not QtCore.QFileInfo(source).exists():

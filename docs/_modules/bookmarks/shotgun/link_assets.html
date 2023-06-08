@@ -568,7 +568,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">createEntity</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_entity</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">restore_current_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;shotgrid/link_multiple_filter&#39;</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;sg_link_multiple/filter&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">entity_type_filter</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
@@ -580,7 +580,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">entity_type_filter</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">(),</span>
             <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span>
         <span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;shotgrid/link_multiple_filter&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;sg_link_multiple/filter&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">emit_filter_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_type_filter</span><span class="o">.</span><span class="n">currentData</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
@@ -605,9 +605,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Invalid context.&#39;</span><span class="p">)</span>
 
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="n">sg_properties</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
             <span class="n">sg_properties</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
             <span class="n">sg_properties</span><span class="o">.</span><span class="n">root</span>

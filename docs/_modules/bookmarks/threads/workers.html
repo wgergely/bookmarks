@@ -869,15 +869,15 @@
     <span class="n">b_item_conf</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="s1">&#39;shotgun_id&#39;</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;shotgun_name&#39;</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;shotgun_type&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">b_conf</span> <span class="o">+</span> <span class="n">b_item_conf</span><span class="p">):</span>
-            <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">SGLinkedRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
         <span class="n">a_item_conf</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;shotgun_id&#39;</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;shotgun_name&#39;</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;shotgun_type&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">b_conf</span> <span class="o">+</span> <span class="n">b_item_conf</span> <span class="o">+</span> <span class="n">a_item_conf</span><span class="p">):</span>
-            <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">SGLinkedRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">SGLinkedRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
@@ -946,7 +946,7 @@
             <span class="n">k</span> <span class="o">=</span> <span class="n">st</span>
 
         <span class="c1"># Load values from the database</span>
-        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="o">*</span><span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
         <span class="n">asset_row_data</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_row</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">database</span><span class="o">.</span><span class="n">AssetTable</span><span class="p">)</span>
         <span class="n">bookmark_row_data</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_row</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">source</span><span class="p">(),</span> <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
@@ -1253,7 +1253,7 @@
             <span class="k">pass</span>  <span class="c1"># ignore index errors</span></div>
 
 
-<div class="viewcode-block" id="ShotgunWorker"><a class="viewcode-back" href="../../../modules/threads/workers.html#bookmarks.threads.workers.ShotgunWorker">[docs]</a><span class="k">class</span> <span class="nc">ShotgunWorker</span><span class="p">(</span><span class="n">BaseWorker</span><span class="p">):</span>
+<div class="viewcode-block" id="SGWorker"><a class="viewcode-back" href="../../../modules/threads/workers.html#bookmarks.threads.workers.SGWorker">[docs]</a><span class="k">class</span> <span class="nc">SGWorker</span><span class="p">(</span><span class="n">BaseWorker</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This worker is used to retrieve data from ShotGrid.&quot;&quot;&quot;</span>
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -1269,7 +1269,7 @@
             <span class="n">args</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
             <span class="n">idx</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">args</span>
 
-            <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">)</span>
+            <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">)</span>
             <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="k">return</span>

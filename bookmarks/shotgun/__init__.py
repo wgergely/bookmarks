@@ -18,6 +18,6 @@ information is stored in the bookmark item database.
 
 :mod:`¬bookmarks.shotgun.shotgun` contains the generic entity model, and
 a utility class used to collect locally set ShotGrid configuration data -
-:mod:`~bookmarks.shotgun.shotgun.ShotgunProperties`.
+:mod:`~bookmarks.shotgun.shotgun.SGProperties`.
 
 """

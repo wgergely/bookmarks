@@ -469,7 +469,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         """Returns the properties needed to connect to shotgun.
 
         """
-        sg_properties = shotgun.ShotgunProperties(
+        sg_properties = shotgun.SGProperties(
             self.server, self.job, self.root
         )
 

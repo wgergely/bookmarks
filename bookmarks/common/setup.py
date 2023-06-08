@@ -108,7 +108,7 @@ def initialize(mode):
     thread = threads.get_thread(threads.QueuedDatabaseTransaction)
     thread.start()
     _threads.append(thread)
-    thread = threads.get_thread(threads.QueuedShotgunQuery)
+    thread = threads.get_thread(threads.QueuedSGQuery)
     thread.start()
     _threads.append(thread)
 

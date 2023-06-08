@@ -820,7 +820,7 @@
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_publish_args</span><span class="p">()</span>
 
         <span class="c1"># Start version publish</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">asset</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Asset not configured.&#39;</span><span class="p">)</span>
@@ -1031,7 +1031,7 @@
         <span class="n">entity_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_entity_editor</span><span class="o">.</span><span class="n">currentData</span><span class="p">(</span><span class="n">shotgun</span><span class="o">.</span><span class="n">IdRole</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">)):</span>
             <span class="k">return</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">connection</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -1052,7 +1052,7 @@
         <span class="n">entity_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset_entity_editor</span><span class="o">.</span><span class="n">currentData</span><span class="p">(</span><span class="n">shotgun</span><span class="o">.</span><span class="n">IdRole</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">)):</span>
             <span class="k">return</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">():</span>
@@ -1073,7 +1073,7 @@
         <span class="n">entity_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_entity_editor</span><span class="o">.</span><span class="n">currentData</span><span class="p">(</span><span class="n">shotgun</span><span class="o">.</span><span class="n">IdRole</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">)):</span>
             <span class="k">return</span>
-        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">ShotgunProperties</span><span class="p">(</span>
+        <span class="n">sg_properties</span> <span class="o">=</span> <span class="n">shotgun</span><span class="o">.</span><span class="n">SGProperties</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset</span><span class="p">)</span>
         <span class="n">sg_properties</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sg_properties</span><span class="o">.</span><span class="n">verify</span><span class="p">():</span>

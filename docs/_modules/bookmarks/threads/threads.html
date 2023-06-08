@@ -410,7 +410,7 @@
 <span class="n">BookmarkInfo</span> <span class="o">=</span> <span class="s1">&#39;BookmarkInfo&#39;</span>
 <span class="n">QueuedDatabaseTransaction</span> <span class="o">=</span> <span class="s1">&#39;QueuedDatabaseTransaction&#39;</span>
 <span class="n">QueuedSettingsTransaction</span> <span class="o">=</span> <span class="s1">&#39;QueuedSettingsTransaction&#39;</span>
-<span class="n">QueuedShotgunQuery</span> <span class="o">=</span> <span class="s1">&#39;QueuedShotgunQuery&#39;</span>
+<span class="n">QueuedSGQuery</span> <span class="o">=</span> <span class="s1">&#39;QueuedSGQuery&#39;</span>
 
 <span class="n">controllers</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -530,11 +530,11 @@
         <span class="s1">&#39;role&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s1">&#39;tab&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="n">QueuedShotgunQuery</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">QueuedSGQuery</span><span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;queue&#39;</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([],</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">),</span>
         <span class="s1">&#39;preload&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="s1">&#39;data_types&#39;</span><span class="p">:</span> <span class="p">{},</span>
-        <span class="s1">&#39;worker&#39;</span><span class="p">:</span> <span class="n">workers</span><span class="o">.</span><span class="n">ShotgunWorker</span><span class="p">,</span>
+        <span class="s1">&#39;worker&#39;</span><span class="p">:</span> <span class="n">workers</span><span class="o">.</span><span class="n">SGWorker</span><span class="p">,</span>
         <span class="s1">&#39;role&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s1">&#39;tab&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">},</span>
@@ -551,9 +551,9 @@
 
 
 <span class="k">def</span> <span class="nf">queue_shotgun_query</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">args</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">queue</span><span class="p">(</span><span class="n">QueuedShotgunQuery</span><span class="p">):</span>
-        <span class="n">queue</span><span class="p">(</span><span class="n">QueuedShotgunQuery</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">get_thread</span><span class="p">(</span><span class="n">QueuedShotgunQuery</span><span class="p">)</span><span class="o">.</span><span class="n">startTimer</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">queue</span><span class="p">(</span><span class="n">QueuedSGQuery</span><span class="p">):</span>
+        <span class="n">queue</span><span class="p">(</span><span class="n">QueuedSGQuery</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">get_thread</span><span class="p">(</span><span class="n">QueuedSGQuery</span><span class="p">)</span><span class="o">.</span><span class="n">startTimer</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="reset_all_queues"><a class="viewcode-back" href="../../../modules/threads/threads.html#bookmarks.threads.threads.reset_all_queues">[docs]</a><span class="k">def</span> <span class="nf">reset_all_queues</span><span class="p">():</span>
@@ -590,7 +590,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        k (str): Name of the thread controller to return, e.g.</span>
-<span class="sd">            ``threads.QueuedShotgunQuery``.</span>
+<span class="sd">            ``threads.QueuedSGQuery``.</span>
 
 <span class="sd">    If the controller does not yet exist we will create and cache it.</span>
 <span class="sd">    All threads are associated with worker, defined by `THREADS`.</span>

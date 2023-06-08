@@ -14,7 +14,7 @@ cache folder as defined by :attr:`common.bookmark_cache_dir`.
 The database table layout is defined by :attr:`TABLES`. It maps the SQLite column types
 to the python types used in the application.
 
-To get a database interface instance use the :func:`.get_db` function. It returns cached,
+To get a database interface instance use the :func:`.get` function. It returns cached,
 thread-specific database controllers.
 
 Example:
@@ -25,7 +25,7 @@ Example:
     from bookmarks import database
 
     # Get the database interface for a specific bookmark item
-    db = database.get_db(server, job, root)
+    db = database.get(server, job, root)
     v = db.value(db.source(), 'width', database.BookmarkTable)
 
 
@@ -35,7 +35,7 @@ Example:
     from bookmarks import database
 
     # Get the database interface of the active bookmark item
-    db = database.get_db(*common.active('root', args=True))
+    db = database.get(*common.active('root', args=True))
     v = db.value(db.source(), 'height', database.BookmarkTable)
 
 
@@ -47,7 +47,7 @@ You can batch commits together by using the built-in context manager:
 
     from bookmarks import database
 
-    db = database.get_db(server, job, root)
+    db = database.get(server, job, root)
     with db.connection():
         db.set_value(*args)
 
@@ -118,6 +118,14 @@ TABLES = {
             'type': str
         },
         'shotgun_type': {
+            'sql': 'TEXT',
+            'type': str
+        },
+        'sg_task_id': {
+            'sql': 'INT',
+            'type': int
+        },
+        'sg_task_name': {
             'sql': 'TEXT',
             'type': str
         },
@@ -266,8 +274,8 @@ TABLES = {
 }
 
 
-def get_db(server, job, root, force=False):
-    """Creates a database controller associated with a bookmark item.
+def get(server, job, root, force=False):
+    """Returns an SQLite database controller associated with a bookmark item.
 
     sqlite3 cannot share the same connection instance between threads, hence we
     create and cache controllers per thread. The cached entries are stored
@@ -370,7 +378,7 @@ def set_flag(server, job, root, k, mode, flag):
     """A utility method used by the base view to set an item flag to the database.
 
     """
-    db = get_db(server, job, root)
+    db = get(server, job, root)
     f = db.value(k, 'flags', AssetTable)
     f = 0 if f is None else f
     f = f | flag if mode else f & ~flag
@@ -433,7 +441,7 @@ def convert_return_values(table, key, value):
         try:
             value = load_json(value)
         except Exception as e:
-            log.error(e)
+            log.debug(e)
             value = None
     elif _type is str:
         try:
@@ -444,13 +452,13 @@ def convert_return_values(table, key, value):
         try:
             value = float(value)
         except Exception as e:
-            log.error(e)
+            log.debug(e)
             value = None
     elif _type is int:
         try:
             value = int(value)
         except Exception as e:
-            log.error(e)
+            log.debug(e)
             value = None
     return value
 
@@ -761,7 +769,7 @@ class BookmarkDB(QtCore.QObject):
         .. code-block:: python
             :linenos:
 
-            db = database.get_db(server, job, root)
+            db = database.get(server, job, root)
             source = f'//{server}/{job}/{root}/sh0010/scenes/my_scene.ma'
             db.set_value(source, 'description', 'hello world')
 

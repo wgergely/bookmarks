@@ -176,7 +176,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                     #
                     common.IdRole: idx,  # non-mutable
                     #
-                    common.ShotgunLinkedRole: False,
+                    common.SGLinkedRole: False,
                 }
             )
 
@@ -228,7 +228,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                             #
                             common.IdRole: 0,
                             #
-                            common.ShotgunLinkedRole: False,
+                            common.SGLinkedRole: False,
                         }
                     )
 

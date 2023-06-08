@@ -199,7 +199,7 @@ class LinkMultiple(QtWidgets.QDialog):
         self.table.createEntity.connect(self.create_entity)
 
     def restore_current_filter(self):
-        v = common.settings.value('shotgrid/link_multiple_filter')
+        v = common.settings.value('sg_link_multiple/filter')
         if v:
             self.blockSignals(True)
             self.entity_type_filter.setCurrentText(v)
@@ -211,7 +211,7 @@ class LinkMultiple(QtWidgets.QDialog):
             self.entity_type_filter.currentIndex(),
             role=QtCore.Qt.DisplayRole
         )
-        common.settings.setValue('shotgrid/link_multiple_filter', v)
+        common.settings.setValue('sg_link_multiple/filter', v)
 
     def emit_filter_changed(self, *args, **kwargs):
         v = self.entity_type_filter.currentData(role=QtCore.Qt.DisplayRole)
@@ -236,9 +236,9 @@ class LinkMultiple(QtWidgets.QDialog):
         if not self.source():
             raise RuntimeError('Invalid context.')
 
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.SGProperties(active=True)
 
-        db = database.get_db(
+        db = database.get(
             sg_properties.server,
             sg_properties.job,
             sg_properties.root
@@ -309,7 +309,7 @@ class LinkMultiple(QtWidgets.QDialog):
                 False,
                 entity_type,
                 request_filter,
-                shotgun.fields[entity_type]
+                shotgun.entity_fields[entity_type]
             )
 
         for row in self.table.data:

@@ -390,7 +390,7 @@ class, and various other helper functions.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.InfoWorker" title="bookmarks.threads.workers.InfoWorker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InfoWorker</span></code></a>(queue[, parent])</p></td>
 <td><p>A worker used to retrieve file information.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.ShotgunWorker" title="bookmarks.threads.workers.ShotgunWorker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShotgunWorker</span></code></a>(queue[, parent])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.SGWorker" title="bookmarks.threads.workers.SGWorker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SGWorker</span></code></a>(queue[, parent])</p></td>
 <td><p>This worker is used to retrieve data from ShotGrid.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker" title="bookmarks.threads.workers.ThumbnailWorker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ThumbnailWorker</span></code></a>(queue[, parent])</p></td>
@@ -571,8 +571,8 @@ for the description, and file flags.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.threads.workers.ShotgunWorker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">ShotgunWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#ShotgunWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.ShotgunWorker" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.threads.workers.SGWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">SGWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#SGWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.SGWorker" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWorker</span></code></a></p>
 <p>This worker is used to retrieve data from ShotGrid.</p>
 </dd></dl>
@@ -792,7 +792,7 @@ and emits the <cite>refUpdated</cite> signal if the data has been correctly load
 <li><a class="reference internal" href="#bookmarks.threads.workers.InfoWorker.process_data"><code class="docutils literal notranslate"><span class="pre">InfoWorker.process_data()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.ShotgunWorker"><code class="docutils literal notranslate"><span class="pre">ShotgunWorker</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.threads.workers.SGWorker"><code class="docutils literal notranslate"><span class="pre">SGWorker</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker.process_data"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker.process_data()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker.queue_items"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker.queue_items()</span></code></a></li>

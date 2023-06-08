@@ -473,23 +473,26 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         )
         self.setObjectName(o)
 
+        # Timer to set the workspace and context periodically
+        self.workspace_timer = common.Timer(parent=self)
+        self.workspace_timer.setSingleShot(False)
+        self.workspace_timer.setInterval(10000)
+
         self._create_ui()
+
         self.setFocusProxy(common.main_widget.stacked_widget)
         common.main_widget.sizeHint = self.sizeHint
 
-        self.workspace_timer = common.Timer(parent=self)
-        self.workspace_timer.setSingleShot(False)
-        self.workspace_timer.setInterval(1000)
         self.workspace_timer.timeout.connect(actions.set_workspace)
 
-        common.main_widget.initialized.connect(
-            lambda: common.main_widget.layout().setContentsMargins(0, 0, 0, 0)
-        )
-
+        # Connect signals when the main widget is initialized
+        common.main_widget.initialized.connect(lambda: common.main_widget.layout().setContentsMargins(0, 0, 0, 0))
         common.main_widget.initialized.connect(self._connect_signals)
         common.main_widget.initialized.connect(self.context_callbacks)
-        common.main_widget.initialized.connect(actions.set_workspace)
         common.main_widget.initialized.connect(self.workspace_timer.start)
+
+        common.main_widget.initialized.connect(actions.set_workspace)
+        common.main_widget.initialized.connect(actions.set_sg_context)
 
     def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
@@ -529,6 +532,9 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         common.widget(common.FavouriteTab).activated.connect(
             actions.execute
         )
+
+        common.signals.assetActivated.connect(actions.set_workspace)
+        common.signals.assetActivated.connect(actions.set_sg_context)
 
     @QtCore.Slot()
     def active_changed(self):

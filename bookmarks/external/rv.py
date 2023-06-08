@@ -1,4 +1,4 @@
-"""Shotgun RV commands module.
+"""ShotGrid RV commands module.
 
 TODO: This module is a stub and needs more testing and development.
 

@@ -232,33 +232,39 @@ def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
 
     """
     if len(parent_paths) == 3:
-        tab_idx = common.BookmarkTab
+        models = (
+            common.source_model(idx=common.BookmarkTab),
+        )
     elif len(parent_paths) == 4:
-        tab_idx = common.AssetTab
+        models = (
+            common.source_model(idx=common.AssetTab),
+        )
     elif len(parent_paths) > 4:
-        tab_idx = common.FileTab
+        models = (
+            common.source_model(idx=common.FileTab),
+            common.source_model(idx=common.FavouriteTab),
+        )
     else:
         return
 
-    model = common.source_model(idx=tab_idx)
+    for model in models:
 
-    p = model.source_path()
-    k = model.task()
+        p = model.source_path()
+        k = model.task()
 
-    # Make sure data is up-to-date in all data sets.
-    for t in (common.FileItem, common.SequenceItem,):
-        data = common.get_data(p, k, t)
+        # Make sure data is up-to-date in all data sets.
+        for t in (common.FileItem, common.SequenceItem,):
+            data = common.get_data(p, k, t)
 
-        for n, item in enumerate(data.values()):
-            # Bail if the data set is large
-            if n > limit:
-                break
-
-            if item[common.PathRole] == source:
-                if state and not item[common.FlagsRole] & flag:
-                    item[common.FlagsRole] |= flag
-                if not state and (item[common.FlagsRole] & flag):
-                    item[common.FlagsRole] &= ~flag
+            for n, item in enumerate(data.values()):
+                # Bail if the data set is large
+                if n > limit:
+                    break
+                if common.proxy_path(item[common.PathRole]) == source or item[common.PathRole] == source:
+                    if state and not item[common.FlagsRole] & flag:
+                        item[common.FlagsRole] |= flag
+                    if not state and (item[common.FlagsRole] & flag):
+                        item[common.FlagsRole] &= ~flag
 
 
 @common.error
@@ -281,7 +287,6 @@ def clear_favourites(prompt=True):
 
     common.favourites = {}
     common.settings.set_favourites(common.favourites)
-    common.signals.favouritesChanged.emit()
 
 
 @common.error
@@ -298,7 +303,7 @@ def export_favourites(*args, destination=None):
 
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
-            caption='Select where to save your favourites',
+            caption='Save Favourites',
             filter=f'*.{common.favorite_file_ext}',
             dir=QtCore.QStandardPaths.writableLocation(
                 QtCore.QStandardPaths.HomeLocation
@@ -346,8 +351,10 @@ def export_favourites(*args, destination=None):
         v = json.dumps(
             data,
             ensure_ascii=True,
+            sort_keys=False,
+            indent=4
         )
-        _zip.writestr(common.favorite_file_ext, v)
+        _zip.writestr('data.json', v)
 
     return destination
 
@@ -364,7 +371,7 @@ def import_favourites(*args, source=None):
     common.check_type(source, (None, str))
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
-            caption='Select the favourites file to import',
+            caption='Import Favourites',
             filter=f'*.{common.favorite_file_ext}'
         )
         if not source:
@@ -380,7 +387,7 @@ def import_favourites(*args, source=None):
         if common.favorite_file_ext not in _zip.namelist():
             raise RuntimeError('Invalid file.')
 
-        with _zip.open(common.favorite_file_ext) as _f:
+        with _zip.open('data.json') as _f:
             v = _f.read()
 
         data = json.loads(

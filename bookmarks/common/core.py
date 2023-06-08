@@ -313,23 +313,6 @@ def get_template_file_path(name):
     )
 
 
-def pseudo_local_bookmark():
-    """Return a location on the local system to store temporary files.
-    This is used to store thumbnails for starred items and other temporary items.
-
-    Returns:
-            tuple: A tuple of path segments.
-
-    """
-    return (
-        QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation
-        ),
-        common.product,
-        'temp',
-    )
-
-
 def temp_path():
     """Path to the folder to store temporary files.
 
@@ -337,7 +320,9 @@ def temp_path():
             str: Path to a directory.
 
     """
-    return '/'.join(pseudo_local_bookmark())
+    a = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)
+    b = common.product
+    return f'{a}/{b}/temp'
 
 
 def get_thread_key(*args):

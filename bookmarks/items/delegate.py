@@ -898,6 +898,9 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         editor.setGeometry(rectangles[DataRect])
 
     def setEditorData(self, editor, index):
+        """Sets the data to be displayed and edited by the editor from the data model item specified by the model index.
+
+        """
         v = index.data(common.DescriptionRole)
         v = v if v else ''
         editor.setText(v)
@@ -905,6 +908,9 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         editor.setFocus()
 
     def setModelData(self, editor, model, index):
+        """Sets the model data for the given index to the given value.
+
+        """
         text = f'{index.data(common.DescriptionRole)}'
         if text.lower() == editor.text().lower():
             return
@@ -918,12 +924,16 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         else:
             k = p
 
+        # Sanitize text string to remove duplicate "#" symbols
+
+        v = editor.text().strip() if editor.text() else ''
+
         # Set the database value
         # Note that we don't need to set the data directly as
         # the database will emit a value changed signal that will
         # automatically update the views and model data caches
         db = database.get(*source_path[0:3])
-        db.set_value(k, 'description', editor.text())
+        db.set_value(k, 'description', common.sanitize_hashtags(v))
 
     def paint(self, painter, option, index):
         """Paints an item.
@@ -2834,8 +2844,9 @@ class BookmarkItemViewDelegate(ItemDelegate):
 
         # Set the database value
         db = database.get(*source_path[0:3])
+        v = editor.text().strip() if editor.text() else ''
         with db.connection():
-            db.set_value(k, 'description', editor.text(), table=database.BookmarkTable)
+            db.set_value(k, 'description', common.sanitize_hashtags(v), table=database.BookmarkTable)
             bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
 
         # Set value to cached data
@@ -2844,7 +2855,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
         idx = source_index.row()
 
         from ..threads import workers
-        data[idx][common.DescriptionRole] = editor.text()
+        data[idx][common.DescriptionRole] = v
         data[idx][common.DescriptionRole] = workers.get_bookmark_description(
             bookmark_row_data
         )

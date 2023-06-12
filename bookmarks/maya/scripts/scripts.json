@@ -1,0 +1,7 @@
+{
+  "0": {
+    "name": "Shader Template Manager",
+    "module": "shader_templates",
+    "description": "Shader template import and export"
+  }
+}

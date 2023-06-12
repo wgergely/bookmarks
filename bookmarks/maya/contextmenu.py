@@ -3,6 +3,9 @@
 """
 import collections
 import functools
+import importlib
+import json
+import os
 
 from PySide2 import QtCore
 
@@ -27,6 +30,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.scripts_menu()
+        self.separator()
         self.apply_bookmark_settings_menu()
         self.separator()
         self.save_menu()
@@ -204,6 +209,32 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             'text': f'Toggle {common.product.title()}',
             'action': self.parent().clicked.emit
         }
+
+    def scripts_menu(self):
+        """Custom Maya scripts deployed with the Maya module.
+
+        """
+        k = 'Scripts'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('maya')
+
+        p = os.path.normpath(f'{__file__}/../scripts/scripts.json')
+        if not os.path.isfile(p):
+            raise RuntimeError(f'File not found: {p}')
+
+        with open(p, 'r') as f:
+            data = json.load(f)
+
+        def _run(name):
+            module = importlib.import_module(f'.scripts.{name}', package=__package__)
+            module.run()
+
+        for v in data.values():
+            self.menu[k][v['name']] = {
+                'text': v['name'],
+                'action': functools.partial(_run, v['module']),
+                'icon': ui.get_icon('maya'),
+            }
 
 
 class MayaButtonWidgetContextMenu(PluginContextMenu):

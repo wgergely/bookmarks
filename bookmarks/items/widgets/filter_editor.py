@@ -8,7 +8,7 @@ from ... import common
 from ... import ui
 
 
-class TextFilterEditor(QtWidgets.QDialog):
+class TextFilterEditor(QtWidgets.QWidget):
     """Editor widget used to set a list model's persistent text filter.
 
     """
@@ -27,6 +27,7 @@ class TextFilterEditor(QtWidgets.QDialog):
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setWindowFlags(QtCore.Qt.Widget)
+
         self.setFocusProxy(self.editor)
 
     def _create_ui(self):
@@ -62,15 +63,15 @@ class TextFilterEditor(QtWidgets.QDialog):
         self.layout().addStretch(1)
 
     def _connect_signals(self):
-        self.editor.returnPressed.connect(self.action)
-        self.ok_button.clicked.connect(self.action)
+        self.editor.returnPressed.connect(lambda: self.finished.emit(self.editor.text()))
+        self.ok_button.clicked.connect(lambda: self.finished.emit(self.editor.text()))
+        self.finished.connect(self.close)
 
     def set_completer(self):
         """Sets the editor's completer.
 
         """
-        proxy = self.parent().model()
-        model = proxy.sourceModel()
+        model = common.source_model()
 
         v = model.get_filter_setting('filters/text_history')
         v = v.split(';') if v else []
@@ -96,28 +97,18 @@ class TextFilterEditor(QtWidgets.QDialog):
         """Sets the current filter text to the editor.
 
         """
-        proxy = self.parent().model()
+        proxy = common.model()
         text = proxy.filter_text()
         text = text.lower() if text else ''
         text = '' if text == '/' else text
         self.editor.setText(text)
 
     @QtCore.Slot()
-    def action(self):
-        """Edit action.
-
-        """
-        self.finished.emit(self.editor.text())
-        self.done(QtWidgets.QDialog.Accepted)
-
-    @QtCore.Slot()
     def adjust_size(self):
         """Adjusts the editor's size.
 
         """
-        if not self.parent():
-            return
-        geo = self.parent().geometry()
+        geo = common.widget()
         self.resize(geo.width(), geo.height())
 
     def paintEvent(self, event):
@@ -152,4 +143,4 @@ class TextFilterEditor(QtWidgets.QDialog):
         self.init_text()
         self.set_completer()
         self.editor.selectAll()
-        self.editor.setFocus()
+        self.setFocus()

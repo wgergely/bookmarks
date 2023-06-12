@@ -542,7 +542,7 @@ class BaseItemView(QtWidgets.QTableView):
         self.progress_indicator_widget.setHidden(True)
 
         self.filter_indicator_widget = FilterOnOverlayWidget(parent=self)
-        self.filter_editor = filter_editor.TextFilterEditor(parent=self)
+        self.filter_editor = filter_editor.TextFilterEditor(parent=self.parent())
         self.filter_editor.setHidden(True)
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)

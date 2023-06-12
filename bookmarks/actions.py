@@ -384,7 +384,7 @@ def import_favourites(*args, source=None):
                 f'This zip archive seem corrupted: {corrupt}.'
             )
 
-        if common.favorite_file_ext not in _zip.namelist():
+        if 'data.json' not in _zip.namelist():
             raise RuntimeError('Invalid file.')
 
         with _zip.open('data.json') as _f:
@@ -650,7 +650,7 @@ def toggle_filter_editor():
     """
     w = common.widget()
     if w.filter_editor.isHidden():
-        w.filter_editor.open()
+        w.filter_editor.show()
     else:
         w.filter_editor.done(QtWidgets.QDialog.Rejected)
 

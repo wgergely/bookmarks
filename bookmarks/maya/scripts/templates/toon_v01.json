@@ -1,0 +1,696 @@
+{
+    "main_material": {
+        "type": "shadingEngine",
+        "attrs": {
+            "main_material.ihi": 0
+        },
+        "connections": [
+            {
+                "conn_source": "main_displacementShader.d",
+                "conn_destination": "main_material.ds"
+            },
+            {
+                "conn_source": "main_shader.oc",
+                "conn_destination": "main_material.ss"
+            }
+        ]
+    },
+    "main_displacementShader": {
+        "type": "displacementShader",
+        "attrs": {
+            "main_displacementShader.scl": 2.0,
+            "main_displacementShader.ai_displacement_padding": 0.5,
+            "main_displacementShader.ai_displacement_zero_value": 0.5
+        },
+        "connections": [
+            {
+                "conn_source": "main_displacement_file.ocr",
+                "conn_destination": "main_displacementShader.d"
+            }
+        ]
+    },
+    "main_displacement_file": {
+        "type": "file",
+        "attrs": {
+            "main_displacement_file.oa": 1.0,
+            "main_displacement_file.osx": 4096.0,
+            "main_displacement_file.osy": 4096.0
+        },
+        "connections": [
+            {
+                "conn_source": "main_displacement_place2dTexture.o",
+                "conn_destination": "main_displacement_file.uv"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.ofs",
+                "conn_destination": "main_displacement_file.fs"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.c",
+                "conn_destination": "main_displacement_file.c"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.tf",
+                "conn_destination": "main_displacement_file.tf"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.rf",
+                "conn_destination": "main_displacement_file.rf"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.mu",
+                "conn_destination": "main_displacement_file.mu"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.mv",
+                "conn_destination": "main_displacement_file.mv"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.s",
+                "conn_destination": "main_displacement_file.s"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.wu",
+                "conn_destination": "main_displacement_file.wu"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.wv",
+                "conn_destination": "main_displacement_file.wv"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.re",
+                "conn_destination": "main_displacement_file.re"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.of",
+                "conn_destination": "main_displacement_file.of"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.r",
+                "conn_destination": "main_displacement_file.ro"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.n",
+                "conn_destination": "main_displacement_file.n"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.vc1",
+                "conn_destination": "main_displacement_file.vc1"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.vt1",
+                "conn_destination": "main_displacement_file.vt1"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.vt2",
+                "conn_destination": "main_displacement_file.vt2"
+            },
+            {
+                "conn_source": "main_displacement_place2dTexture.vt3",
+                "conn_destination": "main_displacement_file.vt3"
+            }
+        ]
+    },
+    "main_displacement_place2dTexture": {
+        "type": "place2dTexture",
+        "attrs": {},
+        "connections": [
+            {}
+        ]
+    },
+    "main_shader": {
+        "type": "surfaceShader",
+        "attrs": {},
+        "connections": [
+            {
+                "conn_source": "main_color_aiMultiply.out",
+                "conn_destination": "main_shader.oc"
+            },
+            {
+                "conn_source": "main_transparency_aiMultiply.out",
+                "conn_destination": "main_shader.ot"
+            }
+        ]
+    },
+    "main_color_aiMultiply": {
+        "type": "aiMultiply",
+        "attrs": {},
+        "connections": [
+            {
+                "conn_source": "main_aiToon.out",
+                "conn_destination": "main_color_aiMultiply.input1"
+            },
+            {
+                "conn_source": "main_adjustlines_aiRange.out",
+                "conn_destination": "main_color_aiMultiply.input2"
+            }
+        ]
+    },
+    "main_aiToon": {
+        "type": "aiToon",
+        "attrs": {
+            "main_aiToon.nx": 1.0,
+            "main_aiToon.ny": 1.0,
+            "main_aiToon.nz": 1.0,
+            "main_aiToon.angle_threshold": 35.0,
+            "main_aiToon.base": 1.0,
+            "main_aiToon.specular_roughness": 0.4000000059604645
+        },
+        "connections": [
+            {
+                "conn_source": "main_linestrength_aiRange1.outr",
+                "conn_destination": "main_aiToon.edge_opacity"
+            },
+            {
+                "conn_source": "main_linestrength_aiRange2.outr",
+                "conn_destination": "main_aiToon.edge_width_scale"
+            },
+            {
+                "conn_source": "main_color_file.oc",
+                "conn_destination": "main_aiToon.base_color"
+            },
+            {
+                "conn_source": "main_base_aiRampRgb.out",
+                "conn_destination": "main_aiToon.base_tonemap"
+            },
+            {
+                "conn_source": "main_color_file.oc",
+                "conn_destination": "main_aiToon.emission_color"
+            }
+        ]
+    },
+    "main_linestrength_aiRange1": {
+        "type": "aiRange",
+        "attrs": {},
+        "connections": [
+            {
+                "conn_source": "main_linestrength_file.oc",
+                "conn_destination": "main_linestrength_aiRange1.input"
+            }
+        ]
+    },
+    "main_linestrength_file": {
+        "type": "file",
+        "attrs": {
+            "main_linestrength_file.oa": 1.0,
+            "main_linestrength_file.osx": 4096.0,
+            "main_linestrength_file.osy": 4096.0
+        },
+        "connections": [
+            {
+                "conn_source": "main_linestrength_place2dTexture.o",
+                "conn_destination": "main_linestrength_file.uv"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.ofs",
+                "conn_destination": "main_linestrength_file.fs"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.c",
+                "conn_destination": "main_linestrength_file.c"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.tf",
+                "conn_destination": "main_linestrength_file.tf"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.rf",
+                "conn_destination": "main_linestrength_file.rf"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.mu",
+                "conn_destination": "main_linestrength_file.mu"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.mv",
+                "conn_destination": "main_linestrength_file.mv"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.s",
+                "conn_destination": "main_linestrength_file.s"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.wu",
+                "conn_destination": "main_linestrength_file.wu"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.wv",
+                "conn_destination": "main_linestrength_file.wv"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.re",
+                "conn_destination": "main_linestrength_file.re"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.of",
+                "conn_destination": "main_linestrength_file.of"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.r",
+                "conn_destination": "main_linestrength_file.ro"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.n",
+                "conn_destination": "main_linestrength_file.n"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.vc1",
+                "conn_destination": "main_linestrength_file.vc1"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.vt1",
+                "conn_destination": "main_linestrength_file.vt1"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.vt2",
+                "conn_destination": "main_linestrength_file.vt2"
+            },
+            {
+                "conn_source": "main_linestrength_place2dTexture.vt3",
+                "conn_destination": "main_linestrength_file.vt3"
+            }
+        ]
+    },
+    "main_linestrength_place2dTexture": {
+        "type": "place2dTexture",
+        "attrs": {},
+        "connections": [
+            {}
+        ]
+    },
+    "main_linestrength_aiRange2": {
+        "type": "aiRange",
+        "attrs": {
+            "main_linestrength_aiRange2.input_min": 0.8999999761581421
+        },
+        "connections": [
+            {
+                "conn_source": "main_linestrength_file.oc",
+                "conn_destination": "main_linestrength_aiRange2.input"
+            }
+        ]
+    },
+    "main_color_file": {
+        "type": "file",
+        "attrs": {
+            "main_color_file.oa": 1.0,
+            "main_color_file.osx": 4096.0,
+            "main_color_file.osy": 4096.0
+        },
+        "connections": [
+            {
+                "conn_source": "main_color_place2dTexture.o",
+                "conn_destination": "main_color_file.uv"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.ofs",
+                "conn_destination": "main_color_file.fs"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.c",
+                "conn_destination": "main_color_file.c"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.tf",
+                "conn_destination": "main_color_file.tf"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.rf",
+                "conn_destination": "main_color_file.rf"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.mu",
+                "conn_destination": "main_color_file.mu"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.mv",
+                "conn_destination": "main_color_file.mv"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.s",
+                "conn_destination": "main_color_file.s"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.wu",
+                "conn_destination": "main_color_file.wu"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.wv",
+                "conn_destination": "main_color_file.wv"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.re",
+                "conn_destination": "main_color_file.re"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.of",
+                "conn_destination": "main_color_file.of"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.r",
+                "conn_destination": "main_color_file.ro"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.n",
+                "conn_destination": "main_color_file.n"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.vc1",
+                "conn_destination": "main_color_file.vc1"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.vt1",
+                "conn_destination": "main_color_file.vt1"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.vt2",
+                "conn_destination": "main_color_file.vt2"
+            },
+            {
+                "conn_source": "main_color_place2dTexture.vt3",
+                "conn_destination": "main_color_file.vt3"
+            }
+        ]
+    },
+    "main_color_place2dTexture": {
+        "type": "place2dTexture",
+        "attrs": {},
+        "connections": [
+            {}
+        ]
+    },
+    "main_base_aiRampRgb": {
+        "type": "aiRampRgb",
+        "attrs": {},
+        "connections": [
+            {}
+        ],
+        "ramp": [
+            [
+                0.0,
+                [
+                    [
+                        0.08799999952316284,
+                        0.14470000565052032,
+                        0.22470000386238098
+                    ]
+                ],
+                0
+            ],
+            [
+                0.480063796043396,
+                [
+                    [
+                        0.6193000078201294,
+                        0.46140000224113464,
+                        0.4641000032424927
+                    ]
+                ],
+                2
+            ],
+            [
+                0.7145135402679443,
+                [
+                    [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                ],
+                2
+            ],
+            [
+                0.3763955235481262,
+                [
+                    [
+                        0.5400000214576721,
+                        0.39149999618530273,
+                        0.21170000731945038
+                    ]
+                ],
+                2
+            ],
+            [
+                0.12121212482452393,
+                [
+                    [
+                        0.5400000214576721,
+                        0.39149999618530273,
+                        0.21170000731945038
+                    ]
+                ],
+                0
+            ],
+            [
+                0.0669855996966362,
+                [
+                    [
+                        0.08799999952316284,
+                        0.14470000565052032,
+                        0.22470000386238098
+                    ]
+                ],
+                2
+            ],
+            [
+                0.6570972800254822,
+                [
+                    [
+                        0.6320400238037109,
+                        0.47942399978637695,
+                        0.48203301429748535
+                    ]
+                ],
+                2
+            ]
+        ]
+    },
+    "main_adjustlines_aiRange": {
+        "type": "aiRange",
+        "attrs": {},
+        "connections": [
+            {
+                "conn_source": "main_lines_file.oc",
+                "conn_destination": "main_adjustlines_aiRange.input"
+            }
+        ]
+    },
+    "main_lines_file": {
+        "type": "file",
+        "attrs": {
+            "main_lines_file.oa": 1.0,
+            "main_lines_file.osx": 4096.0,
+            "main_lines_file.osy": 4096.0
+        },
+        "connections": [
+            {
+                "conn_source": "main_lines_place2dTexture.o",
+                "conn_destination": "main_lines_file.uv"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.ofs",
+                "conn_destination": "main_lines_file.fs"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.c",
+                "conn_destination": "main_lines_file.c"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.tf",
+                "conn_destination": "main_lines_file.tf"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.rf",
+                "conn_destination": "main_lines_file.rf"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.mu",
+                "conn_destination": "main_lines_file.mu"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.mv",
+                "conn_destination": "main_lines_file.mv"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.s",
+                "conn_destination": "main_lines_file.s"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.wu",
+                "conn_destination": "main_lines_file.wu"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.wv",
+                "conn_destination": "main_lines_file.wv"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.re",
+                "conn_destination": "main_lines_file.re"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.of",
+                "conn_destination": "main_lines_file.of"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.r",
+                "conn_destination": "main_lines_file.ro"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.n",
+                "conn_destination": "main_lines_file.n"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.vc1",
+                "conn_destination": "main_lines_file.vc1"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.vt1",
+                "conn_destination": "main_lines_file.vt1"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.vt2",
+                "conn_destination": "main_lines_file.vt2"
+            },
+            {
+                "conn_source": "main_lines_place2dTexture.vt3",
+                "conn_destination": "main_lines_file.vt3"
+            }
+        ]
+    },
+    "main_lines_place2dTexture": {
+        "type": "place2dTexture",
+        "attrs": {},
+        "connections": [
+            {}
+        ]
+    },
+    "main_transparency_aiMultiply": {
+        "type": "aiMultiply",
+        "attrs": {},
+        "connections": [
+            {
+                "conn_source": "main_tweak_lines_aiRange.out",
+                "conn_destination": "main_transparency_aiMultiply.input1"
+            },
+            {
+                "conn_source": "main_invert_opacity_aiRange.out",
+                "conn_destination": "main_transparency_aiMultiply.input2"
+            }
+        ]
+    },
+    "main_tweak_lines_aiRange": {
+        "type": "aiRange",
+        "attrs": {
+            "main_tweak_lines_aiRange.contrast": 2.0,
+            "main_tweak_lines_aiRange.contrast_pivot": 0.8999999761581421
+        },
+        "connections": [
+            {
+                "conn_source": "main_lines_file.oc",
+                "conn_destination": "main_tweak_lines_aiRange.input"
+            }
+        ]
+    },
+    "main_invert_opacity_aiRange": {
+        "type": "aiRange",
+        "attrs": {
+            "main_invert_opacity_aiRange.output_min": 1.0,
+            "main_invert_opacity_aiRange.output_max": 0.0
+        },
+        "connections": [
+            {
+                "conn_source": "main_opacity_file.oc",
+                "conn_destination": "main_invert_opacity_aiRange.input"
+            }
+        ]
+    },
+    "main_opacity_file": {
+        "type": "file",
+        "attrs": {
+            "main_opacity_file.oa": 1.0,
+            "main_opacity_file.osx": 4096.0,
+            "main_opacity_file.osy": 4096.0
+        },
+        "connections": [
+            {
+                "conn_source": "main_opacity_place2dTexture.o",
+                "conn_destination": "main_opacity_file.uv"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.ofs",
+                "conn_destination": "main_opacity_file.fs"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.c",
+                "conn_destination": "main_opacity_file.c"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.tf",
+                "conn_destination": "main_opacity_file.tf"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.rf",
+                "conn_destination": "main_opacity_file.rf"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.mu",
+                "conn_destination": "main_opacity_file.mu"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.mv",
+                "conn_destination": "main_opacity_file.mv"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.s",
+                "conn_destination": "main_opacity_file.s"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.wu",
+                "conn_destination": "main_opacity_file.wu"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.wv",
+                "conn_destination": "main_opacity_file.wv"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.re",
+                "conn_destination": "main_opacity_file.re"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.of",
+                "conn_destination": "main_opacity_file.of"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.r",
+                "conn_destination": "main_opacity_file.ro"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.n",
+                "conn_destination": "main_opacity_file.n"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.vc1",
+                "conn_destination": "main_opacity_file.vc1"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.vt1",
+                "conn_destination": "main_opacity_file.vt1"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.vt2",
+                "conn_destination": "main_opacity_file.vt2"
+            },
+            {
+                "conn_source": "main_opacity_place2dTexture.vt3",
+                "conn_destination": "main_opacity_file.vt3"
+            }
+        ]
+    },
+    "main_opacity_place2dTexture": {
+        "type": "place2dTexture",
+        "attrs": {},
+        "connections": [
+            {}
+        ]
+    }
+}

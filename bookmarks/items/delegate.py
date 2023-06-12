@@ -890,6 +890,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         editor = ui.LineEdit(parent=parent)
         editor.setPlaceholderText('Enter an item description...')
+        editor.returnPressed.connect(lambda: self.commitData.emit(editor))
+        editor.returnPressed.connect(lambda: self.closeEditor.emit(editor))
         return editor
 
     def updateEditorGeometry(self, editor, option, index):

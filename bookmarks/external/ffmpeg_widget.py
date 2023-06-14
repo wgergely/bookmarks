@@ -402,9 +402,9 @@ class FFMpegWidget(base.BasePropertyEditor):
             source_paths.append(source_path)
             destination_paths.append(destination_path)
 
-        # Convert to jpeg
+        # Call the pre-conversion function
         try:
-            if not pyimageutil.convert_images(source_paths, destination_paths):
+            if not pyimageutil.convert_images(source_paths, destination_paths, max_size=-1, release_gil=False):
                 raise RuntimeError(f'{source_frame} could not be read')
             for f in destination_paths:
                 if not os.path.isfile(f):

@@ -45,6 +45,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.separator()
         self.viewport_presets_menu()
         self.capture_menu()
+        self.separator()
+        self.hud_menu()
 
     def apply_bookmark_settings_menu(self):
         """Apply settings action.
@@ -236,6 +238,15 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
                 'icon': ui.get_icon('maya'),
             }
 
+    def hud_menu(self):
+        k = contextmenu.key()
+        self.menu[k] = {
+            'text': 'Toggle HUD',
+            'action': actions.toggle_hud
+        }
+
+
+
 
 class MayaButtonWidgetContextMenu(PluginContextMenu):
     """The context-menu associated with the BrowserButton."""
@@ -270,3 +281,6 @@ class MayaWidgetContextMenu(PluginContextMenu):
         self.separator()
         self.viewport_presets_menu()
         self.capture_menu()
+        self.separator()
+        self.hud_menu()
+

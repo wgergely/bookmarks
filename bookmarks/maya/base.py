@@ -375,7 +375,10 @@ def get_framerate():
     """Returns the value of the current frame-rate enum.
 
     """
-    return MAYA_FPS[cmds.currentUnit(query=True, time=True)]
+    v = cmds.currentUnit(query=True, time=True)
+    if v not in MAYA_FPS:
+        raise ValueError(f'Invalid framerate value: {v}')
+    return MAYA_FPS[v]
 
 
 def find_project_folder(key):
@@ -490,7 +493,7 @@ def is_scene_modified():
 
 
 def report_export_progress(start, current, end, start_time):
-    """A litle progress report get some export feedback."""
+    """A little progress report get some export feedback."""
     elapsed = time.time() - start_time
     elapsed = time.strftime('%H:%M.%Ssecs', time.localtime(elapsed))
 

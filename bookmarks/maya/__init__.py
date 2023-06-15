@@ -67,5 +67,6 @@ def uninitialize():
     actions.remove_maya_widget()
     actions.remove_maya_button()
     actions.remove_workspace_controls()
+    actions.remove_hud()
 
     common.uninitialize()

@@ -115,8 +115,9 @@ def apply_settings(*args, **kwargs):
     """
     props = base.MayaProperties()
     mbox = ui.MessageBox(
-        'Are you sure you want to apply the following settings?', props.get_info(), buttons=[ui.YesButton,
-                                                                                             ui.CancelButton], )
+        'Are you sure you want to apply the following settings?',
+        props.get_info(),
+        buttons=[ui.YesButton, ui.CancelButton], )
 
     res = mbox.exec_()
     if res == QtWidgets.QDialog.Rejected:
@@ -233,8 +234,9 @@ def save_warning(*args):
     if workspace_info.path().lower() not in scene_file.filePath().lower():
         ui.MessageBox(
             f'Looks like you are saving "{scene_file.fileName()}" outside the current project\nThe '
-            f'current project is "{workspace_info.path()}"', 'If you didn\'t expect this message, is it possible the project was '
-                                                             'changed by {} from another instance of Maya?'.format(
+            f'current project is "{workspace_info.path()}"',
+            'If you didn\'t expect this message, is it possible the project was '
+            'changed by {} from another instance of Maya?'.format(
                 common.product
             )
         ).open()
@@ -483,9 +485,18 @@ def capture_viewport(size=1.0):
 
     try:
         capture.capture(
-            camera=camera, width=width, height=height, display_options=base.DisplayOptions, camera_options=base.CameraOptions, viewport2_options=
-            options['viewport2_options'], viewport_options=options[
-                'viewport_options'], format='image', compression=ext, filename=base_destination_path, overwrite=True, viewer=False
+            camera=camera,
+            width=width,
+            height=height,
+            display_options=base.DisplayOptions,
+            camera_options=base.CameraOptions,
+            viewport2_options=options['viewport2_options'],
+            viewport_options=options['viewport_options'],
+            format='image',
+            compression=ext,
+            filename=base_destination_path,
+            overwrite=True,
+            viewer=False
         )
         log.success(f'Capture saved to {_dir.path()}')
     except:
@@ -517,9 +528,13 @@ def capture_viewport(size=1.0):
 
     # Push and reveal output
     path = base.CAPTURE_FILE.format(
-        workspace=workspace, capture_folder=capture_folder, scene=scene_info.completeBaseName(), frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(
+        workspace=workspace,
+        capture_folder=capture_folder,
+        scene=scene_info.completeBaseName(),
+        frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(
             base.DefaultPadding
-        ), ext=ext
+        ),
+        ext=ext
     )
     push_capture(path)
     reveal_capture(path)
@@ -594,7 +609,11 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
     for n in range(int(duration)):
         frame = str(n + int(start)).zfill(base.DefaultPadding)
         source = base.CAPTURE_FILE.format(
-            workspace=workspace, capture_folder=capture_folder, scene=scene_info.completeBaseName(), frame=frame, ext=ext
+            workspace=workspace,
+            capture_folder=capture_folder,
+            scene=scene_info.completeBaseName(),
+            frame=frame,
+            ext=ext
         )
         dest = base.AGNOSTIC_CAPTURE_FILE.format(
             workspace=workspace, capture_folder=capture_folder, asset=asset, frame=frame, ext=ext
@@ -692,3 +711,36 @@ def show_shader_tool():
     """
     from . import shadertool
     shadertool.show()
+
+
+@QtCore.Slot()
+@common.error
+@common.debug
+def add_hud(*args, **kwargs):
+    """Adds a HUD to the current viewport.
+
+    """
+    from . import hud
+    hud.add()
+
+
+@QtCore.Slot()
+@common.error
+@common.debug
+def remove_hud(*args, **kwargs):
+    """Removes the HUD from the current viewport.
+
+    """
+    from . import hud
+    hud.remove()
+
+
+@QtCore.Slot()
+@common.error
+@common.debug
+def toggle_hud(*args, **kwargs):
+    """Removes the HUD from the current viewport.
+
+    """
+    from . import hud
+    hud.toggle()

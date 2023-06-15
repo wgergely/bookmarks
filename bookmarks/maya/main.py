@@ -156,7 +156,6 @@ def init_maya_widget():
         cmds.evalDeferred(widget.raise_)
         return
 
-
 class PanelPicker(QtWidgets.QDialog):
     """Modal dialog used to select a visible modelPanel in Maya.
 
@@ -331,7 +330,7 @@ class MayaButtonWidget(ui.ClickableIconButton):
     ContextMenu = contextmenu.MayaButtonWidgetContextMenu
 
     def __init__(self, size, parent=None):
-        super(MayaButtonWidget, self).__init__(
+        super().__init__(
             'icon',
             (None, None),
             size,
@@ -473,6 +472,11 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         )
         self.setObjectName(o)
 
+        # Timer to update the HUD
+        self.hud_update_timer = common.Timer(parent=self)
+        self.hud_update_timer.setSingleShot(False)
+        self.hud_update_timer.setInterval(5000)
+
         # Timer to set the workspace and context periodically
         self.workspace_timer = common.Timer(parent=self)
         self.workspace_timer.setSingleShot(False)
@@ -484,15 +488,18 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         common.main_widget.sizeHint = self.sizeHint
 
         self.workspace_timer.timeout.connect(actions.set_workspace)
+        self.hud_update_timer.timeout.connect(actions.add_hud)
 
         # Connect signals when the main widget is initialized
         common.main_widget.initialized.connect(lambda: common.main_widget.layout().setContentsMargins(0, 0, 0, 0))
         common.main_widget.initialized.connect(self._connect_signals)
         common.main_widget.initialized.connect(self.context_callbacks)
         common.main_widget.initialized.connect(self.workspace_timer.start)
+        common.main_widget.initialized.connect(self.hud_update_timer.start)
 
         common.main_widget.initialized.connect(actions.set_workspace)
         common.main_widget.initialized.connect(actions.set_sg_context)
+        common.main_widget.initialized.connect(actions.add_hud)
 
     def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
@@ -535,35 +542,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         common.signals.assetActivated.connect(actions.set_workspace)
         common.signals.assetActivated.connect(actions.set_sg_context)
-
-    @QtCore.Slot()
-    def active_changed(self):
-        """Slot called when an active asset changes.
-
-        """
-        v = common.settings.value('maya/workspace_save_warnings')
-        v = QtCore.Qt.Unchecked if v is None else v
-
-        # Do nothing if explicitly set not to show warnings
-        if v == QtCore.Qt.Checked:
-            return
-
-        # We will get a warning when we change to a new bookmark item. Whilst
-        # technically correct, it is counterintuitive to be warned of a direct
-        # action just performed
-        assets_model = common.main_widget.assets_widget.model().sourceModel()
-        if not assets_model.active_index().isValid():
-            return
-
-        workspace_info = QtCore.QFileInfo(
-            cmds.workspace(q=True, expandName=True)
-        )
-
-        ui.MessageBox(
-            f'Workspace changed\n The new workspace is {workspace_info.path()}',
-            'If you didn\'t expect this message, it is possible your current '
-            'project was changed by Bookmarks, perhaps in another instance of Maya.'
-        ).open()
+        common.signals.assetActivated.connect(actions.add_hud)
 
     def context_callbacks(self):
         """This method is called by the Maya plug-in when initializing
@@ -584,10 +563,6 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             OpenMaya.MSceneMessage.kBeforeNew, actions.unmark_active
         )
         self._callbacks.append(callback)
-
-        # callback = OpenMaya.MSceneMessage.addCallback(
-        #     OpenMaya.MSceneMessage.kBeforeSave, self.save_warning)
-        # self._callbacks.append(callback)
 
         callback = OpenMaya.MSceneMessage.addCallback(
             OpenMaya.MSceneMessage.kAfterSave, actions.save_warning

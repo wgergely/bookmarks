@@ -1473,9 +1473,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         )
 
         self.menu[k][key()] = {
-            'text': 'Push',
+            'text': 'Play',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.push, path, command=rv.DEFAULT),
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.PushAndClear),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRV
@@ -1486,9 +1486,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
         }
         self.menu[k][key()] = {
-            'text': 'Push full-screen',
+            'text': 'Play full-screen',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.push, path, command=rv.FULLSCREEN),
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.PushAndClearFullScreen),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRVFullScreen
@@ -1497,6 +1497,14 @@ class BaseContextMenu(QtWidgets.QMenu):
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRVFullScreen
             ),
+        }
+
+        self.separator(self.menu[k])
+
+        self.menu[k][key()] = {
+            'text': 'Add as source',
+            'icon': ui.get_icon('sg'),
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.Add, basecommand=rv.MERGE)
         }
 
         self.separator(self.menu[k])

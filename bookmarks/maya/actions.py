@@ -553,7 +553,7 @@ def push_capture(path, command=rv.DEFAULT):
     if v == QtCore.Qt.Checked:
         return
 
-    rv.push(path, command=command)
+    rv.execute_rvpush_command(path, command)
 
 
 def reveal_capture(path):

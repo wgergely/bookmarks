@@ -2090,7 +2090,7 @@ def push_to_rv(index):
     )
 
     from .external import rv
-    rv.push(path, command=rv.DEFAULT)
+    rv.execute_rvpush_command(path, rv.PushAndClear)
 
 
 @common.error
@@ -2105,4 +2105,4 @@ def push_to_rv_full_screen(index):
     )
 
     from .external import rv
-    rv.push(path, command=rv.FULLSCREEN)
+    rv.execute_rvpush_command(path, rv.PushAndClearFullScreen)

@@ -348,7 +348,7 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         if self.ffmpeg_pushtorv_editor.isChecked():
             try:
-                rv.push(destination)
+                rv.execute_rvpush_command(destination, rv.PushAndClear)
             except:
                 log.error('Failed to push to RV.')
 

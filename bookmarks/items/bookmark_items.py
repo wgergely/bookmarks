@@ -195,9 +195,7 @@ class BookmarkItemModel(models.ItemModel):
                 break  # Let's limit the maximum number of items we load
 
             # Find the entry
-            for entry in os.scandir(file_info.dir().path()):
-                if entry.name == file_info.baseName():
-                    break
+            entry = common.get_entry_from_path(filepath)
 
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
             for i, n in enumerate(parent_path_role):

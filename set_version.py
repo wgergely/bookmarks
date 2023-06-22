@@ -19,7 +19,7 @@ STRINGS = {
         r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
     f'{pkg_root}/package/CMakeLists.txt': re.compile(
         r"VERSION ([0-9]\.[0-9]\.[0-9])", flags=re.MULTILINE),
-    f'{pkg_root}/docs/source/guide.rst': re.compile(r'.*([0-9]\.[0-9]\.[0-9]).*',
+    f'{pkg_root}/docs-source/guide.rst': re.compile(r'.*([0-9]\.[0-9]\.[0-9]).*',
                                                     flags=re.MULTILINE),
 }
 

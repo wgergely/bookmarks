@@ -382,6 +382,10 @@ def count_assets(path, ASSET_IDENTIFIER):
 
     """
     n = 0
+
+    if not os.path.isdir(path):
+        return n
+
     for entry in os.scandir(path):
         if entry.name.startswith('.'):
             continue
@@ -676,13 +680,11 @@ class InfoWorker(BaseWorker):
             return
 
         er = ref()[common.EntryRole]
-        if not er:
+        if not er or not all(er):
             return
 
-        size = 0
-        if er:
-            stat = er[0].stat()
-            size = stat.st_size
+        stat = er[0].stat()
+        size = stat.st_size
 
         _mtime = stat.st_mtime
         mtime = _qlast_modified(_mtime)

@@ -562,11 +562,10 @@ class FileItemModel(models.ItemModel):
             return
 
         for entry in it:
-            if entry.is_dir():
-                for _entry in self.item_generator(entry.path):
-                    yield _entry
-            else:
+            if entry.is_file():
                 yield entry
+                continue
+            yield from self.item_generator(entry.path)
 
     def save_active(self):
         """Saves the current active item.

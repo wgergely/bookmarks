@@ -365,32 +365,22 @@ class TaskItemModel(models.ItemModel):
                 return
 
             try:
-                try:
-                    entry = next(it)
-                except StopIteration:
-                    break
+                entry = next(it)
+
+                if entry.name.startswith('.'):
+                    continue
+
+                if entry.is_symlink():
+                    continue
+
+                if not entry.is_dir():
+                    yield entry
             except OSError:
+                continue
+            except StopIteration:
                 return
 
-            try:
-                is_dir = entry.is_dir()
-            except OSError:
-                is_dir = False
-
-            if entry.name.startswith('.'):
-                continue
-
-            if not is_dir:
-                yield entry
-
-            try:
-                is_symlink = entry.is_symlink()
-            except OSError:
-                is_symlink = False
-
-            if not is_symlink:
-                for entry in cls.item_generator(entry.path):
-                    yield entry
+            yield from cls.item_generator(entry.path)
 
 
 class TaskItemView(views.ThreadedItemView):

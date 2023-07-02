@@ -89,7 +89,7 @@ DEFAULT_TOKEN_CONFIG = {
             'flag': SceneFormat,
             'value': common.sort_words(
                 'aep, ai, blend, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, '
-                'hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv, tvpp, zprj'
+                'hip, hiplc, hipnc, ma, mb, nk, nk~, spm, mocha, rcproj, rv, tvpp, zbr, zpr, ztl, zpac, zprj'
             ),
             'description': 'Scene file formats'
         },

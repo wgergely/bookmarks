@@ -371,7 +371,7 @@ def import_json_asset_properties(indexes, prompt=True):
                         continue
                     db.set_value(path, k, v, table=database.AssetTable)
 
-            if 'thumbnail' in data[item] and os.path.isfile(data[item]['thumbnail']):
+            if 'thumbnail' in data[item] and data[item]['thumbnail'] and os.path.isfile(data[item]['thumbnail']):
                 images.create_thumbnail_from_image(
                     index.data(common.ParentPathRole)[0],
                     index.data(common.ParentPathRole)[1],

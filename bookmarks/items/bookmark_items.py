@@ -82,6 +82,8 @@ class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.scripts_menu()
+        self.separator()
         self.bookmark_editor_menu()
         self.add_asset_to_bookmark_menu()
         self.separator()
@@ -218,7 +220,7 @@ class BookmarkItemModel(models.ItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
-                    common.TodoCountRole: 0,
+                    common.NoteCountRole: 0,
                     common.AssetCountRole: 0,
                     common.FileDetailsRole: None,
                     common.SequenceRole: None,
@@ -228,8 +230,6 @@ class BookmarkItemModel(models.ItemModel):
                     common.EndPathRole: None,
                     #
                     common.ThumbnailLoaded: False,
-                    #
-                    common.TypeRole: common.FileItem,
                     #
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),

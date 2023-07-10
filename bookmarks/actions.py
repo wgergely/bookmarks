@@ -277,12 +277,12 @@ def clear_favourites(prompt=True):
 
     """
     if prompt:
-        from . import ui
-        mbox = ui.MessageBox(
+        if common.show_message(
             'Are you sure you want to clear your saved items?',
-            buttons=[ui.YesButton, ui.NoButton]
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            body='This action not undoable.',
+            buttons=[common.YesButton, common.NoButton],
+            modal=True
+        ) == QtWidgets.QDialog.Rejected:
             return
 
     common.favourites = {}
@@ -460,11 +460,7 @@ def prune_bookmarks():
                 common.bookmarks[k]['root']
             )
 
-    from . import ui
-    mbox = ui.OkBox(
-        f'{n} items pruned.',
-    )
-    mbox.open()
+    common.show_message(f'{n} items pruned.')
 
 
 def set_active(k, v):
@@ -652,7 +648,7 @@ def toggle_filter_editor():
     if w.filter_editor.isHidden():
         w.filter_editor.show()
     else:
-        w.filter_editor.done(QtWidgets.QDialog.Rejected)
+        w.filter_editor.close()
 
 
 @QtCore.Slot(str)
@@ -1327,8 +1323,7 @@ def toggle_archived(index):
 
     """
     if index.data(common.FlagsRole) & common.MarkedAsDefault:
-        from . import ui
-        ui.MessageBox('Default bookmark items cannot be archived.').open()
+        common.show_message('Default bookmark items cannot be archived.',  message_type='error')
         return
 
     common.widget().save_selection()
@@ -1765,7 +1760,7 @@ def import_properties(index):
 
 @common.error
 @common.debug
-def import_json_asset_properties():
+def import_json_asset_properties(path=None, prompt=True):
     """Imports properties and applies them to the selected item.
 
     """
@@ -1773,7 +1768,7 @@ def import_json_asset_properties():
 
     model = common.model(common.AssetTab)
     indexes = [QtCore.QPersistentModelIndex(model.index(f, 0)) for f in range(model.rowCount())]
-    importexport.import_json_asset_properties(indexes)
+    importexport.import_json_asset_properties(indexes, prompt=prompt, path=path)
 
 
 @common.debug
@@ -1826,13 +1821,13 @@ def add_zip_template(source, mode, prompt=False):
         raise RuntimeError(s)
 
     if file_info.exists():
-        from . import ui
-        mbox = ui.MessageBox(
-            s,
-            'Do you want to overwrite the existing file?',
-            buttons=[ui.YesButton, ui.CancelButton]
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+        if common.show_message(
+            'Overwrite existing file?',
+            body='A template file with the same name exists already.',
+            buttons=[common.YesButton, common.CancelButton],
+            message_type=None,
+            modal=True,
+        ) == QtWidgets.QDialog.Rejected:
             return None
         QtCore.QFile.remove(file_info.filePath())
 
@@ -1923,12 +1918,13 @@ def remove_zip_template(source, prompt=True):
         raise RuntimeError('Template does not exist.')
 
     if prompt:
-        from . import ui
-        mbox = ui.MessageBox(
-            'Are you sure you want to delete this template?',
-            buttons=[ui.CancelButton, ui.YesButton]
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+        if common.show_message(
+            'Delete template?',
+            body=f'Are you sure you want to delete {file_info.fileName()}? This action cannot be undone.',
+            buttons=[common.YesButton, common.CancelButton],
+            message_type='error',
+            modal=True,
+        ) == QtWidgets.QDialog.Rejected:
             return
 
     if not QtCore.QFile.remove(source):
@@ -1974,40 +1970,6 @@ def pick_template(mode):
     add_zip_template(source, mode)
 
 
-def show_sg_error_message(v):
-    """Shows a ShotGrid error message.
-
-    """
-    from . import ui
-    common.sg_error_message = ui.ErrorBox(
-        'An error occurred.',
-        v
-    ).open()
-
-
-def show_sg_connecting_message():
-    """Shows a ShotGrid connection progress message.
-
-    """
-    from . import ui
-    common.sg_connecting_message = ui.MessageBox(
-        'ShotGrid is connecting, please wait...', no_buttons=True
-    )
-    common.sg_connecting_message.open()
-    QtWidgets.QApplication.instance().processEvents()
-
-
-def hide_sg_connecting_message():
-    """Hides a ShotGrid connection progress message.
-
-    """
-    try:
-        common.sg_connecting_message.hide()
-        QtWidgets.QApplication.instance().processEvents()
-    except:
-        pass
-
-
 @common.debug
 @common.error
 @selection
@@ -2015,14 +1977,14 @@ def delete_selected_files(index):
     """Deletes the selected file items.
 
     """
-    from . import ui
     from . import log
-    mbox = ui.ErrorBox(
-        'Are you sure you want to delete this file?',
-        f'{index.data(QtCore.Qt.DisplayRole)} will be permanently lost.',
-        buttons=[ui.YesButton, ui.NoButton]
-    )
-    if mbox.exec_() == QtWidgets.QDialog.Rejected:
+    if common.show_message(
+        'Delete file?',
+        body='Are you sure you want to delete the selected file(s)? They will be permanently lost.',
+        buttons=[common.YesButton, common.CancelButton],
+        message_type='error',
+        modal=True,
+    ) == QtWidgets.QDialog.Rejected:
         return
 
     model = index.model().sourceModel()

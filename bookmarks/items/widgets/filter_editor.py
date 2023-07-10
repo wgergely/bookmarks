@@ -21,14 +21,52 @@ class TextFilterEditor(QtWidgets.QWidget):
         self.ok_button = None
         self.context_menu_open = False
 
-        self._create_ui()
-        self._connect_signals()
+        self.installEventFilter(self)
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setWindowFlags(QtCore.Qt.Widget)
 
+        # Shadow effect
+        self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
+        self.effect.setBlurRadius(common.size(common.size_margin))
+        self.effect.setXOffset(0)
+        self.effect.setYOffset(0)
+        self.effect.setColor(QtGui.QColor(0, 0, 0, 255))
+        self.setGraphicsEffect(self.effect)
+
+        self._opacity = 0.0
+        self.animation = QtCore.QPropertyAnimation(self, b'_opacity')
+        self.animation.setDuration(300)  # 500 ms duration for fade in/out
+        self.animation.setEasingCurve(QtCore.QEasingCurve.OutCubic)
+        self.animation.valueChanged.connect(self.set_opacity)
+
         self.setFocusProxy(self.editor)
+
+        self._create_ui()
+        self._connect_signals()
+
+    def set_opacity(self, value):
+        self._opacity = value
+        self.setWindowOpacity(value)
+        self.repaint()
+        QtWidgets.QApplication.instance().processEvents()
+
+    def eventFilter(self, source, event):
+        if event.type() == QtCore.QEvent.KeyRelease:
+            if event.key() in [QtCore.Qt.Key_Escape,]:
+                self.close()
+                return True
+            if event.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:
+                self.finished.emit(self.editor.text())
+                self.close()
+                return True
+        elif event.type() == QtCore.QEvent.MouseButtonRelease:
+            rect = self._get_rect()
+            if not rect.contains(event.pos()):
+                self.close()
+                return True
+        return super().eventFilter(source, event)
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
@@ -40,7 +78,6 @@ class TextFilterEditor(QtWidgets.QWidget):
         row = ui.add_row(
             None,
             parent=self,
-            padding=0,
             height=common.size(common.size_row_height)
         )
 
@@ -55,6 +92,7 @@ class TextFilterEditor(QtWidgets.QWidget):
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.editor.setPlaceholderText('Enter filter, e.g. "maya" or --"SH010"')
         row.layout().addWidget(self.editor, 1)
 
         self.ok_button = ui.PaintedButton('Save', parent=self)
@@ -66,6 +104,17 @@ class TextFilterEditor(QtWidgets.QWidget):
         self.editor.returnPressed.connect(lambda: self.finished.emit(self.editor.text()))
         self.ok_button.clicked.connect(lambda: self.finished.emit(self.editor.text()))
         self.finished.connect(self.close)
+
+        common.signals.jobAdded.connect(self.close)
+        common.signals.assetAdded.connect(self.close)
+        common.signals.fileAdded.connect(self.close)
+        common.signals.bookmarksChanged.connect(self.close)
+        common.signals.tabChanged.connect(self.close)
+        common.signals.taskViewToggled.connect(self.close)
+        common.signals.taskFolderChanged.connect(self.close)
+        common.signals.bookmarkActivated.connect(self.close)
+        common.signals.assetActivated.connect(self.close)
+        common.signals.fileActivated.connect(self.close)
 
     def set_completer(self):
         """Sets the editor's completer.
@@ -103,13 +152,13 @@ class TextFilterEditor(QtWidgets.QWidget):
         text = '' if text == '/' else text
         self.editor.setText(text)
 
-    @QtCore.Slot()
-    def adjust_size(self):
-        """Adjusts the editor's size.
+    def _get_rect(self):
+        o = common.size(common.size_margin)
+        r = common.size(common.size_row_height)
 
-        """
-        geo = common.widget()
-        self.resize(geo.width(), geo.height())
+        rect = self.rect().adjusted(o, o, -o, -o)
+        rect.setHeight(r + (o * 2))
+        return rect
 
     def paintEvent(self, event):
         """Event handler.
@@ -118,29 +167,39 @@ class TextFilterEditor(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
 
+        rect = common.widget().rect()
+        painter.setBrush(QtGui.QColor(0, 0, 0, 150))
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setOpacity(self._opacity * 0.3)
+        painter.drawRect(rect)
+
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
         pen = QtGui.QPen(common.color(common.color_separator))
         pen.setWidthF(common.size(common.size_separator))
         painter.setPen(pen)
 
-        o = common.size(common.size_margin)
         i = common.size(common.size_indicator)
-        r = common.size(common.size_row_height)
-
-        rect = self.rect().adjusted(o, o, -o, -o)
-        rect.setHeight(r + (o * 2))
-
+        rect = self._get_rect()
         painter.setBrush(common.color(common.color_dark_background))
-        painter.setOpacity(0.85)
+        painter.setOpacity(self._opacity)
         painter.drawRoundedRect(rect, i, i)
+
         painter.end()
 
     def showEvent(self, event):
-        """Event handler.
+        """Event handler."""
+        global_position = common.widget().mapToGlobal(QtCore.QPoint(0, 0))
+        local_position = self.parent().mapFromGlobal(global_position)
+        self.setGeometry(QtCore.QRect(local_position, common.widget().size()))
 
-        """
+        self.animation.setStartValue(0.0)
+        self.animation.setEndValue(1.0)
+        self.animation.start()
+
         self.init_text()
         self.set_completer()
         self.editor.selectAll()
-        self.setFocus()
+
+        # Set focus to the editor when shown
+        self.editor.setFocus()

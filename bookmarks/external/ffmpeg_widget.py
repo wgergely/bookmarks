@@ -279,12 +279,13 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         _f = QtCore.QFile(destination)
         if _f.exists():
-            mbox = ui.MessageBox(
-                f'{destination} already exists.',
-                'Do you want to replace it with a new version?',
-                buttons=[ui.YesButton, ui.CancelButton]
-            )
-            if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            if common.show_message(
+                'File already exists',
+                f'{destination} already exists.\nDo you want to replace it with a new version?',
+                buttons=[common.YesButton, common.NoButton],
+                message_type='error',
+                modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return False
             if not _f.remove():
                 raise RuntimeError(f'Could not remove {destination}')
@@ -352,7 +353,7 @@ class FFMpegWidget(base.BasePropertyEditor):
             except:
                 log.error('Failed to push to RV.')
 
-        ui.OkBox(f'Movie saved to {destination}').open()
+        common.show_message('Success', f'Movie saved to {destination}', message_type='success')
         log.success(f'Movie saved to {destination}')
         return True
 

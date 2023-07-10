@@ -405,27 +405,32 @@ class PublishWidget(base.BasePropertyEditor):
 
         """
         if not self.file_editor.path():
-            ui.MessageBox('File not selected.', 'Drag-and-drop a file to the top bar before continuing.').open()
+            common.show_message(
+                'File not selected.',
+                body='Drag-and-drop a file to the top bar before continuing.',
+                message_type='error'
+            )
             return False
 
         # Get all arguments needed to publish a Version and a PublishFile
         kwargs = self.get_publish_args()
 
         # Start version publish
-        sg_properties = shotgun.SGProperties(
-            active=True,
-            login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password')
-        )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
         if not sg_properties.verify(asset=True):
             raise ValueError('Asset not configured.')
 
-        with shotgun.connection(sg_properties) as sg:
+        with sg_properties.connection() as sg:
             kwargs['sg'] = sg
 
-            mbox = ui.MessageBox('Creating Version...', no_buttons=True)
-            mbox.open()
+            common.show_message(
+                'Publishing...',
+                body='Please wait while the file is being published.',
+                message_type=None,
+                buttons=[],
+                no_anim=True,
+            )
             QtWidgets.QApplication.instance().processEvents()
 
             try:
@@ -438,23 +443,31 @@ class PublishWidget(base.BasePropertyEditor):
                     kwargs['status_entity'], )
                 kwargs['version_entity'] = version_entity
             finally:
-                mbox.close()
+                common.close_message()
 
-            mbox = ui.MessageBox('Uploading movie...', no_buttons=True)
-            mbox.open()
+            common.show_message(
+                'Publishing movie...',
+                body='Please wait while the file is being published.',
+                buttons=[],
+                no_anim=True,
+            )
             QtWidgets.QApplication.instance().processEvents()
             try:
                 self._upload_movie(**kwargs)
             finally:
-                mbox.close()
+                common.close_message()
 
-            mbox = ui.MessageBox('Publishing File...', no_buttons=True)
-            mbox.open()
+            common.show_message(
+                'Publishing cache...',
+                body='Please wait while the file is being published.',
+                buttons=[],
+                no_anim=True,
+            )
             QtWidgets.QApplication.instance().processEvents()
             try:
                 published_file_entity = self._create_published_file(**kwargs)
             finally:
-                mbox.close()
+                common.close_message()
 
             info = {
                 'id': published_file_entity['id'],
@@ -463,18 +476,12 @@ class PublishWidget(base.BasePropertyEditor):
             }
 
             import pprint
-            mbox = ui.MessageBox(
+            common.show_message(
                 'Success.',
-                '{} was published successfully as:\n\n{}'.format(
-                    published_file_entity['code'],
-                    pprint.pformat(
-                        info, indent=1,
-                        depth=3,
-                        width=2
-                    )
-                )
-            ).open()
-
+                body=f'{published_file_entity["code"]} was published successfully as:'
+                     f'\n\n{pprint.pformat(info, indent=1, depth=3, width=2)}',
+                message_type='success'
+            )
             return True
 
     def get_publish_args(self):
@@ -573,11 +580,7 @@ class PublishWidget(base.BasePropertyEditor):
         if not all((entity_type, entity_id)):
 
             return
-        sg_properties = shotgun.SGProperties(
-            active=True,
-            login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password')
-        )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
 
         if not sg_properties.verify(connection=True):
@@ -596,11 +599,7 @@ class PublishWidget(base.BasePropertyEditor):
         if not all((entity_type, entity_id)):
             return
 
-        sg_properties = shotgun.SGProperties(
-            active=True,
-            login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password')
-        )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
         if not sg_properties.verify():
             return
@@ -618,11 +617,7 @@ class PublishWidget(base.BasePropertyEditor):
         if not all((entity_type, entity_id)):
             return
 
-        sg_properties = shotgun.SGProperties(
-            active=True,
-            login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password')
-        )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
         if not sg_properties.verify():
             return

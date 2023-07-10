@@ -333,11 +333,11 @@ class PreferenceEditor(base.BasePropertyEditor):
             parent=parent
         )
 
+        self.setWindowTitle('Preferences')
+
         self.settings_disable_oiio_editor.stateChanged.connect(
             actions.generate_thumbnails_changed
         )
-        self.setWindowTitle('Preferences')
-
         self.debugging_editor.stateChanged.connect(actions.toggle_debug)
 
     @common.error
@@ -387,7 +387,7 @@ class PreferenceEditor(base.BasePropertyEditor):
         """Info button click action.
 
         """
-        ui.MessageBox('Checking version...').open()
+        common.show_message('Checking version', message_type=None, no_anim=True, buttons=[])
         from ..versioncontrol import versioncontrol
         versioncontrol.check()
 

@@ -226,10 +226,11 @@ class BookmarkItemEditor(ui.ListWidget):
         for n in range(self.count()):
             item = self.item(n)
             if item.data(QtCore.Qt.DisplayRole) == name:
-                ui.MessageBox(
-                    f'"{name}" is already a bookmark.'
-                    'The selected folder is already a bookmark, skipping.'
-                ).open()
+                common.show_message(
+                    f'Cannot add "{name}" as a bookmark',
+                    body='"{name}" is already a bookmark item.',
+                    message_type='error'
+                )
                 return
 
         # Add link

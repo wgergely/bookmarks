@@ -129,15 +129,27 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
-        'cut_duration': {
-            'sql': 'INT',
-            'type': int
-        },
         'cut_in': {
             'sql': 'INT',
             'type': int,
         },
         'cut_out': {
+            'sql': 'INT',
+            'type': int
+        },
+        'cut_duration': {
+            'sql': 'INT',
+            'type': int
+        },
+        'edit_in': {
+            'sql': 'INT',
+            'type': int,
+        },
+        'edit_out': {
+            'sql': 'INT',
+            'type': int
+        },
+        'edit_duration': {
             'sql': 'INT',
             'type': int
         },

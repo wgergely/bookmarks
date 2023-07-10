@@ -305,9 +305,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
             for k, v in data[section].items():
                 _name = v['name'].title()
                 _name = f'{_name} Folder' if section == tokens.AssetFolderConfig else _name
-                row = ui.add_row(
-                    _name, padding=None, height=h, parent=_grp
-                )
+                row = ui.add_row(_name, height=h, parent=_grp)
                 row.setStatusTip(v['description'])
                 row.setWhatsThis(v['description'])
                 row.setToolTip(v['description'])
@@ -415,13 +413,12 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
     @QtCore.Slot()
     def restore_to_defaults(self):
-        mbox = ui.MessageBox(
-            'Are you sure you want to restore all templates to the default value?',
-            'Your custom settings will be permanently lost.',
-            buttons=[ui.YesButton, ui.CancelButton],
-        )
-        res = mbox.exec_()
-        if res == QtWidgets.QDialog.Rejected:
+        if common.show_message(
+                'Are you sure you want to restore all templates to the default value?',
+            body='Your custom settings will be permanently lost.',
+            buttons=[common.YesButton, common.CancelButton],
+            modal=True,
+        ) == QtWidgets.QDialog.Rejected:
             return
         self.tokens.set_data(tokens.DEFAULT_TOKEN_CONFIG.copy())
         self.window().close()

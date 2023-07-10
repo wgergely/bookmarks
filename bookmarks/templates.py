@@ -158,7 +158,7 @@ class TemplateListWidget(ui.ListWidget):
     """
 
     def __init__(self, mode=JobTemplateMode, parent=None):
-        super(TemplateListWidget, self).__init__(
+        super().__init__(
             default_message='Right-click or drag\'n\'drop to add ZIP template',
             default_icon='folder',
             parent=parent,
@@ -451,7 +451,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
     """
 
     def __init__(self, parent=None):
-        super(TemplatesPreviewWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.installEventFilter(self)
 
     @QtCore.Slot(tuple)
@@ -550,7 +550,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
     """
 
     def __init__(self, mode, parent=None):
-        super(TemplatesWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self._mode = mode
 
         self.template_list_widget = None
@@ -558,7 +558,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
 
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.Preferred,
+            QtWidgets.QSizePolicy.MinimumExpanding,
         )
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -578,6 +578,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
             common.set_stylesheet(self)
         self.template_list_widget = TemplateListWidget(self._mode, parent=self)
         self.template_contents_widget = TemplatesPreviewWidget(parent=self)
+
         self.addWidget(self.template_list_widget)
         self.addWidget(self.template_contents_widget)
         self.setSizes((1, 0))
@@ -609,11 +610,15 @@ class TemplatesWidget(QtWidgets.QSplitter):
             index.data(TemplateContentsRole)
         )
 
-    def sizeHint(self):
-        """Returns a size hint.
+    def current_template_path(self):
+        """Returns the currently selected template path.
+
+        Returns:
+            str: The currently selected template path.
+            None: If no template is selected.
 
         """
-        return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_height)
-        )
+        index = common.get_selected_index(self.template_list_widget)
+        if not index.isValid():
+            return None
+        return index.data(TemplatePathRole)

@@ -7,57 +7,56 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 
-n = (f for f in range(9999))
 
-OpenNewInstance = next(n)
+OpenNewInstance = common.idx(reset=True, start=0)
 
-RowIncrease = next(n)
-RowDecrease = next(n)
-RowReset = next(n)
+RowIncrease = common.idx()
+RowDecrease = common.idx()
+RowReset = common.idx()
 
-ToggleSortOrder = next(n)
+ToggleSortOrder = common.idx()
 
-ShowBookmarksTab = next(n)
-ShowAssetsTab = next(n)
-ShowFilesTab = next(n)
-ShowFavouritesTab = next(n)
+ShowBookmarksTab = common.idx()
+ShowAssetsTab = common.idx()
+ShowFilesTab = common.idx()
+ShowFavouritesTab = common.idx()
 
-NextTab = next(n)
-PreviousTab = next(n)
+NextTab = common.idx()
+PreviousTab = common.idx()
 
-AddItem = next(n)
-EditItem = next(n)
-RemoveItem = next(n)
+AddItem = common.idx()
+EditItem = common.idx()
+RemoveItem = common.idx()
 
-Refresh = next(n)
-AltRefresh = next(n)
+Refresh = common.idx()
+AltRefresh = common.idx()
 
-CopyItemPath = next(n)
-CopyAltItemPath = next(n)
-RevealItem = next(n)
-RevealAltItem = next(n)
+CopyItemPath = common.idx()
+CopyAltItemPath = common.idx()
+RevealItem = common.idx()
+RevealAltItem = common.idx()
 
-Quit = next(n)
-Minimize = next(n)
-Maximize = next(n)
-FullScreen = next(n)
+Quit = common.idx()
+Minimize = common.idx()
+Maximize = common.idx()
+FullScreen = common.idx()
 
-ToggleSearch = next(n)
-ToggleSequence = next(n)
-ToggleArchived = next(n)
-ToggleFavourite = next(n)
-ToggleActive = next(n)
+ToggleSearch = common.idx()
+ToggleSequence = common.idx()
+ToggleArchived = common.idx()
+ToggleFavourite = common.idx()
+ToggleActive = common.idx()
 
-HideInlineButtons = next(n)
-OpenSlack = next(n)
-OpenPreferences = next(n)
-OpenTodo = next(n)
+HideInlineButtons = common.idx()
+OpenSlack = common.idx()
+OpenPreferences = common.idx()
+OpenTodo = common.idx()
 
-ToggleItemArchived = next(n)
-ToggleItemFavourite = next(n)
+ToggleItemArchived = common.idx()
+ToggleItemFavourite = common.idx()
 
-PushToRV = next(n)
-PushToRVFullScreen = next(n)
+PushToRV = common.idx()
+PushToRVFullScreen = common.idx()
 
 BookmarkEditorShortcuts = {
     AddItem: {

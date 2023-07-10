@@ -1,10 +1,12 @@
 """The application launcher item viewer.
 
 """
+from PySide2 import QtWidgets
 
 from .. import common
 from .. import database
 from .. import ui
+from .. import actions
 
 
 def close():
@@ -62,12 +64,17 @@ class LauncherGallery(ui.GalleryWidget):
         )
 
         if not isinstance(v, dict) or not v:
-            ui.MessageBox(
-                'There are no items configured yet.',
-                'Add new application launcher items in the bookmark property editor.'
-            ).exec_()
             self.close()
-            return
+
+            if common.show_message(
+                'The application launcher has not yet been configured.',
+                body='You can add new items in the current bookmark item\'s property editor. '
+                     'Do you want to open it now?',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True,
+            ) == QtWidgets.QDialog.Rejected:
+                return
+            actions.edit_bookmark()
 
         for k in sorted(v, key=lambda _k: v[_k]['name']):
             yield v[k]['name'], v[k]['path'], v[k]['thumbnail']

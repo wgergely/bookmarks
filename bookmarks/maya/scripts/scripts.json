@@ -1,7 +1,7 @@
 {
   "0": {
     "name": "Shader Template Manager",
-    "module": "shader_templates",
-    "description": "Shader template import and export"
+    "module": "aka_odyssey_shaders",
+    "description": "Shader template import and export used on the Studio Aka Odyssey project."
   }
 }

@@ -11,6 +11,13 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import common
 
 
+OkButton = 'Ok'
+YesButton = 'Yes'
+SaveButton = 'Save'
+CancelButton = 'Cancel'
+NoButton = 'No'
+
+
 def size(v):
     """Return a size value based on the current UI scale factors.
 
@@ -106,6 +113,24 @@ def center_window(w):
         if _geo.contains(common.cursor.pos(screen)):
             w.move(_geo.center() + (r.topLeft() - r.center()))
             return
+
+
+def center_to_parent(w):
+    """Move the given widget to the available screen geometry's middle.
+
+    Args:
+        w (QWidget): The widget to center.
+        p (QWidget): The widget to center to.
+
+    """
+    if not w.parent():
+        return
+
+    w.adjustSize()
+    g = w.parent().geometry()
+    r = w.rect()
+    w.move(g.center() + (r.topLeft() - r.center()))
+    return
 
 
 def move_widget_to_available_geo(w):
@@ -209,10 +234,23 @@ def init_stylesheet():
             color_secondary_text=rgb(common.color_secondary_text),
             color_selected_text=rgb(common.color_selected_text),
             color_disabled_text=rgb(common.color_disabled_text),
-            color_green=rgb(common.color_green),
-            color_red=rgb(common.color_red),
             color_separator=rgb(common.color_separator),
+            #
+            color_red=rgb(common.color_red),
+            color_light_red=rgb(common.color_light_red),
+            color_medium_red=rgb(common.color_medium_red),
+            color_dark_red=rgb(common.color_dark_red),
+            #
             color_blue=rgb(common.color_blue),
+            color_light_blue=rgb(common.color_light_blue),
+            color_medium_blue=rgb(common.color_medium_blue),
+            color_dark_blue=rgb(common.color_dark_blue),
+            #
+            color_green=rgb(common.color_green),
+            color_light_green=rgb(common.color_light_green),
+            color_medium_green=rgb(common.color_medium_green),
+            color_dark_green=rgb(common.color_dark_green),
+            #
             color_opaque=rgb(common.color_opaque),
             branch_closed=images.rsc_pixmap(
                 'branch_closed', None, None, get_path=True
@@ -301,6 +339,68 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
 
     painter.restore()
     return width
+
+
+def close_message():
+    """Close the message box.
+
+    """
+    if common.message_widget is None:
+        return
+
+    try:
+        common.message_widget.close()
+        common.message_widget.deleteLater()
+        common.message_widget = None
+    except:
+        pass
+
+
+def show_message(title, body='', no_anim=False, icon='icon', message_type='info', buttons=None, modal=False, parent=None):
+    """Show a message box.
+
+    Args:
+        title (str): The title of the message box.
+        body (str): The body of the message box.
+        no_anim (bool): Whether to show the message box without animation.
+        icon (str): The icon to use.
+        message_type (str): The message type.
+        buttons (list): The buttons to show.
+        modal (bool): Whether the message box should be modal.
+        parent (QWidget): The parent widget.
+
+    Returns:
+        int: The result of the message box.
+
+    """
+    close_message()
+
+    app = QtWidgets.QApplication.instance()
+    if not app:
+        return
+    if QtCore.QThread.currentThread() != app.thread():
+        return
+
+    from .. import ui
+    mbox = ui.MessageBox(
+        title=title,
+        body=body,
+        no_anim=no_anim,
+        icon=icon,
+        message_type=message_type,
+        buttons=[OkButton,] if buttons is None else buttons,
+        parent=parent
+    )
+    common.message_widget = mbox
+    if modal:
+        return mbox.exec_()
+
+    if no_anim:
+        mbox.show()
+        mbox.raise_()
+        QtWidgets.QApplication.instance().processEvents()
+        return mbox
+    return mbox.open()
 
 
 def get_selected_index(widget):

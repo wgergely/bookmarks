@@ -48,34 +48,96 @@ MarkedAsDefault = 0b1000000000000
 FileItem = 1100
 SequenceItem = 1200
 
-n = (f for f in range(999, QtCore.Qt.UserRole + 4096))
 
-FlagsRole = QtCore.Qt.ItemDataRole(next(n))
-PathRole = QtCore.Qt.ItemDataRole(next(n))
-ParentPathRole = QtCore.Qt.ItemDataRole(next(n))
-DescriptionRole = QtCore.Qt.ItemDataRole(next(n))
-TodoCountRole = QtCore.Qt.ItemDataRole(next(n))
-AssetCountRole = QtCore.Qt.ItemDataRole(next(n))
-FileDetailsRole = QtCore.Qt.ItemDataRole(next(n))
-SequenceRole = QtCore.Qt.ItemDataRole(next(n))
-FramesRole = QtCore.Qt.ItemDataRole(next(n))
-FileInfoLoaded = QtCore.Qt.ItemDataRole(next(n))
-ThumbnailLoaded = QtCore.Qt.ItemDataRole(next(n))
-StartPathRole = QtCore.Qt.ItemDataRole(next(n))
-EndPathRole = QtCore.Qt.ItemDataRole(next(n))
-TypeRole = QtCore.Qt.ItemDataRole(next(n))
-EntryRole = QtCore.Qt.ItemDataRole(next(n))
-IdRole = QtCore.Qt.ItemDataRole(next(n))
-QueueRole = QtCore.Qt.ItemDataRole(next(n))
-DataTypeRole = QtCore.Qt.ItemDataRole(next(n))
-ItemTabRole = QtCore.Qt.ItemDataRole(next(n))
-SortByNameRole = QtCore.Qt.ItemDataRole(next(n))
-SortByLastModifiedRole = QtCore.Qt.ItemDataRole(next(n))
-SortBySizeRole = QtCore.Qt.ItemDataRole(next(n))
-SortByTypeRole = QtCore.Qt.ItemDataRole(next(n))
-SGLinkedRole = QtCore.Qt.ItemDataRole(next(n))
-SlackLinkedRole = QtCore.Qt.ItemDataRole(next(n))
-AssetProgressRole = QtCore.Qt.ItemDataRole(next(n))
+def idx_func():
+    """
+    Constructs and returns the index function.
+    
+    """
+    _num = -1
+    _start = -1
+
+    def _idx_func(reset=False, start=None):
+        """
+        The index function. Increments and returns a counter. Can reset the counter 
+        to the start value and set a new start value.
+
+        Args:
+            reset (bool, optional): If True, resets the counter to the start value.
+                                    Defaults to False.
+            start (int, optional): If provided, sets a new start value.
+                                       Defaults to None.
+
+        Returns:
+            int: The current counter value.
+        """
+        nonlocal _num
+        nonlocal _start
+        if start is not None:
+            _start = start - 1
+        if reset:
+            _num = _start
+        _num += 1
+        return _num
+
+    return _idx_func
+
+
+#: The index function used to generate index values across the application.
+idx = idx_func()
+
+#: List item role used to store favourite, archived, etc. flags.
+FlagsRole = QtCore.Qt.ItemDataRole(idx(reset=True, start=QtCore.Qt.UserRole + 4096))
+#: List item role used to store the item's file path.
+PathRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role used to store the item's parent path.
+ParentPathRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role used to store the item's description.
+DescriptionRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for the number of notes attached to the item.
+NoteCountRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for the number of assets attached to the item.
+AssetCountRole = QtCore.Qt.ItemDataRole(idx())
+
+#: List item role for storing file information.
+FileDetailsRole = QtCore.Qt.ItemDataRole(idx())
+
+#: List item role for getting the get_sequence() regex match results.
+SequenceRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for getting an item's number of frames.
+FramesRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role to indicate if the item has been fully loaded.
+FileInfoLoaded = QtCore.Qt.ItemDataRole(idx())
+#: List item role to indicate if the item's thumbnail has been loaded.
+ThumbnailLoaded = QtCore.Qt.ItemDataRole(idx())
+#: A file item role to indicate a sequence item's first path
+StartPathRole = QtCore.Qt.ItemDataRole(idx())
+#: A file item role to indicate a sequence item's last path
+EndPathRole = QtCore.Qt.ItemDataRole(idx())
+#: A list item role to access the DirEntry instances associated with the item
+EntryRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for getting the item's persistent id.
+IdRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for getting the item's thread queue
+QueueRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for getting the item's data type (sequence or file)
+DataTypeRole = QtCore.Qt.ItemDataRole(idx())
+#: The view tab associated with the item
+ItemTabRole = QtCore.Qt.ItemDataRole(idx())
+#: Data used to sort the items by name
+SortByNameRole = QtCore.Qt.ItemDataRole(idx())
+#: Data used to sort the items by date
+SortByLastModifiedRole = QtCore.Qt.ItemDataRole(idx())
+#: Data used to sort the items by size
+SortBySizeRole = QtCore.Qt.ItemDataRole(idx())
+#: Data used to sort the items by type
+SortByTypeRole = QtCore.Qt.ItemDataRole(idx())
+#: Item linkage status
+SGLinkedRole = QtCore.Qt.ItemDataRole(idx())
+#: Item linkage status
+SlackLinkedRole = QtCore.Qt.ItemDataRole(idx())
+#: The progress tracking data linked with the item
+AssetProgressRole = QtCore.Qt.ItemDataRole(idx())
 
 DEFAULT_SORT_VALUES = {
     SortByNameRole: 'Name',
@@ -207,8 +269,11 @@ def error(func):
             app = QtWidgets.QApplication.instance()
             if app and QtCore.QThread.currentThread() == app.thread():
                 if QtWidgets.QApplication.instance():
-                    from .. import ui
-                    ui.ErrorBox(exc_value.__str__(), limit=1).open()
+                    common.show_message(
+                        'Error',
+                        body=exc_value.__str__(),
+                        message_type='error'
+                    )
                 common.signals.showStatusTipMessage.emit(
                     f'Error: {exc_value.__str__()}'
                 )
@@ -394,7 +459,7 @@ def get_sequence_and_shot(s):
     # If we don't have a match for either, we could try to check for a numerical pattern
     if not seq and not shot:
         match = re.search(
-            r'(?<=\D)(\d{2,4})_(\d{2,5})(?=\D)',
+            r'(\d{2,})\D*(\d{3,})',
             s,
             flags=re.IGNORECASE
         )

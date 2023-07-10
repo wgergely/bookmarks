@@ -138,19 +138,18 @@ def check():
     # Convert json to dict
     try:
         data = json.loads(data)
-    except Exception as err:
-        s = 'Error occured loading the server response: {} "{}" {}'.format(
-            code, URL, responses[code]
-        )
+    except Exception:
+        s = f'Error occured loading the server response: {code} "{URL}" {responses[code]}'
         raise RuntimeError(s)
 
     tags = [(version.parse(f['tag_name']).release, f) for f in data]
     if not tags:
-        ui.MessageBox(
+        common.show_message(
             'No versions are available',
-            'Could not find any releases. Maybe no release has been published yet '
-            'for this product?'
-        ).open()
+            body='Could not find any releases. Maybe no release has been published yet '
+            'for this product?',
+            message_type='error'
+        )
         return
 
     # Getting the latest version
@@ -158,11 +157,11 @@ def check():
     current_version = version.parse(package_version)
     latest_version = version.parse(latest[1]['tag_name'])
 
-    # We're good and there's not need to update
     if current_version >= latest_version:
-        ui.OkBox(
-            f'You\'re running the latest version ({latest_version})'
-        ).open()
+        common.show_message(
+            f'You\'re running the latest version ({latest_version})',
+            message_type='success'
+        )
         return
 
     mbox = QtWidgets.QMessageBox()

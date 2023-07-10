@@ -673,10 +673,11 @@ class FileSaverWidget(base.BasePropertyEditor):
             return
 
         if source not in _dir or source == _dir:
-            ui.ErrorBox(
+            common.show_message(
                 'Invalid selection',
-                'Make sure to select a folder inside the current asset.'
-            ).open()
+                body=f'{_dir} must be inside the current asset.',
+                message_type='error'
+            )
             return
 
         relative_path = _dir.replace(source, '').strip('/')
@@ -723,26 +724,18 @@ class FileSaverWidget(base.BasePropertyEditor):
         _dir = QtCore.QDir(self.parent_folder())
 
         if not _dir.exists():
-            mbox = QtWidgets.QMessageBox(parent=self)
-            mbox.setWindowTitle('Folder does not yet exist')
-            mbox.setIcon(QtWidgets.QMessageBox.Warning)
-            mbox.setText('Destination folder does not exist.')
-            mbox.setInformativeText(
-                'The destination folder does not yet exist. Do you want to create '
-                'it now?'
-            )
-            button = mbox.addButton(
-                'Create folder', QtWidgets.QMessageBox.AcceptRole
-            )
-            mbox.setDefaultButton(button)
-            mbox.addButton('Cancel', QtWidgets.QMessageBox.RejectRole)
-
-            if mbox.exec_() == QtWidgets.QMessageBox.RejectRole:
+            if common.show_message(
+                f'Folder does not yet exist',
+                body='The destination folder does not yet exist. Do you want to create it now?',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return
             if not _dir.mkpath('.'):
-                ui.ErrorBox(
-                    'Could not create destination folder.'
-                ).open()
+                common.show_message(
+                    'Could not create destination folder',
+                    message_type='error'
+                )
                 return
 
         actions.reveal(_dir.path())

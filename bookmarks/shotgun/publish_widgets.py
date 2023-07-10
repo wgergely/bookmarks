@@ -274,9 +274,7 @@ class ProjectEntityEditor(shotgun.EntityComboBox):
     @common.error
     @common.debug
     def entity(self):
-        sg_properties = shotgun.SGProperties(
-            active=True, login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password'), )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
@@ -301,9 +299,7 @@ class AssetEntityEditor(shotgun.EntityComboBox):
     @common.error
     @common.debug
     def entity(self):
-        sg_properties = shotgun.SGProperties(
-            active=True, login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password'), )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
 
         if not sg_properties.verify(asset=True):
@@ -377,9 +373,7 @@ class TaskEditor(shotgun.EntityComboBox):
 
         # Set filtering
         self.model().set_entity_type('Task')
-        sg_properties = shotgun.SGProperties(
-            active=True, login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password'), )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
@@ -472,9 +466,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
         # Set filtering
         self.model().set_entity_type('LocalStorage')
 
-        sg_properties = shotgun.SGProperties(
-            active=True, login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password'), )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
 
         if not sg_properties.verify(connection=True):
@@ -539,9 +531,7 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
         # Set filtering
         self.model().set_entity_type('PublishedFileType')
 
-        sg_properties = shotgun.SGProperties(
-            active=True, login=common.settings.value('sg_auth/login'),
-            password=common.settings.value('sg_auth/password'), )
+        sg_properties = shotgun.SGProperties(active=True, auth_as_user=True)
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):

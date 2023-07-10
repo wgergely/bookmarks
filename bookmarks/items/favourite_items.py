@@ -24,6 +24,8 @@ class FavouriteItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.scripts_menu()
+        self.separator()
         self.control_favourites_menu()
         if self.index.isValid():
             self.remove_favourite_menu()
@@ -135,7 +137,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
-                    common.TodoCountRole: 0,
+                    common.NoteCountRole: 0,
                     common.FileDetailsRole: '',
                     common.SequenceRole: seq,
                     common.FramesRole: [],
@@ -144,8 +146,6 @@ class FavouriteItemModel(file_items.FileItemModel):
                     common.EndPathRole: None,
                     #
                     common.ThumbnailLoaded: False,
-                    #
-                    common.TypeRole: common.FileItem,
                     #
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: 0,
@@ -181,13 +181,14 @@ class FavouriteItemModel(file_items.FileItemModel):
                             QtCore.Qt.SizeHintRole: self.row_size,
                             #
                             common.QueueRole: self.queues,
+                            common.DataTypeRole: common.SequenceItem,
                             common.ItemTabRole: common.FavouriteTab,
                             #
                             common.EntryRole: [],
                             common.FlagsRole: flags,
                             common.ParentPathRole: parent_path_role,
                             common.DescriptionRole: '',
-                            common.TodoCountRole: 0,
+                            common.NoteCountRole: 0,
                             common.FileDetailsRole: '',
                             common.SequenceRole: seq,
                             common.FramesRole: [],
@@ -196,8 +197,6 @@ class FavouriteItemModel(file_items.FileItemModel):
                             common.EndPathRole: None,
                             #
                             common.ThumbnailLoaded: False,
-                            #
-                            common.TypeRole: common.SequenceItem,
                             #
                             common.SortByNameRole: sort_by_name_role,
                             common.SortByLastModifiedRole: 0,
@@ -239,7 +238,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                 v[QtCore.Qt.DisplayRole] = filename
                 v[QtCore.Qt.EditRole] = filename
                 v[common.PathRole] = filepath
-                v[common.TypeRole] = common.FileItem
+                v[common.DataTypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
                 flags = models.DEFAULT_ITEM_FLAGS
@@ -249,11 +248,10 @@ class FavouriteItemModel(file_items.FileItemModel):
                 v[common.FlagsRole] = flags
 
             elif len(v[common.FramesRole]) == 0:
-                v[common.TypeRole] = common.FileItem
+                v[common.DataTypeRole] = common.FileItem
 
             data[idx] = v
             data[idx][common.IdRole] = idx
-            data[idx][common.DataTypeRole] = common.SequenceItem
 
     def source_path(self):
         """The path of the source file.

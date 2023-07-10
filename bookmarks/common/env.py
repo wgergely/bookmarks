@@ -192,11 +192,7 @@ class EnvPathEditor(QtWidgets.QWidget):
         common.set_stylesheet(self)
 
         for name in external_binaries:
-            row = ui.add_row(
-                name,
-                padding=common.size(common.size_margin),
-                parent=self
-            )
+            row = ui.add_row(name, parent=self)
 
             editor = ui.LineEdit(parent=row)
             editor.setPlaceholderText(f'Path to {name}.exe...')

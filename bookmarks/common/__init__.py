@@ -108,9 +108,6 @@ screen_capture_widget = None
 pick_thumbnail_widget = None
 notes_widget = None
 
-sg_connecting_message = None
-sg_error_message = None
-
 # Save the initial module values for later use
 __initial_values__ = {
     k: (v.copy() if isinstance(v, dict) else v) for (k, v) in

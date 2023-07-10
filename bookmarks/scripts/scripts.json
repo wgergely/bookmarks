@@ -1,0 +1,9 @@
+{
+  "0": {
+    "name": "AKA Odyssey - Sync ShotGrid Assets (beta!)",
+    "module": "aka_odyssey_sync",
+    "description": "Syncs editorial data with ShotGrid and server assets",
+    "needs_active": "root",
+    "icon": "sg"
+  }
+}

@@ -94,6 +94,11 @@ SECTIONS = {
                     ),
                     'placeholder': None,
                     'description': 'Select a folder template to create this asset.',
+                    'help': 'Select a folder template to create this asset. Templates are simple zip files that '
+                            'contain a folder structure and a set of files. The template can contain a `.link` file '
+                            'which will be used to read nested assets inside the template. This can be useful if an'
+                            'asset is made up of multiple tasks, e.g. a shot asset may contain a `lighting` and `anim`'
+                            'tasks.',
                 },
             },
         },
@@ -169,7 +174,7 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
-                    'name': 'In Frame',
+                    'name': 'Cut In',
                     'key': 'cut_in',
                     'validator': base.int_validator,
                     'widget': ui.LineEdit,
@@ -177,7 +182,7 @@ SECTIONS = {
                     'description': 'The frame this asset starts at, e.g. \'1150\'.',
                 },
                 1: {
-                    'name': 'Out Frame',
+                    'name': 'Cut Out',
                     'key': 'cut_out',
                     'validator': base.int_validator,
                     'widget': ui.LineEdit,
@@ -191,6 +196,24 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'Duration in frames, e.g. \'425\'',
                     'description': 'The asset\'s duration in frames, e.g. \'425\'.',
+                },
+            },
+            1: {
+                0: {
+                    'name': 'Edit In',
+                    'key': 'edit_in',
+                    'validator': base.int_validator,
+                    'widget': ui.LineEdit,
+                    'placeholder': 'In frame, e.g. \'1150\'',
+                    'description': 'The frame this asset starts at, e.g. \'1150\'.',
+                },
+                1: {
+                    'name': 'Edit Out',
+                    'key': 'edit_out',
+                    'validator': base.int_validator,
+                    'widget': ui.LineEdit,
+                    'placeholder': 'Out frame, e.g. \'1575\'',
+                    'description': 'The frame this asset ends at, e.g. \'1575\'.',
                 },
             },
         },
@@ -455,7 +478,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
 
         """
         if not self.shotgun_type_editor.currentText():
-            ui.MessageBox('Select an entity type before continuing').open()
+            common.show_message('Select an entity type before continuing', message_type='error')
             return
 
         sg_actions.link_asset_entity(

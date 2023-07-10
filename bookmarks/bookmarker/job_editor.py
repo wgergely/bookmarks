@@ -175,8 +175,7 @@ class AddJobWidget(base.BasePropertyEditor):
             pass
 
         common.signals.jobAdded.emit(file_info.filePath())
-        ui.MessageBox(f'{name} was successfully created.').open()
-
+        common.show_message(f'{name} was successfully created.', message_type='success')
         return True
 
 

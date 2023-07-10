@@ -106,6 +106,8 @@ class TrayMenu(contextmenu.BaseContextMenu):
 
         """
         try:
+            self.scripts_menu()
+            self.separator()
             self.window_menu()
             self.separator()
             self.tray_menu()

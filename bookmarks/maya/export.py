@@ -318,12 +318,13 @@ class ExportWidget(base.BasePropertyEditor):
             raise OSError(f'{_dir.path()} is not readable')
 
         if file_info.exists():
-            mbox = ui.MessageBox(
+            if common.show_message(
                 f'{file_info.fileName()} already exists.',
                 'Are you sure you want to overwrite it?',
-                buttons=[ui.YesButton, ui.NoButton]
-            )
-            if mbox.exec_() == QtWidgets.QDialog.Rejected:
+                buttons=[common.YesButton, common.NoButton],
+                message_type='error',
+                modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return
             if not QtCore.QFile(file_path).remove():
                 raise RuntimeError(f'Could not remove {file_info.fileName()}.')

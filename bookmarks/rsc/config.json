@@ -99,6 +99,12 @@
     180,
     255
   ],
+  "color_medium_blue": [
+    66,
+    118,
+    160,
+    180
+  ],
   "color_dark_blue": [
     31,
     39,
@@ -111,10 +117,22 @@
     114,
     255
   ],
+  "color_light_red": [
+    240,
+    100,
+    100,
+    180
+  ],
+  "color_medium_red": [
+    210,
+    75,
+    75,
+    180
+  ],
   "color_dark_red": [
-    190,
-    50,
-    50,
+    65,
+    35,
+    35,
     180
   ],
   "color_green": [
@@ -129,10 +147,16 @@
     100,
     180
   ],
-  "color_dark_green": [
+  "color_medium_green": [
+    65,
     110,
-    190,
-    160,
+    75,
+    180
+  ],
+  "color_dark_green": [
+    35,
+    65,
+    45,
     255
   ],
   "color_yellow": [

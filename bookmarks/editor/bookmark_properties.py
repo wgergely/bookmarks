@@ -434,7 +434,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         self._create_tokens_editor(self.scroll_area.widget())
 
     def _connect_signals(self):
-        super(BookmarkPropertyEditor, self)._connect_signals()
+        super()._connect_signals()
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
 
     def db_source(self):

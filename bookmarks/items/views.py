@@ -657,6 +657,8 @@ class BaseItemView(QtWidgets.QTableView):
         self.verticalHeader().setDefaultSectionSize(int(model.row_size.height()))
         proxy.init_filter_values()
 
+        proxy.filterTextChanged.connect(self.filter_editor.editor.setText)
+
         model.modelReset.connect(model.init_sort_values)
         model.modelReset.connect(proxy.init_filter_values)
         model.modelReset.connect(model.init_row_size)
@@ -884,13 +886,13 @@ class BaseItemView(QtWidgets.QTableView):
         if flag == common.MarkedAsArchived and index.data(
                 common.FlagsRole
         ) & common.MarkedAsDefault:
-            ui.MessageBox('Default bookmark items cannot be archived.').open()
+            common.show_message('Default bookmark items cannot be archived.', message_type='error')
             return
         # Ignore active items
         if flag == common.MarkedAsArchived and index.data(
                 common.FlagsRole
         ) & common.MarkedAsActive:
-            ui.MessageBox('This item is currently active and cannot be archived.').open()
+            common.show_message('Active bookmark items cannot be archived.', message_type='error')
             return
 
         if flag == common.MarkedAsArchived:
@@ -1023,12 +1025,13 @@ class BaseItemView(QtWidgets.QTableView):
             k = data[common.PathRole]
 
             if not can_toggle_flag(k, mode, data, flag):
-                ui.MessageBox(
+                common.show_message(
                     'Looks like this item belongs to a sequence that has a flag set '
                     'already.',
-                    'To modify individual sequence items, remove the flag from the '
-                    'sequence first and try again.'
-                ).open()
+                    body='To modify individual sequence items, remove the flag from the '
+                    'sequence first and try again.',
+                    message_type=None
+                )
                 self.reset_multi_toggle()
                 return False
 

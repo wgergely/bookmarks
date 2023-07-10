@@ -7,6 +7,9 @@ and definitions.
 """
 import collections
 import functools
+import importlib
+import json
+import os
 import uuid
 
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -1645,3 +1648,40 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
         self.separator(menu=self.menu[k])
+
+    def scripts_menu(self):
+        """Custom scripts deployed with the Maya module.
+
+        """
+        k = 'Scripts'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('icon')
+
+        p = os.path.normpath(f'{__file__}/../scripts/scripts.json')
+        if not os.path.isfile(p):
+            raise RuntimeError(f'File not found: {p}')
+
+        with open(p, 'r') as f:
+            data = json.load(f)
+
+        @common.debug
+        @common.error
+        def _run(name):
+            module = importlib.import_module(f'.scripts.{name}', package=__package__)
+            module.run()
+
+        for v in data.values():
+            # Check if the script needs_active
+            if 'needs_active' in v and v['needs_active']:
+                if not common.active(v['needs_active'], args=True):
+                    continue
+            if 'icon' in v and v['icon']:
+                icon = ui.get_icon(v['icon'])
+            else:
+                icon = ui.get_icon('icon')
+
+            self.menu[k][v['name']] = {
+                'text': v['name'],
+                'action': functools.partial(_run, v['module']),
+                'icon': icon,
+            }

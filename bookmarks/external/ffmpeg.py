@@ -435,10 +435,11 @@ def convert(
                 f.write('\n\n')
                 f.write('\n'.join(lines))
 
-            ui.ErrorBox(
+            common.show_message(
                 'An error occurred converting.',
-                '\n'.join(lines[-5:])
-            ).open()
+                body='\n'.join(lines[-5:]),
+                message_type='error'
+            )
             return None
 
     return output_path

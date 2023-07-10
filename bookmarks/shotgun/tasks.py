@@ -639,7 +639,7 @@ class TaskPicker(QtWidgets.QDialog):
 
         self.sg_properties = sg_properties
 
-        with shotgun.connection(sg_properties) as sg:
+        with sg_properties.connection() as sg:
             entities = sg.find(
                 'Task', [['project', 'is', {
                     'type': 'Project',

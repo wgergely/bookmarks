@@ -126,7 +126,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
 
         active = index.data(QtCore.Qt.DisplayRole) == common.active('task')
 
-        if index.data(common.TodoCountRole):
+        if index.data(common.NoteCountRole):
             color = common.color(
                 common.color_selected_text
             ) if hover else common.color(common.color_text)
@@ -144,7 +144,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         o = common.size(common.size_margin)
         rect = QtCore.QRect(option.rect)
 
-        if index.data(common.TodoCountRole):
+        if index.data(common.NoteCountRole):
             pixmap = images.rsc_pixmap(
                 'folder', common.color(common.color_separator), o
             )
@@ -289,7 +289,7 @@ class TaskItemModel(models.ItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: source_path,
                     common.DescriptionRole: description,
-                    common.TodoCountRole: self.file_count(path),
+                    common.NoteCountRole: self.file_count(path),
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,
                     common.FramesRole: [],
@@ -298,8 +298,6 @@ class TaskItemModel(models.ItemModel):
                     #
                     common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: True,
-                    #
-                    common.TypeRole: common.FileItem,
                     #
                     common.SortByNameRole: entry.name.lower(),
                     common.SortByLastModifiedRole: 0,

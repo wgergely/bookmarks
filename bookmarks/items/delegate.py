@@ -137,7 +137,7 @@ def draw_painter_path(painter, x, y, font, text):
         text (str): The text to render.
 
     """
-    k = f'[{font.family(), font.pixelSize()}]{text}'
+    k = f'[{font.family(), font.pixelSize(), font.underline()}]{text}'
 
     if k not in common.delegate_paths:
         path = QtGui.QPainterPath()
@@ -194,22 +194,12 @@ def add_clickable_rectangle(index, option, rect, text):
         text (str): The text of the rectangle.
 
     """
-    if text and '|' in text:
+    if not text or not rect or not index.isValid() or any(c in text for c in '|/\\•'):
         return
-    if text and '•' in text:
-        return
-    if not rect:
-        return
-    if not text:
-        return
-    if not index.isValid():
-        return
+
     k = get_clickable_cache_key(index, option.rect)
     v = (rect, text)
-    if k not in common.delegate_clickable_rectangles:
-        common.delegate_clickable_rectangles[k] = ()
-    if v not in common.delegate_clickable_rectangles[k]:
-        common.delegate_clickable_rectangles[k] += (v,)
+    common.delegate_clickable_rectangles.setdefault(k, []).append(v)
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -264,9 +254,6 @@ def get_bookmark_text_segments(text, label):
         _v = s.split('/')
         for _i, _s in enumerate(_v):
             _s = _s.strip()
-            # In the AKA ecosystem folder names are prefixed with numbers, but we
-            # don't want to show these
-            _s = re.sub(r'^[0-9]+_', '', _s)
 
             d[len(d)] = (_s, c)
             if _i < (len(_v) - 1):
@@ -282,7 +269,7 @@ def get_bookmark_text_segments(text, label):
 
             d[len(d)] = (s, s_color)
             if __i != len(v) - 1:
-                d[len(d)] = (', ', s_color)
+                d[len(d)] = ('  ‖  ', s_color)
 
     common.delegate_text_segments[k] = d
     return common.delegate_text_segments[k]
@@ -322,18 +309,6 @@ def get_asset_text_segments(text, label):
 
     for i, s in enumerate(v):
         c = common.color(common.color_text)
-
-        # Check if subdir contains sequence and shot markers
-        sequence, shot = common.get_sequence_and_shot(s)
-        for ss in [f for f in common.get_sequence_and_shot(s) if f]:
-            d[len(d)] = (ss, common.color(common.color_text))
-
-            s = s.replace(ss, '').strip('_').strip('-').strip()
-            if s:
-                d[len(d)] = ('  •  ', common.color(common.color_dark_background))
-
-        # For ecosystems where folder names are prefixed with numbers
-        s = re.sub(r'^[0-9]+_', '', s)
         s = s.strip().strip('_').strip('.')
 
         d[len(d)] = (s, c)
@@ -1473,9 +1448,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         painter.setBrush(common.color(common.color_separator))
         painter.drawRect(rectangles[ThumbnailRect])
 
-        if self.parent().verticalScrollBar().isSliderDown():
-            return
-
         if not index.data(common.ParentPathRole):
             return
 
@@ -1486,27 +1458,36 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if not source or not size_role:
             return
 
-        pixmap, color = images.get_thumbnail(
-            server,
-            job,
-            root,
-            source,
-            size_role.height(),
-            fallback_thumb=self.fallback_thumb
-        )
 
-        o = 1.0 if selected or active or hover else 0.9
+        if self.parent().verticalScrollBar().isSliderDown():
+            pixmap = images.rsc_pixmap(
+                self.fallback_thumb,
+                color=None,
+                size=size_role.height(),
+            )
+            color = common.color(common.color_transparent)
+        else:
+            pixmap, color = images.get_thumbnail(
+                server,
+                job,
+                root,
+                source,
+                size_role.height(),
+                fallback_thumb=self.fallback_thumb
+            )
 
         # Background
-        painter.setOpacity(o)
         if not common.settings.value('settings/paint_thumbnail_bg'):
             if color:
-                painter.setOpacity(1.0)
+                painter.setOpacity(0.5)
             color = color if color else QtGui.QColor(0, 0, 0, 50)
             painter.setBrush(color)
             if archived:
                 painter.setOpacity(0.1)
             painter.drawRect(rectangles[ThumbnailRect])
+
+        o = 0.8 if selected or active or hover else 0.65
+        painter.setOpacity(o)
 
         if not pixmap:
             return
@@ -1941,7 +1922,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         )
         painter.drawPixmap(rect, pixmap)
 
-        count = index.data(common.TodoCountRole)
+        count = index.data(common.NoteCountRole)
         self.paint_inline_count(painter, rect, cursor_position, count, 'add')
 
     @save_painter
@@ -2574,9 +2555,9 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         r.moveLeft(r.left() + offset)
         rect.moveLeft(rect.left() + offset)
 
-        color = common.color(common.color_dark_green)
+        color = common.color(common.color_green)
         color = color if active else common.color(common.color_blue)
-        color = common.color(common.color_green).darker(150) if r.contains(
+        color = common.color(common.color_light_green) if r.contains(
             cursor_position
         ) else color
         color = common.color(common.color_separator) if archived else color
@@ -2631,10 +2612,14 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 )
 
             if _text.lower() in filter_text.lower():
+                font.setUnderline(True)
                 if hover or active or selected:
-                    _color = common.color(common.color_green).lighter(150)
+                    _color = common.color(common.color_selected_text)
                 else:
-                    _color = common.color(common.color_green)
+                    _color = common.color(common.color_green).lighter(150)
+            else:
+                font.setUnderline(False)
+
             _color = common.color(common.color_disabled_text) if archived else _color
 
             # Skip painting separator characters but mark the center of the rectangle

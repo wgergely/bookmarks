@@ -482,13 +482,14 @@ class PublishWidget(base.BasePropertyEditor):
                 s = _strip(s)
 
         if s and len(s) >= 3 and 'main' not in s and '_' not in s:
-            mbox = ui.MessageBox(
-                f'Found a possible element name. Is it correct?',
-                f'"{s}"',
-                buttons=(ui.YesButton, ui.NoButton)
-            )
-            if mbox.exec_() == QtWidgets.QDialog.Accepted:
-                self.element_editor.setText(s)
+            if common.show_message(
+                'Publish',
+                body=f'Found a possible element name. Is it correct?\n\n{s}',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True,
+            ) == QtWidgets.QDialog.Rejected:
+                return
+            self.element_editor.setText(s)
 
     def init_thumbnail(self):
         """Load the item's current thumbnail.
@@ -570,7 +571,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         # Item info
         kwargs['source'] = self._index.data(common.PathRole)
-        kwargs['type'] = self._index.data(common.TypeRole)
+        kwargs['type'] = self._index.data(common.DataTypeRole)
         kwargs['entries'] = self._index.data(common.EntryRole)
         kwargs['is_collapsed'] = common.is_collapsed(kwargs['source'])
         kwargs['ext'] = QtCore.QFileInfo(kwargs['source']).suffix()
@@ -901,9 +902,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         """
         log.success('Publish done.')
-
-        mbox = ui.OkBox('Publish finished.')
-        mbox.open()
+        common.show_message('Publish finished.', message_type='success')
 
         if kwargs['publish_reveal']:
             actions.reveal(QtCore.QFileInfo(destination).dir().path())

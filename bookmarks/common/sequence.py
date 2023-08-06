@@ -47,19 +47,19 @@ IsSequenceRegex = re.compile(
 
 #: Regular expression used to get the first frame of a collapsed sequence
 SequenceStartRegex = re.compile(
-    rf'^(.*){SEQSTART}([0-9]+).*{SEQEND}(.*)$',
+    rf'^(.*){SEQSTART}(\d+).*{SEQEND}(.*)$',
     flags=re.IGNORECASE
 )
 
 #: Regular expression used to get the last frame of a collapsed sequence
 SequenceEndRegex = re.compile(
-    rf'^(.*){SEQSTART}.*?([0-9]+){SEQEND}(.*)$',
+    rf'^(.*){SEQSTART}.*?(\d+){SEQEND}(.*)$',
     flags=re.IGNORECASE
 )
 
 #: Regular expression used to get the path components of a collapsed sequence
 GetSequenceRegex = re.compile(
-    r'^(.*?)([0-9]+)([0-9\\/]*|[^0-9\\/]*(?=.+?))\.([^\.]+)$',
+    r'^(.*?)(\d+)([\d\\/]*|[^\d\\/]*(?=.+?))\.([^\.]+)$',
     flags=re.IGNORECASE
 )
 

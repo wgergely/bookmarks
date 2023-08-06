@@ -37,8 +37,8 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from .. import common
 from .. import database
 from .. import images
-from ..threads import threads
 from .. import log
+from ..threads import threads
 
 EntityRole = QtCore.Qt.UserRole + 1000
 IdRole = QtCore.Qt.UserRole + 1001
@@ -92,6 +92,7 @@ def sanitize_path(path, separator):
 
     path = path.strip()
     return path.replace('/', separator).replace('\\', separator)
+
 
 def get_sg(domain, script, key, auth_as_user=False):
     """Method for retrieving a thread specific `ScriptConnection` instance,
@@ -181,7 +182,8 @@ class SG(shotgun_api3.Shotgun):
             missing_fields = list(set(fields) - set(entity.keys()))
             if missing_fields:
                 _f = '", "'.join(missing_fields)
-                log.error(f'Missing fields: "{_f}" in return data. Check if you have permission to access these fields.')
+                log.error(f'Missing fields: "{_f}" in return data. Check if you have permission to access these '
+                          f'fields.')
         return entities
 
     def find_one(self, entity_type, filters, fields=None, **kwargs):

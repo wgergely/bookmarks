@@ -26,7 +26,7 @@ class MessageBox(QtWidgets.QDialog):
     """
     buttonClicked = QtCore.Signal(str)
 
-    def __init__(self, title=None, body='', buttons=None, icon='icon', no_anim=False, message_type=None, parent=None):
+    def __init__(self, title=None, body='', buttons=None, icon='icon', disable_animation=False, message_type=None, parent=None):
         super().__init__(parent=parent if parent else QtWidgets.QApplication.activeWindow())
 
         common.set_stylesheet(self)
@@ -38,7 +38,7 @@ class MessageBox(QtWidgets.QDialog):
             self.setObjectName(f'{message_type}Box')
 
         self.icon = icon
-        self.no_anim = no_anim
+        self.disable_animation = disable_animation
         self.message_type = message_type
         self.buttons = buttons if buttons else []
 
@@ -214,12 +214,13 @@ class MessageBox(QtWidgets.QDialog):
         common.center_to_parent(self)
         common.move_widget_to_available_geo(self)
 
-        if self.no_anim:
+        if self.disable_animation:
             return
 
         self.animation.setStartValue(0.0)
         self.animation.setEndValue(1.0)
         self.animation.start()
+
 
 class Label(QtWidgets.QLabel):
     def __init__(
@@ -367,7 +368,7 @@ class PaintedLabel(QtWidgets.QLabel):
             size=common.size(common.size_font_medium),
             parent=None
     ):
-        super(PaintedLabel, self).__init__(text, parent=parent)
+        super().__init__(text, parent=parent)
         self._size = size
         self._color = color
         self._text = text
@@ -1107,45 +1108,6 @@ def get_group(parent=None, vertical=True, margin=common.size(common.size_margin)
     parent.layout().addWidget(grp, 1)
 
     return grp
-
-
-def get_progress_bar(title, label, start, end, parent=None):
-    """A progress bar used during the conversion process.
-
-    Args:
-        title (str): The title of the progress bar window.
-        label (str): The current progress description.
-        start (int): The range start.
-        end (int): The range end.
-        parent (QObject, optional): A QWidget instance
-
-    Returns:
-        QProgressBar: A widget instance.
-
-    """
-    start = int(start)
-    end = int(end)
-
-    v = QtWidgets.QProgressDialog(parent=parent)
-    common.set_stylesheet(v)
-    v.setFixedWidth(common.size(common.size_width))
-    v.setLabelText(label)
-    v.setMinimum(start)
-    v.setMaximum(end)
-    v.setRange(start, end)
-    v.setWindowTitle(title)
-
-    if parent:
-        v.setWindowFlags(
-            QtCore.Qt.Dialog |
-            QtCore.Qt.FramelessWindowHint
-        )
-        v.setFixedWidth(parent.width())
-        v.setFixedHeight(parent.height())
-        v.setGeometry(parent.geometry())
-        v.move(parent.geometry().topLeft())
-        v.raise_()
-    return v
 
 
 def add_row(

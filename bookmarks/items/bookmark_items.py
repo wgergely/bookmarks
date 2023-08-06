@@ -54,7 +54,6 @@ Model items store their path segments using the
 
 
 """
-import os
 
 from PySide2 import QtCore, QtWidgets
 
@@ -239,7 +238,6 @@ class BookmarkItemModel(models.ItemModel):
                     common.IdRole: idx,
                     #
                     common.SGLinkedRole: False,
-                    common.SlackLinkedRole: False
                 }
             )
 

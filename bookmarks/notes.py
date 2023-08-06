@@ -137,7 +137,8 @@ class SyntaxHighlighter(QtGui.QSyntaxHighlighter):
         },
         'filepath': {
             'regex': re.compile(
-                r'^(?:\s|^)((?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*[\/\\][^\/\\:*?"<>|\r\n]+|(?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*(?:[^\/\\:*?"<>|\r\n]+\.?)+)(?=\s|$)$',
+                r'^(?:\s|^)((?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*[\/\\][^\/\\:*?"<>|\r\n]+|(?:['
+                r'A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*(?:[^\/\\:*?"<>|\r\n]+\.?)+)(?=\s|$)$',
                 re.IGNORECASE | re.MULTILINE
             ),
             'flag': 0b000000,
@@ -360,11 +361,11 @@ class RemoveNoteButton(ui.ClickableIconButton):
 
         """
         if common.show_message(
-            'Delete note',
-            body='Are you sure you want to remove this note? This action cannot be undone.',
-            buttons=[common.YesButton, common.NoButton],
-            message_type='error',
-            modal=True,
+                'Delete note',
+                body='Are you sure you want to remove this note? This action cannot be undone.',
+                buttons=[common.YesButton, common.NoButton],
+                message_type='error',
+                modal=True,
         ) == QtWidgets.QDialog.Rejected:
             return
 

@@ -30,7 +30,6 @@ from . import version
 from .. import __version__ as package_version
 from .. import actions
 from .. import common
-from .. import ui
 
 URL = 'https://api.github.com/repos/wgergely/bookmarks/releases'
 socket.setdefaulttimeout(5)
@@ -147,7 +146,7 @@ def check():
         common.show_message(
             'No versions are available',
             body='Could not find any releases. Maybe no release has been published yet '
-            'for this product?',
+                 'for this product?',
             message_type='error'
         )
         return

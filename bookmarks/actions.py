@@ -153,11 +153,7 @@ def remove_bookmark(server, job, root):
 
     # If the active bookmark is removed, make sure we're clearing the active
     # bookmark. This will cause all models to reset so show the bookmark tab.
-    if (
-            common.active('server') == server and
-            common.active('job') == job and
-            common.active('root') == root
-    ):
+    if (common.active('server') == server and common.active('job') == job and common.active('root') == root):
         set_active('server', None)
         change_tab(common.BookmarkTab)
 
@@ -214,9 +210,7 @@ def remove_favourite(source_paths, source):
     common.signals.favouriteRemoved.emit(source_paths, source)
 
 
-@QtCore.Slot(tuple)
-@QtCore.Slot(str)
-@QtCore.Slot(bool)
+@QtCore.Slot()
 def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
     """Slot used to keep item filter flag values updated across all datasets.
 
@@ -232,18 +226,11 @@ def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
 
     """
     if len(parent_paths) == 3:
-        models = (
-            common.source_model(idx=common.BookmarkTab),
-        )
+        models = (common.source_model(idx=common.BookmarkTab),)
     elif len(parent_paths) == 4:
-        models = (
-            common.source_model(idx=common.AssetTab),
-        )
+        models = (common.source_model(idx=common.AssetTab),)
     elif len(parent_paths) > 4:
-        models = (
-            common.source_model(idx=common.FileTab),
-            common.source_model(idx=common.FavouriteTab),
-        )
+        models = (common.source_model(idx=common.FileTab), common.source_model(idx=common.FavouriteTab),)
     else:
         return
 
@@ -278,10 +265,8 @@ def clear_favourites(prompt=True):
     """
     if prompt:
         if common.show_message(
-            'Are you sure you want to clear your saved items?',
-            body='This action not undoable.',
-            buttons=[common.YesButton, common.NoButton],
-            modal=True
+                'Are you sure you want to clear your saved items?', body='This action not undoable.',
+                buttons=[common.YesButton, common.NoButton], modal=True
         ) == QtWidgets.QDialog.Rejected:
             return
 
@@ -303,12 +288,10 @@ def export_favourites(*args, destination=None):
 
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
-            caption='Save Favourites',
-            filter=f'*.{common.favorite_file_ext}',
+            caption='Save Favourites', filter=f'*.{common.favorite_file_ext}',
             dir=QtCore.QStandardPaths.writableLocation(
                 QtCore.QStandardPaths.HomeLocation
-            ),
-        )
+            ), )
         if not destination:
             return
 
@@ -322,10 +305,7 @@ def export_favourites(*args, destination=None):
             server, job, root = source_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
-                server,
-                job,
-                root,
-                source
+                server, job, root, source
             )
 
             file_info = QtCore.QFileInfo(thumbnail_path)
@@ -343,16 +323,12 @@ def export_favourites(*args, destination=None):
             v = db.value(source, k, table)
             if v:
                 _zip.writestr(
-                    file_info.baseName() + k,
-                    database.b64encode(v)
+                    file_info.baseName() + k, database.b64encode(v)
                 )
 
         # Let's Save the current list favourites to the zip
         v = json.dumps(
-            data,
-            ensure_ascii=True,
-            sort_keys=False,
-            indent=4
+            data, ensure_ascii=True, sort_keys=False, indent=4
         )
         _zip.writestr('data.json', v)
 
@@ -371,8 +347,7 @@ def import_favourites(*args, source=None):
     common.check_type(source, (None, str))
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
-            caption='Import Favourites',
-            filter=f'*.{common.favorite_file_ext}'
+            caption='Import Favourites', filter=f'*.{common.favorite_file_ext}'
         )
         if not source:
             return
@@ -391,21 +366,14 @@ def import_favourites(*args, source=None):
             v = _f.read()
 
         data = json.loads(
-            v,
-            parse_int=int,
-            parse_float=float,
-            object_hook=common.int_key
+            v, parse_int=int, parse_float=float, object_hook=common.int_key
         )
 
         for _source, source_paths in data.items():
             server, job, root = source_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
-                server,
-                job,
-                root,
-                _source,
-            )
+                server, job, root, _source, )
 
             # There's a thumbnail already, we'll skip
             file_info = QtCore.QFileInfo(thumbnail_path)
@@ -413,12 +381,10 @@ def import_favourites(*args, source=None):
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
                     root = '/'.join(
-                        (server, job, root,
-                         common.bookmark_cache_dir)
+                        (server, job, root, common.bookmark_cache_dir)
                     )
                     _zip.extract(
-                        file_info.fileName(),
-                        root
+                        file_info.fileName(), root
                     )
                     images.ImageCache.flush(thumbnail_path)
 
@@ -455,9 +421,7 @@ def prune_bookmarks():
         if not QtCore.QFileInfo(k).exists():
             n += 1
             remove_bookmark(
-                common.bookmarks[k]['server'],
-                common.bookmarks[k]['job'],
-                common.bookmarks[k]['root']
+                common.bookmarks[k]['server'], common.bookmarks[k]['job'], common.bookmarks[k]['root']
             )
 
     common.show_message(f'{n} items pruned.')
@@ -791,10 +755,7 @@ def show_add_file(extension=None, file=None, create_file=True, increment=False):
     """
     from .file_saver import main as editor
     widget = editor.show(
-        file=file,
-        create_file=create_file,
-        increment=increment,
-        extension=extension
+        file=file, create_file=create_file, increment=increment, extension=extension
     )
     widget.itemCreated.connect(common.signals.fileAdded)
     return widget
@@ -858,8 +819,7 @@ def edit_file(f):
     """
     from .file_saver import main as editor
     widget = editor.show(
-        extension=QtCore.QFileInfo(f).suffix(),
-        file=f
+        extension=QtCore.QFileInfo(f).suffix(), file=f
     )
     return widget
 
@@ -872,34 +832,6 @@ def show_preferences():
     """
     from .editor import preferences as editor
     widget = editor.show()
-    return widget
-
-
-@common.error
-@common.debug
-def show_slack():
-    """Opens the Slack widget used to send messages using SlackAPI.
-
-    """
-    server = common.active('server')
-    job = common.active('job')
-    root = common.active('root')
-
-    args = (server, job, root)
-    if not all(args):
-        return
-
-    db = database.get(*args)
-    token = db.value(
-        db.source(),
-        'slacktoken',
-        database.BookmarkTable
-    )
-    if token is None:
-        raise RuntimeError('Slack is not yet configured.')
-
-    from .slack import slack
-    widget = slack.show(token)
     return widget
 
 
@@ -931,10 +863,7 @@ def edit_item(index):
     if len(pp) == 3:
         server, job, root = index.data(common.ParentPathRole)[0:3]
         edit_bookmark(
-            server=server,
-            job=job,
-            root=root,
-        )
+            server=server, job=job, root=root, )
     elif len(pp) == 4:
         v = index.data(common.ParentPathRole)[-1]
         edit_asset(asset=v)
@@ -1040,8 +969,7 @@ def exec_instance():
             s += f'"{common.env_key}" environment variable is not set.'
             raise RuntimeError(s)
 
-        p = os.environ[common.env_key] + \
-            os.path.sep + 'bookmarks.exe'
+        p = os.environ[common.env_key] + os.path.sep + 'bookmarks.exe'
         subprocess.Popen(p)
     elif common.get_platform() == common.PlatformMacOS:
         raise NotImplementedError('Not implemented.')
@@ -1131,9 +1059,7 @@ def copy_selected_path(index):
     else:
         mode = common.UnixPath
     copy_path(
-        index.data(common.PathRole),
-        mode=mode,
-        first=False
+        index.data(common.PathRole), mode=mode, first=False
     )
 
 
@@ -1150,9 +1076,7 @@ def copy_selected_alt_path(index):
     if not index.data(common.FileInfoLoaded):
         return
     copy_path(
-        index.data(common.PathRole),
-        mode=common.UnixPath,
-        first=True
+        index.data(common.PathRole), mode=common.UnixPath, first=True
     )
 
 
@@ -1193,12 +1117,7 @@ def preview_thumbnail(index):
 
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = images.get_thumbnail(
-        server,
-        job,
-        root,
-        source,
-        get_path=True,
-        fallback_thumb=common.widget().itemDelegate().fallback_thumb
+        server, job, root, source, get_path=True, fallback_thumb=common.widget().itemDelegate().fallback_thumb
     )
     if not source:
         return
@@ -1323,7 +1242,7 @@ def toggle_archived(index):
 
     """
     if index.data(common.FlagsRole) & common.MarkedAsDefault:
-        common.show_message('Default bookmark items cannot be archived.',  message_type='error')
+        common.show_message('Default bookmark items cannot be archived.', message_type='error')
         return
 
     common.widget().save_selection()
@@ -1367,8 +1286,7 @@ def reveal(item):
 
     """
     if isinstance(
-            item,
-            (QtCore.QModelIndex, QtCore.QPersistentModelIndex, QtWidgets.QListWidgetItem)
+            item, (QtCore.QModelIndex, QtCore.QPersistentModelIndex, QtWidgets.QListWidgetItem)
     ):
         path = item.data(common.PathRole)
     elif isinstance(item, str):
@@ -1388,16 +1306,8 @@ def reveal(item):
         QtCore.QProcess.startDetached('explorer', args)
         return
     elif common.get_platform() == common.PlatformMacOS:
-        args = [
-            '-e',
-            'tell application "Finder"',
-            '-e',
-            'activate',
-            '-e',
-            f'select POSIX file "{QtCore.QDir.toNativeSeparators(path)}"',
-            '-e',
-            'end tell'
-        ]
+        args = ['-e', 'tell application "Finder"', '-e', 'activate', '-e',
+                f'select POSIX file "{QtCore.QDir.toNativeSeparators(path)}"', '-e', 'end tell']
         QtCore.QProcess.startDetached('osascript', args)
         return
     elif common.get_platform() == common.PlatformUnsupported:
@@ -1417,7 +1327,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
     Args:
         path (str): A file path.
         mode (int):
-            Any of ``WindowsPath``, ``UnixPath``, ``SlackPath`` or ``MacOSPath``.
+            Any of ``WindowsPath``, ``UnixPath`` or ``MacOSPath``.
             Defaults to ``WindowsPath``.
         first (bool): When `True`, copies the first item of a sequence.
         copy (bool):
@@ -1441,18 +1351,13 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
 
     # Normalise path
     path = re.sub(
-        r'[\/\\]',
-        r'/',
-        path,
-        flags=re.IGNORECASE
+        r'[\/\\]', r'/', path, flags=re.IGNORECASE
     ).strip('/')
 
     if mode == common.WindowsPath:
         prefix = '//' if ':' not in path else ''
     elif mode == common.UnixPath:
         prefix = '//' if ':' not in path else ''
-    elif mode == common.SlackPath:
-        prefix = 'file://'
     elif mode == common.MacOSPath:
         prefix = 'smb://'
         path = path.replace(':', '')
@@ -1462,10 +1367,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
     path = prefix + path
     if mode == common.WindowsPath:
         path = re.sub(
-            r'[\/\\]',
-            r'\\',
-            path,
-            flags=re.IGNORECASE
+            r'[\/\\]', r'\\', path, flags=re.IGNORECASE
         )
 
     if copy:
@@ -1505,20 +1407,6 @@ def execute(index, first=False):
 
 @common.debug
 @common.error
-def test_slack_token(token):
-    """Tests the given slack api token.
-
-    Args:
-        token (str): The slack api token.
-
-    """
-    from .slack import slack
-    client = slack.SlackClient(token)
-    client.verify_token()
-
-
-@common.debug
-@common.error
 def suggest_prefix(job):
     """Suggests a prefix for the given job.
 
@@ -1553,11 +1441,7 @@ def capture_thumbnail(index):
 
     from .items.widgets import thumb_capture as editor
     widget = editor.show(
-        server=server,
-        job=job,
-        root=root,
-        source=source,
-        proxy=False
+        server=server, job=job, root=root, source=source, proxy=False
     )
 
     if common.init_mode == common.StandaloneMode:
@@ -1586,10 +1470,7 @@ def pick_thumbnail_from_file(index):
 
     from .items.widgets import thumb_picker as editor
     widget = editor.show(
-        server=server,
-        job=job,
-        root=root,
-        source=source
+        server=server, job=job, root=root, source=source
     )
 
     widget.fileSelected.connect(widget.save_image)
@@ -1691,11 +1572,7 @@ def copy_asset_properties(index):
     """
     server, job, root, asset = index.data(common.ParentPathRole)[0:4]
     database.copy_properties(
-        server,
-        job,
-        root,
-        asset,
-        table=database.AssetTable
+        server, job, root, asset, table=database.AssetTable
     )
 
 
@@ -1711,11 +1588,7 @@ def paste_asset_properties(index):
     """
     server, job, root, asset = index.data(common.ParentPathRole)[0:4]
     database.paste_properties(
-        server,
-        job,
-        root,
-        asset,
-        table=database.AssetTable
+        server, job, root, asset, table=database.AssetTable
     )
 
 
@@ -1822,12 +1695,9 @@ def add_zip_template(source, mode, prompt=False):
 
     if file_info.exists():
         if common.show_message(
-            'Overwrite existing file?',
-            body='A template file with the same name exists already.',
-            buttons=[common.YesButton, common.CancelButton],
-            message_type=None,
-            modal=True,
-        ) == QtWidgets.QDialog.Rejected:
+                'Overwrite existing file?', body='A template file with the same name exists already.',
+                buttons=[common.YesButton, common.CancelButton], message_type=None,
+                modal=True, ) == QtWidgets.QDialog.Rejected:
             return None
         QtCore.QFile.remove(file_info.filePath())
 
@@ -1893,9 +1763,7 @@ def extract_zip_template(source, destination, name):
             raise RuntimeError(f'The zip archive seems corrupt: {corrupt}')
 
         f.extractall(
-            dest_file_info.absoluteFilePath(),
-            members=None,
-            pwd=None
+            dest_file_info.absoluteFilePath(), members=None, pwd=None
         )
 
     common.signals.templateExpanded.emit(dest_file_info.filePath())
@@ -1919,12 +1787,10 @@ def remove_zip_template(source, prompt=True):
 
     if prompt:
         if common.show_message(
-            'Delete template?',
-            body=f'Are you sure you want to delete {file_info.fileName()}? This action cannot be undone.',
-            buttons=[common.YesButton, common.CancelButton],
-            message_type='error',
-            modal=True,
-        ) == QtWidgets.QDialog.Rejected:
+                'Delete template?',
+                body=f'Are you sure you want to delete {file_info.fileName()}? This action cannot be undone.',
+                buttons=[common.YesButton, common.CancelButton], message_type='error',
+                modal=True, ) == QtWidgets.QDialog.Rejected:
             return
 
     if not QtCore.QFile.remove(source):
@@ -1955,8 +1821,7 @@ def pick_template(mode):
     dialog.setNameFilters(['*.zip', ])
     dialog.setFilter(QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot)
     dialog.setLabelText(
-        QtWidgets.QFileDialog.Accept,
-        'Select a {} template'.format(mode.title())
+        QtWidgets.QFileDialog.Accept, 'Select a {} template'.format(mode.title())
     )
     dialog.setWindowTitle(
         'Select *.zip archive to use as a {} template'.format(mode.lower())
@@ -1979,12 +1844,9 @@ def delete_selected_files(index):
     """
     from . import log
     if common.show_message(
-        'Delete file?',
-        body='Are you sure you want to delete the selected file(s)? They will be permanently lost.',
-        buttons=[common.YesButton, common.CancelButton],
-        message_type='error',
-        modal=True,
-    ) == QtWidgets.QDialog.Rejected:
+            'Delete file?', body='Are you sure you want to delete the selected file(s)? They will be permanently lost.',
+            buttons=[common.YesButton, common.CancelButton], message_type='error',
+            modal=True, ) == QtWidgets.QDialog.Rejected:
         return
 
     model = index.model().sourceModel()

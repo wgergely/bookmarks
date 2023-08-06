@@ -3,7 +3,7 @@
 """
 import os
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore
 
 from . import shotgun
 from .. import common
@@ -46,9 +46,9 @@ def link_assets():
 
 @common.debug
 @common.error
-def publish():
-    from . import publish as editor
-    widget = editor.show()
+def publish(formats=('mp4', 'mov')):
+    from . import sg_publish_clip as editor
+    widget = editor.show(formats=formats)
     return widget
 
 
@@ -118,7 +118,7 @@ def test_shotgun_connection(sg_properties):
 def create_entity(
         entity_type, entity_name, request_data=None, create_data=None,
         verify_bookmark=True, verify_all=False
-        ):
+):
     """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
@@ -198,7 +198,7 @@ def create_project(server, job, root, entity_name):
                 ['is_template_project', 'is', False],
                 ['archived', 'is', False],
             ], fields=shotgun.entity_fields['Project']
-            )
+        )
 
         for entity in entities:
             def has(k):

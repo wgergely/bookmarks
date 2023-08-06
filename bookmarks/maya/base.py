@@ -354,7 +354,7 @@ def set_framerate(fps):
                 k: True,
                 'query': True
             }
-            )
+        )
 
     # Set the frame range
     for k, v in MAYA_FPS.items():
@@ -368,7 +368,7 @@ def set_framerate(fps):
             **{
                 k: v
             }
-            )
+        )
 
 
 def get_framerate():

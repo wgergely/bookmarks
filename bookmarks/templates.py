@@ -243,7 +243,7 @@ class TemplateListWidget(ui.ListWidget):
                     TemplateContentsRole, [f.strip(
                         '/'
                     ) for f in sorted(zip.namelist())]
-                    )
+                )
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
 
             self.addItem(item)
@@ -495,7 +495,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
                 QtCore.Qt.FontRole, common.font_db.medium_font(
                     common.size(common.size_font_small)
                 )[0]
-                )
+            )
             item.setData(QtCore.Qt.DisplayRole, f)
             item.setData(QtCore.Qt.SizeHintRole, size)
             item.setData(QtCore.Qt.DecorationRole, icon)

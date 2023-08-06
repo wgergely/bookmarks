@@ -96,7 +96,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
     """Base class for constructing a property editor widget.
 
     Args:
-        sections (dict): The data needed to construct the ui layout.
         server (str or None): `server` path segment.
         job (str or None): `job` path segment.
         root (str or None): `root` path segment.
@@ -115,9 +114,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
     #: Signal emitted when the item's thumbnail was updated
     thumbnailUpdated = QtCore.Signal(str)
 
+    sections = {}
+
     def __init__(
             self,
-            sections,
             server,
             job,
             root,
@@ -130,8 +130,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
             parent=None,
             section_buttons=True
     ):
-        common.check_type(sections, dict)
-
         super().__init__(
             parent=parent,
             f=(
@@ -145,7 +143,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self._fallback_thumb = fallback_thumb
         self._alignment = alignment
-        self._sections = sections
         self._section_widgets = []
         self._buttons = buttons
         self._db_table = db_table
@@ -272,7 +269,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         """
         parent = self.scroll_area.widget()
-        for section in self._sections.values():
+        for section in self.sections.values():
             grp = add_section(
                 section['icon'],
                 section['name'],
@@ -448,7 +445,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
         )
 
         row = ui.add_row(
-            None, height=h * 2, parent=self.right_row)
+            None, height=h * 2, parent=self.right_row
+        )
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
         row.layout().addSpacing(common.size(common.size_margin))
         row.layout().addWidget(self.save_button, 1)
@@ -628,7 +626,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
                 # Make sure the type loaded from the database matches the required
                 # type
-                for section in self._sections.values():
+                for section in self.sections.values():
                     for group in section['groups'].values():
                         for item in group.values():
                             if item['key'] != k:
@@ -791,10 +789,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
         if result == QtWidgets.QDialog.Rejected:
             if self.changed_data:
                 if common.show_message(
-                    'Are you sure you want to close the editor?',
-                    body='Your changes will be lost.',
-                    buttons=[common.YesButton, common.NoButton],
-                    modal=True,
+                        'Are you sure you want to close the editor?',
+                        body='Your changes will be lost.',
+                        buttons=[common.YesButton, common.NoButton],
+                        modal=True,
                 ) == QtWidgets.QDialog.Rejected:
                     return
             return super().done(result)
@@ -830,8 +828,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """Show event handler.
 
         """
-        QtCore.QTimer.singleShot(100, self.init_data)
         super().showEvent(event)
+        common.restore_window_geometry(self)
+        QtCore.QTimer.singleShot(100, self.init_data)
 
     def sizeHint(self):
         """Returns a size hint.

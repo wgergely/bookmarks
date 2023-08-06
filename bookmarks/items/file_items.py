@@ -173,12 +173,12 @@ class FileItemViewContextMenu(contextmenu.BaseContextMenu):
         self.launcher_menu()
         self.separator()
         if self.index and self.index.isValid() and self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.sg_publish_menu()
             self.publish_menu()
             self.separator()
         self.sg_url_menu()
         self.sg_browse_tasks_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.sg_publish_menu()
             self.sg_rv_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.convert_menu()

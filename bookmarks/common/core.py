@@ -38,7 +38,6 @@ PlatformUnsupported = 2
 WindowsPath = 0
 MacOSPath = 1
 UnixPath = 2
-SlackPath = 3
 
 MarkedAsArchived = 0b1000000000
 MarkedAsFavourite = 0b10000000000
@@ -134,8 +133,6 @@ SortBySizeRole = QtCore.Qt.ItemDataRole(idx())
 SortByTypeRole = QtCore.Qt.ItemDataRole(idx())
 #: Item linkage status
 SGLinkedRole = QtCore.Qt.ItemDataRole(idx())
-#: Item linkage status
-SlackLinkedRole = QtCore.Qt.ItemDataRole(idx())
 #: The progress tracking data linked with the item
 AssetProgressRole = QtCore.Qt.ItemDataRole(idx())
 
@@ -442,7 +439,7 @@ def get_sequence_and_shot(s):
 
     # Get sequence name
     match = re.search(
-        r'(SQ|SEQ|SEQUENCE)([0-9]+)',
+        r'(sq|sq_|seq|seq_|sequence|sequence_)(\d+)',
         s,
         flags=re.IGNORECASE
     )
@@ -450,7 +447,7 @@ def get_sequence_and_shot(s):
 
     # Get shot name
     match = re.search(
-        r'(SH|SHOT)([0-9]+)',
+        r'(sh|sh_|shot|shot_)(\d+)',
         s,
         flags=re.IGNORECASE
     )
@@ -459,7 +456,7 @@ def get_sequence_and_shot(s):
     # If we don't have a match for either, we could try to check for a numerical pattern
     if not seq and not shot:
         match = re.search(
-            r'(\d{2,})\D*(\d{3,})',
+            r'(\d{2,})\D{1,6}(\d{3,})',
             s,
             flags=re.IGNORECASE
         )

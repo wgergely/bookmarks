@@ -415,9 +415,9 @@ class TokenConfigEditor(QtWidgets.QWidget):
     def restore_to_defaults(self):
         if common.show_message(
                 'Are you sure you want to restore all templates to the default value?',
-            body='Your custom settings will be permanently lost.',
-            buttons=[common.YesButton, common.CancelButton],
-            modal=True,
+                body='Your custom settings will be permanently lost.',
+                buttons=[common.YesButton, common.CancelButton],
+                modal=True,
         ) == QtWidgets.QDialog.Rejected:
             return
         self.tokens.set_data(tokens.DEFAULT_TOKEN_CONFIG.copy())

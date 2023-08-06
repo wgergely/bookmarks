@@ -53,14 +53,7 @@ def show(index):
 
 
 def _strip(s):
-    return (
-        s.
-        strip('-').
-        strip('_').
-        strip().
-        replace('__', '_').
-        replace('_.', '.')
-    )
+    return (s.strip('-').strip('_').strip().replace('__', '_').replace('_.', '.'))
 
 
 def get_payload(kwargs, destination):
@@ -150,13 +143,11 @@ class TemplateModel(ui.AbstractListModel):
         for v in data[tokens.PublishConfig].values():
             if template == v['name']:
                 pixmap = images.rsc_pixmap(
-                    'check', common.color(common.color_green),
-                    common.size(common.size_margin) * 2
+                    'check', common.color(common.color_green), common.size(common.size_margin) * 2
                 )
             else:
                 pixmap = images.rsc_pixmap(
-                    'file', common.color(common.color_separator),
-                    common.size(common.size_margin) * 2
+                    'file', common.color(common.color_separator), common.size(common.size_margin) * 2
                 )
             icon = QtGui.QIcon(pixmap)
 
@@ -260,137 +251,123 @@ class TaskComboBox(QtWidgets.QComboBox):
         self.setModel(TaskModel())
 
 
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': None,
-        'icon': None,
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Source',
-                    'key': 'source',
-                    'validator': None,
-                    'widget': QtWidgets.QLabel,
-                    'placeholder': '',
-                    'description': 'Source file path',
-                },
-                1: {
-                    'name': 'Destination',
-                    'key': 'destination',
-                    'validator': None,
-                    'widget': QtWidgets.QLabel,
-                    'placeholder': '',
-                    'description': 'Final output path',
-                },
-            },
-        },
-    },
-    1: {
-        'name': 'Template',
-        'icon': None,
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Publish Template',
-                    'key': 'publish/template',
-                    'validator': None,
-                    'widget': TemplateComboBox,
-                    'placeholder': None,
-                    'description': 'Select the publish template',
-                },
-                1: {
-                    'name': 'Task',
-                    'key': 'publish/task',
-                    'validator': None,
-                    'widget': TaskComboBox,
-                    'placeholder': None,
-                    'description': 'Select the publish template',
-                },
-                2: {
-                    'name': 'Description',
-                    'key': 'description',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Enter a short description here...',
-                    'description': 'A short description of this file '
-                                   'publish.\nIndicate significant changes and '
-                                   'notes here.',
-                },
-                3: {
-                    'name': 'Specify Element',
-                    'key': 'element',
-                    'validator': base.text_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'The element being published, e.g. \'CastleInterior\'',
-                    'description': 'The name of the element being published. E.g., '
-                                   '\'ForegroundTower\', or \'BackgroundElements\'',
-                },
-            },
-        },
-    },
-    2: {
-        'name': 'Settings',
-        'icon': None,
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Archive existing files',
-                    'key': 'publish/archive_existing',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': None,
-                    'description': 'Enable will archive all existing files in the destination folder.',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Copy Path to Clipboard',
-                    'key': 'publish/copy_path',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': None,
-                    'description': 'Copy the path to the clipboard after finish.',
-                },
-                1: {
-                    'name': 'Reveal Publish',
-                    'key': 'publish/reveal',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': None,
-                    'description': 'Reveal the published files in the explorer.',
-                },
-                2: {
-                    'name': 'Teams Notification',
-                    'key': 'publish/teams_notification',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': None,
-                    'description': 'Send a notification of the publish to a Teams channel.',
-                },
-            },
-        },
-    },
-}
-
-
 class PublishWidget(base.BasePropertyEditor):
     """Publishes a footage.
 
     """
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': None,
+            'icon': None,
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Source',
+                        'key': 'source',
+                        'validator': None,
+                        'widget': QtWidgets.QLabel,
+                        'placeholder': '',
+                        'description': 'Source file path',
+                    },
+                    1: {
+                        'name': 'Destination',
+                        'key': 'destination',
+                        'validator': None,
+                        'widget': QtWidgets.QLabel,
+                        'placeholder': '',
+                        'description': 'Final output path',
+                    },
+                },
+            },
+        },
+        1: {
+            'name': 'Template',
+            'icon': None,
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Publish Template',
+                        'key': 'publish/template',
+                        'validator': None,
+                        'widget': TemplateComboBox,
+                        'placeholder': None,
+                        'description': 'Select the publish template',
+                    },
+                    1: {
+                        'name': 'Task',
+                        'key': 'publish/task',
+                        'validator': None,
+                        'widget': TaskComboBox,
+                        'placeholder': None,
+                        'description': 'Select the publish template',
+                    },
+                    2: {
+                        'name': 'Description',
+                        'key': 'description',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Enter a short description here...',
+                        'description': 'A short description of this file '
+                                       'publish.\nIndicate significant changes and '
+                                       'notes here.',
+                    },
+                    3: {
+                        'name': 'Specify Element',
+                        'key': 'element',
+                        'validator': base.text_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'The element being published, e.g. \'CastleInterior\'',
+                        'description': 'The name of the element being published. E.g., '
+                                       '\'ForegroundTower\', or \'BackgroundElements\'',
+                    },
+                },
+            },
+        },
+        2: {
+            'name': 'Settings',
+            'icon': None,
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Archive existing files',
+                        'key': 'publish/archive_existing',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                        'placeholder': None,
+                        'description': 'Enable will archive all existing files in the destination folder.',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Copy Path to Clipboard',
+                        'key': 'publish/copy_path',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                        'placeholder': None,
+                        'description': 'Copy the path to the clipboard after finish.',
+                    },
+                    1: {
+                        'name': 'Reveal Publish',
+                        'key': 'publish/reveal',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                        'placeholder': None,
+                        'description': 'Reveal the published files in the explorer.',
+                    },
+                },
+            },
+        },
+    }
 
     def __init__(self, index, parent=None):
         super().__init__(
-            SECTIONS,
-            common.active('server'),
-            common.active('job'),
-            common.active('root'),
-            db_table=database.AssetTable,
-            buttons=('Publish', 'Cancel'),
-            parent=parent
+            common.active('server'), common.active('job'), common.active('root'), db_table=database.AssetTable,
+            buttons=(
+            'Publish', 'Cancel'), parent=parent
         )
         self._index = index
         self.progress_widget = None
@@ -483,11 +460,8 @@ class PublishWidget(base.BasePropertyEditor):
 
         if s and len(s) >= 3 and 'main' not in s and '_' not in s:
             if common.show_message(
-                'Publish',
-                body=f'Found a possible element name. Is it correct?\n\n{s}',
-                buttons=[common.YesButton, common.NoButton],
-                modal=True,
-            ) == QtWidgets.QDialog.Rejected:
+                    'Publish', body=f'Found a possible element name. Is it correct?\n\n{s}', buttons=[common.YesButton,
+                                                                                                      common.NoButton], modal=True, ) == QtWidgets.QDialog.Rejected:
                 return
             self.element_editor.setText(s)
 
@@ -500,11 +474,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         server, job, root = self._index.data(common.ParentPathRole)[0:3]
         source = images.get_thumbnail(
-            server,
-            job,
-            root,
-            self._index.data(common.PathRole),
-            get_path=True
+            server, job, root, self._index.data(common.PathRole), get_path=True
         )
         if QtCore.QFileInfo(source).exists():
             self.thumbnail_editor.process_image(source)
@@ -531,18 +501,15 @@ class PublishWidget(base.BasePropertyEditor):
 
         config = tokens.get(kwargs['server'], kwargs['job'], kwargs['root'])
         v = config.expand_tokens(
-            kwargs['publish_template'],
-            **kwargs
+            kwargs['publish_template'], **kwargs
         )
 
         r = common.rgb(common.color_red)
         v = v.replace(
-            tokens.invalid_token,
-            f'<span style="color:{r}">{tokens.invalid_token}</span>'
+            tokens.invalid_token, f'<span style="color:{r}">{tokens.invalid_token}</span>'
         )
         v = v.replace(
-            '###',
-            f'<span style="color:{common.rgb(common.color_red)}">###</span>'
+            '###', f'<span style="color:{common.rgb(common.color_red)}">###</span>'
         )
 
         self.destination_editor.setText(v)
@@ -593,9 +560,6 @@ class PublishWidget(base.BasePropertyEditor):
         kwargs['publish_copy_path'] = self.publish_copy_path_editor.isChecked()
         kwargs['publish_reveal'] = self.publish_reveal_editor.isChecked()
 
-        v = self.publish_teams_notification_editor.isChecked()
-        kwargs['publish_teams_notification'] = v
-
         # Overrides
         kwargs.update(_kwargs)
         return kwargs
@@ -626,8 +590,7 @@ class PublishWidget(base.BasePropertyEditor):
             data = config.data()
             flag = next(
                 (v['filter'] for v in data[tokens.PublishConfig].values() if
-                 v['value'] == kwargs['publish_template']),
-                None
+                 v['value'] == kwargs['publish_template']), None
             )
             exts = config.get_extensions(flag)
             if kwargs['ext'] not in exts:
@@ -643,7 +606,6 @@ class PublishWidget(base.BasePropertyEditor):
             self.make_videos(destination, jpegs, payload=payload)
             self.write_manifest(destination, payload=payload)
             self.post_publish(destination, kwargs)
-            self.post_teams_message(destination, kwargs, payload=payload)
             return True
         except:
             raise
@@ -662,9 +624,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         if QtCore.QFileInfo(temp).exists():
             res = pyimageutil.convert_image(
-                temp,
-                dest,
-                max_size=int(common.thumbnail_size)
+                temp, dest, max_size=int(common.thumbnail_size)
             )
             if not res:
                 print(f'Error: Could not convert {temp}')
@@ -691,10 +651,7 @@ class PublishWidget(base.BasePropertyEditor):
         if not QtCore.QFileInfo(f'{_dir.path()}').exists() and not _dir.mkpath('.'):
             raise OSError('Failed to create publish directory.')
 
-        if (
-                not QtCore.QFileInfo(f'{_dir.path()}/.archive').exists()
-                and not _dir.mkpath('./.archive')
-        ):
+        if (not QtCore.QFileInfo(f'{_dir.path()}/.archive').exists() and not _dir.mkpath('./.archive')):
             raise OSError('Failed to create .archive directory.')
 
         s = time.strftime('.archive_%Y-%m-%d-%H%M%S')
@@ -827,15 +784,9 @@ class PublishWidget(base.BasePropertyEditor):
 
         ffmpeg.convert(
             jpegs[0],
-            ffmpeg.PRESETS[ffmpeg.H264HQ]['preset'],
-            server=payload['kwargs']['server'],
-            job=payload['kwargs']['job'],
-            root=payload['kwargs']['root'],
-            asset=asset,
-            task=payload['kwargs']['task'],
-            size=(None, None),
-            timecode=False,
-            output_path=o
+            ffmpeg.PRESETS[ffmpeg.H264HQ]['preset'], server=payload['kwargs']['server'], job=payload['kwargs'][
+                'job'], root=payload['kwargs']['root'], asset=asset, task=payload['kwargs']['task'], size=(
+            None, None), timecode=False, output_path=o
         )
         payload['videos'].append(o)
 
@@ -844,15 +795,9 @@ class PublishWidget(base.BasePropertyEditor):
 
         ffmpeg.convert(
             jpegs[0],
-            ffmpeg.PRESETS[ffmpeg.H264HQ]['preset'],
-            server=payload['kwargs']['server'],
-            job=payload['kwargs']['job'],
-            root=payload['kwargs']['root'],
-            asset=asset,
-            task=payload['kwargs']['task'],
-            size=(1920, 1080),
-            timecode=True,
-            output_path=o
+            ffmpeg.PRESETS[ffmpeg.H264HQ]['preset'], server=payload['kwargs']['server'], job=payload['kwargs'][
+                'job'], root=payload['kwargs']['root'], asset=asset, task=payload['kwargs']['task'], size=(
+            1920, 1080), timecode=True, output_path=o
         )
         payload['videos'].append(o)
 
@@ -862,14 +807,9 @@ class PublishWidget(base.BasePropertyEditor):
 
             ffmpeg.convert(
                 jpegs[0],
-                ffmpeg.PRESETS[ffmpeg.DNxHD90]['preset'],
-                server=payload['kwargs']['server'],
-                job=payload['kwargs']['job'],
-                root=payload['kwargs']['root'],
-                asset=asset,
-                task=payload['kwargs']['task'],
-                timecode=True,
-                output_path=o
+                ffmpeg.PRESETS[ffmpeg.DNxHD90]['preset'], server=payload['kwargs']['server'], job=payload['kwargs'][
+                    'job'], root=payload['kwargs']['root'], asset=asset, task=payload['kwargs'][
+                    'task'], timecode=True, output_path=o
             )
             payload['videos'].append(o)
         except:
@@ -908,36 +848,3 @@ class PublishWidget(base.BasePropertyEditor):
             actions.reveal(QtCore.QFileInfo(destination).dir().path())
         if kwargs['publish_copy_path']:
             actions.copy_path(destination)
-
-    def post_teams_message(self, destination, kwargs, payload=None):
-        """Post-publish Teams notification action.
-
-        """
-        if not kwargs['publish_teams_notification']:
-            return
-
-        from .teams import message
-
-        db = database.get(*common.active('root', args=True))
-        webhook = db.value(db.source(), 'teamstoken', database.BookmarkTable)
-        if not webhook:
-            return
-
-        sequence = kwargs['sequence']
-        shot = kwargs['shot']
-
-        if all((sequence, shot)):
-            asset = f'{sequence}_{shot}'
-        else:
-            asset = kwargs['asset']
-
-        payload = message.get_payload(
-            message.PUBLISH_MESSAGE,
-            thumbnail=payload['thumbnail'],
-            asset=asset,
-            path=destination,
-            date=time.strftime('%d/%m/%Y %H:%M:%S'),
-            user=common.get_username(),
-            publish_type=kwargs['asset'],
-        )
-        message.send(webhook, payload)

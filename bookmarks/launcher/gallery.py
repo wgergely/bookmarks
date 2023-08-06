@@ -3,10 +3,10 @@
 """
 from PySide2 import QtWidgets
 
+from .. import actions
 from .. import common
 from .. import database
 from .. import ui
-from .. import actions
 
 
 def close():
@@ -67,11 +67,11 @@ class LauncherGallery(ui.GalleryWidget):
             self.close()
 
             if common.show_message(
-                'The application launcher has not yet been configured.',
-                body='You can add new items in the current bookmark item\'s property editor. '
-                     'Do you want to open it now?',
-                buttons=[common.YesButton, common.NoButton],
-                modal=True,
+                    'The application launcher has not yet been configured.',
+                    body='You can add new items in the current bookmark item\'s property editor. '
+                         'Do you want to open it now?',
+                    buttons=[common.YesButton, common.NoButton],
+                    modal=True,
             ) == QtWidgets.QDialog.Rejected:
                 return
             actions.edit_bookmark()

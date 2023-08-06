@@ -54,7 +54,7 @@ class TextFilterEditor(QtWidgets.QWidget):
 
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.KeyRelease:
-            if event.key() in [QtCore.Qt.Key_Escape,]:
+            if event.key() in [QtCore.Qt.Key_Escape, ]:
                 self.close()
                 return True
             if event.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:

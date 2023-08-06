@@ -19,7 +19,8 @@ PushAndClearFullScreen = 'PushAndClearFullScreen'
 Add = 'Add'
 
 RV_COMMANDS = {
-    PushAndClearFullScreen: '-reuse 1 -inferSequence -l -play -fullscreen -nofloat -lookback 0 -nomb -fps {framerate} \"{source}\"',
+    PushAndClearFullScreen: '-reuse 1 -inferSequence -l -play -fullscreen -nofloat -lookback 0 -nomb -fps {framerate} '
+                            '\"{source}\"',
     PushAndClear: '-reuse 1 -inferSequence -l -play -lookback 0 -fps {framerate} \"{source}\"',
     Add: '\"{source}\"',
 }

@@ -1,9 +1,23 @@
 {
   "0": {
-    "name": "AKA Odyssey - Sync ShotGrid Assets (beta!)",
-    "module": "aka_odyssey_sync",
+    "name": "SG Sync (experimental)",
+    "module": "sg_sync",
     "description": "Syncs editorial data with ShotGrid and server assets",
     "needs_active": "root",
     "icon": "sg"
+  },
+  "1": {
+    "name": "Auto-o-matic",
+    "module": "clips",
+    "description": "View clips and export them to editorial",
+    "needs_active": "root",
+    "icon": "sg"
+  },
+  "2": {
+    "name": "Export renders to After Effects",
+    "module": "render_layers_to_ae",
+    "description": "View clips and export them to editorial",
+    "needs_active": "task",
+    "icon": "file"
   }
 }

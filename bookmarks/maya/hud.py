@@ -6,8 +6,8 @@ import functools
 
 from PySide2 import QtCore
 
-from .. import common
 from . import base
+from .. import common
 
 STATUS_HUD = 'HUD_bookmarks_status'
 
@@ -78,7 +78,6 @@ def toggle():
         if 'bookmarks_' not in hud:
             continue
         cmds.headsUpDisplay(hud, edit=True, visible=not cmds.headsUpDisplay(hud, query=True, visible=True))
-
 
 
 def get_warnings():

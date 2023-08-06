@@ -1,23 +1,22 @@
-"""Defines :class:`BookmarkDB`, the SQLite database interface used to store item
-properties, such as custom descriptions, flags, width, height,
-:mod:`bookmarks.tokens.tokens` values, etc.
+"""This module defines the :class:`BookmarkDB` class, which provides an SQLite database interface for storing
+properties related to bookmark items. Properties can include custom descriptions, flags, dimensions (width, height),
+and values from :mod:bookmarks.tokens.tokens, among others.
 
-Each bookmark item has its own database file stored in the root of the bookmark item's
-cache folder as defined by :attr:`common.bookmark_cache_dir`.
+The database file for each bookmark item is stored at the root of the item's cache folder, as defined by
+:attr:`common.bookmark_cache_dir`. The location of the database file is represented as follows:
 
 .. code-block:: python
     :linenos:
 
     f'{server}/{job}/{root}/{common.bookmark_cache_dir}/{common.bookmark_database}'
 
+The database table layout is determined by :attr:`TABLES`, which maps SQLite column types to the Python types used in
+the application.
 
-The database table layout is defined by :attr:`TABLES`. It maps the SQLite column types
-to the python types used in the application.
-
-To get a database interface instance use the :func:`.get` function. It returns cached,
+To get an instance of the database interface, use the :func:`.get` function. This function retrieves cached,
 thread-specific database controllers.
 
-Example:
+Example usage:
 
 .. code-block:: python
     :linenos:
@@ -28,19 +27,11 @@ Example:
     db = database.get(server, job, root)
     v = db.value(db.source(), 'width', database.BookmarkTable)
 
+    # Get the database interface of the active bookmark item db = database.get(*common.active('root', args=True)) v =
+    db.value(db.source(), 'height', database.BookmarkTable)
 
-.. code-block:: python
-    :linenos:
-
-    from bookmarks import database
-
-    # Get the database interface of the active bookmark item
-    db = database.get(*common.active('root', args=True))
-    v = db.value(db.source(), 'height', database.BookmarkTable)
-
-
-Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.set_value` call will autocommit.
-You can batch commits together by using the built-in context manager:
+Every :meth:`BookmarkDB.value` and :meth:`BookmarkDB.set_value` call triggers an automatic commit. To group commits
+together, use the built-in context manager:
 
 .. code-block:: python
     :linenos:
@@ -51,18 +42,16 @@ You can batch commits together by using the built-in context manager:
     with db.connection():
         db.set_value(*args)
 
-There are two tables that hold item data: ``common.BookmarkTable`` and
-``common.AssetTable``. The asset table is meant to be used as a general table to hold
-descriptions and notes for all items where the bookmark table contains properties
-specifically related to the bookmark item.
+The database contains two tables that hold item data: :attr:`common.BookmarkTable` and :attr:`common.AssetTable`. The
+AssetTable is intended to hold general descriptions and notes for all items, while the BookmarkTable contains
+properties specifically related to the bookmark item.
 
-Known issues:
+Note: Bookmark items should ideally store their descriptions in the AssetTable as it is a general property. However,
+currently, they use the 'description' column in the BookmarkTable, which is redundant. This behavior is a known issue
+and may be corrected in future versions of the software.
 
-    Bookmark items should store their description in the asset table as it is a general
-    property, but they don't, and instead use the superfluous bookmark table
-    'description' column. Sorry about that...
-
-"""
+The module also provides utility functions for creating and managing the database, handling connections, encoding and
+decoding data, and managing items' flags. For more details, refer to the specific function's docstring."""
 import base64
 import functools
 import json
@@ -233,14 +222,6 @@ TABLES = {
         'identifier': {
             'sql': 'TEXT',
             'type': str
-        },
-        'slacktoken': {
-            'sql': 'TEXT',
-            'type': str
-        },
-        'teamstoken': {
-            'sql': 'TEXT',
-            'type': str,
         },
         'shotgun_domain': {
             'sql': 'TEXT',

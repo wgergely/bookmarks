@@ -114,7 +114,7 @@ def get_thumbnail(
         server, job, root, source, size=common.thumbnail_size,
         fallback_thumb='placeholder',
         get_path=False
-        ):
+):
     """Get the thumbnail of a list item.
 
     When an item is missing a bespoke cached thumbnail file, we will try to load
@@ -519,7 +519,7 @@ def resize_image(image, size):
 def rsc_pixmap(
         name, color, size, opacity=1.0, resource=common.GuiResource,
         get_path=False, oiio=False
-        ):
+):
     """Loads an image resource and returns it as a resized (and recolored) QPixmap.
 
     Args:

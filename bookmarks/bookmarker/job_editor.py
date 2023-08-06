@@ -4,9 +4,6 @@ select jobs found inside a server.
 The module also defines :class:`AddJobWidget`, an editor used to create new jobs inside
 a server.
 
-Arguments:
-    SECTIONS (dict): UI definitions used by :class:`AddJobWidget`.
-
 """
 import functools
 import os
@@ -22,39 +19,6 @@ from .. import shortcuts
 from .. import templates
 from .. import ui
 from ..editor import base
-
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': 'Add Job',
-        'icon': '',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Name',
-                    'key': None,
-                    'validator': base.job_name_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Name, e.g. `MY_NEW_JOB`',
-                    'description': 'The job\'s name, e.g. `MY_NEW_JOB`.',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Template',
-                    'key': None,
-                    'validator': None,
-                    'widget': functools.partial(
-                        templates.TemplatesWidget, templates.JobTemplateMode
-                    ),
-                    'placeholder': None,
-                    'description': 'Select a folder template to create this asset.',
-                },
-            },
-        },
-    },
-}
 
 
 def get_job_icon(path):
@@ -85,9 +49,41 @@ class AddJobWidget(base.BasePropertyEditor):
     """
     buttons = ('Create Job', 'Cancel')
 
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': 'Add Job',
+            'icon': '',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Name',
+                        'key': None,
+                        'validator': base.job_name_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Name, e.g. `MY_NEW_JOB`',
+                        'description': 'The job\'s name, e.g. `MY_NEW_JOB`.',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Template',
+                        'key': None,
+                        'validator': None,
+                        'widget': functools.partial(
+                            templates.TemplatesWidget, templates.JobTemplateMode
+                        ),
+                        'placeholder': None,
+                        'description': 'Select a folder template to create this asset.',
+                    },
+                },
+            },
+        },
+    }
+
     def __init__(self, server, parent=None):
         super().__init__(
-            SECTIONS,
             server,
             None,
             None,

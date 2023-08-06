@@ -78,11 +78,6 @@ I developed the app to help manage personal projects and keep myself organised (
     :width: 480
 
 
-
-
-
-
-
 .. toctree::
     :maxdepth: 3
     :hidden:

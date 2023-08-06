@@ -1,9 +1,6 @@
 """:class:`.AssetPropertyEditor` is used to create new assets and edit existing asset
 item properties.
 
-Attributes:
-    SECTIONS (dict): The property editor sections.
-
 """
 import functools
 import re
@@ -57,199 +54,6 @@ def show(server, job, root, asset=None):
     return common.asset_property_editor
 
 
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': 'Settings',
-        'icon': '',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Name',
-                    'key': None,
-                    'validator': base.job_name_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Enter name, e.g. \'SH0010\'',
-                    'description': 'The asset\'s name, e.g. \'SH0010\'',
-                },
-                1: {
-                    'name': 'Description',
-                    'key': 'description',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'A description, e.g. \'My first shot\'',
-                    'description': 'A short description of the asset, e.g. \'My '
-                                   'first shot.\'.',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Template',
-                    'key': None,
-                    'validator': None,
-                    'widget': functools.partial(
-                        templates.TemplatesWidget,
-                        templates.AssetTemplateMode
-                    ),
-                    'placeholder': None,
-                    'description': 'Select a folder template to create this asset.',
-                    'help': 'Select a folder template to create this asset. Templates are simple zip files that '
-                            'contain a folder structure and a set of files. The template can contain a `.link` file '
-                            'which will be used to read nested assets inside the template. This can be useful if an'
-                            'asset is made up of multiple tasks, e.g. a shot asset may contain a `lighting` and `anim`'
-                            'tasks.',
-                },
-            },
-        },
-    },
-    1: {
-        'name': 'ShotGrid Entity',
-        'icon': 'sg',
-        'color': None,
-        'groups': {
-            0: {
-                0: {
-                    'name': 'ShotGrid Link',
-                    'key': 'link',
-                    'validator': None,
-                    'widget': None,
-                    'placeholder': None,
-                    'description': 'Link item with a ShotGrid Entity',
-                    'button': 'Link with ShotGrid Entity',
-                },
-                1: {
-                    'name': 'ShotGrid Type',
-                    'key': 'shotgun_type',
-                    'validator': base.int_validator,
-                    'widget': base_widgets.SGAssetTypesWidget,
-                    'placeholder': None,
-                    'description': 'Select the item\'s ShotGrid type',
-                },
-                2: {
-                    'name': 'ShotGrid Id',
-                    'key': 'shotgun_id',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid entity id, e.g. \'123\'',
-                    'description': 'The ShotGrid entity id this item is associated '
-                                   'with. e.g. \'123\'.',
-                },
-                3: {
-                    'name': 'ShotGrid Name',
-                    'key': 'shotgun_name',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid entity name, e.g. \'MyAsset\'',
-                    'description': 'The ShotGrid entity name. The name usually corresponds to the "code" field'
-                                   'in ShotGrid.',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Task Id',
-                    'key': 'sg_task_id',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid task id, e.g. \'123\'',
-                    'description': 'If the asset is associated with a ShotGrid task, the task entity id can be '
-                                   'entered here. e.g. \'123\'.',
-                },
-                1: {
-                    'name': 'Task Name',
-                    'key': 'sg_task_name',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid task name, e.g. \'rigging\'',
-                    'description': 'If the asset is associated with a ShotGrid task, the task name can be entered '
-                                   'here. e.g. \'rigging\'.',
-                },
-            },
-        }
-    },
-    2: {
-        'name': 'Cut',
-        'icon': 'todo',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Cut In',
-                    'key': 'cut_in',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'In frame, e.g. \'1150\'',
-                    'description': 'The frame this asset starts at, e.g. \'1150\'.',
-                },
-                1: {
-                    'name': 'Cut Out',
-                    'key': 'cut_out',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Out frame, e.g. \'1575\'',
-                    'description': 'The frame this asset ends at, e.g. \'1575\'.',
-                },
-                2: {
-                    'name': 'Cut Duration',
-                    'key': 'cut_duration',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Duration in frames, e.g. \'425\'',
-                    'description': 'The asset\'s duration in frames, e.g. \'425\'.',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Edit In',
-                    'key': 'edit_in',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'In frame, e.g. \'1150\'',
-                    'description': 'The frame this asset starts at, e.g. \'1150\'.',
-                },
-                1: {
-                    'name': 'Edit Out',
-                    'key': 'edit_out',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Out frame, e.g. \'1575\'',
-                    'description': 'The frame this asset ends at, e.g. \'1575\'.',
-                },
-            },
-        },
-    },
-    3: {
-        'name': 'Links',
-        'icon': '',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Link #1',
-                    'key': 'url1',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'https://my.custom-url.com',
-                    'description': 'A custom url of the bookmarks, '
-                                   'e.g. https://sheets.google.com/123',
-                    'button': 'Visit',
-                },
-                1: {
-                    'name': 'Link #2',
-                    'key': 'url2',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'https://my.custom-url.com',
-                    'description': 'A custom url of the bookmarks, '
-                                   'e.g. https://sheets.google.com/123',
-                    'button': 'Visit',
-                }
-            }
-        }
-    }
-}
-
-
 class AssetPropertyEditor(base.BasePropertyEditor):
     """Property editor widget used to edit asset item properties.
 
@@ -258,6 +62,198 @@ class AssetPropertyEditor(base.BasePropertyEditor):
 
     """
 
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': 'Settings',
+            'icon': '',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Name',
+                        'key': None,
+                        'validator': base.job_name_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Enter name, e.g. \'SH0010\'',
+                        'description': 'The asset\'s name, e.g. \'SH0010\'',
+                    },
+                    1: {
+                        'name': 'Description',
+                        'key': 'description',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'A description, e.g. \'My first shot\'',
+                        'description': 'A short description of the asset, e.g. \'My '
+                                       'first shot.\'.',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Template',
+                        'key': None,
+                        'validator': None,
+                        'widget': functools.partial(
+                            templates.TemplatesWidget,
+                            templates.AssetTemplateMode
+                        ),
+                        'placeholder': None,
+                        'description': 'Select a folder template to create this asset.',
+                        'help': 'Select a folder template to create this asset. Templates are simple zip files that '
+                                'contain a folder structure and a set of files. The template can contain a `.link` file '
+                                'which will be used to read nested assets inside the template. This can be useful if an'
+                                'asset is made up of multiple tasks, e.g. a shot asset may contain a `lighting` and `anim`'
+                                'tasks.',
+                    },
+                },
+            },
+        },
+        1: {
+            'name': 'ShotGrid Entity',
+            'icon': 'sg',
+            'color': None,
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'ShotGrid Link',
+                        'key': 'link',
+                        'validator': None,
+                        'widget': None,
+                        'placeholder': None,
+                        'description': 'Link item with a ShotGrid Entity',
+                        'button': 'Link with ShotGrid Entity',
+                    },
+                    1: {
+                        'name': 'ShotGrid Type',
+                        'key': 'shotgun_type',
+                        'validator': base.int_validator,
+                        'widget': base_widgets.SGAssetTypesWidget,
+                        'placeholder': None,
+                        'description': 'Select the item\'s ShotGrid type',
+                    },
+                    2: {
+                        'name': 'ShotGrid Id',
+                        'key': 'shotgun_id',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'ShotGrid entity id, e.g. \'123\'',
+                        'description': 'The ShotGrid entity id this item is associated '
+                                       'with. e.g. \'123\'.',
+                    },
+                    3: {
+                        'name': 'ShotGrid Name',
+                        'key': 'shotgun_name',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'ShotGrid entity name, e.g. \'MyAsset\'',
+                        'description': 'The ShotGrid entity name. The name usually corresponds to the "code" field'
+                                       'in ShotGrid.',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Task Id',
+                        'key': 'sg_task_id',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'ShotGrid task id, e.g. \'123\'',
+                        'description': 'If the asset is associated with a ShotGrid task, the task entity id can be '
+                                       'entered here. e.g. \'123\'.',
+                    },
+                    1: {
+                        'name': 'Task Name',
+                        'key': 'sg_task_name',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'ShotGrid task name, e.g. \'rigging\'',
+                        'description': 'If the asset is associated with a ShotGrid task, the task name can be entered '
+                                       'here. e.g. \'rigging\'.',
+                    },
+                },
+            }
+        },
+        2: {
+            'name': 'Cut',
+            'icon': 'todo',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Cut In',
+                        'key': 'cut_in',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'In frame, e.g. \'1150\'',
+                        'description': 'The frame this asset starts at, e.g. \'1150\'.',
+                    },
+                    1: {
+                        'name': 'Cut Out',
+                        'key': 'cut_out',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Out frame, e.g. \'1575\'',
+                        'description': 'The frame this asset ends at, e.g. \'1575\'.',
+                    },
+                    2: {
+                        'name': 'Cut Duration',
+                        'key': 'cut_duration',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Duration in frames, e.g. \'425\'',
+                        'description': 'The asset\'s duration in frames, e.g. \'425\'.',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Edit In',
+                        'key': 'edit_in',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'In frame, e.g. \'1150\'',
+                        'description': 'The frame this asset starts at, e.g. \'1150\'.',
+                    },
+                    1: {
+                        'name': 'Edit Out',
+                        'key': 'edit_out',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Out frame, e.g. \'1575\'',
+                        'description': 'The frame this asset ends at, e.g. \'1575\'.',
+                    },
+                },
+            },
+        },
+        3: {
+            'name': 'Links',
+            'icon': '',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Link #1',
+                        'key': 'url1',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'https://my.custom-url.com',
+                        'description': 'A custom url of the bookmarks, '
+                                       'e.g. https://sheets.google.com/123',
+                        'button': 'Visit',
+                    },
+                    1: {
+                        'name': 'Link #2',
+                        'key': 'url2',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'https://my.custom-url.com',
+                        'description': 'A custom url of the bookmarks, '
+                                       'e.g. https://sheets.google.com/123',
+                        'button': 'Visit',
+                    }
+                }
+            }
+        }
+    }
+
     def __init__(self, server, job, root, asset=None, parent=None):
         if asset:
             buttons = ('Save', 'Cancel')
@@ -265,7 +261,6 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             buttons = ('Add Asset', 'Cancel')
 
         super().__init__(
-            SECTIONS,
             server,
             job,
             root,

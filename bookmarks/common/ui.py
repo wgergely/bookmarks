@@ -10,7 +10,6 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 
-
 OkButton = 'Ok'
 YesButton = 'Yes'
 SaveButton = 'Save'
@@ -356,13 +355,14 @@ def close_message():
         pass
 
 
-def show_message(title, body='', no_anim=False, icon='icon', message_type='info', buttons=None, modal=False, parent=None):
+def show_message(title, body='', disable_animation=False, icon='icon', message_type='info', buttons=None, modal=False,
+                 parent=None):
     """Show a message box.
 
     Args:
         title (str): The title of the message box.
         body (str): The body of the message box.
-        no_anim (bool): Whether to show the message box without animation.
+        disable_animation (bool): Whether to show the message box without animation.
         icon (str): The icon to use.
         message_type (str): The message type.
         buttons (list): The buttons to show.
@@ -385,17 +385,17 @@ def show_message(title, body='', no_anim=False, icon='icon', message_type='info'
     mbox = ui.MessageBox(
         title=title,
         body=body,
-        no_anim=no_anim,
+        disable_animation=disable_animation,
         icon=icon,
         message_type=message_type,
-        buttons=[OkButton,] if buttons is None else buttons,
+        buttons=[OkButton, ] if buttons is None else buttons,
         parent=parent
     )
     common.message_widget = mbox
     if modal:
         return mbox.exec_()
 
-    if no_anim:
+    if disable_animation:
         mbox.show()
         mbox.raise_()
         QtWidgets.QApplication.instance().processEvents()
@@ -637,10 +637,13 @@ def source_model(idx=None):
 
 
 def active_index(idx=None):
-    """Get the active index of the current, or given list index.
+    """Get the active index of a specified item tab view.
 
     Args:
         idx (int, optional): A tab index number, e.g. ``common.FileTab``.
+
+    Returns:
+        QtCore.QModelIndex: The active index.
 
     """
     common.check_type(idx, (int, None))
@@ -648,16 +651,13 @@ def active_index(idx=None):
 
 
 def selected_index(idx=None):
-    """Retrieves a list widget's active index.
-
-    If idx is None, it returns the currently visible items' active index,
-    otherwise, returns the specified widget's active index.
+    """Get the selected index of a specified item tab view.
 
     Args:
         idx (int, optional): A tab index number, e.g. ``common.FileTab``.
 
     Returns:
-        QtCore.QModelIndex: A list widget's active index.
+        QtCore.QModelIndex: The selected index.
 
     """
     common.check_type(idx, (int, None))

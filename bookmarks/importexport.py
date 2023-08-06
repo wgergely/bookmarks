@@ -21,7 +21,6 @@ from . import common
 from . import database
 from . import images
 from . import log
-from . import ui
 
 _last_directory = None
 
@@ -265,11 +264,11 @@ def import_item_properties(index, source=None, prompt=True):
 
     if prompt:
         if common.show_message(
-            'Are you sure you want to import the preset?',
-            body='The action is not undoable and will override current values.',
-            buttons=[common.YesButton, common.CancelButton],
-            message_type=None,
-            modal=True,
+                'Are you sure you want to import the preset?',
+                body='The action is not undoable and will override current values.',
+                buttons=[common.YesButton, common.CancelButton],
+                message_type=None,
+                modal=True,
         ) == QtWidgets.QDialog.Rejected:
             return None
 
@@ -352,10 +351,10 @@ def import_json_asset_properties(indexes, prompt=True, path=None):
 
     if prompt:
         if common.show_message(
-            'Are you sure you want to import the preset?',
-            body='The action is not undoable and will override the values of the visible items.',
-            buttons=[common.YesButton, common.CancelButton],
-            modal=True,
+                'Are you sure you want to import the preset?',
+                body='The action is not undoable and will override the values of the visible items.',
+                buttons=[common.YesButton, common.CancelButton],
+                modal=True,
         ) == QtWidgets.QDialog.Rejected:
             return None
 
@@ -365,7 +364,7 @@ def import_json_asset_properties(indexes, prompt=True, path=None):
         body='Processing items...',
         message_type=None,
         buttons=[],
-        no_anim=True,
+        disable_animation=True,
     )
 
     count = len(indexes)

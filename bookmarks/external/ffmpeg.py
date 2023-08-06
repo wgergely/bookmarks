@@ -15,7 +15,6 @@ from PySide2 import QtCore, QtWidgets
 from .. import common
 from .. import database
 from .. import images
-from .. import ui
 
 
 class SafeDict(dict):
@@ -148,6 +147,28 @@ PRESETS = {
 
 SHOT = 0
 ASSET = 1
+
+
+def get_supported_formats(ffmpeg_console_output):
+    native_formats = ['jpeg', 'jpg', 'png', 'tiff', 'tff']
+    codecs = []
+    regex = re.compile(r'\s*([A-Z\.]{6})\s(\w+)\s+(.+)', re.IGNORECASE)
+
+    for line in ffmpeg_console_output.split('\n'):
+        match = regex.match(line)
+        if not match:
+            continue
+
+        # Check the match against the native formats
+        for native_format in native_formats:
+            if native_format.lower() in match.group(3).lower() or native_format.lower() in match.group(2).lower():
+                if native_format == 'jpeg':
+                    codecs.append('jpg')
+                elif native_format == 'tiff':
+                    codecs.append('tif')
+                else:
+                    codecs.append(native_format.lower())
+    return codecs
 
 
 def _get_font_path():
@@ -375,17 +396,19 @@ def convert(
         tc = ''
 
     # Get all properties and construct the ffmpeg command
+    input_path=_input_path_from_seq(seq)
     cmd = preset.format(
         BIN=ffmpeg_bin,
         FRAMERATE=_get_framerate(server, job, root),
         STARTFRAME=startframe,
-        INPUT=_input_path_from_seq(seq),
+        INPUT=input_path,
         OUTPUT=output_path,
         WIDTH=width,
         HEIGHT=height,
         TIMECODE=tc
     )
 
+    lines = []
     with subprocess.Popen(
             cmd,
             bufsize=1,
@@ -393,25 +416,10 @@ def convert(
             stderr=subprocess.STDOUT,
             universal_newlines=True
     ) as proc:
-
-        pbar = ui.get_progress_bar(
-            'Making Video',
-            'Processing images...',
-            startframe,
-            endframe,
-            parent=parent
-        )
-
-        pbar.open()
-        QtWidgets.QApplication.instance().processEvents()
-
-        lines = []
-
         while proc.poll() is None:
-            if pbar.wasCanceled():
+            if not common.message_widget or not common.message_widget.isVisible():
                 proc.kill()
-                pbar.close()
-                return None
+                raise RuntimeError('Convert cancelled.')
 
             line = proc.stdout.readline()
             if not line:
@@ -424,10 +432,12 @@ def convert(
             if not match:
                 continue
 
-            pbar.setValue(int(match.group(1)))
-            QtWidgets.QApplication.instance().processEvents()
+            if common.message_widget.isVisible():
+                common.message_widget.title_label.setText('Making movie...')
+                common.message_widget.body_label.setText(
+                    f'Converting frame {int(match.group(1))} of {int(endframe)}')
+                QtWidgets.QApplication.instance().processEvents()
 
-        pbar.close()
         # Verify the output
         if proc.returncode == 1:
             with open(f'{output_path}.log', 'w', encoding='utf-8') as f:
@@ -435,11 +445,6 @@ def convert(
                 f.write('\n\n')
                 f.write('\n'.join(lines))
 
-            common.show_message(
-                'An error occurred converting.',
-                body='\n'.join(lines[-5:]),
-                message_type='error'
-            )
-            return None
+            raise RuntimeError('\n'.join(lines[-5:]))
 
     return output_path

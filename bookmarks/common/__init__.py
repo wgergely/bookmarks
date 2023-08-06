@@ -1,26 +1,22 @@
-"""Core attributes, classes and methods used to define the look and behaviour of
-Bookmarks.
+"""This module, bookmarks, serves as the core of the Bookmarks application, defining key attributes, classes,
+and methods that shape the app's functionality and aesthetics. This module also houses the application's configurable
+properties and default settings.
 
+Initialization methods for the application can be found in :mod:`~bookmarks.common.setup`. Hard-coded default
+properties are contained within :mod:`~bookmarks.common.core`. Configurable properties, including color schemes and
+size settings, are loaded from ./rsc/conf.json during runtime.
 
-See the :mod:`~bookmarks.common.setup` module for the initialization methods.
-Hard-coded default properties are defined in :mod:`~bookmarks.common.core`.
-Configurable properties, such as colors and size settings are loaded from
-``./rsc/conf.json`` at runtime.
+This module allows for direct submodule access. For example:
 
-Tip:
+.. code-block:: python
+    :linenos:
 
-    Submodules can be accessed directly from this top module. E.g.:
+    # bookmarks.common.setup.initialize(common.EmbeddedMode) can be imported as
+    from bookmarks import common
+    common.initialize(common.EmbeddedMode)
 
-    .. code-block:: python
-        :linenos:
-
-        # bookmarks.common.setup.initialize(common.EmbeddedMode) can be imported as
-        from bookmarks import common
-        common.initialize(common.EmbeddedMode)
-
-
-The app can be run in two modes. As a standalone application, or embedded in a
-PySide2 environment. The base-layers can be initialized with:
+The Bookmarks application operates in two modes: standalone and embedded in a PySide2 environment. The app's base layers
+are initialized using:
 
 .. code-block:: python
     :linenos:
@@ -28,10 +24,17 @@ PySide2 environment. The base-layers can be initialized with:
     from bookmarks import common
     common.initialize(common.EmbeddedMode) # or common.StandaloneMode
 
-:func:`bookmarks.exec_()` is a utility method for starting Bookmarks in
-:attr:`~bookmarks.common.core.StandaloneMode`, whilst :attr:`~bookmarks.common.core.EmbeddedMode` is useful when
-running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
-See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
+To start Bookmarks in :attr:`~bookmarks.common.core.StandaloneMode`, use :func:`bookmarks.exec_()`. The
+:attr:`~bookmarks.common.core.EmbeddedMode` is designed for running the application within a host DCC, a feature
+currently utilized only by the Maya plugin. Refer to :mod:bookmarks.maya and :mod:`bookmarks.common` for related
+methods.
+
+This module also houses widget instance bindings for various components of the application, such as the main widget,
+tray widget, and several editor widgets. The initial values of module-level variables are stored in the
+`__initial_values__` dictionary for potential later use.
+
+This top module additionally makes various submodules available, including those related to core functionalities,
+data handling, environment settings, font settings, UI elements, and more.
 
 """
 debug_on = False
@@ -76,7 +79,7 @@ color_cache_str = {}
 
 elided_text = {}
 
-VIEWER_WIDGET_CACHE = {}
+viewer_widgets = {}
 
 pixel_ratio = None
 oiio_cache = None
@@ -92,7 +95,6 @@ main_widget = None
 tray_widget = None
 maya_widget = None
 maya_button_widget = None
-slack_widget = None
 gallery_widget = None
 launcher_widget = None
 message_widget = None

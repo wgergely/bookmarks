@@ -78,7 +78,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
         grp = ui.get_group(
             margin=common.size(common.size_indicator),
             vertical=False, parent=self
-            )
+        )
         grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         h = common.size(common.size_margin) * 2

@@ -1,7 +1,17 @@
 {
   "0": {
-    "name": "Shader Template Manager",
-    "module": "aka_odyssey_shaders",
-    "description": "Shader template import and export used on the Studio Aka Odyssey project."
+    "name": "AKA-ODSY-DJI | Shader Import/Export...",
+    "module": "aka_odsy_dji_shaders",
+    "description": "Shader template import and export tool"
+  },
+  "1": {
+    "name": "AKA-ODSY-DJI | Make EXPORT Sets",
+    "module": "aka_odsy_dji_make_export_sets",
+    "description": ""
+  },
+  "2": {
+    "name": "Reset joint orientations",
+    "module": "reset_joint_orientations",
+    "description": "Resets bone orientation values too zero without moving the bones"
   }
 }

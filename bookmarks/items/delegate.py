@@ -91,6 +91,9 @@ def save_painter(func):
 
         if painter:
             painter.restore()
+            for arg in args:
+                if isinstance(arg, QtGui.QFont):
+                    arg.setUnderline(False)
 
         return res
 
@@ -1226,7 +1229,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             return self.paint_asset_name(
                 *args,
                 offset=common.size(common.size_indicator) * 2
-                )
+            )
         elif len(pp) > 4:
             return self.paint_file_name(*args)
 
@@ -1234,7 +1237,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     def draw_file_description(
             self, font, metrics, left_limit, right_limit, offset,
             large_mode, *args
-            ):
+    ):
         """Draws file items' descriptions.
 
         """
@@ -1457,7 +1460,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         size_role = index.data(QtCore.Qt.SizeHintRole)
         if not source or not size_role:
             return
-
 
         if self.parent().verticalScrollBar().isSliderDown():
             pixmap = images.rsc_pixmap(
@@ -1966,7 +1968,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     def _paint_inline_properties(
             self, *args,
             _color=common.color(common.color_separator)
-            ):
+    ):
         (
             rectangles,
             painter,
@@ -2205,64 +2207,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
     @save_painter
-    def paint_slack_status(self, *args):
-        """Paints the item's Slack configuration status.
-
-        """
-        (
-            rectangles,
-            painter,
-            option,
-            index,
-            selected,
-            focused,
-            active,
-            archived,
-            favourite,
-            hover,
-            font,
-            metrics,
-            cursor_position
-        ) = args
-
-        if not index.isValid():
-            return
-        if not index.data(QtCore.Qt.DisplayRole):
-            return
-        if not index.data(common.ParentPathRole):
-            return
-        if not index.data(common.SlackLinkedRole):
-            return
-
-        rect = QtCore.QRect(
-            0, 0, common.size(
-                common.size_margin
-            ), common.size(common.size_margin)
-        )
-
-        offset = QtCore.QPoint(
-            common.size(common.size_indicator),
-            common.size(common.size_indicator)
-        )
-        rect.moveBottomRight(
-            rectangles[ThumbnailRect].bottomRight() - offset
-        )
-
-        if index.data(common.SGLinkedRole):
-            rect.moveLeft(
-                rect.left() - (common.size(common.size_margin) * 0.66)
-            )
-
-        painter.setOpacity(0.9) if hover else painter.setOpacity(0.8)
-
-        pixmap = images.rsc_pixmap(
-            'slack', common.color(common.color_text), common.size(common.size_margin)
-        )
-        painter.drawPixmap(rect, pixmap, pixmap.rect())
-
-    @save_painter
     def paint_db_status(self, *args):
-        """Paints the item's Slack configuration status.
+        """Paints the item's configuration status.
 
         """
         (
@@ -2868,7 +2814,6 @@ class BookmarkItemViewDelegate(ItemDelegate):
             self.paint_thumbnail_drop_indicator(*args)
             self.paint_description_editor_background(*args)
             self.paint_selection_indicator(*args)
-            self.paint_slack_status(*args)
             self.paint_shotgun_status(*args)
             self.paint_db_status(*args)
             self.paint_drag_source(*args)

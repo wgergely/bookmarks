@@ -246,8 +246,6 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
 
-
-
 class MayaButtonWidgetContextMenu(PluginContextMenu):
     """The context-menu associated with the BrowserButton."""
 
@@ -283,4 +281,3 @@ class MayaWidgetContextMenu(PluginContextMenu):
         self.capture_menu()
         self.separator()
         self.hud_menu()
-

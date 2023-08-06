@@ -199,7 +199,8 @@ DEFAULT_TOKEN_CONFIG = {
     PublishConfig: {
         0: {
             'name': 'Shot Task',
-            'value': '{server}/{job}/publish/{sequence}_{shot}/{task}/{element}/{prefix}_{sequence}_{shot}_{task}_{element}.{ext}',
+            'value': '{server}/{job}/publish/{sequence}_{shot}/{task}/{element}/{prefix}_{sequence}_{shot}_{task}_{'
+                     'element}.{ext}',
             'description': 'Publish a shot task element',
             'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
         },
@@ -235,7 +236,8 @@ DEFAULT_TOKEN_CONFIG = {
         },
         7: {
             'name': 'Studio Aka - vCur',
-            'value': '{server}/{job}/{root}/{asset0}/{asset1}/{asset2}/publish/{asset4}/{asset5}/{asset1}_{asset5}_{element}.vCur.{ext}',
+            'value': '{server}/{job}/{root}/{asset0}/{asset1}/{asset2}/publish/{asset4}/{asset5}/{asset1}_{asset5}_{'
+                     'element}.vCur.{ext}',
             'description': 'Studio Aka - vCur',
             'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
         },

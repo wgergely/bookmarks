@@ -9,7 +9,6 @@ from PySide2 import QtWidgets, QtCore
 from .. import actions
 from .. import common
 from .. import contextmenu
-from .. import database
 from .. import images
 from .. import shortcuts
 from .. import ui
@@ -123,7 +122,6 @@ class FilterButton(BaseControlButton):
 
         if alt_modifier or shift_modifier or control_modifier:
             common.widget().model().set_filter_text('')
-            common.widget().model().filterTextChanged.emit('')
             return
 
         super(FilterButton, self).mouseReleaseEvent(event)
@@ -149,11 +147,11 @@ class ToggleSequenceButton(BaseControlButton):
             return images.rsc_pixmap(
                 'collapse', self._on_color,
                 common.size(common.size_margin)
-                )
+            )
         return images.rsc_pixmap(
             'expand', self._off_color,
             common.size(common.size_margin)
-            )
+        )
 
     def state(self):
         if not common.widget():
@@ -257,64 +255,6 @@ class ToggleFavouriteButton(BaseControlButton):
             self.hide()
 
 
-class SlackButton(BaseControlButton):
-    def __init__(self, parent=None):
-        super(SlackButton, self).__init__(
-            'slack',
-            'Slack Messenger',
-            parent=parent
-        )
-        common.signals.databaseValueUpdated.connect(self.check_updated_value)
-        common.signals.bookmarkActivated.connect(self.check_token)
-
-    @QtCore.Slot()
-    def action(self):
-        """Opens the set slack workspace."""
-        actions.show_slack()
-
-    def state(self):
-        return True
-
-    @QtCore.Slot()
-    def check_updated_value(self, table, _, key, value):
-        if table != database.BookmarkTable:
-            return
-        if key != 'slacktoken':
-            return
-        if value:
-            self.setHidden(False)
-            return True
-        self.setHidden(True)
-        return False
-
-    @QtCore.Slot()
-    def check_token(self, *args, **kwargs):
-        """Checks if the current bookmark has an active slack token set.
-
-        If the value is set we'll show the button, otherwise it will stay hidden.
-
-        """
-        args = [common.active(f) for f in (
-            'server', 'job', 'root')]
-        if not all(args):
-            self.setHidden(True)
-            return False
-
-        db = database.get(*args)
-        slacktoken = db.value(
-            db.source(),
-            'slacktoken',
-            database.BookmarkTable
-        )
-
-        if not slacktoken:
-            self.setHidden(True)
-            return False
-
-        self.setHidden(False)
-        return True
-
-
 class RefreshButton(BaseControlButton):
     def __init__(self, parent=None):
         s = shortcuts.string(
@@ -349,7 +289,7 @@ class RefreshButton(BaseControlButton):
         if any(
                 (data[common.FileItem].refresh_needed,
                  data[common.SequenceItem].refresh_needed)
-                ):
+        ):
             return True
 
         return False

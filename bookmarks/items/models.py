@@ -803,7 +803,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
     invalidated = QtCore.Signal()
 
     def __init__(self, parent=None):
-        super(FilterProxyModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setSortLocaleAware(False)
         self.setDynamicSortFilter(False)
 
@@ -833,7 +833,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         self.modelAboutToBeReset.connect(self.verify_items.stop)
         self.modelReset.connect(self.verify_items.start)
-        common.signals.databaseValueUpdated.connect(self.verify_items.start())
+        common.signals.databaseValueUpdated.connect(self.verify_items.start)
         self.modelReset.connect(self.invalidateFilter)
 
         self.filterTextChanged.connect(self.verify_items.start)
@@ -855,6 +855,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         is_archived_visible = self.filter_flag(common.MarkedAsArchived)
         is_favourite_visible = self.filter_flag(common.MarkedAsFavourite)
+
         for n in range(self.rowCount()):
             index = self.index(n, 0)
             is_archived = index.flags() & common.MarkedAsArchived
@@ -879,7 +880,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
     @QtCore.Slot()
     def delayed_invalidate(self, *args, **kwargs):
         """Slot called by the queued invalidate timer's timeout signal."""
-        result = super(FilterProxyModel, self).invalidateFilter()
+        result = super().invalidateFilter()
         self.invalidated.emit()
         return result
 
@@ -887,7 +888,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         """Invalidates the filter.
 
         """
-        result = super(FilterProxyModel, self).invalidate()
+        result = super().invalidate()
         self.invalidated.emit()
         return result
 
@@ -895,7 +896,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         """Resets and invalidates the proxy model.
 
         """
-        result = super(FilterProxyModel, self).reset()
+        result = super().reset()
         self.invalidated.emit()
         return result
 

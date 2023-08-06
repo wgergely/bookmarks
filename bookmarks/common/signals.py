@@ -149,8 +149,10 @@ class CoreSignals(QtCore.QObject):
         self.assetActivated.connect(actions.adjust_tab_button_size)
 
         self.sgConnectionAttemptStarted.connect(
-            lambda *x: common.show_message('ShotGrid is connecting, please wait.', no_anim=True,
-                                           buttons=[], message_type=None)
+            lambda *x: common.show_message(
+                'ShotGrid is connecting, please wait.', disable_animation=True,
+                buttons=[], message_type=None
+                )
         )
         self.sgConnectionSuccessful.connect(common.close_message)
         self.sgConnectionFailed.connect(common.close_message)

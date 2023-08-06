@@ -71,260 +71,257 @@ class UIScaleFactorsCombobox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': 'Interface',
-        'icon': 'icon',
-        'color': None,
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Interface Scale',
-                    'key': 'settings/ui_scale',
-                    'validator': None,
-                    'widget': UIScaleFactorsCombobox,
-                    'placeholder': '',
-                    'description': 'Scales Bookmark\'s interface by the specified '
-                                   'amount.\nUseful for high-dpi displays if the '
-                                   'text is too small to read.\n\nTakes effect the '
-                                   'next time Bookmarks is launched.',
-                },
-                1: {
-                    'name': 'Hide Context Menu Icons',
-                    'key': 'settings/show_menu_icons',
-                    'validator': None,
-                    'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Enable'
-                    ),
-                    'placeholder': 'Check to icons',
-                    'description': 'Check to icons',
-                },
-                2: {
-                    'name': 'Hide Thumbnail Backgrounds',
-                    'key': 'settings/paint_thumbnail_bg',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': 'Check to hide thumbnail background colors',
-                    'description': 'Check to hide thumbnail background colors'
-                },
-                3: {
-                    'name': 'Disable Image Thumbnails',
-                    'key': 'settings/disable_oiio',
-                    'validator': None,
-                    'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Disable'
-                    ),
-                    'placeholder': 'Check to disable generating thumbnails from '
-                                   'image files using OpenImageIO',
-                    'description': 'Check to disable generating thumbnails from '
-                                   'image files using OpenImageIO',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Bookmark item search depth',
-                    'key': 'settings/job_scan_depth',
-                    'validator': base.int_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': '3',
-                    'description': 'Set the maximum folder depth to parse. Parsing large '
-                                   'project folders will take a long time. This setting '
-                                   'will limit the number of sub-directories the editor '
-                                   'parses when looking for bookmark items.',
-                    'help': 'This setting will limit the number of sub-directories the '
-                            'editor will look into when looking for bookmark items.',
-                },
-            },
-        },
-    },
-    2: {
-        'name': 'Binaries',
-        'icon': 'icon',
-        'color': None,
-        'groups': {
-            0: {
-                0: {
-                    'name': None,
-                    'key': 'environment',
-                    'validator': None,
-                    'widget': common.EnvPathEditor,
-                    'placeholder': '',
-                    'description': 'Edit external binary paths',
-                },
-            },
-        },
-    },
-    3: {
-        'name': 'ShotGrid',
-        'icon': 'sg',
-        'color': None,
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Login',
-                    'key': 'sg_auth/login',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': '',
-                    'description': 'Your ShotGrid login name',
-                },
-                1: {
-                    'name': 'Password',
-                    'key': 'sg_auth/password',
-                    'validator': None,
-                    'protect': True,
-                    'widget': ui.LineEdit,
-                    'placeholder': '',
-                    'description': 'Your ShotGrid password',
-                },
-            },
-        },
-    },
-    4: {
-        'name': 'Maya',
-        'icon': 'maya',
-        'color': None,
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Set Maya Workspace',
-                    'key': 'maya/sync_workspace',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': f'Click to disable setting the Maya workspace. By '
-                                   f'default the Maya workspace is always set to be the'
-                                   f'current active asset.',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Workspace Save Warning',
-                    'key': 'maya/workspace_save_warnings',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': 'Click to disable warnings when saving files outside '
-                                   'the current Workspace.'
-                },
-            },
-            2: {
-                0: {
-                    'name': 'Push Capture to RV',
-                    'key': 'maya/push_capture_to_rv',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': 'When ShotGrid RV is available the latest '
-                                   'capture will automatically be pushed to RV for '
-                                   'viewing. Check the box above to disable.',
-                },
-                1: {
-                    'name': 'Reveal Capture',
-                    'key': 'maya/reveal_capture',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': 'Check the box above to disable showing '
-                                   'captures in the file explorer.',
-                },
-                2: {
-                    'name': 'Disable "Latest" Capture',
-                    'key': 'maya/publish_capture',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': 'The last capture by default will be '
-                                   'published into a "Latest" folder with using a '
-                                   'generic filename.\nThis can be useful for '
-                                   'creating quick edits in RV. Check the box '
-                                   'above to disable.',
-                },
-            },
-            3: {
-                0: {
-                    'name': 'Set ShotGrid context',
-                    'key': 'maya/set_sg_context',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': 'If an asset is associated with a valid ShotGrid task, activating it will'
-                                   'automatically set the ShotGrid context in Maya. Check the box above to disable.',
-                },
-            },
-        },
-    },
-    5: {
-        'name': 'About',
-        'icon': None,
-        'color': common.color(common.color_secondary_text),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Help',
-                    'key': None,
-                    'validator': None,
-                    'widget': None,
-                    'placeholder': '',
-                    'description': 'Show the online documentation',
-                    'button': 'Open Documentation',
-                },
-                1: {
-                    'name': 'Latest Version',
-                    'key': 'app_version',
-                    'validator': None,
-                    'widget': None,
-                    'placeholder': '',
-                    'description': 'Check online for new versions.',
-                    'button': 'Check for Updates',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Current Versions',
-                    'key': None,
-                    'validator': None,
-                    'widget': None,
-                    'placeholder': '',
-                    'description': '',
-                    'help': importlib.import_module(
-                        __name__.split('.', maxsplit=1)[0]
-                    ).info(),
-                },
-            },
-            2: {
-                0: {
-                    'name': 'Debugging',
-                    'key': None,
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': '',
-                    'description': 'Enable debug messages.',
-                },
-                1: {
-                    'name': '',
-                    'key': 'reset_image_cache',
-                    'validator': None,
-                    'widget': None,
-                    'placeholder': '',
-                    'description': '',
-                    'button': 'Reset Image Cache'
-                },
-            },
-        },
-    },
-}
-
-
 class PreferenceEditor(base.BasePropertyEditor):
     """Property editor used to edit application preferences.
 
     """
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': 'Interface',
+            'icon': 'icon',
+            'color': None,
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Interface Scale',
+                        'key': 'settings/ui_scale',
+                        'validator': None,
+                        'widget': UIScaleFactorsCombobox,
+                        'placeholder': '',
+                        'description': 'Scales Bookmark\'s interface by the specified '
+                                       'amount.\nUseful for high-dpi displays if the '
+                                       'text is too small to read.\n\nTakes effect the '
+                                       'next time Bookmarks is launched.',
+                    },
+                    1: {
+                        'name': 'Hide Context Menu Icons',
+                        'key': 'settings/show_menu_icons',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Enable'
+                        ),
+                        'placeholder': 'Check to icons',
+                        'description': 'Check to icons',
+                    },
+                    2: {
+                        'name': 'Hide Thumbnail Backgrounds',
+                        'key': 'settings/paint_thumbnail_bg',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                        'placeholder': 'Check to hide thumbnail background colors',
+                        'description': 'Check to hide thumbnail background colors'
+                    },
+                    3: {
+                        'name': 'Disable Image Thumbnails',
+                        'key': 'settings/disable_oiio',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Disable'
+                        ),
+                        'placeholder': 'Check to disable generating thumbnails from '
+                                       'image files using OpenImageIO',
+                        'description': 'Check to disable generating thumbnails from '
+                                       'image files using OpenImageIO',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Bookmark item search depth',
+                        'key': 'settings/job_scan_depth',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': '3',
+                        'description': 'Set the maximum folder depth to parse. Parsing large '
+                                       'project folders will take a long time. This setting '
+                                       'will limit the number of sub-directories the editor '
+                                       'parses when looking for bookmark items.',
+                        'help': 'This setting will limit the number of sub-directories the '
+                                'editor will look into when looking for bookmark items.',
+                    },
+                },
+            },
+        },
+        2: {
+            'name': 'Binaries',
+            'icon': 'icon',
+            'color': None,
+            'groups': {
+                0: {
+                    0: {
+                        'name': None,
+                        'key': 'environment',
+                        'validator': None,
+                        'widget': common.EnvPathEditor,
+                        'placeholder': '',
+                        'description': 'Edit external binary paths',
+                    },
+                },
+            },
+        },
+        3: {
+            'name': 'ShotGrid',
+            'icon': 'sg',
+            'color': None,
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Login',
+                        'key': 'sg_auth/login',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': '',
+                        'description': 'Your ShotGrid login name',
+                    },
+                    1: {
+                        'name': 'Password',
+                        'key': 'sg_auth/password',
+                        'validator': None,
+                        'protect': True,
+                        'widget': ui.LineEdit,
+                        'placeholder': '',
+                        'description': 'Your ShotGrid password',
+                    },
+                },
+            },
+        },
+        4: {
+            'name': 'Maya',
+            'icon': 'maya',
+            'color': None,
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Set Maya Workspace',
+                        'key': 'maya/sync_workspace',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                        'placeholder': None,
+                        'description': f'Click to disable setting the Maya workspace. By '
+                                       f'default the Maya workspace is always set to be the'
+                                       f'current active asset.',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Workspace Save Warning',
+                        'key': 'maya/workspace_save_warnings',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                        'placeholder': None,
+                        'description': 'Click to disable warnings when saving files outside '
+                                       'the current Workspace.'
+                    },
+                },
+                2: {
+                    0: {
+                        'name': 'Push Capture to RV',
+                        'key': 'maya/push_capture_to_rv',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                        'placeholder': None,
+                        'description': 'When ShotGrid RV is available the latest '
+                                       'capture will automatically be pushed to RV for '
+                                       'viewing. Check the box above to disable.',
+                    },
+                    1: {
+                        'name': 'Reveal Capture',
+                        'key': 'maya/reveal_capture',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                        'placeholder': None,
+                        'description': 'Check the box above to disable showing '
+                                       'captures in the file explorer.',
+                    },
+                    2: {
+                        'name': 'Disable "Latest" Capture',
+                        'key': 'maya/publish_capture',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                        'placeholder': None,
+                        'description': 'The last capture by default will be '
+                                       'published into a "Latest" folder with using a '
+                                       'generic filename.\nThis can be useful for '
+                                       'creating quick edits in RV. Check the box '
+                                       'above to disable.',
+                    },
+                },
+                3: {
+                    0: {
+                        'name': 'Set ShotGrid context',
+                        'key': 'maya/set_sg_context',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
+                        'placeholder': None,
+                        'description': 'If an asset is associated with a valid ShotGrid task, activating it will'
+                                       'automatically set the ShotGrid context in Maya. Check the box above to disable.',
+                    },
+                },
+            },
+        },
+        5: {
+            'name': 'About',
+            'icon': None,
+            'color': common.color(common.color_secondary_text),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Help',
+                        'key': None,
+                        'validator': None,
+                        'widget': None,
+                        'placeholder': '',
+                        'description': 'Show the online documentation',
+                        'button': 'Open Documentation',
+                    },
+                    1: {
+                        'name': 'Latest Version',
+                        'key': 'app_version',
+                        'validator': None,
+                        'widget': None,
+                        'placeholder': '',
+                        'description': 'Check online for new versions.',
+                        'button': 'Check for Updates',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Current Versions',
+                        'key': None,
+                        'validator': None,
+                        'widget': None,
+                        'placeholder': '',
+                        'description': '',
+                        'help': importlib.import_module(
+                            __name__.split('.', maxsplit=1)[0]
+                        ).info(),
+                    },
+                },
+                2: {
+                    0: {
+                        'name': 'Debugging',
+                        'key': None,
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                        'placeholder': '',
+                        'description': 'Enable debug messages.',
+                    },
+                    1: {
+                        'name': '',
+                        'key': 'reset_image_cache',
+                        'validator': None,
+                        'widget': None,
+                        'placeholder': '',
+                        'description': '',
+                        'button': 'Reset Image Cache'
+                    },
+                },
+            },
+        },
+    }
 
     def __init__(self, parent=None):
         super().__init__(
-            SECTIONS,
             None,
             None,
             None,
@@ -387,7 +384,7 @@ class PreferenceEditor(base.BasePropertyEditor):
         """Info button click action.
 
         """
-        common.show_message('Checking version', message_type=None, no_anim=True, buttons=[])
+        common.show_message('Checking version', message_type=None, disable_animation=True, buttons=[])
         from ..versioncontrol import versioncontrol
         versioncontrol.check()
 

@@ -541,8 +541,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         path = self.index.data(common.PathRole)
         metrics = QtGui.QFontMetrics(self.font())
         for mode in (
-                common.WindowsPath, common.MacOSPath, common.UnixPath,
-                common.SlackPath):
+                common.WindowsPath, common.MacOSPath, common.UnixPath):
             m = key()
             n = actions.copy_path(path, mode=mode, copy=False)
 
@@ -1530,10 +1529,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
         self.menu[k][key()] = {
-            'text': 'Publish',
+            'text': 'SG Publish: MP4 as Version',
             'icon': ui.get_icon('sg', color=common.color(common.color_green)),
-            'action': sg_actions.publish,
+            'action': functools.partial(sg_actions.publish, formats=('mp4', 'mov')),
         }
+
+        self.separator(self.menu[k])
 
     def sg_browse_tasks_menu(self):
         """ShotGrid publish menu actions.

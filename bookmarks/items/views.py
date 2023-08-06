@@ -1029,7 +1029,7 @@ class BaseItemView(QtWidgets.QTableView):
                     'Looks like this item belongs to a sequence that has a flag set '
                     'already.',
                     body='To modify individual sequence items, remove the flag from the '
-                    'sequence first and try again.',
+                         'sequence first and try again.',
                     message_type=None
                 )
                 self.reset_multi_toggle()
@@ -1340,7 +1340,7 @@ class BaseItemView(QtWidgets.QTableView):
             100, functools.partial(
                 self.select_item, v, role=role
             )
-            )
+        )
 
     def select_item(self, v, role=QtCore.Qt.DisplayRole):
         """Select an item in the viewer.
@@ -1445,10 +1445,8 @@ class BaseItemView(QtWidgets.QTableView):
         self.drag_source_row = index.row()
 
         drag = ItemDrag(index, self)
-        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
         QtCore.QTimer.singleShot(1, self.viewport().update)
         drag.exec_(supported_actions)
-        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
         QtCore.QTimer.singleShot(10, self._reset_drag_indicators)
 
     def dropEvent(self, event):

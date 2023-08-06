@@ -63,9 +63,6 @@ SECTIONS = {
         'state/geometry',
         'state/state',
     ),
-    'slack': (
-        'slack/user',
-    ),
     'sg_auth': (
         'sg_auth/login',
         'sg_auth/password',

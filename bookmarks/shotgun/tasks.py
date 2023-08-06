@@ -9,6 +9,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from . import shotgun
 from .. import common
 from .. import contextmenu
+from .. import database
 from .. import images
 from .. import ui
 from ..editor import base
@@ -62,8 +63,7 @@ class TaskViewContextMenu(contextmenu.BaseContextMenu):
             return
 
         url = shotgun.ENTITY_URL.format(
-            domain=sg_properties.domain, entity_type=entity['type'],
-            entity_id=entity['id'], )
+            domain=sg_properties.domain, entity_type=entity['type'], entity_id=entity['id'], )
         self.menu['visit'] = {
             'text': 'View Online...',
             'action': functools.partial(QtGui.QDesktopServices.openUrl, QtCore.QUrl(url))
@@ -564,8 +564,8 @@ class TaskPicker(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         self.sg_properties = None
-        self.user_editor = None
-        self.asset_editor = None
+        self.user_filter_editor = None
+        self.asset_filter_editor = None
         self.task_editor = None
 
         self.ok_button = None
@@ -582,22 +582,22 @@ class TaskPicker(QtWidgets.QDialog):
 
         grp = base.add_section('sg', 'Select Task', self, color=None)
 
-        self.user_editor = base_widgets.BaseComboBox(parent=self)
-        self.user_editor.setDuplicatesEnabled(False)
-        self.asset_editor = base_widgets.BaseComboBox(parent=self)
-        self.asset_editor.setDuplicatesEnabled(False)
+        self.user_filter_editor = base_widgets.BaseComboBox(parent=self)
+        self.user_filter_editor.setDuplicatesEnabled(False)
+        self.asset_filter_editor = base_widgets.BaseComboBox(parent=self)
+        self.asset_filter_editor.setDuplicatesEnabled(False)
 
         filter_row = ui.add_row(None, parent=grp)
 
         label = ui.PaintedLabel('Filter by User')
         filter_row.layout().addWidget(label, 0)
-        filter_row.layout().addWidget(self.user_editor, 1)
+        filter_row.layout().addWidget(self.user_filter_editor, 1)
 
         filter_row.layout().addSpacing(o)
 
         label = ui.PaintedLabel('Filter by Asset')
         filter_row.layout().addWidget(label, 0)
-        filter_row.layout().addWidget(self.asset_editor, 1)
+        filter_row.layout().addWidget(self.asset_filter_editor, 1)
 
         self.task_editor = TaskView(parent=self)
         grp.layout().addWidget(self.task_editor)
@@ -606,20 +606,30 @@ class TaskPicker(QtWidgets.QDialog):
         grp.layout().addWidget(self.ok_button, 1)
 
     def _connect_signals(self):
-        self.user_editor.currentIndexChanged.connect(
-            lambda: self.task_editor.model().set_user_filter(self.user_editor.currentData())
+        self.user_filter_editor.currentIndexChanged.connect(
+            lambda: self.task_editor.model().set_user_filter(self.user_filter_editor.currentData())
         )
-        self.user_editor.currentIndexChanged.connect(lambda x: self.task_editor.model().invalidateFilter())
+        self.user_filter_editor.currentIndexChanged.connect(lambda x: self.task_editor.model().invalidateFilter())
 
-        self.user_editor.currentTextChanged.connect(functools.partial(common.save_selection, self.user_editor))
-
-        self.asset_editor.currentIndexChanged.connect(
-            lambda: self.task_editor.model().set_asset_filter(self.asset_editor.currentData())
+        self.user_filter_editor.currentTextChanged.connect(
+            functools.partial(
+                common.save_selection,
+                self.user_filter_editor
+            )
         )
-        self.asset_editor.currentIndexChanged.connect(lambda x: self.task_editor.model().invalidateFilter())
-        self.asset_editor.currentIndexChanged.connect(self.task_editor.expandAll)
 
-        self.asset_editor.currentTextChanged.connect(functools.partial(common.save_selection, self.asset_editor))
+        self.asset_filter_editor.currentIndexChanged.connect(
+            lambda: self.task_editor.model().set_asset_filter(self.asset_filter_editor.currentData())
+        )
+        self.asset_filter_editor.currentIndexChanged.connect(lambda x: self.task_editor.model().invalidateFilter())
+        self.asset_filter_editor.currentIndexChanged.connect(self.task_editor.expandAll)
+
+        self.asset_filter_editor.currentTextChanged.connect(
+            functools.partial(
+                common.save_selection,
+                self.asset_filter_editor
+            )
+        )
 
         self.task_editor.selectionModel().currentChanged.connect(
             functools.partial(common.save_selection, self.task_editor)
@@ -639,76 +649,91 @@ class TaskPicker(QtWidgets.QDialog):
 
         self.sg_properties = sg_properties
 
+        common.show_message(
+            'Getting tasks from Shotgun...', body='Please wait...', buttons=[], disable_animation=True, )
+
         with sg_properties.connection() as sg:
             entities = sg.find(
                 'Task', [['project', 'is', {
                     'type': 'Project',
                     'id': sg_properties.bookmark_id
                 }], ], fields=shotgun.entity_fields['Task']
-                )
+            )
 
         model = TaskModel(entities, parent=self)
-
         proxy = ProxyModel(parent=self)
         proxy.setSourceModel(model)
 
         self.task_editor.setModel(proxy)
         self.task_editor.set_root_node(model.root_node)
         self.task_editor.expandAll()
-        common.restore_selection(self.task_editor)
+
+        # Get current task from the context
+        if common.active('asset'):
+            db = database.get(
+                common.active('server'), common.active('job'), common.active('root'), )
+            with db.connection():
+                task_id = db.value(common.active('asset', path=True), 'sg_task_id', database.AssetTable)
+                task_name = db.value(common.active('asset', path=True), 'sg_task_name', database.AssetTable)
+
+            if all([task_id, task_name]):
+                common.select_index(self.task_editor, task_id, role=shotgun.IdRole)
+        else:
+            common.restore_selection(self.task_editor)
 
         self.init_users(entities)
         self.init_assets(entities)
 
         self._connect_signals()
 
-        common.restore_selection(self.asset_editor)
+        common.restore_selection(self.asset_filter_editor)
         self.select_asset()
 
+    @QtCore.Slot()
     def select_asset(self):
         asset = common.active('asset')
         if not asset:
             return
-        for n in range(self.asset_editor.count()):
-            index = self.asset_editor.model().index(n, 0)
+        for n in range(self.asset_filter_editor.count()):
+            index = self.asset_filter_editor.model().index(n, 0)
             if not index.data(QtCore.Qt.DisplayRole):
                 continue
             if index.data(QtCore.Qt.DisplayRole).lower() in common.active('asset', path=True).lower():
-                self.asset_editor.setCurrentText(index.data(QtCore.Qt.DisplayRole))
+                self.asset_filter_editor.setCurrentText(index.data(QtCore.Qt.DisplayRole))
                 break
 
-        common.restore_selection(self.user_editor)
+        common.restore_selection(self.user_filter_editor)
 
     def init_users(self, entities):
-        self.user_editor.clear()
+        self.user_filter_editor.clear()
 
-        self.user_editor.addItem('Show All', userData=-1)
-        self.user_editor.addItem('Show Unassigned', userData=-2)
-        self.user_editor.insertSeparator(self.user_editor.count())
+        self.user_filter_editor.addItem('Show All', userData=-1)
+        self.user_filter_editor.addItem('Show Unassigned', userData=-2)
+        self.user_filter_editor.insertSeparator(self.user_filter_editor.count())
 
         for entity in entities:
             if 'task_assignees' not in entity or not entity['task_assignees']:
                 continue
 
             for user in entity['task_assignees']:
-                if self.user_editor.findData(user['id'], role=QtCore.Qt.UserRole) >= 0:
+                if self.user_filter_editor.findData(user['id'], role=QtCore.Qt.UserRole) >= 0:
                     continue
-                self.user_editor.addItem(user['name'], userData=user['id'])
+                self.user_filter_editor.addItem(user['name'], userData=user['id'])
 
     def init_assets(self, entities):
-        self.asset_editor.clear()
+        self.asset_filter_editor.clear()
 
-        self.asset_editor.addItem('Show All', userData=-1)
-        self.asset_editor.insertSeparator(self.asset_editor.count())
+        self.asset_filter_editor.addItem('Show All', userData=-1)
+        self.asset_filter_editor.insertSeparator(self.asset_filter_editor.count())
 
         for entity in entities:
             if 'entity' not in entity or not entity['entity']:
                 continue
 
             _entity = entity['entity']
-            if self.asset_editor.findData(_entity['id'], role=QtCore.Qt.UserRole) >= 0:
+            if self.asset_filter_editor.findData(_entity['id'], role=QtCore.Qt.UserRole) >= 0:
                 continue
-            self.asset_editor.addItem(_entity['name'], userData=_entity['id'])
+            self.asset_filter_editor.addItem(_entity['name'], userData=_entity['id'])
 
     @common.error
     @common.debug

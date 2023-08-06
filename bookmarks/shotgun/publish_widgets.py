@@ -7,6 +7,7 @@ from . import actions as sg_actions
 from . import shotgun
 from .. import common
 from .. import images
+from .. import database
 
 NOT_SELECTED = 'Not selected...'
 NOT_CONFIGURED = 'Not configured'
@@ -409,23 +410,41 @@ class TaskEditor(shotgun.EntityComboBox):
 
     @common.error
     @common.debug
+    @QtCore.Slot()
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value('shotgrid_publish/task')
-        if not v:
-            self.setCurrentIndex(0)
-            return
+        # First let's check if the current active context has a task
+        # associated with it.
+        db = database.get(
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
+        )
+        with db.connection():
+            task_id = db.value(common.active('asset', path=True), 'sg_task_id', database.AssetTable)
+            task_name = db.value(common.active('asset', path=True), 'sg_task_name', database.AssetTable)
+
+        if all([task_id, task_name]):
+            v = task_id
+        else:
+            # Check the user preferences if we set a task previously
+            v = common.settings.value('shotgrid_publish/task')
 
         for idx in range(self.count()):
             entity = self.itemData(idx, role=shotgun.EntityRole)
             if not entity:
                 continue
-            k = 'content'
+
+            if isinstance(v, int):
+                k = 'id'
+            else:
+                k = 'content'
+
             if k in entity and entity[k]:
                 if v == entity[k]:
                     self.setCurrentIndex(idx)
                     return
 
-        self.setCurrentIndex(0)
+        self.setCurrentIndex(-1)
 
     @common.error
     @common.debug
@@ -516,6 +535,7 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
 
     def __init__(self, parent=None):
         super().__init__([NOT_SELECTED, ], parent=parent)
+
         self.init_data()
         self.model().sourceModel().entityDataReceived.connect(self.restore_selection)
         self.currentIndexChanged.connect(self.save_selection)
@@ -564,22 +584,33 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value('shotgrid_publish/type')
-        if not v:
-            self.setCurrentIndex(0)
-            return
+        # Let's first try to guess from the current selection
+        # Get the current item selection
+        index = common.selected_index(common.FileTab)
+
+        if not index and index.isValid():
+            self.setCurrentIndex(-1)
+
+        p = index.data(common.PathRole)
+        seq = index.data(common.SequenceRole)
+
+        ext = QtCore.QFileInfo(p).suffix()
 
         for idx in range(self.count()):
             entity = self.itemData(idx, role=shotgun.EntityRole)
             if not entity:
                 continue
+
             k = 'code'
             if k in entity and entity[k]:
-                if v == entity[k]:
+                if ext.lower() in ('mp4', 'mov') and entity[k].lower() == 'movie':
+                    self.setCurrentIndex(idx)
+                    return
+                if ext.lower() in ('jpg', 'png') and seq and entity[k].lower() == 'movie':
                     self.setCurrentIndex(idx)
                     return
 
-        self.setCurrentIndex(0)
+        self.setCurrentIndex(-1)
 
     @common.error
     @common.debug

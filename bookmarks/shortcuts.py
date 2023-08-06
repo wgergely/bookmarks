@@ -7,7 +7,6 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 
-
 OpenNewInstance = common.idx(reset=True, start=0)
 
 RowIncrease = common.idx()
@@ -48,7 +47,6 @@ ToggleFavourite = common.idx()
 ToggleActive = common.idx()
 
 HideInlineButtons = common.idx()
-OpenSlack = common.idx()
 OpenPreferences = common.idx()
 OpenTodo = common.idx()
 
@@ -277,13 +275,6 @@ MainWidgetShortcuts = {
         'default': 'Alt+H',
         'repeat': False,
         'description': 'Hide buttons',
-        'shortcut': None,
-    },
-    OpenSlack: {
-        'value': 'Alt+M',
-        'default': 'Alt+M',
-        'repeat': False,
-        'description': 'Open Slack',
         'shortcut': None,
     },
     OpenPreferences: {

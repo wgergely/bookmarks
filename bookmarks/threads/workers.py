@@ -472,14 +472,6 @@ def get_ranges(arr, padding):
     return ','.join(['-'.join(sorted({blocks[k][0], blocks[k][-1]})) for k in blocks])
 
 
-def update_slack_configured(source_paths, bookmark_row_data, ref):
-    """Slot called when a slack integration value was updated.
-
-    """
-    v = bookmark_row_data['slacktoken']
-    ref()[common.SlackLinkedRole] = True if v else False
-
-
 def update_shotgun_configured(pp, b, a, ref):
     """Slot called when a shotgun integration value was updated.
 
@@ -623,9 +615,6 @@ class InfoWorker(BaseWorker):
         ref()[common.AssetCountRole] = count
         ref()[common.DescriptionRole] = description
         ref()[QtCore.Qt.ToolTipRole] = description
-
-        # Let's load and verify Slack status
-        update_slack_configured(pp, bookmark_row_data, ref)
 
     def _process_sequence_item(self, ref, item_type):
         if not self.is_valid(ref):

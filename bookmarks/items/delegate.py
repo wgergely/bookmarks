@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Item delegate used to draw bookmark, asset and file items.
 
 Defines :class:`ItemDelegate`, the base delegate class, subclasses and helper functions.
@@ -844,7 +843,7 @@ def draw_gradient_background(*args):
     painter.drawRect(rect)
 
 
-class ItemDelegate(QtWidgets.QAbstractItemDelegate):
+class ItemDelegate(QtWidgets.QStyledItemDelegate):
     """The main delegate used to represent lists derived from `base.BaseItemView`.
 
     """
@@ -914,12 +913,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         # automatically update the views and model data caches
         db = database.get(*source_path[0:3])
         db.set_value(k, 'description', common.sanitize_hashtags(v))
-
-    def paint(self, painter, option, index):
-        """Paints an item.
-
-        """
-        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     def get_rectangles(self, index):
         """Return all rectangles needed to paint an item.

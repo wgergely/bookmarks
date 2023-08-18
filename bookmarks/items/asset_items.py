@@ -330,6 +330,7 @@ class AssetItemModel(models.ItemModel):
                 entry.path.replace('\\', '/'),
                 section='links/asset'
             )
+
             for link in links:
                 v = f'{path}/{entry.name}/{link}'
                 _entry = common.get_entry_from_path(v)
@@ -337,6 +338,7 @@ class AssetItemModel(models.ItemModel):
                     log.error(f'Could not get entry from link {v}')
                     continue
                 yield _entry
+
             if links:
                 continue
 

@@ -41,6 +41,7 @@ of tasks path templates relative to the asset root directory, e.g.:
 import functools
 import json
 import os
+import shutil
 import time
 import zipfile
 
@@ -767,6 +768,21 @@ class SyncWidget(base.BasePropertyEditor):
 
                     print(f'Patching {root}/{task_path}')
                     self.patch_asset(asset_template_path, f'{root}/{task_path}')
+
+                    # Check if the audio file exists
+                    audio_file_path = f"{bookmark_root}/{entity['code']}.wav"
+
+                    if os.path.exists(audio_file_path):
+                        print(f'Copying audio file {entity["code"]}.wav to {root}/{task_path}/audio/{entity["code"]}.wav')
+                        task_audio_dir = os.path.join(f'{root}', task_path, 'audio')
+                        destination_audio_path = os.path.join(task_audio_dir, f"{entity['code']}.wav")
+
+                        # Create 'audio' folder if it doesn't exist
+                        if not os.path.exists(task_audio_dir):
+                            os.makedirs(task_audio_dir)
+
+                        # Copy the audio file
+                        shutil.copy2(audio_file_path, destination_audio_path)
 
         # Update the .link files for Bookmarks
         if self.sg_sync_sync_data_to_bookmarks_editor.isChecked():

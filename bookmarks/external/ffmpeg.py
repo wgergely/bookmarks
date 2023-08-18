@@ -396,7 +396,7 @@ def convert(
         tc = ''
 
     # Get all properties and construct the ffmpeg command
-    input_path=_input_path_from_seq(seq)
+    input_path = _input_path_from_seq(seq)
     cmd = preset.format(
         BIN=ffmpeg_bin,
         FRAMERATE=_get_framerate(server, job, root),
@@ -435,7 +435,8 @@ def convert(
             if common.message_widget.isVisible():
                 common.message_widget.title_label.setText('Making movie...')
                 common.message_widget.body_label.setText(
-                    f'Converting frame {int(match.group(1))} of {int(endframe)}')
+                    f'Converting frame {int(match.group(1))} of {int(endframe)}'
+                )
                 QtWidgets.QApplication.instance().processEvents()
 
         # Verify the output

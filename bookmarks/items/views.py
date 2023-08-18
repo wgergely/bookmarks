@@ -243,8 +243,7 @@ class ListsWidget(QtWidgets.QStackedWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
-        self.animation = QtCore.QParallelAnimationGroup(self)
-        self.animation.finished.connect(self.animation_finished)
+
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
     def setCurrentIndex(self, idx):
@@ -280,11 +279,18 @@ class ListsWidget(QtWidgets.QStackedWidget):
         if current_index == idx:
             return
 
-        a = self.animation.animationAt(0)
-        if a and a.currentTime() < a.totalDuration():
-            return
+        @QtCore.Slot()
+        def animation_finished(a):
+            anim = a.animationAt(1)
+            if not anim:
+                return
+            if isinstance(anim.targetObject(), QtWidgets.QWidget):
+                _idx = self.indexOf(anim.targetObject())
+                super(ListsWidget, self).setCurrentIndex(_idx)
+                common.signals.tabChanged.emit(_idx)
 
-        self.animation.clear()
+        animation = QtCore.QParallelAnimationGroup()
+        animation.finished.connect(functools.partial(animation_finished, animation))
 
         duration = 200
         # Create animation for outgoing widget
@@ -320,23 +326,13 @@ class ListsWidget(QtWidgets.QStackedWidget):
         in_op.setStartValue(0.0)
         in_op.setEndValue(1.0)
 
-        self.animation.addAnimation(out_anim)
-        self.animation.addAnimation(in_anim)
-        self.animation.addAnimation(out_op)
-        self.animation.addAnimation(in_op)
+        animation.addAnimation(out_anim)
+        animation.addAnimation(in_anim)
+        animation.addAnimation(out_op)
+        animation.addAnimation(in_op)
 
+        animation.start()
         self.widget(idx).show()
-        self.animation.start()
-
-    @QtCore.Slot()
-    def animation_finished(self):
-        anim = self.animation.animationAt(1)
-        if not anim:
-            return
-        if isinstance(anim.targetObject(), QtWidgets.QWidget):
-            idx = self.indexOf(anim.targetObject())
-            super().setCurrentIndex(idx)
-            common.signals.tabChanged.emit(idx)
 
     def showEvent(self, event):
         """Event handler.
@@ -497,8 +493,8 @@ class BaseItemView(QtWidgets.QTableView):
     resized = QtCore.Signal(QtCore.QRect)
 
     ThumbnailContextMenu = ThumbnailsContextMenu
-    Delegate = NotImplementedError
-    ContextMenu = NotImplementedError
+    Delegate = delegate.ItemDelegate
+    ContextMenu = None
 
     def __init__(self, icon='icon_bw', parent=None):
         super().__init__(parent=parent)
@@ -590,6 +586,7 @@ class BaseItemView(QtWidgets.QTableView):
         self.delayed_reset_row_layout_timer.setSingleShot(True)
 
         self.setItemDelegate(self.Delegate(parent=self))
+
         self.init_model()
         self._connect_signals()
 

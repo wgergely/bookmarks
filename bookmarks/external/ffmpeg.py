@@ -248,22 +248,25 @@ def _output_path_from_seq(seq, ext):
     return f'{seq.group(1).rstrip(".").rstrip("_").rstrip()}.{ext}'
 
 
-def _get_framerate(server, job, root, fallback_framerate=24.0):
+def _get_framerate(fallback_framerate=24.0):
     """Get the currently set frame-rate from the bookmark item database.
 
     Returns:
-        float: The current framerate.
+        float: The current frame-rate set in the active context.
 
     """
-    db = database.get(server, job, root)
-    v = db.value(
-        db.source(),
-        'framerate',
-        database.BookmarkTable
-    )
-
-    if not v:  # use the fallback value when not set
+    if not all(common.active('root', args=True)):
         return fallback_framerate
+
+    db = database.get(*common.active('root', args=True))
+
+    bookmark_framerate = db.value(common.active('root', path=True),'framerate', database.BookmarkTable)
+    asset_framerate = db.value(common.active('asset', path=True),'asset_framerate', database.AssetTable)
+
+    v = asset_framerate or bookmark_framerate or fallback_framerate
+    if not isinstance(v, (int, float)) or v < 1.0:
+        return fallback_framerate
+
     return v
 
 
@@ -399,7 +402,7 @@ def convert(
     input_path = _input_path_from_seq(seq)
     cmd = preset.format(
         BIN=ffmpeg_bin,
-        FRAMERATE=_get_framerate(server, job, root),
+        FRAMERATE=_get_framerate(),
         STARTFRAME=startframe,
         INPUT=input_path,
         OUTPUT=output_path,

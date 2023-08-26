@@ -142,6 +142,18 @@ TABLES = {
             'sql': 'INT',
             'type': int
         },
+        'asset_framerate': {
+            'sql': 'REAL',
+            'type': float
+        },
+        'asset_width': {
+            'sql': 'INT',
+            'type': int
+        },
+        'asset_height': {
+            'sql': 'INT',
+            'type': int
+        },
         'url1': {
             'sql': 'TEXT',
             'type': str

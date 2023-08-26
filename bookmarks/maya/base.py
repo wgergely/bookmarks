@@ -152,8 +152,7 @@ CAPTURE_FILE = '{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
 #: Default capture agnostic publish path template
 CAPTURE_PUBLISH_DIR = '{workspace}/{capture_folder}/latest'
 #: Default capture agnostic publish file name template
-AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{' \
-                        'frame}.{ext}'
+AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{frame}.{ext}'
 
 #: Workspace file format rules
 EXPORT_FILE_RULES = {
@@ -182,28 +181,11 @@ EXPORT_FILE_RULES = {
 }
 
 #: Default render template
-RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_' \
-                       '<RenderPass>_<Version>'
+RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<RenderPass>_<Version>'
 
 SUFFIX_LABEL = 'Select a suffix for this import.\n\n\
 Suffixes are always unique and help differentiate imports when the same file \
 is imported multiple times.'
-
-# The list of database tables and column containing relevant properties
-DB_KEYS = {
-    database.BookmarkTable: (
-        'width',
-        'height',
-        'framerate',
-        'startframe',
-        'duration'
-    ),
-    database.AssetTable: (
-        'cut_duration',
-        'cut_out',
-        'cut_in'
-    ),
-}
 
 
 def patch_workspace_file_rules():
@@ -213,8 +195,7 @@ def patch_workspace_file_rules():
     """
     for rule, ext in EXPORT_FILE_RULES.items():
         v = DEFAULT_CACHE_DIR.format(
-            export_dir=tokens.get_folder(tokens.CacheFolder),
-            ext=tokens.get_subfolder(tokens.CacheFolder, ext)
+            export_dir=tokens.get_folder(tokens.CacheFolder), ext=tokens.get_subfolder(tokens.CacheFolder, ext)
         )
         cmds.workspace(fr=(rule, v))
 
@@ -295,16 +276,11 @@ def apply_default_render_values():
 
     # Enable versioned outputs
     cmds.setAttr(
-        'defaultRenderGlobals.imageFilePrefix',
-        RENDER_NAME_TEMPLATE,
-        type='string'
+        'defaultRenderGlobals.imageFilePrefix', RENDER_NAME_TEMPLATE, type='string'
     )
     if not cmds.getAttr('defaultRenderGlobals.renderVersion'):
         cmds.setAttr(
-            'defaultRenderGlobals.renderVersion',
-            'v001',
-            type='string',
-        )
+            'defaultRenderGlobals.renderVersion', 'v001', type='string', )
 
     cmds.setAttr('defaultRenderGlobals.extensionPadding', 4)
     cmds.setAttr('defaultRenderGlobals.animation', 1)
@@ -377,7 +353,7 @@ def get_framerate():
     """
     v = cmds.currentUnit(query=True, time=True)
     if v not in MAYA_FPS:
-        raise ValueError(f'Invalid framerate value: {v}')
+        raise ValueError(f'Invalid frame-rate value: {v}')
     return MAYA_FPS[v]
 
 
@@ -394,10 +370,7 @@ def find_project_folder(key):
     if not key:
         raise ValueError('Key must be specified.')
 
-    _file_rules = cmds.workspace(
-        fr=True,
-        query=True,
-    )
+    _file_rules = cmds.workspace(fr=True, query=True)
 
     file_rules = {}
     for n, _ in enumerate(_file_rules):
@@ -454,8 +427,7 @@ def _add_suffix_attribute(rfn, suffix, reference=True):
                 if cmds.attributeQuery('instance_suffix', node=node, exists=True):
                     continue
                 cmds.addAttr(
-                    _node, ln='instance_suffix', at='enum',
-                    en=':'.join(string.ascii_uppercase)
+                    _node, ln='instance_suffix', at='enum', en=':'.join(string.ascii_uppercase)
                 )
                 cmds.setAttr('{}.instance_suffix'.format(_node), _id)
         except:
@@ -476,9 +448,7 @@ def is_scene_modified():
     )
     mbox.setInformativeText('Do you want to save before continuing?')
     mbox.setStandardButtons(
-        QtWidgets.QMessageBox.Save
-        | QtWidgets.QMessageBox.No
-        | QtWidgets.QMessageBox.Cancel
+        QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel
     )
     mbox.setDefaultButton(QtWidgets.QMessageBox.Save)
     result = mbox.exec_()
@@ -510,17 +480,12 @@ def report_export_progress(start, current, end, start_time):
         progress = float(_current) / float(_end) * 100
 
     progress = '[{}{}] {}%'.format(
-        '#' * int(progress),
-        ' ' * (100 - int(progress)),
-        int(progress)
+        '#' * int(progress), ' ' * (100 - int(progress)), int(progress)
     )
 
     msg = '# Exporting frame {current} of {end}\n# {progress}\n# Elapsed: {' \
           'elapsed}\n'.format(
-        current=current,
-        end=end,
-        progress=progress,
-        elapsed=elapsed
+        current=current, end=end, progress=progress, elapsed=elapsed
     )
     sys.stdout.write(msg)
 
@@ -557,19 +522,15 @@ def _is_set_created_by_user(name):
         return False
 
     # if the object is not a set, return false
-    if not (nodeType == "objectSet" or
-            nodeType == "textureBakeSet" or
-            nodeType == "vertexBakeSet" or
-            nodeType == "character"):
+    if not (
+            nodeType == "objectSet" or nodeType == "textureBakeSet" or nodeType == "vertexBakeSet" or nodeType ==
+            "character"):
         return False
 
     # We also do not want any sets with restrictions
-    restrictionAttrs = ["verticesOnlySet", "edgesOnlySet",
-                        "facetsOnlySet", "editPointsOnlySet",
-                        "renderableOnlySet"]
+    restrictionAttrs = ["verticesOnlySet", "edgesOnlySet", "facetsOnlySet", "editPointsOnlySet", "renderableOnlySet"]
     if any(
-            cmds.getAttr(f'{name}.{attr}') for attr in
-            restrictionAttrs
+            cmds.getAttr(f'{name}.{attr}') for attr in restrictionAttrs
     ):
         return False
 
@@ -625,9 +586,8 @@ def get_geo_sets():
             continue
 
         # We can ignore this group is it does not contain any shapes
-        members = [
-            cmds.ls(f, long=True)[-1] for f in dag_set_members if
-            cmds.listRelatives(f, shapes=True, fullPath=True)]
+        members = [cmds.ls(f, long=True)[-1] for f in dag_set_members if
+                   cmds.listRelatives(f, shapes=True, fullPath=True)]
         if not members:
             continue
 
@@ -646,58 +606,53 @@ def capture_viewport_destination():
     workspace = cmds.workspace(q=True, rootDirectory=True).rstrip('/')
     scene = QtCore.QFileInfo(cmds.file(q=True, expandName=True))
     dest = CAPTURE_DESTINATION.format(
-        workspace=workspace,
-        capture_folder=DEFAULT_CAPTURE_DIR,
-        scene=scene.completeBaseName()
+        workspace=workspace, capture_folder=DEFAULT_CAPTURE_DIR, scene=scene.completeBaseName()
     )
     return DEFAULT_CAPTURE_DIR, workspace, dest
 
 
-class MayaProperties(object):
+class MayaProperties(QtCore.QObject):
     """Utility class used to interface with values stored in the bookmark item's database.
 
     """
 
+    # The list of database tables and column containing relevant properties
+    db_keys = {
+        database.BookmarkTable: ('width', 'height', 'framerate', 'startframe', 'duration'),
+        database.AssetTable: ('cut_duration', 'cut_out', 'cut_in', 'edit_in', 'edit_out', 'asset_width', 'asset_height',
+                              'asset_framerate',),
+    }
+
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
 
-        server = common.active('server')
-        job = common.active('job')
-        root = common.active('root')
-        asset = common.active('asset')
-
-        if not all((server, job, root, asset)):
-            raise RuntimeError('Could not find active asset.')
+        if not all(common.active('asset', args=True)):
+            raise RuntimeError('An asset must be active!')
 
         self.data = {}
 
-        self.init_data(server, job, root, asset)
+        self.init_data()
 
-    def init_data(self, server, job, root, asset):
-        """Initializes the maya properties instance.
+    def init_data(self):
+        """Loads pertinent data from the database.
 
         """
-        # Bookmark properties
-        db = database.get(server, job, root)
-        for k in DB_KEYS[database.BookmarkTable]:
-            self.data[k] = db.value(
-                db.source(),
-                k,
-                database.BookmarkTable
-            )
-        for k in DB_KEYS[database.AssetTable]:
-            self.data[k] = db.value(
-                db.source(asset),
-                k,
-                database.AssetTable
-            )
+        db = database.get(*common.active('root', args=True))
+        for k in self.db_keys[database.BookmarkTable]:
+            self.data[k] = db.value(db.source(), k, database.BookmarkTable)
+        for k in self.db_keys[database.AssetTable]:
+            self.data[k] = db.value(common.active('asset', path=True), k, database.AssetTable)
 
     @property
     def framerate(self):
         """A current frame-rate value.
 
         """
-        v = self.data['framerate']
+        bookmark_framerate = self.data['framerate']
+        asset_framerate = self.data['asset_framerate']
+
+        v = asset_framerate or bookmark_framerate
+
         if isinstance(v, (float, int)) and float(v) in MAYA_FPS.values():
             return v
         return get_framerate()
@@ -750,9 +705,18 @@ class MayaProperties(object):
         """A current width value.
 
         """
-        v = self.data['width']
-        if isinstance(v, (float, int)):
-            return v
+        bookmark_width = self.data['width']
+        bookmark_height = self.data['height']
+
+        asset_width = self.data['asset_width']
+        asset_height = self.data['asset_height']
+
+        if all((asset_width, asset_height)) and asset_width > 1:
+            return asset_width
+
+        if all((bookmark_width, bookmark_height)) and bookmark_width > 1:
+            return bookmark_width
+
         return cmds.getAttr('defaultResolution.width')
 
     @property
@@ -760,9 +724,18 @@ class MayaProperties(object):
         """A current height value.
 
         """
-        v = self.data['height']
-        if isinstance(v, (float, int)):
-            return v
+        bookmark_width = self.data['width']
+        bookmark_height = self.data['height']
+
+        asset_width = self.data['asset_width']
+        asset_height = self.data['asset_height']
+
+        if all((asset_width, asset_height)) and asset_height > 1:
+            return asset_height
+
+        if all((bookmark_width, bookmark_height)) and bookmark_height > 1:
+            return bookmark_height
+
         return cmds.getAttr('defaultResolution.height')
 
     def get_info(self):
@@ -770,21 +743,14 @@ class MayaProperties(object):
 
         """
         duration = self.endframe - self.startframe
-        info = 'Resolution:  {w}{h}\nFrame-rate:  {fps}\nCut:  {start}{' \
-               'duration}'.format(
-            w='{}'.format(int(self.width)) if (
-                    self.width and self.height) else '',
-            h='x{}px'.format(int(self.height)) if (
-                    self.width and self.height) else '',
-            fps='{}fps'.format(
-                self.framerate
-            ) if self.framerate else '',
-            start='{}'.format(
-                int(self.startframe)
-            ) if self.startframe else '',
-            duration='-{} ({} frames)'.format(
-                int(self.startframe) + int(duration),
-                int(duration) if duration else ''
-            ) if duration else ''
-        )
+        w = f'{int(self.width)}' if (self.width and self.height) else ''
+        h = f'x{self.height}px' if (self.width and self.height) else ''
+        fps = f'{self.framerate}fps' if self.framerate else ''
+        start = self.startframe or ''
+        end = f'-{int(self.startframe) + int(duration)} ({duration} frames)' if duration else ''
+
+        info = (f'Resolution:  {w}{h}\n'
+                f'Frame-rate:  {fps}\n'
+                f'Cut:  {start}{end}')
+
         return info

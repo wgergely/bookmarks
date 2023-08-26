@@ -64,13 +64,29 @@ def get_footage_sources():
 
 def generate_jsx_script(footage_sources):
     db = database.get(*common.active('root', args=True))
-    framerate = db.value(db.source(), 'framerate', database.BookmarkTable)
-    width = db.value(db.source(), 'width', database.BookmarkTable)
-    height = db.value(db.source(), 'height', database.BookmarkTable)
+
+    # Look for framerate and resolution in the bookmark...
+    bookmark_framerate = db.value(db.source(), 'framerate', database.BookmarkTable)
+    bookmark_width = db.value(db.source(), 'width', database.BookmarkTable)
+    bookmark_height = db.value(db.source(), 'height', database.BookmarkTable)
+
+    # ...and if not found, look for it in the asset
+    asset_framerate = db.value(common.active('asset', path=True), 'framerate', database.AssetTable)
+    asset_width = db.value(common.active('asset', path=True), 'width', database.AssetTable)
+    asset_height = db.value(common.active('asset', path=True), 'height', database.AssetTable)
+
+    # If still not found, use default values
+    framerate = asset_framerate or bookmark_framerate or 25
+    width = asset_width or bookmark_width or 1920
+    height = asset_height or bookmark_height or 1080
+
     cut_in = db.value(common.active('asset', path=True), 'cut_in', database.AssetTable)
     cut_out = db.value(common.active('asset', path=True), 'cut_out', database.AssetTable)
 
     config = tokens.get(*common.active('root', args=True), force=True)
+
+    # TODO: 'asset1' is hardcoded here, but it should correspond to the asset name
+    #  ({asset1} in the Studio Aka SG pipeline, for example)
     comp_name = config.expand_tokens('{asset1}_comp', asset=common.active('asset'))
 
     jsx_script = ""

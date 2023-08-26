@@ -66,6 +66,18 @@ class TimecodeModel(ui.AbstractListModel):
         if not isinstance(data, dict):
             return
 
+        # Add no-timecode option
+        self._data[len(self._data)] = {
+            QtCore.Qt.DisplayRole: 'No timecode',
+            QtCore.Qt.DecorationRole: None,
+            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.StatusTipRole: 'No timecode',
+            QtCore.Qt.AccessibleDescriptionRole: 'No timecode',
+            QtCore.Qt.WhatsThisRole: 'No timecode',
+            QtCore.Qt.ToolTipRole: 'No timecode',
+            QtCore.Qt.UserRole: None,
+        }
+
         template = common.settings.value('ffmpeg/timecode_preset')
         for v in data[tokens.FFMpegTCConfig].values():
             if template == v['name']:
@@ -100,8 +112,7 @@ class TimecodeComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        model = TimecodeModel()
-        self.setModel(model)
+        self.setModel(TimecodeModel())
 
 
 class PresetComboBox(QtWidgets.QComboBox):
@@ -139,10 +150,17 @@ class SizeComboBox(QtWidgets.QComboBox):
 
         """
         db = database.get(*common.active('root', args=True))
-        width = db.value(db.source(), 'width', database.BookmarkTable)
-        height = db.value(db.source(), 'width', database.BookmarkTable)
+        bookmark_width = db.value(db.source(), 'width', database.BookmarkTable)
+        bookmark_height = db.value(db.source(), 'width', database.BookmarkTable)
+        asset_width = db.value(common.active('asset', path=True), 'asset_width', database.AssetTable)
+        asset_height = db.value(common.active('asset', path=True), 'asset_height', database.AssetTable)
+
+        width = asset_width or bookmark_width or None
+        height = asset_height or bookmark_height or None
+
         if all((width, height)):
             self.addItem(f'Project | {int(height)}p', userData=(width, height))
+            self.addItem(f'Project | {int(height * 0.5)}p', userData=(int(width * 0.5), int(height * 0.5)))
 
         self.blockSignals(True)
         for v in ffmpeg.SIZE_PRESETS.values():
@@ -178,14 +196,6 @@ class FFMpegWidget(base.BasePropertyEditor):
                         'widget': SizeComboBox,
                         'placeholder': None,
                         'description': 'Set the output video size.',
-                    },
-                    2: {
-                        'name': 'Add timecode',
-                        'key': 'ffmpeg_add_timecode',
-                        'validator': None,
-                        'widget': functools.partial(QtWidgets.QCheckBox, 'Add Timecode'),
-                        'placeholder': None,
-                        'description': 'Add an informative bar and a timecode.',
                     },
                     3: {
                         'name': 'Timecode preset',
@@ -272,7 +282,7 @@ class FFMpegWidget(base.BasePropertyEditor):
             v['preset'] == preset
         )
 
-        if self.ffmpeg_add_timecode_editor.isChecked():
+        if self.ffmpeg_timecode_preset_editor.currentData():
             destination = f'{seq.group(1).strip().strip("_").strip(".")}' \
                           f'{seq.group(3).strip().strip("_").strip(".")}_tc.' \
                           f'{ext}'
@@ -307,15 +317,12 @@ class FFMpegWidget(base.BasePropertyEditor):
             return
 
         timecode_preset = self.ffmpeg_timecode_preset_editor.currentData()
-        if not timecode_preset:
-            common.close_message()
-            raise RuntimeError('No timecode preset was selected.')
 
         mov = ffmpeg.convert(
             source_image_paths[0],
             self.ffmpeg_preset_editor.currentData(),
             size=self.ffmpeg_size_editor.currentData(),
-            timecode=self.ffmpeg_add_timecode_editor.isChecked(),
+            timecode=bool(timecode_preset),
             timecode_preset=timecode_preset,
             output_path=destination,
             parent=self

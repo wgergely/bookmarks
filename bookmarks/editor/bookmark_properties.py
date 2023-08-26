@@ -91,14 +91,13 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                 },
                 2: {
                     0: {
-                        'name': 'Framerate',
+                        'name': 'Frame-rate',
                         'key': 'framerate',
                         'validator': base.float_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Framerate, e.g. \'23.976\'',
-                        'description': 'The framerate of the bookmark, eg, '
-                                       '\'25.0\'.\n\nUsed by Bookmarks to control the '
-                                       'format of scenes inside hosts, e.g. Maya.'
+                        'placeholder': 'Frame-rate, e.g. \'23.976\'',
+                        'description': 'The frame-rate of the bookmark, e.g. '
+                                       '\'25.0\'.'
                     },
                     1: {
                         'name': 'Width',

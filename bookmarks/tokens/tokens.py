@@ -792,7 +792,11 @@ class TokenConfig(QtCore.QObject):
 
         # We can also use bookmark item properties as tokens
         db = database.get(self.server, self.job, self.root)
-        for _k in ('width', 'height', 'framerate', 'prefix', 'startframe', 'duration'):
+        for _k in database.TABLES[database.BookmarkTable]:
+            if _k == 'id':
+                continue
+            if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
+                continue
             if _k not in kwargs or not kwargs[_k]:
                 _v = db.value(db.source(), _k, database.BookmarkTable)
                 _v = _v if _v else invalid_token
@@ -801,10 +805,22 @@ class TokenConfig(QtCore.QObject):
         # The asset root token will only be available when the asset is manually
         # specified
         if 'asset' in kwargs and kwargs['asset']:
-            tokens['asset_root'] = f'{self.server}/{self.job}/{self.root}/{kwargs["asset"]}'
+            source = f'{self.server}/{self.job}/{self.root}/{kwargs["asset"]}'
 
-        # We also want to use the path elements as tokens,
-        # so we will split them and add them to the tokens dictionary
+            for _k in database.TABLES[database.AssetTable]:
+                if _k == 'id':
+                    continue
+                if database.TABLES[database.AssetTable][_k]['type'] == dict:
+                    continue
+                if _k not in kwargs or not kwargs[_k]:
+                    _v = db.value(source, _k, database.AssetTable)
+                    _v = _v if _v else invalid_token
+                    tokens[_k] = _v
+
+                    # Let's also override width, height and fps tokens
+                    tokens[_k.replace('asset_', '')] = _v
+
+        # We also want to use the path elements as tokens.
         for k in ('server', 'job', 'root', 'asset', 'task'):
             if k not in tokens:
                 continue

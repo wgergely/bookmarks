@@ -173,8 +173,8 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             }
         },
         2: {
-            'name': 'Cut',
-            'icon': 'todo',
+            'name': 'Settings',
+            'icon': 'bookmark',
             'color': common.color(common.color_dark_background),
             'groups': {
                 0: {
@@ -219,6 +219,33 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'widget': ui.LineEdit,
                         'placeholder': 'Out frame, e.g. \'1575\'',
                         'description': 'The frame this asset ends at, e.g. \'1575\'.',
+                    },
+                },
+                2: {
+                    0: {
+                        'name': 'Asset frame-rate',
+                        'key': 'asset_framerate',
+                        'validator': base.float_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Frame-rate, e.g. \'23.976\'',
+                        'description': 'The frame-rate of the asset, e.g. '
+                                       '\'25.0\'',
+                    },
+                    1: {
+                        'name': 'Asset width',
+                        'key': 'asset_width',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Width in pixels',
+                        'description': 'The asset\'s output width in pixels, e.g. \'1920\''
+                    },
+                    2: {
+                        'name': 'Asset height',
+                        'key': 'asset_height',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Height in pixels',
+                        'description': 'The asset\'s output height in pixels, e.g. \'1080\''
                     },
                 },
             },
@@ -358,6 +385,29 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         self.init_db_data()
         self._set_completer()
         self._disable_shotgun()
+
+    def init_db_data(self):
+        super().init_db_data()
+
+        # Asset frame-rate, width and height overrides
+        db = database.get(self.server, self.job, self.root)
+        for k in ('asset_framerate', 'asset_width', 'asset_height'):
+            # Skip items that don't have editors
+            if not hasattr(self, f'{k}_editor'):
+                raise RuntimeError(f'No editor for {k}!')
+
+            v = db.value(self.db_source(), k, database.AssetTable)
+            # If the value is not set, we'll use the bookmark item's value instead as a
+            # placeholder for the text editor
+            if not v:
+                source = f'{self.server}/{self.job}/{self.root}'
+                _v = db.value(source, k.replace('asset_', ''), database.BookmarkTable)
+                if _v is None:
+                    continue
+                getattr(self, f'{k}_editor').setPlaceholderText(f'{_v}')
+
+
+
 
     def _disable_shotgun(self):
         sg_properties = shotgun.SGProperties(

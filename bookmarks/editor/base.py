@@ -330,7 +330,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
             if k is not None:
                 setattr(self, f'{_k}_editor', editor)
             else:
-                print(_name)
                 setattr(self, f'{_name}_editor', editor)
 
             if hasattr(editor, 'setAlignment'):

@@ -3,8 +3,20 @@ import maya.cmds as cmds
 
 # Function to find object with variable namespace
 def find_object_with_namespace(base_object):
-    objects = cmds.ls('*:' + base_object)  # Find objects with any namespace
-    return objects or None  # Return None if no object found
+    objects = cmds.ls(f'*{base_object}')
+    namespace_dict = {}
+
+    for obj in objects:
+        if ':' in obj:
+            namespace = obj.rsplit(':', 1)[0]
+        else:
+            namespace = ''
+
+        if namespace not in namespace_dict:
+            namespace_dict[namespace] = []
+        namespace_dict[namespace].append(obj)
+
+    return namespace_dict
 
 
 # Function to create and color object set
@@ -20,33 +32,61 @@ def create_set(set_name):
 
 
 def run():
+
     # Mapping of set names and their corresponding objects
     set_object_mapping = {
-        "IbogaineDJ_body_export": ["head_geo", "body_geo", "shoes_geo"],
-        "IbogaineDJ_extra_export": ["hair_geo", "eye_l_geo", "eye_r_geo", "hat_geo"],
-        "IbogaineDJ_cloth_export": ["cloth_geo",],
-        "camera_export": ["camera:camera"],
+        'IbogaineDJ_body_export': ['*DJ*:head_geo', '*DJ*:body_geo', '*DJ*:shoes_geo'],
+        'IbogaineDJ_extra_export': ['*DJ*:hair_geo', '*DJ*:eye_l_geo', '*DJ*:eye_r_geo', '*DJ*:hat_geo'],
+        'IbogaineDJ_cloth_export': ['*DJ*:cloth_geo', ],
+        'IbogaineMatty_body_export': ['*Matty*:head_geo', '*Matty*:body_geo', '*Matty*:shoes_geo'],
+        'IbogaineMatty_cloth_export': ['*Matty*:cloth_geo', ],
+        'IbogaineMarcus_body_export': ['*Marcus*:head_geo', '*Marcus*:body_geo', '*Marcus*:shoes_geo'],
+        'IbogaineMarcus_cloth_export': ['*Marcus*:tshirt_geo', '*Marcus*:trousers_geo'],
+        'set_ground_export': ['set_ground_geo', ],
+        'set_background_export': ['set_background_geo', ],
+        'set_floor_export': ['set_floor_geo', ],
+        'camera_export': ['camera:camera'],
     }
 
-    # Create each set and add its objects
-    created_sets = []
+    cmds.undoInfo(openChunk=True)
+    try:
+        # Create each set and add its objects
+        created_sets = []
+        sel = cmds.ls(sl=True)
+        cmds.select(clear=True)
 
-    for set_name, base_objects in set_object_mapping.items():
-        created_set = create_set(set_name)
-        created_sets.append(created_set)
+        for set_name, base_objects in set_object_mapping.items():
+            for base_object in base_objects:
+                if 'camera:camera' in base_object:
+                    found_objects = {
+                        '': cmds.ls(base_object)
+                    }
+                else:
+                    found_objects = find_object_with_namespace(base_object)
 
-        for base_object in base_objects:
-            found_objects = None
-            # For camera, no need to find objects with namespace
-            if base_object == "camera:camera":
-                found_objects = cmds.ls(base_object)
-            else:
-                found_objects = find_object_with_namespace(base_object)
+                if not found_objects:
+                    continue
 
-            if found_objects:
-                for found_object in found_objects:
-                    cmds.sets(found_object, add=created_set)
+                suffix_count = 0
+                for namespace, objs in found_objects.items():
+                    suffix_count += 1
 
-    # Create master set and add all other sets to it
-    master_set = create_set("EXPORTS")
-    cmds.sets(created_sets, add=master_set)
+                    final_set_name = set_name
+                    if len(found_objects) > 1 and suffix_count > 1:
+                        final_set_name = set_name.replace('_export', f'_{suffix_count:02}_export')
+
+                    created_set = create_set(final_set_name)
+                    created_sets.append(created_set)
+
+                    for found_object in objs:
+                        cmds.sets(found_object, add=created_set)
+
+        master_set = create_set('EXPORTS')
+        cmds.sets(created_sets, add=master_set)
+        cmds.select(sel, replace=True)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        raise
+    finally:
+        # Ensure the undo chunk is always closed, regardless of success or error
+        cmds.undoInfo(closeChunk=True)

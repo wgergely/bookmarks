@@ -737,6 +737,11 @@ class ThumbnailWorker(BaseWorker):
         if not self.is_valid(ref):
             return False
         source = ref()[common.PathRole]
+
+        # A hard-coded exception for Royal Render's broken files
+        if '_broken__' in source:
+            return False
+
         # Resolve the thumbnail's path...
         destination = images.get_cached_thumbnail_path(_p[0], _p[1], _p[2], source, )
         # ...and use it to load the resource

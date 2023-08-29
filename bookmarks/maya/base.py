@@ -301,8 +301,24 @@ def set_render_resolution(width, height):
     """Sets the render resolution of the current scene.
 
     """
+    pixelaspect = cmds.getAttr('defaultResolution.pixelAspect')
+
     cmds.setAttr('defaultResolution.width', width)
     cmds.setAttr('defaultResolution.height', height)
+
+    # Restore the pixel aspect ratio
+    if cmds.getAttr('defaultResolution.pixelAspect') != pixelaspect:
+        cmds.setAttr('defaultResolution.pixelAspect', pixelaspect)
+
+    if cmds.getAttr('defaultResolution.pixelAspect') != 1.0:
+        common.show_message(
+            'Pixel Aspect Ratio Warning',
+            'The current pixel aspect ratio is not 1.0. This may cause issues '
+            'with the render output.',
+            buttons=[common.OkButton,],
+            message_type='info',
+            modal=True,
+        )
 
 
 def set_framerate(fps):

@@ -21,7 +21,6 @@ from . import common
 from . import database
 from . import images
 from . import log
-from . import ui
 
 _last_directory = None
 
@@ -255,15 +254,6 @@ def import_item_properties(index, source=None, prompt=True):
         prompt (bool): Show prompt before overriding.
 
     """
-    if prompt:
-        mbox = ui.MessageBox(
-            'Are you sure you want to import the preset file?',
-            'This will override current item property values.',
-            buttons=[ui.YesButton, ui.CancelButton]
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
-            return None
-
     if source is None:
         source = get_load_path()
         if not source:
@@ -271,6 +261,16 @@ def import_item_properties(index, source=None, prompt=True):
 
     item_type = index.data(common.ItemTabRole)
     verify_zip_file(source, item_type)
+
+    if prompt:
+        if common.show_message(
+                'Are you sure you want to import the preset?',
+                body='The action is not undoable and will override current values.',
+                buttons=[common.YesButton, common.CancelButton],
+                message_type=None,
+                modal=True,
+        ) == QtWidgets.QDialog.Rejected:
+            return None
 
     with zipfile.ZipFile(source, 'r', compression=zipfile.ZIP_STORED) as f:
         bookmark_table_data = json.loads(
@@ -317,17 +317,27 @@ def import_item_properties(index, source=None, prompt=True):
         for k, v in asset_table_data.items():
             db.set_value(source, k, v, table=database.AssetTable)
 
+    common.show_message(
+        'Properties imported successfully.',
+        message_type='success'
+    )
 
-def import_json_asset_properties(indexes, prompt=True):
+
+def import_json_asset_properties(indexes, prompt=True, path=None):
     """Import properties for multiple items from a JSON file.
 
     Args:
         indexes (list[QtCore.QModelIndex]): A list of item indexes.
         prompt (bool): Show prompt before overriding.
+        path (str): Path to a JSON file. Optional.
+
     """
-    json_file_path = get_load_path(extension='json')
-    if not json_file_path:
-        return
+    if path and QtCore.QFileInfo(path).exists():
+        json_file_path = path
+    else:
+        json_file_path = get_load_path(extension='json')
+        if not json_file_path:
+            return
 
     # Load JSON data from file
     if not os.path.exists(json_file_path):
@@ -340,18 +350,30 @@ def import_json_asset_properties(indexes, prompt=True):
         raise ValueError(f"File is not a valid JSON file: {json_file_path}")
 
     if prompt:
-        from . import ui
-        mbox = ui.MessageBox(
-            'Are you sure you want override the properties of the visible items?',
-            buttons=[ui.YesButton, ui.NoButton]
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
-            return
+        if common.show_message(
+                'Are you sure you want to import the preset?',
+                body='The action is not undoable and will override the values of the visible items.',
+                buttons=[common.YesButton, common.CancelButton],
+                modal=True,
+        ) == QtWidgets.QDialog.Rejected:
+            return None
 
     # Loop through all visible indexes
-    for index in indexes:
+    common.show_message(
+        'Importing properties...',
+        body='Processing items...',
+        message_type=None,
+        buttons=[],
+        disable_animation=True,
+    )
+
+    count = len(indexes)
+
+    for n, index in enumerate(indexes):
 
         path = index.data(common.PathRole)
+        if not path:
+            continue
         db = database.get(*index.data(common.ParentPathRole)[0:3])
 
         for item in data:
@@ -364,6 +386,9 @@ def import_json_asset_properties(indexes, prompt=True):
             if item.lower() not in path.lower():
                 continue
 
+            common.message_widget.body_label.setText(f'Processing {data[item]["name"]} ({n} of {count})...')
+            QtWidgets.QApplication.instance().processEvents()
+
             # Set valid database values
             with db.connection():
                 for k, v in data[item].items():
@@ -371,7 +396,7 @@ def import_json_asset_properties(indexes, prompt=True):
                         continue
                     db.set_value(path, k, v, table=database.AssetTable)
 
-            if 'thumbnail' in data[item] and os.path.isfile(data[item]['thumbnail']):
+            if 'thumbnail' in data[item] and data[item]['thumbnail'] and os.path.isfile(data[item]['thumbnail']):
                 images.create_thumbnail_from_image(
                     index.data(common.ParentPathRole)[0],
                     index.data(common.ParentPathRole)[1],
@@ -380,3 +405,8 @@ def import_json_asset_properties(indexes, prompt=True):
                     data[item]['thumbnail'],
                     proxy=False
                 )
+
+    common.show_message(
+        'Properties imported successfully.',
+        message_type='success'
+    )

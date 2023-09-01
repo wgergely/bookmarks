@@ -130,7 +130,7 @@ class BaseTabButton(QtWidgets.QLabel):
                 0, 0, common.size(
                     common.size_margin
                 ), common.size(common.size_margin)
-                )
+            )
             _rect.moveCenter(self.rect().center())
             painter.drawPixmap(
                 _rect,
@@ -156,7 +156,7 @@ class BaseTabButton(QtWidgets.QLabel):
                     0, 0, common.size(
                         common.size_margin
                     ), common.size(common.size_margin)
-                    )
+                )
                 _rect.moveCenter(self.rect().center())
                 painter.drawPixmap(
                     _rect,

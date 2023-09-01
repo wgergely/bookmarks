@@ -3,7 +3,8 @@
 .. centered:: |label1| |label2| |label3| |label4|
 
 
-Bookmarks is a lightweight Python asset manager designed to browse and manage the content of animation, VFX and film projects.
+Bookmarks is a lightweight Python asset manager designed to browse and manage the content of animation, VFX and film
+projects.
 
 ------------
 
@@ -26,7 +27,9 @@ See :ref:`User Guide` for more information.
 Background
 ------------
 
-I developed the app to help manage personal projects and keep myself organised (I'm a digitally messy person). So, whilst it works great for me, it might not work for you. Still, I tried to make it easily customisable to help adapt to site-specific environments. See the python modules documentation for more information.
+I developed the app to help manage personal projects and keep myself organised (I'm a digitally messy person). So,
+whilst it works great for me, it might not work for you. Still, I tried to make it easily customisable to help adapt
+to site-specific environments. See the python modules documentation for more information.
 
 Quick Start
 -------------
@@ -43,13 +46,13 @@ The simplest way to start Bookmarks as a standalone application is to run:
 Dependencies
 --------------------
 
-The release contains all Windows dependencies. For setting up a custom development environment on another platform, you'll need the following python dependencies:
+The release contains all Windows dependencies. For setting up a custom development environment on another platform,
+you'll need the following python dependencies:
 
 * `Python3 <https://github.com/python/cpython>`_ -  Tested against 3.9
 * `PySide2 <https://pypi.org/project/PySide2>`_ - Tested against Qt 5.15.2
 * `OpenImageIO <https://github.com/OpenImageIO/oiio>`_ - Tested against 2.3
 * `numpy <https://pypi.org/project/numpy>`_
-* `slack_sdk <https://pypi.org/project/slack_sdk>`_
 * `psutil <https://pypi.org/project/psutil>`_
 * `shotgun_api3 <https://github.com/shotgunsoftware/python-api>`_
 
@@ -73,7 +76,7 @@ The release contains all Windows dependencies. For setting up a custom developme
 .. |label3| image:: https://img.shields.io/badge/Platform-Windows-lightgrey
    :height: 18
 
-.. |label4| image:: https://img.shields.io/badge/Version-v0.8.2-green
+.. |label4| image:: https://img.shields.io/badge/Version-v0.8.4-green
    :height: 18
 
 .. |image1| image:: ./images/active_bookmark.png
@@ -97,7 +100,7 @@ __website__ = 'https://bookmarks-vfx.com'
 __email__ = 'hello@gergely-wootsch.com'
 
 #: Project version
-__version__ = '0.8.2'
+__version__ = '0.8.4'
 
 #: Project version
 __version_info__ = __version__.split('.')
@@ -122,7 +125,6 @@ def info():
     oiio_ver = importlib.import_module('OpenImageIO').__version__
     qt_ver = importlib.import_module('PySide2.QtCore').__version__
     sg_ver = importlib.import_module('shotgun_api3').__version__
-    slack_ver = importlib.import_module('slack_sdk.version').__version__
 
     return '\n'.join(
         (
@@ -135,7 +137,6 @@ def info():
             f'PySide2 {qt_ver}',
             f'OpenImageIO {oiio_ver}',
             f'ShotGrid API {sg_ver}',
-            f'Slack SDK {slack_ver}',
         )
     )
 

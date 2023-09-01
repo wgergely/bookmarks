@@ -303,23 +303,23 @@ class MainWidget(QtWidgets.QWidget):
             shortcuts.ShowBookmarksTab, functools.partial(
                 actions.change_tab, common.BookmarkTab
             )
-            )
+        )
         connect(
             shortcuts.ShowAssetsTab, functools.partial(
                 actions.change_tab, common.AssetTab
             )
-            )
+        )
         connect(shortcuts.ShowFilesTab, actions.toggle_task_view)
         connect(
             shortcuts.ShowFilesTab, functools.partial(
                 actions.change_tab, common.FileTab
             )
-            )
+        )
         connect(
             shortcuts.ShowFavouritesTab, functools.partial(
                 actions.change_tab, common.FavouriteTab
             )
-            )
+        )
 
         connect(shortcuts.NextTab, actions.next_tab)
         connect(shortcuts.PreviousTab, actions.previous_tab)
@@ -348,15 +348,14 @@ class MainWidget(QtWidgets.QWidget):
         connect(
             shortcuts.ToggleFavourite,
             common.signals.toggleFavouritesButton
-            )
+        )
         connect(shortcuts.ToggleActive, actions.toggle_active_item)
 
         connect(
             shortcuts.HideInlineButtons,
             common.signals.toggleInlineIcons
-            )
+        )
 
-        connect(shortcuts.OpenSlack, actions.show_slack)
         connect(shortcuts.OpenPreferences, actions.show_preferences)
         connect(shortcuts.OpenTodo, actions.show_notes)
 

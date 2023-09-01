@@ -21,7 +21,6 @@ from . import main
 from .. import actions
 from .. import common
 from .. import log
-from .. import ui
 from ..external import rv
 
 
@@ -114,13 +113,12 @@ def apply_settings(*args, **kwargs):
 
     """
     props = base.MayaProperties()
-    mbox = ui.MessageBox(
-        'Are you sure you want to apply the following settings?',
-        props.get_info(),
-        buttons=[ui.YesButton, ui.CancelButton], )
-
-    res = mbox.exec_()
-    if res == QtWidgets.QDialog.Rejected:
+    if common.show_message(
+            'Are you sure you want to apply the following settings?',
+            body=props.get_info(),
+            buttons=[common.YesButton, common.CancelButton],
+            modal=True,
+    ) == QtWidgets.QDialog.Rejected:
         return
 
     base.patch_workspace_file_rules()
@@ -232,14 +230,12 @@ def save_warning(*args):
         return
 
     if workspace_info.path().lower() not in scene_file.filePath().lower():
-        ui.MessageBox(
-            f'Looks like you are saving "{scene_file.fileName()}" outside the current project\nThe '
-            f'current project is "{workspace_info.path()}"',
-            'If you didn\'t expect this message, is it possible the project was '
-            'changed by {} from another instance of Maya?'.format(
-                common.product
-            )
-        ).open()
+        common.show_message(
+            f'Looks like you are saving "{scene_file.fileName()}" outside the current project\n\n',
+            body=f'The current project is:\n "{workspace_info.path()}"',
+            message_type=None,
+            disable_animation=True
+        )
 
 
 @common.error
@@ -540,7 +536,7 @@ def capture_viewport(size=1.0):
     reveal_capture(path)
 
 
-def push_capture(path, command=rv.DEFAULT):
+def push_capture(path, command=rv.PushAndClear):
     """Action used to push a capture output to RV.
 
     """
@@ -553,7 +549,7 @@ def push_capture(path, command=rv.DEFAULT):
     if v == QtCore.Qt.Checked:
         return
 
-    rv.push(path, command=command)
+    rv.execute_rvpush_command(path, command)
 
 
 def reveal_capture(path):

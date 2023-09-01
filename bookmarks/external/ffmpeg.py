@@ -15,7 +15,6 @@ from PySide2 import QtCore, QtWidgets
 from .. import common
 from .. import database
 from .. import images
-from .. import ui
 
 
 class SafeDict(dict):
@@ -150,6 +149,28 @@ SHOT = 0
 ASSET = 1
 
 
+def get_supported_formats(ffmpeg_console_output):
+    native_formats = ['jpeg', 'jpg', 'png', 'tiff', 'tff']
+    codecs = []
+    regex = re.compile(r'\s*([A-Z\.]{6})\s(\w+)\s+(.+)', re.IGNORECASE)
+
+    for line in ffmpeg_console_output.split('\n'):
+        match = regex.match(line)
+        if not match:
+            continue
+
+        # Check the match against the native formats
+        for native_format in native_formats:
+            if native_format.lower() in match.group(3).lower() or native_format.lower() in match.group(2).lower():
+                if native_format == 'jpeg':
+                    codecs.append('jpg')
+                elif native_format == 'tiff':
+                    codecs.append('tif')
+                else:
+                    codecs.append(native_format.lower())
+    return codecs
+
+
 def _get_font_path():
     """Return the path to the font used to label the generated files.
     The method also takes care of returning the path in a format that ffmpeg
@@ -227,22 +248,25 @@ def _output_path_from_seq(seq, ext):
     return f'{seq.group(1).rstrip(".").rstrip("_").rstrip()}.{ext}'
 
 
-def _get_framerate(server, job, root, fallback_framerate=24.0):
+def _get_framerate(fallback_framerate=24.0):
     """Get the currently set frame-rate from the bookmark item database.
 
     Returns:
-        float: The current framerate.
+        float: The current frame-rate set in the active context.
 
     """
-    db = database.get(server, job, root)
-    v = db.value(
-        db.source(),
-        'framerate',
-        database.BookmarkTable
-    )
-
-    if not v:  # use the fallback value when not set
+    if not all(common.active('root', args=True)):
         return fallback_framerate
+
+    db = database.get(*common.active('root', args=True))
+
+    bookmark_framerate = db.value(common.active('root', path=True),'framerate', database.BookmarkTable)
+    asset_framerate = db.value(common.active('asset', path=True),'asset_framerate', database.AssetTable)
+
+    v = asset_framerate or bookmark_framerate or fallback_framerate
+    if not isinstance(v, (int, float)) or v < 1.0:
+        return fallback_framerate
+
     return v
 
 
@@ -375,17 +399,19 @@ def convert(
         tc = ''
 
     # Get all properties and construct the ffmpeg command
+    input_path = _input_path_from_seq(seq)
     cmd = preset.format(
         BIN=ffmpeg_bin,
-        FRAMERATE=_get_framerate(server, job, root),
+        FRAMERATE=_get_framerate(),
         STARTFRAME=startframe,
-        INPUT=_input_path_from_seq(seq),
+        INPUT=input_path,
         OUTPUT=output_path,
         WIDTH=width,
         HEIGHT=height,
         TIMECODE=tc
     )
 
+    lines = []
     with subprocess.Popen(
             cmd,
             bufsize=1,
@@ -393,25 +419,10 @@ def convert(
             stderr=subprocess.STDOUT,
             universal_newlines=True
     ) as proc:
-
-        pbar = ui.get_progress_bar(
-            'Making Video',
-            'Processing images...',
-            startframe,
-            endframe,
-            parent=parent
-        )
-
-        pbar.open()
-        QtWidgets.QApplication.instance().processEvents()
-
-        lines = []
-
         while proc.poll() is None:
-            if pbar.wasCanceled():
+            if not common.message_widget or not common.message_widget.isVisible():
                 proc.kill()
-                pbar.close()
-                return None
+                raise RuntimeError('Convert cancelled.')
 
             line = proc.stdout.readline()
             if not line:
@@ -424,10 +435,13 @@ def convert(
             if not match:
                 continue
 
-            pbar.setValue(int(match.group(1)))
-            QtWidgets.QApplication.instance().processEvents()
+            if common.message_widget.isVisible():
+                common.message_widget.title_label.setText('Making movie...')
+                common.message_widget.body_label.setText(
+                    f'Converting frame {int(match.group(1))} of {int(endframe)}'
+                )
+                QtWidgets.QApplication.instance().processEvents()
 
-        pbar.close()
         # Verify the output
         if proc.returncode == 1:
             with open(f'{output_path}.log', 'w', encoding='utf-8') as f:
@@ -435,10 +449,6 @@ def convert(
                 f.write('\n\n')
                 f.write('\n'.join(lines))
 
-            ui.ErrorBox(
-                'An error occurred converting.',
-                '\n'.join(lines[-5:])
-            ).open()
-            return None
+            raise RuntimeError('\n'.join(lines[-5:]))
 
     return output_path

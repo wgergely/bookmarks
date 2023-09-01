@@ -3,6 +3,7 @@
 """
 import functools
 import os
+import subprocess
 
 import pyimageutil
 from PySide2 import QtCore, QtWidgets
@@ -65,6 +66,18 @@ class TimecodeModel(ui.AbstractListModel):
         if not isinstance(data, dict):
             return
 
+        # Add no-timecode option
+        self._data[len(self._data)] = {
+            QtCore.Qt.DisplayRole: 'No timecode',
+            QtCore.Qt.DecorationRole: None,
+            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.StatusTipRole: 'No timecode',
+            QtCore.Qt.AccessibleDescriptionRole: 'No timecode',
+            QtCore.Qt.WhatsThisRole: 'No timecode',
+            QtCore.Qt.ToolTipRole: 'No timecode',
+            QtCore.Qt.UserRole: None,
+        }
+
         template = common.settings.value('ffmpeg/timecode_preset')
         for v in data[tokens.FFMpegTCConfig].values():
             if template == v['name']:
@@ -99,8 +112,7 @@ class TimecodeComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        model = TimecodeModel()
-        self.setModel(model)
+        self.setModel(TimecodeModel())
 
 
 class PresetComboBox(QtWidgets.QComboBox):
@@ -138,10 +150,17 @@ class SizeComboBox(QtWidgets.QComboBox):
 
         """
         db = database.get(*common.active('root', args=True))
-        width = db.value(db.source(), 'width', database.BookmarkTable)
-        height = db.value(db.source(), 'width', database.BookmarkTable)
+        bookmark_width = db.value(db.source(), 'width', database.BookmarkTable)
+        bookmark_height = db.value(db.source(), 'width', database.BookmarkTable)
+        asset_width = db.value(common.active('asset', path=True), 'asset_width', database.AssetTable)
+        asset_height = db.value(common.active('asset', path=True), 'asset_height', database.AssetTable)
+
+        width = asset_width or bookmark_width or None
+        height = asset_height or bookmark_height or None
+
         if all((width, height)):
             self.addItem(f'Project | {int(height)}p', userData=(width, height))
+            self.addItem(f'Project | {int(height * 0.5)}p', userData=(int(width * 0.5), int(height * 0.5)))
 
         self.blockSignals(True)
         for v in ffmpeg.SIZE_PRESETS.values():
@@ -150,68 +169,57 @@ class SizeComboBox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': 'Convert Image Sequence to Video',
-        'icon': 'convert',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Preset',
-                    'key': 'ffmpeg_preset',
-                    'validator': None,
-                    'widget': PresetComboBox,
-                    'placeholder': None,
-                    'description': 'Select the preset to use.',
-                },
-                1: {
-                    'name': 'Size',
-                    'key': 'ffmpeg_size',
-                    'validator': None,
-                    'widget': SizeComboBox,
-                    'placeholder': None,
-                    'description': 'Set the output video size.',
-                },
-                2: {
-                    'name': 'Add timecode',
-                    'key': 'ffmpeg_add_timecode',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Add Timecode'),
-                    'placeholder': None,
-                    'description': 'Add an informative bar and a timecode.',
-                },
-                3: {
-                    'name': 'Timecode preset',
-                    'key': 'ffmpeg_timecode_preset',
-                    'validator': None,
-                    'widget': TimecodeComboBox,
-                    'placeholder': None,
-                    'description': 'Select the timecode preset to use.',
-                },
-                4: {
-                    'name': 'Push to RV',
-                    'key': 'ffmpeg_pushtorv',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Push to RV'),
-                    'placeholder': None,
-                    'description': 'Open the converted clip with RV.',
-                },
-            },
-        },
-    },
-}
-
-
 class FFMpegWidget(base.BasePropertyEditor):
     """Widget used to convert an image sequence to a video.
 
     """
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': 'Convert Image Sequence to Video',
+            'icon': 'convert',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Preset',
+                        'key': 'ffmpeg_preset',
+                        'validator': None,
+                        'widget': PresetComboBox,
+                        'placeholder': None,
+                        'description': 'Select the preset to use.',
+                    },
+                    1: {
+                        'name': 'Size',
+                        'key': 'ffmpeg_size',
+                        'validator': None,
+                        'widget': SizeComboBox,
+                        'placeholder': None,
+                        'description': 'Set the output video size.',
+                    },
+                    3: {
+                        'name': 'Timecode preset',
+                        'key': 'ffmpeg_timecode_preset',
+                        'validator': None,
+                        'widget': TimecodeComboBox,
+                        'placeholder': None,
+                        'description': 'Select the timecode preset to use.',
+                    },
+                    4: {
+                        'name': 'Push to RV',
+                        'key': 'ffmpeg_pushtorv',
+                        'validator': None,
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Push to RV'),
+                        'placeholder': None,
+                        'description': 'Open the converted clip with RV.',
+                    },
+                },
+            },
+        },
+    }
 
     def __init__(self, index, parent=None):
         super().__init__(
-            SECTIONS,
             None,
             None,
             None,
@@ -223,6 +231,12 @@ class FFMpegWidget(base.BasePropertyEditor):
         self._index = index
         self._connect_settings_save_signals(common.SECTIONS['ffmpeg'])
 
+        self.setFixedWidth(common.size(common.size_width))
+        self.setFixedHeight(common.size(common.size_height * 0.80))
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.FramelessWindowHint
+        )
+
     @common.error
     @common.debug
     def init_data(self):
@@ -231,8 +245,8 @@ class FFMpegWidget(base.BasePropertyEditor):
         """
         self.load_saved_user_settings(common.SECTIONS['ffmpeg'])
 
-    @common.error
     @common.debug
+    @common.error
     def save_changes(self):
         """Saves changes.
 
@@ -266,9 +280,9 @@ class FFMpegWidget(base.BasePropertyEditor):
         ext = next(
             v['output_extension'] for v in ffmpeg.PRESETS.values() if
             v['preset'] == preset
-            )
+        )
 
-        if self.ffmpeg_add_timecode_editor.isChecked():
+        if self.ffmpeg_timecode_preset_editor.currentData():
             destination = f'{seq.group(1).strip().strip("_").strip(".")}' \
                           f'{seq.group(3).strip().strip("_").strip(".")}_tc.' \
                           f'{ext}'
@@ -279,65 +293,52 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         _f = QtCore.QFile(destination)
         if _f.exists():
-            mbox = ui.MessageBox(
-                f'{destination} already exists.',
-                'Do you want to replace it with a new version?',
-                buttons=[ui.YesButton, ui.CancelButton]
-            )
-            if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            if common.show_message(
+                    'File already exists',
+                    f'{destination} already exists.\nDo you want to replace it with a new version?',
+                    buttons=[common.YesButton, common.NoButton],
+                    message_type='error',
+                    modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return False
             if not _f.remove():
                 raise RuntimeError(f'Could not remove {destination}')
 
-        pbar = ui.get_progress_bar(
-            'Pre-converting frames',
-            f'Pre-converting {int(frames[-1]) - int(frames[0])} frames, please wait.',
-            0,
-            0,
-            parent=self
+        common.show_message(
+            'Preparing images...',
+            body='Please wait while the frames are being converted. This might take a while...',
+            message_type=None,
+            disable_animation=True,
+            buttons=[],
         )
-        pbar.setValue(0)
 
-        pbar.open()
-        QtWidgets.QApplication.instance().processEvents()
-
-        jpeg_paths = self.oiio_process_frames()
-        pbar.open()
-        if pbar.wasCanceled():
-            pbar.close()
+        source_image_paths = self.preprocess_sequence()
+        if not common.message_widget or common.message_widget.isHidden():
             return
 
         timecode_preset = self.ffmpeg_timecode_preset_editor.currentData()
-        if not timecode_preset:
-            raise RuntimeError('No timecode preset was selected.')
 
-        pbar.setLabelText('Making video frames (2/2)...')
+        mov = ffmpeg.convert(
+            source_image_paths[0],
+            self.ffmpeg_preset_editor.currentData(),
+            size=self.ffmpeg_size_editor.currentData(),
+            timecode=bool(timecode_preset),
+            timecode_preset=timecode_preset,
+            output_path=destination,
+            parent=self
+        )
 
-        try:
-            mov = ffmpeg.convert(
-                jpeg_paths[0],
-                self.ffmpeg_preset_editor.currentData(),
-                size=self.ffmpeg_size_editor.currentData(),
-                timecode=self.ffmpeg_add_timecode_editor.isChecked(),
-                timecode_preset=timecode_preset,
-                output_path=destination,
-                parent=self
-            )
-        except:
-            pbar.close()
-            raise
-
-        for f in jpeg_paths:
+        for f in source_image_paths:
             images.ImageCache.flush(f)
             if not QtCore.QFile(f).remove():
                 log.error(f'Failed to remove {f}')
 
         if not mov:
-            pbar.close()
+            common.close_message()
             raise RuntimeError('No movie file was saved.')
 
         if not QtCore.QFileInfo(mov).exists():
-            pbar.close()
+            common.close_message()
             raise RuntimeError(f'Could not find {mov}')
 
         common.widget(common.FileTab).show_item(
@@ -348,15 +349,15 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         if self.ffmpeg_pushtorv_editor.isChecked():
             try:
-                rv.push(destination)
+                rv.execute_rvpush_command(destination, rv.PushAndClear)
             except:
                 log.error('Failed to push to RV.')
 
-        ui.OkBox(f'Movie saved to {destination}').open()
+        common.show_message('Success', f'Movie saved to {destination}', message_type='success')
         log.success(f'Movie saved to {destination}')
         return True
 
-    def oiio_process_frames(self):
+    def preprocess_sequence(self, preconversion_format='jpg'):
         """Convert the source frames to jpeg images using OpenImageIO.
 
         This allows us to feed more exotic sequences to FFMpeg, but the process comes with
@@ -369,8 +370,11 @@ class FFMpegWidget(base.BasePropertyEditor):
         index = self._index
         seq = index.data(common.SequenceRole)
 
+        # The sequence element of the sequence members as padded strings
         frames = index.data(common.FramesRole)
         frames_it = (f for f in frames)
+
+        # The full sequence of frame numbers
         all_frames = [str(f).zfill(len(frames[0])) for f in
                       range(int(frames[0]), int(frames[-1]) + 1)]
 
@@ -383,6 +387,8 @@ class FFMpegWidget(base.BasePropertyEditor):
         for entry in os.scandir(_dir.path()):
             if entry.is_dir():
                 continue
+            if not entry.name.startswith('ffmpeg_'):
+                continue
             _f = QtCore.QFile(entry.path)
             if not _f.remove():
                 log.error(f'Could not remove {_f.filePath()}')
@@ -390,29 +396,61 @@ class FFMpegWidget(base.BasePropertyEditor):
         # Preconvert source using OpenImageIO
         source_paths = []
         destination_paths = []
+        ext = QtCore.QFileInfo(index.data(common.PathRole)).suffix().strip('.').lower()
 
+        # Get the supported ffmpeg image extensions from the current binary
+        # Run the command and capture the output
+        ffmpeg_bin = common.get_binary('ffmpeg')
+        extensions = []
+        if ffmpeg_bin and QtCore.QFileInfo(ffmpeg_bin).exists():
+            result = subprocess.run([os.path.normpath(ffmpeg_bin), '-decoders'], capture_output=True, text=True)
+            extensions = ffmpeg.get_supported_formats(result.stdout)
+
+        if not extensions:
+            raise RuntimeError('Could not get supported ffmpeg image extensions.')
+
+        needs_conversion = ext not in extensions
+
+        # We'll build a full sequence filling in any missing frames with the closest
+        # available frame. This allows us to correctly create videos of sequences with missing
+        # images.
+        source_frame = all_frames[0]
         for frame in all_frames:
-
             if frame in frames:
                 source_frame = next(frames_it)
 
             source_path = f'{seq.group(1)}{source_frame}{seq.group(3)}.{seq.group(4)}'
-            destination_path = f'{_dir.path()}/ffmpeg_{frame}.jpg'
-
             source_paths.append(source_path)
+
+            destination_path = f'{_dir.path()}/ffmpeg_{frame}.{preconversion_format if needs_conversion else ext}'
             destination_paths.append(destination_path)
 
-        # Call the pre-conversion function
-        try:
-            if not pyimageutil.convert_images(source_paths, destination_paths, max_size=-1, release_gil=False):
-                raise RuntimeError(f'{source_frame} could not be read')
-            for f in destination_paths:
-                if not os.path.isfile(f):
-                    raise RuntimeError(f'{f} does not exist')
+        # Check the extension and skip conversion if the source is already in a format ffmpeg likely to understand
+        if not needs_conversion:
+            # We'll copy the source files to the temp directory instead of converting them
+            for idx, items in enumerate(zip(source_paths, destination_paths)):
+                source_path, destination_path = items
 
-        except Exception:
-            log.error('Pre-conversion failed')
-            raise
+                common.message_widget.body_label.setText(f'Copying image {idx} of {len(source_paths)}...')
+                QtWidgets.QApplication.instance().processEvents()
+
+                if not QtCore.QFile.copy(source_path, destination_path):
+                    raise RuntimeError(f'Could not copy {source_path} to {destination_path}')
+
+            raise RuntimeError('needs_conversion')
+
+        if needs_conversion:
+            common.message_widget.body_label.setText(
+                f'The sequence needs pre-converting:\nConverting {len(source_paths)} images, please wait...'
+            )
+            QtWidgets.QApplication.instance().processEvents()
+
+            if not pyimageutil.convert_images(source_paths, destination_paths, max_size=-1, release_gil=False):
+                raise RuntimeError('Failed to convert images using OpenImageIO.')
+
+        for f in destination_paths:
+            if not QtCore.QFileInfo(f).exists():
+                raise RuntimeError(f'{f} does not exist')
 
         return destination_paths
 
@@ -424,3 +462,21 @@ class FFMpegWidget(base.BasePropertyEditor):
             common.size(common.size_width) * 0.66,
             common.size(common.size_height) * 0.66
         )
+
+    def showEvent(self,event):
+        super().showEvent(event)
+
+        if not self._index:
+            return
+
+        item_rect = common.widget().visualRect(self._index)
+        corner = common.widget().mapToGlobal(item_rect.bottomLeft())
+
+        self.move(corner)
+        self.setGeometry(
+            self.geometry().x() + (item_rect.width() / 2) - (self.geometry().width() / 2),
+            self.geometry().y(),
+            self.geometry().width(),
+            self.geometry().height()
+        )
+        common.move_widget_to_available_geo(self)

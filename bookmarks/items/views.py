@@ -243,8 +243,7 @@ class ListsWidget(QtWidgets.QStackedWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
-        self.animation = QtCore.QParallelAnimationGroup(self)
-        self.animation.finished.connect(self.animation_finished)
+
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
     def setCurrentIndex(self, idx):
@@ -280,11 +279,18 @@ class ListsWidget(QtWidgets.QStackedWidget):
         if current_index == idx:
             return
 
-        a = self.animation.animationAt(0)
-        if a and a.currentTime() < a.totalDuration():
-            return
+        @QtCore.Slot()
+        def animation_finished(a):
+            anim = a.animationAt(1)
+            if not anim:
+                return
+            if isinstance(anim.targetObject(), QtWidgets.QWidget):
+                _idx = self.indexOf(anim.targetObject())
+                super(ListsWidget, self).setCurrentIndex(_idx)
+                common.signals.tabChanged.emit(_idx)
 
-        self.animation.clear()
+        animation = QtCore.QParallelAnimationGroup()
+        animation.finished.connect(functools.partial(animation_finished, animation))
 
         duration = 200
         # Create animation for outgoing widget
@@ -320,23 +326,13 @@ class ListsWidget(QtWidgets.QStackedWidget):
         in_op.setStartValue(0.0)
         in_op.setEndValue(1.0)
 
-        self.animation.addAnimation(out_anim)
-        self.animation.addAnimation(in_anim)
-        self.animation.addAnimation(out_op)
-        self.animation.addAnimation(in_op)
+        animation.addAnimation(out_anim)
+        animation.addAnimation(in_anim)
+        animation.addAnimation(out_op)
+        animation.addAnimation(in_op)
 
+        animation.start()
         self.widget(idx).show()
-        self.animation.start()
-
-    @QtCore.Slot()
-    def animation_finished(self):
-        anim = self.animation.animationAt(1)
-        if not anim:
-            return
-        if isinstance(anim.targetObject(), QtWidgets.QWidget):
-            idx = self.indexOf(anim.targetObject())
-            super().setCurrentIndex(idx)
-            common.signals.tabChanged.emit(idx)
 
     def showEvent(self, event):
         """Event handler.
@@ -497,8 +493,8 @@ class BaseItemView(QtWidgets.QTableView):
     resized = QtCore.Signal(QtCore.QRect)
 
     ThumbnailContextMenu = ThumbnailsContextMenu
-    Delegate = NotImplementedError
-    ContextMenu = NotImplementedError
+    Delegate = delegate.ItemDelegate
+    ContextMenu = None
 
     def __init__(self, icon='icon_bw', parent=None):
         super().__init__(parent=parent)
@@ -590,6 +586,7 @@ class BaseItemView(QtWidgets.QTableView):
         self.delayed_reset_row_layout_timer.setSingleShot(True)
 
         self.setItemDelegate(self.Delegate(parent=self))
+
         self.init_model()
         self._connect_signals()
 
@@ -656,6 +653,8 @@ class BaseItemView(QtWidgets.QTableView):
         model.init_row_size()
         self.verticalHeader().setDefaultSectionSize(int(model.row_size.height()))
         proxy.init_filter_values()
+
+        proxy.filterTextChanged.connect(self.filter_editor.editor.setText)
 
         model.modelReset.connect(model.init_sort_values)
         model.modelReset.connect(proxy.init_filter_values)
@@ -884,13 +883,13 @@ class BaseItemView(QtWidgets.QTableView):
         if flag == common.MarkedAsArchived and index.data(
                 common.FlagsRole
         ) & common.MarkedAsDefault:
-            ui.MessageBox('Default bookmark items cannot be archived.').open()
+            common.show_message('Default bookmark items cannot be archived.', message_type='error')
             return
         # Ignore active items
         if flag == common.MarkedAsArchived and index.data(
                 common.FlagsRole
         ) & common.MarkedAsActive:
-            ui.MessageBox('This item is currently active and cannot be archived.').open()
+            common.show_message('Active bookmark items cannot be archived.', message_type='error')
             return
 
         if flag == common.MarkedAsArchived:
@@ -1023,12 +1022,13 @@ class BaseItemView(QtWidgets.QTableView):
             k = data[common.PathRole]
 
             if not can_toggle_flag(k, mode, data, flag):
-                ui.MessageBox(
+                common.show_message(
                     'Looks like this item belongs to a sequence that has a flag set '
                     'already.',
-                    'To modify individual sequence items, remove the flag from the '
-                    'sequence first and try again.'
-                ).open()
+                    body='To modify individual sequence items, remove the flag from the '
+                         'sequence first and try again.',
+                    message_type=None
+                )
                 self.reset_multi_toggle()
                 return False
 
@@ -1337,7 +1337,7 @@ class BaseItemView(QtWidgets.QTableView):
             100, functools.partial(
                 self.select_item, v, role=role
             )
-            )
+        )
 
     def select_item(self, v, role=QtCore.Qt.DisplayRole):
         """Select an item in the viewer.
@@ -1442,10 +1442,8 @@ class BaseItemView(QtWidgets.QTableView):
         self.drag_source_row = index.row()
 
         drag = ItemDrag(index, self)
-        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
         QtCore.QTimer.singleShot(1, self.viewport().update)
         drag.exec_(supported_actions)
-        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
         QtCore.QTimer.singleShot(10, self._reset_drag_indicators)
 
     def dropEvent(self, event):

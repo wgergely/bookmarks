@@ -27,13 +27,13 @@ def show(path, ref, parent, oiio=False, max_size=-1):
 
     """
     k = repr(parent)
-    if k not in common.VIEWER_WIDGET_CACHE:
-        common.VIEWER_WIDGET_CACHE[k] = ImageViewer(parent=parent)
+    if k not in common.viewer_widgets:
+        common.viewer_widgets[k] = ImageViewer(parent=parent)
 
-    common.VIEWER_WIDGET_CACHE[k].show()
-    common.VIEWER_WIDGET_CACHE[k].set_image(path, ref, max_size=max_size, oiio=oiio)
+    common.viewer_widgets[k].show()
+    common.viewer_widgets[k].set_image(path, ref, max_size=max_size, oiio=oiio)
 
-    return common.VIEWER_WIDGET_CACHE[k]
+    return common.viewer_widgets[k]
 
 
 def get_item_info(ref):

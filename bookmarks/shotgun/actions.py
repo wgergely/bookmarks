@@ -3,7 +3,7 @@
 """
 import os
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore
 
 from . import shotgun
 from .. import common
@@ -46,9 +46,9 @@ def link_assets():
 
 @common.debug
 @common.error
-def publish():
-    from . import publish as editor
-    widget = editor.show()
+def publish(formats=('mp4', 'mov')):
+    from . import sg_publish_clip as editor
+    widget = editor.show(formats=formats)
     return widget
 
 
@@ -70,15 +70,18 @@ def upload_thumbnail(sg_properties, thumbnail_path):
         entity_type = sg_properties.asset_type
         entity_id = sg_properties.asset_id
 
-    with shotgun.connection(sg_properties) as sg:
+    with sg_properties.connection() as sg:
         sg.upload_thumbnail(
             entity_type,
             entity_id,
             thumbnail_path
         )
 
-    from .. import ui
-    ui.OkBox('ShotGrid thumbnail updated.').open()
+    common.show_message(
+        'Successfully uploaded thumbnail.',
+        body=f'Uploaded thumbnail to {entity_type} {entity_id}.',
+        message_type='success'
+    )
 
 
 @common.debug
@@ -92,7 +95,7 @@ def test_shotgun_connection(sg_properties):
         if not sg_properties.key:
             raise ValueError('ShotGrid API Script Key not set.')
 
-    with shotgun.connection(sg_properties) as sg:
+    with sg_properties.connection() as sg:
         if not sg.find('Project', []):
             raise ValueError(
                 'Could not find any projects. Are you sure the script'
@@ -104,12 +107,10 @@ def test_shotgun_connection(sg_properties):
             info += f'{k}: {v}'
             info += '\n'
 
-    from .. import ui
-    ui.MessageBox(
+    common.show_message(
         'Successfully connected to ShotGrid.',
-        info
-    ).open()
-    return True
+        body=info
+    )
 
 
 @common.error
@@ -117,7 +118,7 @@ def test_shotgun_connection(sg_properties):
 def create_entity(
         entity_type, entity_name, request_data=None, create_data=None,
         verify_bookmark=True, verify_all=False
-        ):
+):
     """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
@@ -150,7 +151,7 @@ def create_entity(
             'code': entity_name,
         }
 
-    with shotgun.connection(sg_properties) as sg:
+    with sg_properties.connection() as sg:
         # We won't allow creating duplicate entites. So. Let's
         # check for before we move on:
         entities = sg.find(entity_type, request_data, fields=shotgun.entity_fields[entity_type])
@@ -187,8 +188,8 @@ def create_project(server, job, root, entity_name):
     if not sg_properties.verify(connection=True):
         raise ValueError('Bookmark not configured.')
 
-    with shotgun.connection(sg_properties) as sg:
-        # We won't allow creating duplicate entites. So. Let's
+    with sg_properties.connection() as sg:
+        # We won't allow creating duplicate entities. So. Let's
         # check for before we move on:
         entities = sg.find(
             'Project', [
@@ -197,7 +198,7 @@ def create_project(server, job, root, entity_name):
                 ['is_template_project', 'is', False],
                 ['archived', 'is', False],
             ], fields=shotgun.entity_fields['Project']
-            )
+        )
 
         for entity in entities:
             def has(k):

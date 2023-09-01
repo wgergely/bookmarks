@@ -52,7 +52,7 @@ def show():
     if common.init_mode != common.StandaloneMode or not isinstance(
             common.main_widget,
             BookmarksAppWindow
-            ):
+    ):
         raise RuntimeError('Window can only be show in StandaloneMode.')
 
     dict_key = common.main_widget.__class__.__name__
@@ -106,6 +106,8 @@ class TrayMenu(contextmenu.BaseContextMenu):
 
         """
         try:
+            self.scripts_menu()
+            self.separator()
             self.window_menu()
             self.separator()
             self.tray_menu()
@@ -220,7 +222,7 @@ class HeaderWidget(QtWidgets.QWidget):
         self.setFixedHeight(
             common.size(common.size_margin) +
             (common.size(common.size_indicator) * 2)
-            )
+        )
 
         self._create_ui()
 

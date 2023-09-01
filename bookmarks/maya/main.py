@@ -156,6 +156,7 @@ def init_maya_widget():
         cmds.evalDeferred(widget.raise_)
         return
 
+
 class PanelPicker(QtWidgets.QDialog):
     """Modal dialog used to select a visible modelPanel in Maya.
 

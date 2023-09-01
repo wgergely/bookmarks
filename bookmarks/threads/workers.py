@@ -150,7 +150,7 @@ class BaseWorker(QtCore.QObject):
     def __init__(self, queue, parent=None):
         super(BaseWorker, self).__init__(parent=parent)
 
-        self.setObjectName('{}Worker_{}'.format(queue, uuid.uuid1().hex))
+        self.setObjectName(f'{queue}Worker_{uuid.uuid1().hex}')
 
         self.interrupt = False
         self.queue_timer = None
@@ -321,6 +321,12 @@ class BaseWorker(QtCore.QObject):
 
     @common.error
     def sort_data_type(self, ref):
+        """Sorts the data of the given data type.
+
+        Args:
+            ref (weakref.ref): A weakref to the data type.
+
+        """
         verify_thread_affinity()
 
         model = _model(self.queue)
@@ -382,6 +388,10 @@ def count_assets(path, ASSET_IDENTIFIER):
 
     """
     n = 0
+
+    if not os.path.isdir(path):
+        return n
+
     for entry in os.scandir(path):
         if entry.name.startswith('.'):
             continue
@@ -419,13 +429,13 @@ def get_bookmark_description(bookmark_row_data):
             _v = _v if _v else None
             v[k] = _v
 
-        description = f'{v["description"]}{sep}' if v['description'] else ''
+        description = f'{sep}{v["description"]}' if v['description'] else ''
         width = v['width'] if (v['width'] and v['height']) else ''
-        height = f'*{v["height"]}' if (v['width'] and v['height']) else ''
+        height = f'*{v["height"]}px' if (v['width'] and v['height']) else ''
         framerate = f'{sep}{v["framerate"]}fps' if v['framerate'] else ''
         prefix = f'{sep}{v["prefix"]}' if v['prefix'] else ''
 
-        s = f'{description}{width}{height}{framerate}{prefix}'
+        s = f'{width}{height}{framerate}{prefix}{description}'
         s = s.replace(sep + sep, sep)
         s = s.strip(sep).strip()
         return s
@@ -460,14 +470,6 @@ def get_ranges(arr, padding):
             if arr[idx + 1] != n + 1:  # break coming up
                 k += 1
     return ','.join(['-'.join(sorted({blocks[k][0], blocks[k][-1]})) for k in blocks])
-
-
-def update_slack_configured(source_paths, bookmark_row_data, ref):
-    """Slot called when a slack integration value was updated.
-
-    """
-    v = bookmark_row_data['slacktoken']
-    ref()[common.SlackLinkedRole] = True if v else False
 
 
 def update_shotgun_configured(pp, b, a, ref):
@@ -543,7 +545,7 @@ class InfoWorker(BaseWorker):
             raise RuntimeError('Failed to process item.')
 
         flags = ref()[common.FlagsRole]
-        item_type = ref()[common.TypeRole]
+        item_type = ref()[common.DataTypeRole]
 
         # Load values from the database
         db = database.get(*pp[0:3])
@@ -574,7 +576,7 @@ class InfoWorker(BaseWorker):
             update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
         # Note count
         if asset_row_data:
-            ref()[common.TodoCountRole] = count_todos(asset_row_data)
+            ref()[common.NoteCountRole] = count_todos(asset_row_data)
 
         # Flags
         if asset_row_data:
@@ -613,9 +615,6 @@ class InfoWorker(BaseWorker):
         ref()[common.AssetCountRole] = count
         ref()[common.DescriptionRole] = description
         ref()[QtCore.Qt.ToolTipRole] = description
-
-        # Let's load and verify Slack status
-        update_slack_configured(pp, bookmark_row_data, ref)
 
     def _process_sequence_item(self, ref, item_type):
         if not self.is_valid(ref):
@@ -676,13 +675,11 @@ class InfoWorker(BaseWorker):
             return
 
         er = ref()[common.EntryRole]
-        if not er:
+        if not er or not all(er):
             return
 
-        size = 0
-        if er:
-            stat = er[0].stat()
-            size = stat.st_size
+        stat = er[0].stat()
+        size = stat.st_size
 
         _mtime = stat.st_mtime
         mtime = _qlast_modified(_mtime)
@@ -758,7 +755,7 @@ class ThumbnailWorker(BaseWorker):
         # sequence to make the thumbnail.
         if not self.is_valid(ref):
             return False
-        if ref()[common.TypeRole] == common.SequenceItem:
+        if ref()[common.DataTypeRole] == common.SequenceItem:
             if not self.is_valid(ref):
                 return False
             source = ref()[common.EntryRole][0].path.replace('\\', '/')
@@ -845,21 +842,22 @@ class SGWorker(BaseWorker):
             args = threads.queue(self.queue).pop()
             idx, server, job, root, asset, user, entity_type, filters, fields = args
 
-            sg_properties = shotgun.SGProperties(
-                server, job, root, asset, login=common.settings.value(
-                    'sg_auth/login'
-                ) if user else None, password=common.settings.value(
-                    'sg_auth/password'
-                ) if user else None, )
+            # We'll favor the user's credentials if they exist
+            login = common.settings.value('sg_auth/login')
+            password = common.settings.value('sg_auth/password')
+            auth_as_user = login and password
+
+            sg_properties = shotgun.SGProperties(server, job, root, asset, auth_as_user=auth_as_user)
             sg_properties.init()
+
             if not sg_properties.verify(connection=True):
                 return
 
             sg = shotgun.get_sg(
                 sg_properties.domain,
-                common.settings.value('sg_auth/login') if user else sg_properties.script,
-                common.settings.value('sg_auth/password') if user else sg_properties.key,
-                user=user
+                login if auth_as_user else sg_properties.script,
+                password if auth_as_user else sg_properties.key,
+                auth_as_user=auth_as_user
             )
 
             if entity_type == 'Status':

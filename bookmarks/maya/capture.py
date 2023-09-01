@@ -384,7 +384,7 @@ def apply_view(panel, **options):
                 **{
                     key: value
                 }
-                )
+            )
 
     # Camera options
     camera_options = options.get('camera_options', {})
@@ -398,7 +398,7 @@ def apply_view(panel, **options):
             panel, edit=True, **{
                 key: value
             }
-            )
+        )
 
     viewport2_options = options.get('viewport2_options', {})
     for key, value in viewport2_options.items():
@@ -456,7 +456,7 @@ def parse_view(panel):
                 query=True, **{
                     key: True
                 }
-                )
+            )
 
     # Camera options
     camera_options = {}
@@ -718,7 +718,7 @@ def _applied_display_options(options):
             **{
                 preference: value
             }
-            )
+        )
 
     try:
         yield
@@ -732,7 +732,7 @@ def _applied_display_options(options):
                 **{
                     preference: original[preference]
                 }
-                )
+            )
 
 
 @contextlib.contextmanager

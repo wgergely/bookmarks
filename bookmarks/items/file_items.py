@@ -166,17 +166,19 @@ class FileItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.scripts_menu()
+        self.separator()
         self.task_folder_toggle_menu()
         self.separator()
         self.launcher_menu()
         self.separator()
         if self.index and self.index.isValid() and self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.sg_publish_menu()
             self.publish_menu()
             self.separator()
         self.sg_url_menu()
         self.sg_browse_tasks_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.sg_publish_menu()
             self.sg_rv_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.convert_menu()
@@ -403,17 +405,15 @@ class FileItemModel(models.ItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
-                    common.TodoCountRole: 0,
+                    common.NoteCountRole: 0,
                     common.FileDetailsRole: '',
                     common.SequenceRole: seq,
                     common.FramesRole: [],
-                    common.FileInfoLoaded: False,
                     common.StartPathRole: None,
                     common.EndPathRole: None,
                     #
+                    common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: False,
-                    #
-                    common.TypeRole: common.FileItem,
                     #
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: 0,
@@ -454,23 +454,22 @@ class FileItemModel(models.ItemModel):
                             QtCore.Qt.ToolTipRole: sequence_name,
                             #
                             common.QueueRole: self.queues,
+                            common.DataTypeRole: common.SequenceItem,
                             common.ItemTabRole: common.FileTab,
                             #
                             common.EntryRole: [],
                             common.FlagsRole: flags,
                             common.ParentPathRole: parent_path_role,
                             common.DescriptionRole: '',
-                            common.TodoCountRole: 0,
+                            common.NoteCountRole: 0,
                             common.FileDetailsRole: '',
                             common.SequenceRole: seq,
                             common.FramesRole: [],
-                            common.FileInfoLoaded: False,
                             common.StartPathRole: None,
                             common.EndPathRole: None,
                             #
+                            common.FileInfoLoaded: False,
                             common.ThumbnailLoaded: False,
-                            #
-                            common.TypeRole: common.SequenceItem,
                             #
                             common.SortByNameRole: sort_by_name_role,
                             common.SortByLastModifiedRole: 0,
@@ -498,8 +497,8 @@ class FileItemModel(models.ItemModel):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
-            # A sequence with only one element is not a sequence far as
-            # we're concerned
+            # Filter sequence items with a single element and change them back
+            # to file type
             if len(v[common.FramesRole]) == 1:
                 _seq = v[common.SequenceRole]
                 filepath = (
@@ -512,7 +511,7 @@ class FileItemModel(models.ItemModel):
                 v[QtCore.Qt.DisplayRole] = filename
                 v[QtCore.Qt.EditRole] = filename
                 v[common.PathRole] = filepath
-                v[common.TypeRole] = common.FileItem
+                v[common.DataTypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
                 flags = models.DEFAULT_ITEM_FLAGS
@@ -522,11 +521,10 @@ class FileItemModel(models.ItemModel):
                 v[common.FlagsRole] = flags
 
             elif len(v[common.FramesRole]) == 0:
-                v[common.TypeRole] = common.FileItem
+                v[common.DataTypeRole] = common.FileItem
 
             data[idx] = v
             data[idx][common.IdRole] = idx
-            data[idx][common.DataTypeRole] = common.SequenceItem
 
         watcher = common.get_watcher(common.FileTab)
         watcher.reset()
@@ -562,11 +560,10 @@ class FileItemModel(models.ItemModel):
             return
 
         for entry in it:
-            if entry.is_dir():
-                for _entry in self.item_generator(entry.path):
-                    yield _entry
-            else:
+            if entry.is_file():
                 yield entry
+                continue
+            yield from self.item_generator(entry.path)
 
     def save_active(self):
         """Saves the current active item.

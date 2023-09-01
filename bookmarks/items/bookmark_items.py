@@ -54,7 +54,6 @@ Model items store their path segments using the
 
 
 """
-import os
 
 from PySide2 import QtCore, QtWidgets
 
@@ -82,6 +81,8 @@ class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.scripts_menu()
+        self.separator()
         self.bookmark_editor_menu()
         self.add_asset_to_bookmark_menu()
         self.separator()
@@ -195,9 +196,7 @@ class BookmarkItemModel(models.ItemModel):
                 break  # Let's limit the maximum number of items we load
 
             # Find the entry
-            for entry in os.scandir(file_info.dir().path()):
-                if entry.name == file_info.baseName():
-                    break
+            entry = common.get_entry_from_path(filepath)
 
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
             for i, n in enumerate(parent_path_role):
@@ -220,7 +219,7 @@ class BookmarkItemModel(models.ItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
-                    common.TodoCountRole: 0,
+                    common.NoteCountRole: 0,
                     common.AssetCountRole: 0,
                     common.FileDetailsRole: None,
                     common.SequenceRole: None,
@@ -231,8 +230,6 @@ class BookmarkItemModel(models.ItemModel):
                     #
                     common.ThumbnailLoaded: False,
                     #
-                    common.TypeRole: common.FileItem,
-                    #
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),
                     common.SortBySizeRole: file_info.size(),
@@ -241,7 +238,6 @@ class BookmarkItemModel(models.ItemModel):
                     common.IdRole: idx,
                     #
                     common.SGLinkedRole: False,
-                    common.SlackLinkedRole: False
                 }
             )
 

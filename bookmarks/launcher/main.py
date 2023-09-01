@@ -78,7 +78,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
         grp = ui.get_group(
             margin=common.size(common.size_indicator),
             vertical=False, parent=self
-            )
+        )
         grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         h = common.size(common.size_margin) * 2
@@ -96,10 +96,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
         _grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         for k in DEFAULT_ITEM:
-            row = ui.add_row(
-                None, height=None,
-                padding=common.size(common.size_indicator), parent=_grp
-                )
+            row = ui.add_row(None, height=None, parent=_grp)
             editor = DEFAULT_ITEM[k]['widget']()
             editor.setFixedHeight(h)
 

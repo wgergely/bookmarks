@@ -69,6 +69,8 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.scripts_menu()
+        self.separator()
         self.show_add_asset_menu()
         self.add_file_to_asset_menu()
         self.separator()
@@ -262,7 +264,7 @@ class AssetItemModel(models.ItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
-                    common.TodoCountRole: 0,
+                    common.NoteCountRole: 0,
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,
                     common.FramesRole: [],
@@ -271,8 +273,6 @@ class AssetItemModel(models.ItemModel):
                     #
                     common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: False,
-                    #
-                    common.TypeRole: common.FileItem,
                     #
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: 0,
@@ -330,6 +330,7 @@ class AssetItemModel(models.ItemModel):
                 entry.path.replace('\\', '/'),
                 section='links/asset'
             )
+
             for link in links:
                 v = f'{path}/{entry.name}/{link}'
                 _entry = common.get_entry_from_path(v)
@@ -337,6 +338,7 @@ class AssetItemModel(models.ItemModel):
                     log.error(f'Could not get entry from link {v}')
                     continue
                 yield _entry
+
             if links:
                 continue
 

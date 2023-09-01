@@ -13,6 +13,7 @@ functionality. See, :meth:`.BasePropertyEditor.db_source`,
 """
 import datetime
 import functools
+import re
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -95,7 +96,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
     """Base class for constructing a property editor widget.
 
     Args:
-        sections (dict): The data needed to construct the ui layout.
         server (str or None): `server` path segment.
         job (str or None): `job` path segment.
         root (str or None): `root` path segment.
@@ -114,9 +114,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
     #: Signal emitted when the item's thumbnail was updated
     thumbnailUpdated = QtCore.Signal(str)
 
+    sections = {}
+
     def __init__(
             self,
-            sections,
             server,
             job,
             root,
@@ -129,8 +130,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
             parent=None,
             section_buttons=True
     ):
-        common.check_type(sections, dict)
-
         super().__init__(
             parent=parent,
             f=(
@@ -144,7 +143,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self._fallback_thumb = fallback_thumb
         self._alignment = alignment
-        self._sections = sections
         self._section_widgets = []
         self._buttons = buttons
         self._db_table = db_table
@@ -194,13 +192,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
-        if not self.server or not self.job or not self.root:
-            source = ''
-        elif not self.asset:
-            source = '/'.join((self.server, self.job, self.root))
-        else:
-            source = '/'.join((self.server, self.job, self.root, self.asset))
-
         self.thumbnail_editor = base_widgets.ThumbnailEditorWidget(
             fallback_thumb=self._fallback_thumb,
             parent=self
@@ -248,9 +239,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.left_row.layout().addWidget(parent)
         self.left_row.layout().addWidget(separator)
 
-        self.right_row = ui.add_row(
-            None, parent=self, padding=None, height=None, vertical=True
-        )
+        self.right_row = ui.add_row(None, parent=self, height=None, vertical=True)
         self.right_row.layout().setAlignment(
             QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter
         )
@@ -280,7 +269,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         """
         parent = self.scroll_area.widget()
-        for section in self._sections.values():
+        for section in self.sections.values():
             grp = add_section(
                 section['icon'],
                 section['name'],
@@ -303,6 +292,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         _k = k.replace('/', '_') if k else k
         name = v['name']
         _name = name.lower() if name else name
+        _name = re.sub(r'\W+', '_', _name) if _name else _name
 
         if 'description' in v and v['description']:
             row.setStatusTip(v['description'])
@@ -454,7 +444,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         )
 
         row = ui.add_row(
-            None, padding=None, height=h * 2, parent=self.right_row
+            None, height=h * 2, parent=self.right_row
         )
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
         row.layout().addSpacing(common.size(common.size_margin))
@@ -538,6 +528,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         for k in keys:
             _k = k.replace('/', '_')
             if not hasattr(self, f'{_k}_editor'):
+                print(f'No editor found for {k}')
                 continue
 
             editor = getattr(self, f'{_k}_editor')
@@ -634,7 +625,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
                 # Make sure the type loaded from the database matches the required
                 # type
-                for section in self._sections.values():
+                for section in self.sections.values():
                     for group in section['groups'].values():
                         for item in group.values():
                             if item['key'] != k:
@@ -729,7 +720,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
     @QtCore.Slot(QtWidgets.QWidget)
     @QtCore.Slot(str)
     def data_changed(self, key, _type, editor, v):
-        """Signal called when the user changes a value in the editor.
+        """Slot called when the user changes a value in the editor.
 
         Args:
             key (str): The database key.
@@ -796,19 +787,19 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """
         if result == QtWidgets.QDialog.Rejected:
             if self.changed_data:
-                mbox = ui.MessageBox(
-                    'Are you sure you want to close the editor?',
-                    'Your changes will be lost.',
-                    buttons=[ui.YesButton, ui.NoButton]
-                )
-                if mbox.exec_() == QtWidgets.QMessageBox.Rejected:
+                if common.show_message(
+                        'Are you sure you want to close the editor?',
+                        body='Your changes will be lost.',
+                        buttons=[common.YesButton, common.NoButton],
+                        modal=True,
+                ) == QtWidgets.QDialog.Rejected:
                     return
-            return super(BasePropertyEditor, self).done(result)
+            return super().done(result)
 
         if not self.save_changes():
             return
 
-        return super(BasePropertyEditor, self).done(result)
+        return super().done(result)
 
     def changeEvent(self, event):
         """Change event handler.
@@ -836,8 +827,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """Show event handler.
 
         """
-        QtCore.QTimer.singleShot(100, self.init_data)
         super().showEvent(event)
+        common.restore_window_geometry(self)
+        QtCore.QTimer.singleShot(100, self.init_data)
 
     def sizeHint(self):
         """Returns a size hint.
@@ -852,7 +844,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
     @QtCore.Slot(str)
     @QtCore.Slot(object)
     def update_changed_database_value(self, table, source, key, value):
-        """Slot responsible updating the gui when a database value has changed.
+        """Slot responsible updating the widget when a database value has changed.
 
         Args:
             table (str): Name of the db table.

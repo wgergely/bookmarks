@@ -7,6 +7,9 @@ and definitions.
 """
 import collections
 import functools
+import importlib
+import json
+import os
 import uuid
 
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -538,8 +541,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         path = self.index.data(common.PathRole)
         metrics = QtGui.QFontMetrics(self.font())
         for mode in (
-                common.WindowsPath, common.MacOSPath, common.UnixPath,
-                common.SlackPath):
+                common.WindowsPath, common.MacOSPath, common.UnixPath):
             m = key()
             n = actions.copy_path(path, mode=mode, copy=False)
 
@@ -1473,9 +1475,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         )
 
         self.menu[k][key()] = {
-            'text': 'Push',
+            'text': 'Play',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.push, path, command=rv.DEFAULT),
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.PushAndClear),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRV
@@ -1486,9 +1488,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
         }
         self.menu[k][key()] = {
-            'text': 'Push full-screen',
+            'text': 'Play full-screen',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.push, path, command=rv.FULLSCREEN),
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.PushAndClearFullScreen),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRVFullScreen
@@ -1497,6 +1499,14 @@ class BaseContextMenu(QtWidgets.QMenu):
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRVFullScreen
             ),
+        }
+
+        self.separator(self.menu[k])
+
+        self.menu[k][key()] = {
+            'text': 'Add as source',
+            'icon': ui.get_icon('sg'),
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.Add, basecommand=rv.MERGE)
         }
 
         self.separator(self.menu[k])
@@ -1519,10 +1529,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
         self.menu[k][key()] = {
-            'text': 'Publish',
+            'text': 'SG Publish: MP4 as Version',
             'icon': ui.get_icon('sg', color=common.color(common.color_green)),
-            'action': sg_actions.publish,
+            'action': functools.partial(sg_actions.publish, formats=('mp4', 'mov')),
         }
+
+        self.separator(self.menu[k])
 
     def sg_browse_tasks_menu(self):
         """ShotGrid publish menu actions.
@@ -1637,3 +1649,40 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
         self.separator(menu=self.menu[k])
+
+    def scripts_menu(self):
+        """Custom scripts deployed with the Maya module.
+
+        """
+        k = 'Scripts'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('icon')
+
+        p = os.path.normpath(f'{__file__}/../scripts/scripts.json')
+        if not os.path.isfile(p):
+            raise RuntimeError(f'File not found: {p}')
+
+        with open(p, 'r') as f:
+            data = json.load(f)
+
+        @common.debug
+        @common.error
+        def _run(name):
+            module = importlib.import_module(f'.scripts.{name}', package=__package__)
+            module.run()
+
+        for v in data.values():
+            # Check if the script needs_active
+            if 'needs_active' in v and v['needs_active']:
+                if not common.active(v['needs_active'], args=True):
+                    continue
+            if 'icon' in v and v['icon']:
+                icon = ui.get_icon(v['icon'])
+            else:
+                icon = ui.get_icon('icon')
+
+            self.menu[k][v['name']] = {
+                'text': v['name'],
+                'action': functools.partial(_run, v['module']),
+                'icon': icon,
+            }

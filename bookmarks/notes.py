@@ -137,7 +137,8 @@ class SyntaxHighlighter(QtGui.QSyntaxHighlighter):
         },
         'filepath': {
             'regex': re.compile(
-                r'^(?:\s|^)((?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*[\/\\][^\/\\:*?"<>|\r\n]+|(?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*(?:[^\/\\:*?"<>|\r\n]+\.?)+)(?=\s|$)$',
+                r'^(?:\s|^)((?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*[\/\\][^\/\\:*?"<>|\r\n]+|(?:['
+                r'A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*(?:[^\/\\:*?"<>|\r\n]+\.?)+)(?=\s|$)$',
                 re.IGNORECASE | re.MULTILINE
             ),
             'flag': 0b000000,
@@ -359,11 +360,13 @@ class RemoveNoteButton(ui.ClickableIconButton):
         """Remove note item action.
 
         """
-        mbox = ui.MessageBox(
-            'Remove note?',
-            buttons=[ui.YesButton, ui.NoButton]
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+        if common.show_message(
+                'Delete note',
+                body='Are you sure you want to remove this note? This action cannot be undone.',
+                buttons=[common.YesButton, common.NoButton],
+                message_type='error',
+                modal=True,
+        ) == QtWidgets.QDialog.Rejected:
             return
 
         parent_widget = self.parent().parent()
@@ -372,7 +375,7 @@ class RemoveNoteButton(ui.ClickableIconButton):
 
 class DragIndicatorButton(QtWidgets.QLabel):
     """Dotted button indicating a draggable item.
-
+|
     The button is responsible for initiating a QDrag operation and setting the mime
     data. The data is populated with the `TodoEditor`'s text and the custom mime type.
     The latter is needed to accept the drag operation in the target drop widget.
@@ -1013,9 +1016,9 @@ class CardsWidget(QtWidgets.QDialog):
         if not self.index.data(common.FileInfoLoaded):
             return False
 
-        if self.index.data(common.TypeRole) == common.FileItem:
+        if self.index.data(common.DataTypeRole) == common.FileItem:
             source = self.index.data(common.PathRole)
-        elif self.index.data(common.TypeRole) == common.SequenceItem:
+        elif self.index.data(common.DataTypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
         db = database.get(*self.index.data(common.ParentPathRole)[0:3])
@@ -1058,9 +1061,9 @@ class CardsWidget(QtWidgets.QDialog):
         if self.lock.is_locked():
             return
 
-        if self.index.data(common.TypeRole) == common.FileItem:
+        if self.index.data(common.DataTypeRole) == common.FileItem:
             source = self.index.data(common.PathRole)
-        elif self.index.data(common.TypeRole) == common.SequenceItem:
+        elif self.index.data(common.DataTypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
         db = database.get(*self.index.data(common.ParentPathRole)[0:3])

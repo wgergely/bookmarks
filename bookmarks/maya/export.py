@@ -14,7 +14,6 @@ except ImportError:
 from . import base as mayabase
 from .. import common
 from .. import log
-from .. import ui
 from ..editor import base
 from ..tokens import tokens
 
@@ -137,100 +136,99 @@ class VersionsComboBox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': 'Export',
-        'icon': '',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Select Set',
-                    'key': 'maya_export/set',
-                    'validator': None,
-                    'widget': SetsComboBox,
-                    'placeholder': None,
-                    'description': 'Select the set to export.',
-                    'help': 'Select the set to export. If your set is not listed '
-                            'above make sure its name ends with <span '
-                            f'style="color:white">\"_'
-                            f'{mayabase.GEO_SUFFIX}\"</span>, '
-                            'otherwise it won\'t be listed.'
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Export Type',
-                    'key': 'maya_export/type',
-                    'validator': None,
-                    'widget': TypeComboBox,
-                    'placeholder': None,
-                    'description': 'Select the export format.',
-                },
-                1: {
-                    'name': 'Timeline',
-                    'key': 'maya_export/timeline',
-                    'validator': None,
-                    'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Export Timeline'
-                    ),
-                    'placeholder': 'Tick if you want to export the whole timeline, '
-                                   'or just the current frame.',
-                    'description': 'Tick if you want to export the whole timeline, '
-                                   'or just the current frame.',
-                },
-            },
-            2: {
-                0: {
-                    'name': 'Version',
-                    'key': None,
-                    'validator': None,
-                    'widget': VersionsComboBox,
-                    'placeholder': None,
-                    'description': 'Select export version.',
-                    'help': 'Versioned exports have an additional <span '
-                            'style="color:white">"_v001"</span> prepended to their '
-                            'name that will be incremented every subsequent '
-                            're-export.'
-
-                },
-            },
-            3: {
-                0: {
-                    'name': 'Reveal',
-                    'key': 'maya_export/reveal',
-                    'validator': None,
-                    'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Reveal after export'
-                    ),
-                    'placeholder': None,
-                    'description': 'Reveal after export',
-                },
-                1: {
-                    'name': 'Keep Open',
-                    'key': 'maya_export/keep_open',
-                    'validator': None,
-                    'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Keep window open'
-                    ),
-                    'placeholder': None,
-                    'description': 'Keep the window open after export',
-                },
-            },
-        },
-    },
-}
-
 
 class ExportWidget(base.BasePropertyEditor):
     """The widget used to start an export process.
 
     """
 
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': 'Export',
+            'icon': '',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Select Set',
+                        'key': 'maya_export/set',
+                        'validator': None,
+                        'widget': SetsComboBox,
+                        'placeholder': None,
+                        'description': 'Select the set to export.',
+                        'help': 'Select the set to export. If your set is not listed '
+                                'above make sure its name ends with <span '
+                                f'style="color:white">\"_'
+                                f'{mayabase.GEO_SUFFIX}\"</span>, '
+                                'otherwise it won\'t be listed.'
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Export Type',
+                        'key': 'maya_export/type',
+                        'validator': None,
+                        'widget': TypeComboBox,
+                        'placeholder': None,
+                        'description': 'Select the export format.',
+                    },
+                    1: {
+                        'name': 'Timeline',
+                        'key': 'maya_export/timeline',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Export Timeline'
+                        ),
+                        'placeholder': 'Tick if you want to export the whole timeline, '
+                                       'or just the current frame.',
+                        'description': 'Tick if you want to export the whole timeline, '
+                                       'or just the current frame.',
+                    },
+                },
+                2: {
+                    0: {
+                        'name': 'Version',
+                        'key': None,
+                        'validator': None,
+                        'widget': VersionsComboBox,
+                        'placeholder': None,
+                        'description': 'Select export version.',
+                        'help': 'Versioned exports have an additional <span '
+                                'style="color:white">"_v001"</span> prepended to their '
+                                'name that will be incremented every subsequent '
+                                're-export.'
+
+                    },
+                },
+                3: {
+                    0: {
+                        'name': 'Reveal',
+                        'key': 'maya_export/reveal',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Reveal after export'
+                        ),
+                        'placeholder': None,
+                        'description': 'Reveal after export',
+                    },
+                    1: {
+                        'name': 'Keep Open',
+                        'key': 'maya_export/keep_open',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Keep window open'
+                        ),
+                        'placeholder': None,
+                        'description': 'Keep the window open after export',
+                    },
+                },
+            },
+        },
+    }
+
     def __init__(self, parent=None):
         super().__init__(
-            SECTIONS,
             None,
             None,
             None,
@@ -318,12 +316,13 @@ class ExportWidget(base.BasePropertyEditor):
             raise OSError(f'{_dir.path()} is not readable')
 
         if file_info.exists():
-            mbox = ui.MessageBox(
-                f'{file_info.fileName()} already exists.',
-                'Are you sure you want to overwrite it?',
-                buttons=[ui.YesButton, ui.NoButton]
-            )
-            if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            if common.show_message(
+                    f'{file_info.fileName()} already exists.',
+                    'Are you sure you want to overwrite it?',
+                    buttons=[common.YesButton, common.NoButton],
+                    message_type='error',
+                    modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return
             if not QtCore.QFile(file_path).remove():
                 raise RuntimeError(f'Could not remove {file_info.fileName()}.')

@@ -18,7 +18,6 @@ dependencies = (
     'numpy',
     'psutil',
     'shotgun_api3',
-    'slack_sdk',
 )
 
 

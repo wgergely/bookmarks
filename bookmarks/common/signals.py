@@ -148,13 +148,20 @@ class CoreSignals(QtCore.QObject):
         self.bookmarkActivated.connect(actions.adjust_tab_button_size)
         self.assetActivated.connect(actions.adjust_tab_button_size)
 
-        self.sgConnectionAttemptStarted.connect(actions.show_sg_connecting_message)
-        self.sgConnectionSuccessful.connect(actions.hide_sg_connecting_message)
-        self.sgConnectionFailed.connect(actions.hide_sg_connecting_message)
-        self.sgConnectionClosed.connect(actions.hide_sg_connecting_message)
+        self.sgConnectionAttemptStarted.connect(
+            lambda *x: common.show_message(
+                'ShotGrid is connecting, please wait.', disable_animation=True,
+                buttons=[], message_type=None
+                )
+        )
+        self.sgConnectionSuccessful.connect(common.close_message)
+        self.sgConnectionFailed.connect(common.close_message)
+        self.sgConnectionClosed.connect(common.close_message)
 
-        self.sgConnectionFailed.connect(actions.hide_sg_connecting_message)
-        self.sgConnectionFailed.connect(actions.show_sg_error_message)
+        self.sgConnectionFailed.connect(common.close_message)
+        self.sgConnectionFailed.connect(
+            lambda x: common.show_message('An error occurred.', body=x, message_type='error')
+        )
 
         # Item flag signals
         self.favouriteAdded.connect(

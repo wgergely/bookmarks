@@ -7,20 +7,13 @@ from PySide2 import QtWidgets, QtCore
 pkg_root = QtCore.QFileInfo(f'{__file__}{os.path.sep}..').absoluteFilePath()
 
 STRINGS = {
-    f'{pkg_root}/docs/source/conf.py': re.compile(r"release = \'([0-9]\.[0-9]\.[0-9])\'",
-                                                  flags=re.MULTILINE),
-    f'{pkg_root}/bookmarks/__init__.py': re.compile(r"Version-v([0-9]\.[0-9]\.[0-9])",
-                                                    flags=re.MULTILINE),
-    f'{pkg_root}/bookmarks/__init__.py': re.compile(
-        r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
-    f'{pkg_root}/README.md': re.compile(r"Version-v([0-9]\.[0-9]\.[0-9])",
-                                        flags=re.MULTILINE),
-    f'{pkg_root}/bookmarks/maya/plugin.py': re.compile(
-        r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
-    f'{pkg_root}/package/CMakeLists.txt': re.compile(
-        r"VERSION ([0-9]\.[0-9]\.[0-9])", flags=re.MULTILINE),
-    f'{pkg_root}/docs/source/guide.rst': re.compile(r'.*([0-9]\.[0-9]\.[0-9]).*',
-                                                    flags=re.MULTILINE),
+    f'{pkg_root}/docs/src/conf.py': re.compile(r"release = \'(\d\.\d\.\d)\'", flags=re.MULTILINE),
+    f'{pkg_root}/bookmarks/__init__.py': re.compile(r"Version-v(\d\.\d\.\d)", flags=re.MULTILINE),
+    f'{pkg_root}/bookmarks/__init__.py': re.compile(r"__version__ = \'(\d\.\d\.\d)\'", flags=re.MULTILINE),
+    f'{pkg_root}/README.md': re.compile(r"Version-v(\d\.\d\.\d)", flags=re.MULTILINE),
+    f'{pkg_root}/bookmarks/maya/plugin.py': re.compile(r"__version__ = \'(\d\.\d\.\d)\'", flags=re.MULTILINE),
+    f'{pkg_root}/package/CMakeLists.txt': re.compile(r"VERSION (\d\.\d\.\d)", flags=re.MULTILINE),
+    f'{pkg_root}/docs/src/guide.rst': re.compile(r'.*(\d\.\d\.\d).*', flags=re.MULTILINE),
 }
 
 app = QtWidgets.QApplication()

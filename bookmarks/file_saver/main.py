@@ -15,7 +15,6 @@ for more information.
 
 
 Attributes:
-    SECTIONS (dict): The ui layout definition of the file saver widget.
     INACTIVE_KEYS (tuple): A tuple of keys used to mark hidden and disabled editors.
 
 
@@ -51,7 +50,7 @@ def close():
 def show(
         extension=None, file=None, create_file=True,
         increment=False
-        ):
+):
     """Show the :class:`FileSaverWidget` widget.
 
     Args:
@@ -85,99 +84,6 @@ INACTIVE_KEYS = (
     'file_saver_user',
     'file_saver_template',
 )
-
-#: UI layout definition
-SECTIONS = {
-    0: {
-        'name': 'Save File',
-        'icon': 'file',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Template',
-                    'key': 'file_saver/template',
-                    'validator': base.text_validator,
-                    'widget': widgets.TemplateComboBox,
-                    'placeholder': 'A customizable template name',
-                    'description': 'The name of the template to use. These can'
-                                   'be customized in the bookmark properties.',
-                },
-                1: {
-                    'name': 'Task',
-                    'key': 'file_saver/task',
-                    'validator': None,
-                    'widget': widgets.TaskComboBox,
-                    'placeholder': None,
-                    'description': 'The current task item.',
-                    'button': 'Pick'
-                },
-                2: {
-                    'name': 'Format',
-                    'key': 'file_saver/extension',
-                    'validator': None,
-                    'widget': widgets.FormatComboBox,
-                    'placeholder': 'File extension, e.g. \'exr\'',
-                    'description': 'A file extension, without the leading dot. e.g.'
-                                   ' \'ma\'',
-                },
-            },
-            1: {
-                0: {
-                    'name': 'Description',
-                    'key': 'description',
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'A short description, e.g. \'Compositing files\'',
-                    'description': 'A short description of the file\'s '
-                                   'contents.\nIndicate significant changes and '
-                                   'notes here.',
-                },
-                1: {
-                    'name': 'Element',
-                    'key': 'file_saver/element',
-                    'validator': base.text_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'The element being saved, e.g. \'CastleInterior\'',
-                    'description': 'The name of the element being saved. e.g., '
-                                   '\'ForegroundTower\', or \'BackgroundElements\'',
-                },
-                2: {
-                    'name': 'Version',
-                    'key': 'version',
-                    'validator': base.version_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'A version number, e.g. \'v001\'',
-                    'description': 'A version number with, or without, '
-                                   'a preceding \'v\'. e.g. \'v001\'.',
-                    'button': '+',
-                    'button2': '-',
-                },
-                3: {
-                    'name': 'User',
-                    'key': 'file_saver/user',
-                    'validator': base.text_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Your name, e.g. \'JohnDoe\'',
-                    'description': 'The name of the current user, e.g. \'JohnDoe\','
-                                   ' or \'JD\'',
-                },
-            },
-            2: {
-                0: {
-                    'name': None,
-                    'key': 'filename',
-                    'validator': None,
-                    'widget': widgets.FileNameInfo,
-                    'placeholder': 'Invalid file name...',
-                    'description': 'The file name, based on the current template.',
-                    'button': 'Reveal'
-                },
-            },
-        },
-    },
-}
-
 
 def increment_version(v, dir, name, func, increment):
     """Increments a version number considering existing versions in a directory.
@@ -273,13 +179,103 @@ class FileSaverWidget(base.BasePropertyEditor):
     """The main widget used to create template files.
 
     """
+    #: UI layout definition
+    sections = {
+        0: {
+            'name': 'Save File',
+            'icon': 'file',
+            'color': common.color(common.color_dark_background),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Template',
+                        'key': 'file_saver/template',
+                        'validator': base.text_validator,
+                        'widget': widgets.TemplateComboBox,
+                        'placeholder': 'A customizable template name',
+                        'description': 'The name of the template to use. These can'
+                                       'be customized in the bookmark properties.',
+                    },
+                    1: {
+                        'name': 'Task',
+                        'key': 'file_saver/task',
+                        'validator': None,
+                        'widget': widgets.TaskComboBox,
+                        'placeholder': None,
+                        'description': 'The current task item.',
+                        'button': 'Pick'
+                    },
+                    2: {
+                        'name': 'Format',
+                        'key': 'file_saver/extension',
+                        'validator': None,
+                        'widget': widgets.FormatComboBox,
+                        'placeholder': 'File extension, e.g. \'exr\'',
+                        'description': 'A file extension, without the leading dot. e.g.'
+                                       ' \'ma\'',
+                    },
+                },
+                1: {
+                    0: {
+                        'name': 'Description',
+                        'key': 'description',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'A short description, e.g. \'Compositing files\'',
+                        'description': 'A short description of the file\'s '
+                                       'contents.\nIndicate significant changes and '
+                                       'notes here.',
+                    },
+                    1: {
+                        'name': 'Element',
+                        'key': 'file_saver/element',
+                        'validator': base.text_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'The element being saved, e.g. \'CastleInterior\'',
+                        'description': 'The name of the element being saved. e.g., '
+                                       '\'ForegroundTower\', or \'BackgroundElements\'',
+                    },
+                    2: {
+                        'name': 'Version',
+                        'key': 'version',
+                        'validator': base.version_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'A version number, e.g. \'v001\'',
+                        'description': 'A version number with, or without, '
+                                       'a preceding \'v\'. e.g. \'v001\'.',
+                        'button': '+',
+                        'button2': '-',
+                    },
+                    3: {
+                        'name': 'User',
+                        'key': 'file_saver/user',
+                        'validator': base.text_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'Your name, e.g. \'JohnDoe\'',
+                        'description': 'The name of the current user, e.g. \'JohnDoe\','
+                                       ' or \'JD\'',
+                    },
+                },
+                2: {
+                    0: {
+                        'name': None,
+                        'key': 'filename',
+                        'validator': None,
+                        'widget': widgets.FileNameInfo,
+                        'placeholder': 'Invalid file name...',
+                        'description': 'The file name, based on the current template.',
+                        'button': 'Reveal'
+                    },
+                },
+            },
+        },
+    }
 
     def __init__(
             self, extension=None, file=None,
             create_file=True, increment=False, parent=None
     ):
         super().__init__(
-            SECTIONS,
             common.active('server'),
             common.active('job'),
             common.active('root'),
@@ -306,7 +302,8 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.update_timer.timeout.connect(self.verify_unique)
 
         self.filename_editor.setStyleSheet(
-            f'color:{common.rgb(common.color_green)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
+            f'color:{common.rgb(common.color_green)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: '
+            f'AlignCenter;'
         )
 
         if file is not None:
@@ -473,11 +470,13 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                f'color:{common.rgb(common.color_red)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
+                f'color:{common.rgb(common.color_red)};font-size:'
+                f'{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
             )
         else:
             self.filename_editor.setStyleSheet(
-                f'color:{common.rgb(common.color_green)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
+                f'color:{common.rgb(common.color_green)};font-size:'
+                f'{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
             )
 
     def parent_folder(self):
@@ -673,10 +672,11 @@ class FileSaverWidget(base.BasePropertyEditor):
             return
 
         if source not in _dir or source == _dir:
-            ui.ErrorBox(
+            common.show_message(
                 'Invalid selection',
-                'Make sure to select a folder inside the current asset.'
-            ).open()
+                body=f'{_dir} must be inside the current asset.',
+                message_type='error'
+            )
             return
 
         relative_path = _dir.replace(source, '').strip('/')
@@ -723,26 +723,18 @@ class FileSaverWidget(base.BasePropertyEditor):
         _dir = QtCore.QDir(self.parent_folder())
 
         if not _dir.exists():
-            mbox = QtWidgets.QMessageBox(parent=self)
-            mbox.setWindowTitle('Folder does not yet exist')
-            mbox.setIcon(QtWidgets.QMessageBox.Warning)
-            mbox.setText('Destination folder does not exist.')
-            mbox.setInformativeText(
-                'The destination folder does not yet exist. Do you want to create '
-                'it now?'
-            )
-            button = mbox.addButton(
-                'Create folder', QtWidgets.QMessageBox.AcceptRole
-            )
-            mbox.setDefaultButton(button)
-            mbox.addButton('Cancel', QtWidgets.QMessageBox.RejectRole)
-
-            if mbox.exec_() == QtWidgets.QMessageBox.RejectRole:
+            if common.show_message(
+                    f'Folder does not yet exist',
+                    body='The destination folder does not yet exist. Do you want to create it now?',
+                    buttons=[common.YesButton, common.NoButton],
+                    modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return
             if not _dir.mkpath('.'):
-                ui.ErrorBox(
-                    'Could not create destination folder.'
-                ).open()
+                common.show_message(
+                    'Could not create destination folder',
+                    message_type='error'
+                )
                 return
 
         actions.reveal(_dir.path())

@@ -18,6 +18,7 @@ from . import views
 from .. import common
 from .. import contextmenu
 from .. import images
+from .. import log
 from ..tokens import tokens
 
 
@@ -49,7 +50,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
 
     def paint(self, painter, option, index):
         """The main paint method.
-        
+
         """
         args = self.get_paint_arguments(painter, option, index)
         self.paint_background(*args)
@@ -57,20 +58,20 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
 
     def get_description_rect(self, *args, **kwargs):
         """Get description rectangle.
-        
+
         """
         return QtCore.QRect()
 
     def get_text_segments(self, *args, **kwargs):
         """Get text segments.
-        
+
         """
         return []
 
     @delegate.save_painter
     def paint_background(self, *args):
         """Paints the background.
-        
+
         """
         rectangles, painter, option, index, selected, focused, active, archived, \
             favourite, hover, font, metrics, cursor_position = args
@@ -117,7 +118,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
     def paint_name(self, *args):
         """Paints the name and the number of files available for the given
         task item.
-        
+
         """
         rectangles, painter, option, index, selected, focused, active, archived, \
             favourite, hover, font, metrics, cursor_position = args
@@ -126,7 +127,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
 
         active = index.data(QtCore.Qt.DisplayRole) == common.active('task')
 
-        if index.data(common.TodoCountRole):
+        if index.data(common.NoteCountRole):
             color = common.color(
                 common.color_selected_text
             ) if hover else common.color(common.color_text)
@@ -144,7 +145,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         o = common.size(common.size_margin)
         rect = QtCore.QRect(option.rect)
 
-        if index.data(common.TodoCountRole):
+        if index.data(common.NoteCountRole):
             pixmap = images.rsc_pixmap(
                 'folder', common.color(common.color_separator), o
             )
@@ -163,7 +164,6 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         rect = rect.marginsRemoved(QtCore.QMargins(o * 2, 0, o, 0))
 
         text = index.data(QtCore.Qt.DisplayRole)
-        width = 0
         width = common.draw_aliased_text(
             painter, font, rect, text, QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
             color
@@ -235,6 +235,24 @@ class TaskItemModel(models.ItemModel):
         """
         return common.FileItem
 
+    def item_generator(self, path):
+        try:
+            it = os.scandir(path)
+        except OSError as e:
+            log.error(e)
+            return
+
+        # Get folders from the root of the bookmark item
+        for entry in it:
+            if self._interrupt_requested:
+                return
+            if entry.name.startswith('.'):
+                continue
+            if not entry.is_dir():
+                continue
+
+            yield entry
+
     @common.status_bar_message('Loading task folders...')
     @models.initdata
     @common.error
@@ -243,11 +261,21 @@ class TaskItemModel(models.ItemModel):
         """Collects the data needed to populate the task item model.
 
         """
+        p = self.source_path()
+        k = self.task()
+        t = self.data_type()
+
+        if not p or not all(p) or not k or t is None:
+            return
+
+        data = common.get_data(p, k, t)
+        source = '/'.join(p)
+
         flags = (
                 QtCore.Qt.ItemIsSelectable |
                 QtCore.Qt.ItemIsEnabled
         )
-        data = self.model_data()
+
         source_path = self.source_path()
         if not source_path or not all(source_path):
             return
@@ -255,11 +283,7 @@ class TaskItemModel(models.ItemModel):
 
         config = tokens.get(*source_path[0:3])
 
-        entries = sorted(
-            ([f for f in os.scandir(_source_path)]), key=lambda x: x.name
-        )
-
-        for entry in entries:
+        for entry in self.item_generator(source):
             if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
@@ -269,6 +293,7 @@ class TaskItemModel(models.ItemModel):
 
             idx = len(data)
             description = config.get_description(entry.name)
+
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: entry.name,
@@ -289,7 +314,7 @@ class TaskItemModel(models.ItemModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: source_path,
                     common.DescriptionRole: description,
-                    common.TodoCountRole: self.file_count(path),
+                    common.NoteCountRole: self.file_count(path),
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,
                     common.FramesRole: [],
@@ -299,12 +324,10 @@ class TaskItemModel(models.ItemModel):
                     common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: True,
                     #
-                    common.TypeRole: common.FileItem,
-                    #
                     common.SortByNameRole: entry.name.lower(),
-                    common.SortByLastModifiedRole: 0,
-                    common.SortBySizeRole: 0,
-                    common.SortByTypeRole: entry.name,
+                    common.SortByLastModifiedRole: entry.name.lower(),
+                    common.SortBySizeRole: entry.name.lower(),
+                    common.SortByTypeRole: entry.name.lower(),
                     #
                     common.IdRole: idx,
                     #
@@ -344,53 +367,6 @@ class TaskItemModel(models.ItemModel):
             if count > 9:
                 break
         return count
-
-    @classmethod
-    def item_generator(cls, path):
-        """Used to iterate over all files in a given folder.
-
-        Yields:
-            DirEntry:   A DirEntry instance.
-
-        """
-        try:
-            it = os.scandir(path)
-        except:
-            return
-
-        n = 0
-        while True:
-            n += 1
-            if n > 999:
-                return
-
-            try:
-                try:
-                    entry = next(it)
-                except StopIteration:
-                    break
-            except OSError:
-                return
-
-            try:
-                is_dir = entry.is_dir()
-            except OSError:
-                is_dir = False
-
-            if entry.name.startswith('.'):
-                continue
-
-            if not is_dir:
-                yield entry
-
-            try:
-                is_symlink = entry.is_symlink()
-            except OSError:
-                is_symlink = False
-
-            if not is_symlink:
-                for entry in cls.item_generator(entry.path):
-                    yield entry
 
 
 class TaskItemView(views.ThreadedItemView):
@@ -524,10 +500,10 @@ class TaskItemView(views.ThreadedItemView):
 
         if event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter()
-            painter.begin(self)
+            painter.begin(widget)
             painter.setPen(QtCore.Qt.NoPen)
             painter.setBrush(common.color(common.color_separator))
-            painter.drawRect(self.rect())
+            painter.drawRect(widget.rect())
             painter.end()
             return super().eventFilter(widget, event)
 

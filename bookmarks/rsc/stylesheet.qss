@@ -564,6 +564,84 @@ BasePropertyEditor > QScrollArea > QWidget > QWidget {{
     background-color: {color_background};
 }}
 
+
+
+MessageBox QLabel#titleLabel {{
+    font-family: "{font_primary}";
+    font-size: {size_font_large}px;
+}}
+MessageBox QLabel#bodyLabel {{
+    font-family: "{font_secondary}";
+    font-size: {size_font_medium}px;
+}}
+MessageBox QWidget:focus {{
+    border: {size_separator}px solid {color_text};
+}}
+
+QWidget#infoBox {{
+    background-color: {color_blue};
+}}
+QWidget#infoBox,
+QWidget#infoBox QLabel#titleLabel,
+QWidget#infoBox QLabel#bodyLabel {{
+    color: {color_dark_blue};
+}}
+QWidget#infoBox QWidget {{
+    background-color: transparent;
+}}
+QWidget#infoBox QPushButton {{
+    background-color: {color_medium_blue};
+}}
+QWidget#infoBox QPushButton::hover {{
+    background-color: {color_light_blue};
+}}
+QWidget#infoBox QPushButton::pressed {{
+    background-color: {color_dark_blue};
+}}
+
+QWidget#errorBox {{
+    background-color: {color_red};
+}}
+QWidget#errorBox,
+QWidget#errorBox QLabel#titleLabel,
+QWidget#errorBox QLabel#bodyLabel {{
+    color: {color_dark_red};
+}}
+QWidget#errorBox QWidget {{
+    background-color: transparent;
+}}
+QWidget#errorBox QPushButton {{
+    background-color: {color_medium_red};
+}}
+QWidget#errorBox QPushButton::hover {{
+    background-color: {color_light_red};
+}}
+QWidget#errorBox QPushButton::pressed {{
+    background-color: {color_dark_red};
+}}
+
+QWidget#successBox {{
+    background-color: {color_green};
+}}
+QWidget#successBox,
+QWidget#successBox QLabel#titleLabel,
+QWidget#successBox QLabel#bodyLabel {{
+    color: {color_dark_green};
+}}
+QWidget#successBox QWidget {{
+    background-color: transparent;
+}}
+QWidget#successBox QPushButton {{
+    background-color: {color_medium_green};
+}}
+QWidget#successBox QPushButton::hover {{
+    background-color: {color_light_green};
+}}
+QWidget#successBox QPushButton::pressed {{
+    background-color: {color_dark_green};
+}}
+
+
 MayaWidget,
 MainWidget  {{
     background-color: {color_separator};

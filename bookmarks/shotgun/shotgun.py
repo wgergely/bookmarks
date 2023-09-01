@@ -17,7 +17,7 @@ instance:
     if not sg_properties.verify(connection=True):
         raise ValueError('Bookmark not configured to use ShotGrid.')
 
-    with shotgun.connection(sg_properties) as sg:
+    with sg_properties.connection() as sg:
         schema = sg.schema_field_read('Shot')
 
 
@@ -37,6 +37,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from .. import common
 from .. import database
 from .. import images
+from .. import log
 from ..threads import threads
 
 EntityRole = QtCore.Qt.UserRole + 1000
@@ -93,87 +94,36 @@ def sanitize_path(path, separator):
     return path.replace('/', separator).replace('\\', separator)
 
 
-@contextlib.contextmanager
-def connection(sg_properties):
-    """Context manager used for connecting to ShotGrid using an API Script.
-
-    The context manager will connect to shotgun on entering and close the
-    connection when exiting.
-
-    Args:
-        sg_properties (SGProperties): The shotgun properties saved in the bookmark database.
-
-    Yields:
-        ScriptConnection: A connected shotgun connection instance
-
-    """
-    if not sg_properties.verify(connection=True):
-        s = 'Bookmark not yet configured to use ShotGrid. You must enter a valid domain' \
-            'name, script name and api key before connecting.'
-        if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionFailed.emit(s)
-
-    try:
-        if all((sg_properties.domain, sg_properties.login, sg_properties.password)):
-            sg = get_sg(sg_properties.domain, sg_properties.login, sg_properties.password, user=True)
-        elif all((sg_properties.domain, sg_properties.script, sg_properties.key)):
-            sg = get_sg(sg_properties.domain, sg_properties.script, sg_properties.key, user=False)
-        else:
-            raise ValueError(
-                f'Invalid ShotGrid properties:\n'
-                f'domain: {sg_properties.domain}\n'
-                f'script: {sg_properties.script}\n'
-                f'key: {sg_properties.key}\n'
-                f'login: {sg_properties.login}\n'
-                f'password: {sg_properties.password}'
-            )
-
-        if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionAttemptStarted.emit()
-        sg.connect()
-        if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionSuccessful.emit()
-        yield sg
-    except Exception as e:
-        if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionFailed.emit(f'{e}')
-        raise
-    else:
-        sg.close()
-        if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionClosed.emit()
-
-
-def get_sg(domain, script, key, user=False):
+def get_sg(domain, script, key, auth_as_user=False):
     """Method for retrieving a thread specific `ScriptConnection` instance,
     backed by a cache.
 
     Args:
         domain (str): The base url or domain where the shotgun server is located.
-        script (str): A valid ShotGrid API Script's name.
-        key (str): A valid ShotGrid Script's API Key.
-        user (bool): Whether to authenticate as a user or not. Defaults to False.
+        script (str): A valid ShotGrid API Script's name or username.
+        key (str): A valid ShotGrid Script's API Key or password.
+        auth_as_user (bool): Whether to authenticate as a user. Defaults to False.
 
     """
-    common.check_type(user, bool)
+    common.check_type(auth_as_user, bool)
     for arg in (domain, script, key):
         common.check_type(arg, str)
 
-    k = _get_thread_key(domain, script, key, str(user))
+    k = _get_thread_key(domain, script, key, str(auth_as_user))
 
     if k in SG_CONNECTIONS and SG_CONNECTIONS[k]:
         return SG_CONNECTIONS[k]
 
-    _script = script if not user else None
-    _key = key if not user else None
-    login = script if user else None
-    password = key if user else None
+    _script = script if not auth_as_user else None
+    _key = key if not auth_as_user else None
+    login = script if auth_as_user else None
+    password = key if auth_as_user else None
 
     if not all((domain, login, password)):
         if not all((domain, script, key)):
             raise ValueError(
-                f'You must provide a valid domain, {"script" if not user else "login"}'
-                f' name and {"api key" if not user else "password"} to connect to ShotGrid:'
+                f'You must provide a valid domain, {"script" if not auth_as_user else "login"}'
+                f' name and {"api key" if not auth_as_user else "password"} to connect to ShotGrid:'
                 f'\ndomain: {domain}\nscript: {_script}\nkey: {_key}\nlogin: {login}\npassword: {password}'
             )
 
@@ -232,7 +182,8 @@ class SG(shotgun_api3.Shotgun):
             missing_fields = list(set(fields) - set(entity.keys()))
             if missing_fields:
                 _f = '", "'.join(missing_fields)
-                print(f'Missing fields: "{_f}" in return data. Check if you have permission to access these fields.')
+                log.error(f'Missing fields: "{_f}" in return data. Check if you have permission to access these '
+                          f'fields.')
         return entities
 
     def find_one(self, entity_type, filters, fields=None, **kwargs):
@@ -255,7 +206,7 @@ class SG(shotgun_api3.Shotgun):
         return None
 
 
-class SGProperties(object):
+class SGProperties(QtCore.QObject):
     """Returns all ShotGrid properties saved in the bookmark item database.
 
     These properties define the linkage between ShotGrid entities and local assets
@@ -270,12 +221,14 @@ class SGProperties(object):
         root (str): `root` path segment.
         asset (str): `asset` path segment.
         active (bool): Use the active paths when `True`. `False` by default.
-        user (bool):
+        auth_as_user (bool): Authenticate as a user when `True`. `False` by default.
 
     """
 
     def __init__(self, *args, **kwargs):
         self.active = kwargs['active'] if 'active' in kwargs else False
+
+        self.auth_as_user = kwargs['auth_as_user'] if 'auth_as_user' in kwargs else False
 
         self._server = args[0] if len(args) > 0 else None
         self._job = args[1] if len(args) > 1 else None
@@ -287,8 +240,8 @@ class SGProperties(object):
         self.script = None
 
         # Save optional user and password for user authentication
-        self.login = kwargs['login'] if 'login' in kwargs else None
-        self.password = kwargs['password'] if 'password' in kwargs else None
+        self.login = kwargs['login'] if 'login' in kwargs else common.settings.value('sg_auth/login', None)
+        self.password = kwargs['password'] if 'password' in kwargs else common.settings.value('sg_auth/password', None)
 
         self.bookmark_type = 'Project'
         self.bookmark_id = None
@@ -412,6 +365,71 @@ class SGProperties(object):
             return False
 
         return True
+
+    @contextlib.contextmanager
+    def connection(self):
+        """Context manager used for connecting to ShotGrid using an API Script.
+
+        The context manager will connect to shotgun on entering and close the
+        connection when exiting.
+
+        Yields:
+            ScriptConnection: A connected shotgun connection instance
+
+        """
+        if not self.verify(connection=True):
+            s = 'Bookmark not yet configured to use ShotGrid. You set a valid domain' \
+                'name, script/key, or username/password before connecting.'
+            if QtWidgets.QApplication.instance():
+                common.signals.sgConnectionFailed.emit(s)
+
+        try:
+            if self.auth_as_user and all((self.domain, self.login, self.password)):
+                sg = get_sg(self.domain, self.login, self.password, auth_as_user=self.auth_as_user)
+
+            elif self.auth_as_user and not all((self.domain, self.login, self.password)):
+                raise ValueError(
+                    f'Invalid ShotGrid properties:\n'
+                    f'domain: {self.domain}\n'
+                    f'login: {self.login}\n'
+                    f'password: {self.password}'
+                )
+
+            elif not self.auth_as_user and all((self.domain, self.script, self.key)):
+                sg = get_sg(self.domain, self.script, self.key, auth_as_user=self.auth_as_user)
+
+            elif not self.auth_as_user and not all((self.domain, self.script, self.key)):
+                raise ValueError(
+                    f'Invalid ShotGrid properties:\n'
+                    f'domain: {self.domain}\n'
+                    f'script: {self.script}\n'
+                    f'key: {self.key}'
+                )
+
+            else:
+                raise ValueError(
+                    f'Invalid ShotGrid properties:\n'
+                    f'domain: {self.domain}\n'
+                    f'script: {self.script}\n'
+                    f'key: {self.key}\n'
+                    f'login: {self.login}\n'
+                    f'password: {self.password}'
+                )
+
+            if QtWidgets.QApplication.instance():
+                common.signals.sgConnectionAttemptStarted.emit()
+            sg.connect()
+            if QtWidgets.QApplication.instance():
+                common.signals.sgConnectionSuccessful.emit()
+            yield sg
+        except Exception as e:
+            if QtWidgets.QApplication.instance():
+                common.signals.sgConnectionFailed.emit(f'{e}')
+            raise
+        else:
+            sg.close()
+            if QtWidgets.QApplication.instance():
+                common.signals.sgConnectionClosed.emit()
 
     def urls(self):
         """Returns a list of available urls based on the sg_properties provided.

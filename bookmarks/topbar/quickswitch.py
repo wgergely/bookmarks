@@ -112,11 +112,11 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
             'shortcut': shortcuts.string(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem
-                ),
+            ),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem
-                ),
+            ),
         }
 
 
@@ -142,9 +142,9 @@ class SwitchAssetMenu(BaseQuickSwitchMenu):
             'shortcut': shortcuts.string(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem
-                ),
+            ),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem
-                ),
+            ),
         }

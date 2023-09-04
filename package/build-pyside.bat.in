@@ -1,5 +1,4 @@
 @echo off
-@echo off
 @REM -----------------------------------------------------------
 @REM This script builds PySide from source on a Windows system.
 @REM It performs the following steps:
@@ -16,7 +15,7 @@
 @REM -----------------------------------------------------------
 
 
-@REM Copy the vcpkg python parts into a new folder ao wqe can build against it
+@REM Copy the vcpkg python parts into a new folder so we can build against it
 robocopy "${VCPKG_PYTHON_DIR}" "${PYTHON_DIR}" *.* /e /R:0 /W:0 /NFL /NDL /NJH /NJS /nc /ns /np
 mkdir "${PYTHON_DIR}/include"
 robocopy "${VCPKG_PYTHON_INCLUDE_DIR}" "${PYTHON_DIR}/include" *.* /e /R:0 /W:0 /NFL /NDL /NJH /NJS /nc /ns /np

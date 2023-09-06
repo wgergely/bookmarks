@@ -113,7 +113,7 @@ elseif(QT_VERSION_MAJOR STREQUAL 6)
 	set(PYSIDE_VERSION_MAJOR "6")
     set(SHIBOKEN "shiboken6")
 else()
-    message(FATAL_ERROR "PySide only supports Qt 5 and Qt 6")
+    message(FATAL_ERROR "PySide only supports Qt5 and Qt6")
 endif()
 
 string(TOLOWER  ${PYSIDE} PYSIDE_LOWER)

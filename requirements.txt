@@ -12,3 +12,4 @@ numpy
 # 3rd-party integrations
 shotgun_api3 >= 3.3.0
 slack_sdk >= 3.18.0
+opentimelineio

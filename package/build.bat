@@ -1,8 +1,36 @@
 @echo off
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+:: Try to find the path to vswhere.exe
+SET VSWHERE="C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
 
-@REM Check for cmake
+:: Check if vswhere is available
+IF NOT EXIST %VSWHERE% (
+    echo Error: "vswhere.exe" not found. Please ensure you have Visual Studio 2017 or newer installed.
+    exit /b 1
+)
+
+:: Use vswhere to find the latest VS installation with VC tools
+FOR /F "tokens=*" %%i IN ('%VSWHERE% -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') DO (
+    SET VSPATH=%%i
+)
+
+IF NOT DEFINED VSPATH (
+    echo Error: Suitable Visual Studio installation not found.
+    exit /b 1
+)
+
+:: Construct path to vcvars64.bat using the found VS path
+SET VCVARS64="%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
+
+:: Check for vcvars64.bat existence
+IF NOT EXIST %VCVARS64% (
+    echo Error: "vcvars64.bat" not found in detected Visual Studio path.
+    exit /b 1
+)
+
+call %VCVARS64%
+
+:: Check for cmake
 where cmake >nul 2>nul
 IF ERRORLEVEL 1 (
     echo Error: cmake is not installed or not in the PATH.

@@ -81,7 +81,7 @@ set(FFMPEG_LIST_FILE ${PACKAGES_DIR}/vcpkg/installed/vcpkg/info/ffmpeg_${FFMPEG_
 add_custom_command(
 	OUTPUT ${FFMPEG_LIST_FILE}
 	COMMAND echo "Building FFMPEG..."
-	COMMAND ${PACKAGES_DIR}/vcpkg/vcpkg.exe install ffmpeg[avcodec,avdevice,avfilter,avformat,avresample,ffmpeg,fontconfig,freetype,gpl,opengl,swresample,swscale,x264,x265]:${VCPKG_TRIPLET} --overlay-ports=${VCPKG_OVERLAYS_DIR}
+	COMMAND ${PACKAGES_DIR}/vcpkg/vcpkg.exe install ffmpeg[avcodec,avdevice,avfilter,avformat,avresample,bzip2,ffmpeg,fontconfig,freetype,lzma,opengl,swresample,swscale,x264,x265,zlib]:${VCPKG_TRIPLET} --overlay-ports=${VCPKG_OVERLAYS_DIR}
 )
 add_custom_target(
 	vcpkg-ffmpeg ALL
@@ -113,7 +113,7 @@ elseif(QT_VERSION_MAJOR STREQUAL 6)
 	set(PYSIDE_VERSION_MAJOR "6")
     set(SHIBOKEN "shiboken6")
 else()
-    message(FATAL_ERROR "PySide only supports Qt 5 and Qt 6")
+    message(FATAL_ERROR "PySide only supports Qt5 and Qt6")
 endif()
 
 string(TOLOWER  ${PYSIDE} PYSIDE_LOWER)

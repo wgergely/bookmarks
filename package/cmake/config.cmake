@@ -19,9 +19,9 @@ set(INNO_URL "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe" CACHE STRIN
 set(INNO_SHA512 "496375b1ce9c0d2f8eb3930ebd8366f5c4c938bc1eda47aed415e3f02bd8651a84a770a15f2825bf3c8ed9dbefa355b9eb805dd76bc782f6d8c8096d80443099" CACHE STRING "" FORCE)
 get_filename_component(INNO_ARCHIVE ${INNO_URL} NAME)
 
-set(VCPKG_TAG "2023.04.15")
+set(VCPKG_TAG "2023.08.09")
 set(VCPKG_URL "https://github.com/microsoft/vcpkg/archive/refs/tags/${VCPKG_TAG}.tar.gz" CACHE STRING "" FORCE)
-set(VCPKG_SHA512 "0f9472555011897d5f92789c927388b0786f1fa4db66fceb87a78bfb15b2349b7d7a79f4e9d1a846a4afc49dfbba097dcbbd5e5976413c18ae4eda762af6fc49" CACHE STRING "" FORCE)
+set(VCPKG_SHA512 "91f896a1ab77bb057697ac76733cdf9c1beb849184c1c974a11ec66e6034b950bc5da75aa6894079dc46a4aefc10f35a620738f6f312dd11d58f3c2df35d1a78" CACHE STRING "" FORCE)
 get_filename_component(VCPKG_ARCHIVE ${VCPKG_URL} NAME)
 set(VCPKG_OVERLAYS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_ports")
 set(VCPKG_TOOLCHAIN "${PACKAGES_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")

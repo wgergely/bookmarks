@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO OpenImageIO/oiio
     REF "v${VERSION}"
-    SHA512 e7dd7aba8dc0baa9bc50f362c21119bf4008edbd03a0c9f31bb03e01b5b0cc18c39f8a368885a4d756f6b475965138409c7e91eeae90b0ebc18d253ff314f025
+    SHA512 75b18d6f719797343c1b85a8441973f831b29bd4193c1c03ebb084f5e16389719c4df6c74352c06aa12975d321171e0da00dad2afb0e35ea50bcc8690c542d09
     HEAD_REF master
     PATCHES
         fix-dependencies.patch

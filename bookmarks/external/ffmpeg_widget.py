@@ -16,6 +16,7 @@ from .. import log
 from .. import ui
 from ..editor import base
 from ..external import rv
+from ..threads import threads
 from ..tokens import tokens
 
 
@@ -82,14 +83,11 @@ class TimecodeModel(ui.AbstractListModel):
         for v in data[tokens.FFMpegTCConfig].values():
             if template == v['name']:
                 icon = ui.get_icon(
-                    'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    'check', color=common.color(common.color_green), size=common.size(common.size_margin) * 2
                 )
             else:
                 icon = ui.get_icon(
-                    'branch_closed',
-                    size=common.size(common.size_margin) * 2
+                    'branch_closed', size=common.size(common.size_margin) * 2
                 )
 
             self._data[len(self._data)] = {
@@ -220,13 +218,8 @@ class FFMpegWidget(base.BasePropertyEditor):
 
     def __init__(self, index, parent=None):
         super().__init__(
-            None,
-            None,
-            None,
-            fallback_thumb='convert',
-            hide_thumbnail_editor=True,
-            buttons=('Convert', 'Cancel'),
-            parent=parent
+            None, None, None, fallback_thumb='convert', hide_thumbnail_editor=True, buttons=(
+            'Convert', 'Cancel'), parent=parent
         )
         self._index = index
         self._connect_settings_save_signals(common.SECTIONS['ffmpeg'])
@@ -278,8 +271,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         seq = index.data(common.SequenceRole)
         preset = self.ffmpeg_preset_editor.currentData()
         ext = next(
-            v['output_extension'] for v in ffmpeg.PRESETS.values() if
-            v['preset'] == preset
+            v['output_extension'] for v in ffmpeg.PRESETS.values() if v['preset'] == preset
         )
 
         if self.ffmpeg_timecode_preset_editor.currentData():
@@ -294,23 +286,17 @@ class FFMpegWidget(base.BasePropertyEditor):
         _f = QtCore.QFile(destination)
         if _f.exists():
             if common.show_message(
-                    'File already exists',
-                    f'{destination} already exists.\nDo you want to replace it with a new version?',
-                    buttons=[common.YesButton, common.NoButton],
-                    message_type='error',
-                    modal=True,
-            ) == QtWidgets.QDialog.Rejected:
+                    'File already exists', f'{destination} already exists.\nDo you want to replace it with a new '
+                                           f'version?', buttons=[
+                        common.YesButton,
+                        common.NoButton], message_type='error', modal=True, ) == QtWidgets.QDialog.Rejected:
                 return False
             if not _f.remove():
                 raise RuntimeError(f'Could not remove {destination}')
 
         common.show_message(
-            'Preparing images...',
-            body='Please wait while the frames are being converted. This might take a while...',
-            message_type=None,
-            disable_animation=True,
-            buttons=[],
-        )
+            'Preparing images...', body='Please wait while the frames are being converted. This might take a '
+                                        'while...', message_type=None, disable_animation=True, buttons=[], )
 
         source_image_paths = self.preprocess_sequence()
         if not common.message_widget or common.message_widget.isHidden():
@@ -319,13 +305,9 @@ class FFMpegWidget(base.BasePropertyEditor):
         timecode_preset = self.ffmpeg_timecode_preset_editor.currentData()
 
         mov = ffmpeg.convert(
-            source_image_paths[0],
-            self.ffmpeg_preset_editor.currentData(),
-            size=self.ffmpeg_size_editor.currentData(),
-            timecode=bool(timecode_preset),
-            timecode_preset=timecode_preset,
-            output_path=destination,
-            parent=self
+            source_image_paths[
+                0], self.ffmpeg_preset_editor.currentData(), size=self.ffmpeg_size_editor.currentData(),
+            timecode=bool(timecode_preset), timecode_preset=timecode_preset, output_path=destination, parent=self
         )
 
         for f in source_image_paths:
@@ -342,9 +324,7 @@ class FFMpegWidget(base.BasePropertyEditor):
             raise RuntimeError(f'Could not find {mov}')
 
         common.widget(common.FileTab).show_item(
-            destination,
-            role=common.PathRole,
-            update=True
+            destination, role=common.PathRole, update=True
         )
 
         if self.ffmpeg_pushtorv_editor.isChecked():
@@ -378,8 +358,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         frames_it = (f for f in frames)
 
         # The full sequence of frame numbers
-        all_frames = [str(f).zfill(len(frames[0])) for f in
-                      range(int(frames[0]), int(frames[-1]) + 1)]
+        all_frames = [str(f).zfill(len(frames[0])) for f in range(int(frames[0]), int(frames[-1]) + 1)]
 
         # FFMpeg can't handle missing frames, so we'll check for them and fill in the gaps
         has_missing_frames = len(all_frames) != len(frames)
@@ -477,11 +456,10 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.66,
-            common.size(common.size_height) * 0.66
+            common.size(common.size_width) * 0.66, common.size(common.size_height) * 0.66
         )
 
-    def showEvent(self,event):
+    def showEvent(self, event):
         super().showEvent(event)
 
         if not self._index:
@@ -492,9 +470,9 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         self.move(corner)
         self.setGeometry(
-            self.geometry().x() + (item_rect.width() / 2) - (self.geometry().width() / 2),
-            self.geometry().y(),
-            self.geometry().width(),
-            self.geometry().height()
+            self.geometry().x() + (item_rect.width() / 2) - (
+                        self.geometry().width() / 2), self.geometry().y(), self.geometry().width(), self.geometry(
+
+            ).height()
         )
         common.move_widget_to_available_geo(self)

@@ -272,7 +272,11 @@ class BaseThread(QtCore.QThread):
     def __init__(self, worker, parent=None):
         super().__init__(parent=parent)
 
-        self.setObjectName(f'{worker.queue}Thread_{uuid.uuid1().hex}')
+        if hasattr(worker, 'queue'):
+            self.setObjectName(f'{worker.queue}Thread_{uuid.uuid1().hex}')
+        else:
+            self.setObjectName(f'Thread_{uuid.uuid1().hex}')
+
         self.setTerminationEnabled(True)
 
         self.worker = worker
@@ -297,8 +301,9 @@ class BaseThread(QtCore.QThread):
         self.worker.moveToThread(self)
 
         cnx = QtCore.Qt.QueuedConnection
-        self.initWorker.connect(self.worker.initWorker, cnx)
-        self.initWorker.emit()
+        if hasattr(self.worker, 'initWorker'):
+            self.initWorker.connect(self.worker.initWorker, cnx)
+            self.initWorker.emit()
 
         if self.worker.thread() == QtWidgets.QApplication.instance().thread():
             s = 'Could not move worker to thread.'

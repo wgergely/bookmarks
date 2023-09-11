@@ -71,9 +71,9 @@ def generate_jsx_script(footage_sources):
     bookmark_height = db.value(db.source(), 'height', database.BookmarkTable)
 
     # ...and if not found, look for it in the asset
-    asset_framerate = db.value(common.active('asset', path=True), 'framerate', database.AssetTable)
-    asset_width = db.value(common.active('asset', path=True), 'width', database.AssetTable)
-    asset_height = db.value(common.active('asset', path=True), 'height', database.AssetTable)
+    asset_framerate = db.value(common.active('asset', path=True), 'asset_framerate', database.AssetTable)
+    asset_width = db.value(common.active('asset', path=True), 'asset_width', database.AssetTable)
+    asset_height = db.value(common.active('asset', path=True), 'asset_height', database.AssetTable)
 
     # If still not found, use default values
     framerate = asset_framerate or bookmark_framerate or 25

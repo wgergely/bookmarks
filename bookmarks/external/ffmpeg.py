@@ -150,6 +150,15 @@ ASSET = 1
 
 
 def get_supported_formats(ffmpeg_console_output):
+    """Return a list of supported formats from the ffmpeg console output.
+
+    Args:
+        ffmpeg_console_output (str): The output from the ffmpeg binary.
+
+    Returns:
+        list: A list of supported formats.
+
+    """
     native_formats = ['jpeg', 'jpg', 'png', 'tiff', 'tff']
     codecs = []
     regex = re.compile(r'\s*([A-Z\.]{6})\s(\w+)\s+(.+)', re.IGNORECASE)
@@ -168,7 +177,7 @@ def get_supported_formats(ffmpeg_console_output):
                     codecs.append('tif')
                 else:
                     codecs.append(native_format.lower())
-    return codecs
+    return tuple(sorted(set(codecs)))
 
 
 def _get_font_path():

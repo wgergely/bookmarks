@@ -89,7 +89,6 @@ SECTIONS = {
     'ffmpeg': (
         'ffmpeg/preset',
         'ffmpeg/size',
-        'ffmpeg/add_timecode',
         'ffmpeg/timecode_preset',
         'ffmpeg/pushtorv',
     ),

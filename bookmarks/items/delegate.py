@@ -527,7 +527,7 @@ def get_subdir_cache_key(index, rect):
     return f'{index.data(common.PathRole)}_subdir_{rect.size()}'
 
 
-def get_subdir_bg_cache_key(index, rect):
+def get_subdir_bg_cache_key(index, rect, text_edge=None):
     """Returns the cache key used to store sub-folder background rectangles.
 
     Returns:
@@ -536,7 +536,7 @@ def get_subdir_bg_cache_key(index, rect):
     """
     p = index.data(common.PathRole)
     d = index.data(common.DescriptionRole)
-    return f'{p}:{d}:[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
+    return f'{p}:{d}:[{rect.x()},{rect.y()},{rect.width()},{rect.height()},{text_edge}]'
 
 
 def get_clickable_cache_key(index, rect):
@@ -768,80 +768,6 @@ def draw_subdir_bg_rectangles(text_edge, *args):
     return QtCore.QRect()
 
 
-@save_painter
-def draw_gradient_background(*args):
-    """Helper method used to draw file items' gradient background.
-
-    Args:
-        text_edge (float): The left edge of the text to avoid clipping.
-
-    """
-    (
-        rectangles,
-        painter,
-        option,
-        index,
-        selected,
-        focused,
-        active,
-        archived,
-        favourite,
-        hover,
-        font,
-        metrics,
-        cursor_position
-    ) = args
-
-    text_edge = rectangles[DataRect].right()
-
-    k = get_subdir_bg_cache_key(index, option.rect)
-
-    if k in common.delegate_bg_brushes:
-        rect, brush = common.delegate_bg_brushes[k]
-    else:
-        rect = QtCore.QRect(
-            rectangles[ThumbnailRect].right(),
-            0,
-            text_edge - rectangles[ThumbnailRect].right(),
-            option.rect.height(),
-        )
-        margin = rectangles[DataRect].width() * 0.1
-        if rectangles[DataRect].center().x() + margin >= text_edge:
-            start_x = text_edge - margin
-        else:
-            start_x = rectangles[DataRect].center().x()
-
-        gradient = QtGui.QLinearGradient()
-        gradient.setStart(
-            QtCore.QPoint(
-                start_x,
-                0,
-            )
-        )
-        gradient.setFinalStop(
-            QtCore.QPoint(
-                text_edge,
-                0
-            )
-        )
-        color = QtGui.QColor(common.color(common.color_dark_background))
-        color.setAlpha(240)
-        gradient.setSpread(QtGui.QGradient.PadSpread)
-        gradient.setColorAt(0.0, color)
-        gradient.setColorAt(1.0, common.color(common.color_transparent))
-        brush = QtGui.QBrush(gradient)
-
-        common.delegate_bg_brushes[k] = (rect, brush)
-
-    rect.moveCenter(
-        QtCore.QPoint(
-            rect.center().x(),
-            rectangles[BackgroundRect].center().y()
-        )
-    )
-    painter.setBrush(brush)
-    painter.drawRect(rect)
-
 
 class ItemDelegate(QtWidgets.QStyledItemDelegate):
     """The main delegate used to represent lists derived from `base.BaseItemView`.
@@ -854,6 +780,38 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         self._min = 0
         self._max = 0
+        self._gradient_pixmap = self._create_gradient_pixmap()
+
+
+    def _get_largest_screen_width(self):
+        # Get all available screens
+        screens = QtWidgets.QApplication.screens()
+        # Return the width of the largest screen
+        return max(screen.geometry().width() for screen in screens)
+
+    def _create_gradient_pixmap(self):
+        width = self._get_largest_screen_width()
+
+        # 1. Set up the linear gradient
+        gradient = QtGui.QLinearGradient()
+        gradient.setStart(QtCore.QPoint(0,0))
+        gradient.setFinalStop(QtCore.QPoint(width, 0))
+
+        # 2. Define the color stops
+        # gradient.setSpread(QtGui.QGradient.PadSpread)
+        gradient.setColorAt(0.0, common.color(common.color_separator))
+        gradient.setColorAt(1.0, common.color(common.color_transparent))
+
+        # 3. Create a QPixmap and fill it with transparent color
+        pixmap = QtGui.QPixmap(width, 1)
+        pixmap.fill(QtCore.Qt.transparent)
+
+        # 4. Render the gradient onto the QPixmap
+        painter = QtGui.QPainter(pixmap)
+        painter.fillRect(pixmap.rect(), gradient)
+        painter.end()
+
+        return pixmap
 
     def createEditor(self, parent, option, index):
         if not index.data(common.FileInfoLoaded):
@@ -1615,6 +1573,77 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             common.size(common.size_indicator)
         )
 
+    def _draw_gradient_background(self, *args):
+        """Helper method used to draw file items' gradient background.
+
+        Args:
+            text_edge (float): The left edge of the text to avoid clipping.
+
+        """
+        (
+            rectangles,
+            painter,
+            option,
+            index,
+            selected,
+            focused,
+            active,
+            archived,
+            favourite,
+            hover,
+            font,
+            metrics,
+            cursor_position
+        ) = args
+
+        text_edge = rectangles[DataRect].right()
+        k = get_subdir_bg_cache_key(index, option.rect, text_edge=text_edge)
+
+        if k in common.delegate_bg_brushes:
+            rect, gradient = common.delegate_bg_brushes[k]
+        else:
+            rect = QtCore.QRect(
+                rectangles[ThumbnailRect].right(),
+                0,
+                text_edge - rectangles[ThumbnailRect].right(),
+                option.rect.height(),
+            )
+            margin = rectangles[DataRect].width() * 0.1
+            if rectangles[DataRect].center().x() + margin >= text_edge:
+                start_x = text_edge - margin
+            else:
+                start_x = rectangles[DataRect].center().x()
+
+            gradient = QtGui.QLinearGradient()
+            gradient.setStart(
+                QtCore.QPoint(
+                    start_x,
+                    0,
+                )
+            )
+            gradient.setFinalStop(
+                QtCore.QPoint(
+                    start_x + (margin * 2),
+                    0
+                )
+            )
+
+            gradient.setSpread(QtGui.QGradient.PadSpread)
+            color = QtGui.QColor(common.color(common.color_background))
+            color.setAlpha(100)
+            gradient.setColorAt(0.0, color)
+            gradient.setColorAt(1.0, common.color(common.color_transparent))
+
+            rect.moveCenter(
+                QtCore.QPoint(
+                    rect.center().x(),
+                    rectangles[BackgroundRect].center().y()
+                )
+            )
+
+        painter.setOpacity(1.0)
+        painter.fillRect(rect, gradient)
+
     @save_painter
     def paint_background(self, *args):
         """Paints the background for all list items."""
@@ -1642,11 +1671,15 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             rect.setHeight(rect.height() + common.size(common.size_separator))
 
         color = common.color(common.color_light_background)
-        color = color if selected else common.color(common.color_background)
+        color = color if selected else common.color(common.color_dark_background)
         painter.setBrush(color)
 
-        painter.setOpacity(0.7)
         painter.drawRect(rect)
+
+        if selected or archived or active:
+            return
+
+        self._draw_gradient_background(*args)
 
     @save_painter
     def paint_hover(self, *args):
@@ -1677,7 +1710,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             rect.setHeight(rect.height() + common.size(common.size_separator))
 
         color = common.color(common.color_light_background)
-        color = color if selected else common.color(common.color_background)
+        color = color if selected else common.color(common.color_dark_background)
         painter.setBrush(color)
 
         painter.setOpacity(0.7)
@@ -2795,7 +2828,6 @@ class BookmarkItemViewDelegate(ItemDelegate):
             args = self.get_paint_arguments(painter, option, index)
             self.paint_background(*args)
             self.paint_default(*args)
-            draw_gradient_background(*args)
             self.paint_active(*args)
             self.paint_hover(*args)
             self.paint_thumbnail_shadow(*args)
@@ -2837,7 +2869,6 @@ class AssetItemViewDelegate(ItemDelegate):
                 return  # The index might still be populated...
             args = self.get_paint_arguments(painter, option, index)
             self.paint_background(*args)
-            draw_gradient_background(*args)
             self.paint_active(*args)
             self.paint_hover(*args)
             self.paint_thumbnail_shadow(*args)
@@ -2885,7 +2916,6 @@ class FileItemViewDelegate(ItemDelegate):
             p_role = index.data(common.ParentPathRole)
             if p_role:
                 self.paint_background(*args)
-                draw_gradient_background(*args)
                 self.paint_active(*args)
                 self.paint_hover(*args)
                 self.paint_name(*args)

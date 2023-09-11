@@ -358,13 +358,16 @@ class FFMpegWidget(base.BasePropertyEditor):
         return True
 
     def preprocess_sequence(self, preconversion_format='jpg'):
-        """Convert the source frames to jpeg images using OpenImageIO.
+        """Preprocesses the source image sequence.
 
-        This allows us to feed more exotic sequences to FFMpeg, but the process comes with
-        a significant performance cost.
+        FFMpeg can't handle missing frames, so we'll check for them and fill in the gaps and convert the source images
+        to jpeg images using OpenImageIO if they're not already supported by FFMpeg.
+
+        Args:
+            preconversion_format (str): The format to convert the source images to.
 
         Returns:
-            tuple: A tuple of jpeg file paths.
+            tuple: A tuple of jpeg file paths to be used as input for ffmpeg.
 
         """
         index = self._index
@@ -378,12 +381,16 @@ class FFMpegWidget(base.BasePropertyEditor):
         all_frames = [str(f).zfill(len(frames[0])) for f in
                       range(int(frames[0]), int(frames[-1]) + 1)]
 
+        # FFMpeg can't handle missing frames, so we'll check for them and fill in the gaps
+        has_missing_frames = len(all_frames) != len(frames)
+
+        # Set up the temp directory
         _dir = QtCore.QDir(f'{common.temp_path()}/ffmpeg')
         if not _dir.exists():
             if not _dir.mkpath('.'):
                 raise RuntimeError('Could not create ffmpeg temp dir')
 
-        # Remove any frames in the temp directory
+        # Remove any previously created temp image frames
         for entry in os.scandir(_dir.path()):
             if entry.is_dir():
                 continue
@@ -393,45 +400,54 @@ class FFMpegWidget(base.BasePropertyEditor):
             if not _f.remove():
                 log.error(f'Could not remove {_f.filePath()}')
 
-        # Preconvert source using OpenImageIO
-        source_paths = []
-        destination_paths = []
         ext = QtCore.QFileInfo(index.data(common.PathRole)).suffix().strip('.').lower()
 
         # Get the supported ffmpeg image extensions from the current binary
         # Run the command and capture the output
         ffmpeg_bin = common.get_binary('ffmpeg')
-        extensions = []
-        if ffmpeg_bin and QtCore.QFileInfo(ffmpeg_bin).exists():
-            result = subprocess.run([os.path.normpath(ffmpeg_bin), '-decoders'], capture_output=True, text=True)
-            extensions = ffmpeg.get_supported_formats(result.stdout)
+
+        if not ffmpeg_bin:
+            raise RuntimeError('FFMpeg binary not found.')
+
+        if not QtCore.QFileInfo(ffmpeg_bin).exists():
+            raise RuntimeError(f'FFMpeg binary {ffmpeg_bin} does not exist.')
+
+        result = subprocess.run([os.path.normpath(ffmpeg_bin), '-decoders'], capture_output=True, text=True)
+        extensions = ffmpeg.get_supported_formats(result.stdout)
 
         if not extensions:
-            raise RuntimeError('Could not get supported ffmpeg image extensions.')
+            raise RuntimeError('FFMpeg doesn\'t seem to support any image formats.')
 
         needs_conversion = ext not in extensions
 
-        # We'll build a full sequence filling in any missing frames with the closest
-        # available frame. This allows us to correctly create videos of sequences with missing
-        # images.
+        source_images = []
+        ffmpeg_source_images = []
+
+        # If the source images are already supported by ffmpeg and there are no missing frames, we'll just use the
+        # source images as input for ffmpeg.
+        if not has_missing_frames and not needs_conversion:
+            return [f'{seq.group(1)}{f}{seq.group(3)}.{seq.group(4)}' for f in frames]
+
+        # We'll build a full sequence filling in any missing frames with the closest available frame. This allows us
+        # to correctly create videos of sequences with missing images.
         source_frame = all_frames[0]
         for frame in all_frames:
             if frame in frames:
                 source_frame = next(frames_it)
 
             source_path = f'{seq.group(1)}{source_frame}{seq.group(3)}.{seq.group(4)}'
-            source_paths.append(source_path)
+            source_images.append(source_path)
 
             destination_path = f'{_dir.path()}/ffmpeg_{frame}.{preconversion_format if needs_conversion else ext}'
-            destination_paths.append(destination_path)
+            ffmpeg_source_images.append(destination_path)
 
-        # Check the extension and skip conversion if the source is already in a format ffmpeg likely to understand
-        if not needs_conversion:
-            # We'll copy the source files to the temp directory instead of converting them
-            for idx, items in enumerate(zip(source_paths, destination_paths)):
+        # We'll copy the source files to the temp directory instead of converting them to create a full sequence
+        # of images. This allows us to correctly create videos of sequences with missing images.
+        if not needs_conversion and has_missing_frames:
+            for idx, items in enumerate(zip(source_images, ffmpeg_source_images)):
                 source_path, destination_path = items
 
-                common.message_widget.body_label.setText(f'Copying image {idx} of {len(source_paths)}...')
+                common.message_widget.body_label.setText(f'Copying image {idx} of {len(source_images)}...')
                 QtWidgets.QApplication.instance().processEvents()
 
                 if not QtCore.QFile.copy(source_path, destination_path):
@@ -439,20 +455,22 @@ class FFMpegWidget(base.BasePropertyEditor):
 
             raise RuntimeError('needs_conversion')
 
+        # Convert the source images to jpeg images using OpenImageIO
         if needs_conversion:
             common.message_widget.body_label.setText(
-                f'The sequence needs pre-converting:\nConverting {len(source_paths)} images, please wait...'
+                f'The sequence needs pre-converting:\nConverting {len(source_images)} images, please wait...'
             )
             QtWidgets.QApplication.instance().processEvents()
 
-            if not pyimageutil.convert_images(source_paths, destination_paths, max_size=-1, release_gil=False):
-                raise RuntimeError('Failed to convert images using OpenImageIO.')
+            if not pyimageutil.convert_images(source_images, ffmpeg_source_images, max_size=-1, release_gil=True):
+                raise RuntimeError('Failed to convert an image using OpenImageIO.')
 
-        for f in destination_paths:
+        # Sanity check to make sure all the destination paths exist
+        for f in ffmpeg_source_images:
             if not QtCore.QFileInfo(f).exists():
                 raise RuntimeError(f'{f} does not exist')
 
-        return destination_paths
+        return ffmpeg_source_images
 
     def sizeHint(self):
         """Returns a size hint.

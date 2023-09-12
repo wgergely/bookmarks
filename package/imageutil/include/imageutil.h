@@ -128,13 +128,9 @@ bool convert_images(const std::vector<std::string>& input_images, const std::vec
 /**
  * @brief PyBind11 wrapper function for make_thumbnail
  * 
- * @param release_gil The Python GIL won't be hold whilst the function is running when `true` (the default)
- * 
- * The function manages the GIL locking by the extra release_gil parameter
- * 
  * @return `true` on success, `false` on failiure
 */
-bool py_convert_image(const std::string& input_image, const std::string& output_image, const int max_size = 512, bool debug = false, bool release_gil = true);
+bool py_convert_image(const std::string& input_image, const std::string& output_image, const int max_size = 512, bool debug = false);
 
 
 

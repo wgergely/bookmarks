@@ -446,10 +446,8 @@ bool py_convert_image(
     const std::string& input_image,
     const std::string& output_image,
     const int max_size,
-    bool debug,
+    bool debug
 ) {
-    // GIL is held when called from Python code. Release GIL before
-    // calling into (potentially long-running) C++ code
     return convert_image(input_image, output_image, max_size, debug);
 }
 
@@ -457,10 +455,8 @@ bool py_convert_images(
     const std::vector<std::string>& input_images,
     const std::vector<std::string>& output_images,
     const int max_size,
-    bool debug,
+    bool debug
 ) {
-    // GIL is held when called from Python code. Release GIL before
-    // calling into (potentially long-running) C++ code
     try {
         return convert_images(input_images, output_images, max_size, debug);
     }
@@ -481,7 +477,6 @@ PYBIND11_MODULE(pyimageutil, m)
         py::arg("max_size") = 512,
         py::arg("debug") = false,
         py::return_value_policy::copy,
-        py::call_guard<py::gil_scoped_release>(),
         "Create a thumbnail from `input_image` and save it as `output_image`"
     );
     m.def(

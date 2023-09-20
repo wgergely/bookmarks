@@ -274,7 +274,15 @@ TABLES = {
         'applications': {
             'sql': 'TEXT',
             'type': dict,
-        }
+        },
+        'bookmark_display_token': {
+            'sql': 'TEXT',
+            'type': str
+        },
+        'asset_display_token': {
+            'sql': 'TEXT',
+            'type': str
+        },
     }
 }
 

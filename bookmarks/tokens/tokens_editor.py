@@ -69,7 +69,7 @@ class TokenEditor(QtWidgets.QDialog):
         editor.setSpacing(0)
 
         editor.itemClicked.connect(
-            lambda x: self.tokenSelected.emit(x.data(QtCore.Qt.DisplayRole))
+            lambda x: self.tokenSelected.emit(x.data(QtCore.Qt.UserRole))
         )
         editor.itemClicked.connect(
             lambda x: self.done(QtWidgets.QDialog.Accepted)
@@ -78,34 +78,21 @@ class TokenEditor(QtWidgets.QDialog):
         self.layout().addWidget(editor, 0)
 
         config = tokens.get(self.server, self.job, self.root)
-        v = config.get_tokens(
-            user='username',
-            version='v001',
-            host='my-machine',
-            task='anim',
-            mode='anim',
-            element='main',
-            ext='ma',
-            prefix='MY_PROJECT',
-            asset='asset/with/multiple/subfolders',
-            seq='SQ010',
-            sequence='SQ010',
-            shot='SH0010',
-            project='my_project',
-        )
-        for k in sorted(v.keys()):
-            token = '{{{}}}'.format(k)
-            editor.addItem(token)
+        v = config.get_tokens()
+
+        for k in sorted(v.keys(), key=lambda x: x.strip('{}').lower()):
+            editor.addItem(f'{k}{"    >   {}".format(v[k]) if v[k] != "{invalid_token}" else ""}')
             item = editor.item(editor.count() - 1)
             item.setFlags(QtCore.Qt.ItemIsEnabled)
+
             item.setData(
                 QtCore.Qt.ToolTipRole,
                 f'Current value: "{v[k]}"'
             )
-
-    @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def item_clicked(self, item):
-        item = item.data(QtCore.Qt.DisplayRole)
+            item.setData(
+                QtCore.Qt.UserRole,
+                '{{{}}}'.format(k)
+            )
 
     def sizeHint(self):
         """Returns a size hint.

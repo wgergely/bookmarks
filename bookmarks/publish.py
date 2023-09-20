@@ -739,6 +739,8 @@ class PublishWidget(base.BasePropertyEditor):
             f = f'{folder}/jpg/{name}.jpg'
             files.append(f)
             buf.write(f)
+
+            images.ImageCache.flush(destination)
             images.ImageCache.flush(f)
 
         payload['jpgs'] = files

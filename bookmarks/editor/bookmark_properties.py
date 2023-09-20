@@ -159,7 +159,27 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                                 'left empty, all folders in the bookmark will be '
                                 'interpreted as assets.',
                     }
-                }
+                },
+                4: {
+                    0: {
+                        'name': 'Bookmark Display Name',
+                        'key': 'bookmark_display_token',
+                        'validator': base.name_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': '{server}/{job}/{root}',
+                        'description': 'Specify the tokens used to display bookmark items',
+                        'button': '+'
+                    },
+                    1: {
+                        'name': 'Asset Display Name',
+                        'key': 'asset_display_token',
+                        'validator': base.name_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': '{asset}',
+                        'description': 'Specify the tokens used to display asset items',
+                        'button': '+'
+                    },
+                },
             }
         },
         1: {
@@ -476,3 +496,27 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
         """
         self.applications_editor.add_new_item()
+
+    @QtCore.Slot()
+    def bookmark_display_token_button_clicked(self):
+        k = 'bookmark_display_token'
+        if not hasattr(self, f'{k}_editor'):
+            raise RuntimeError(f'{k}_editor not found')
+
+        from ..tokens import tokens_editor
+        editor = getattr(self, f'{k}_editor')
+        w = tokens_editor.TokenEditor(self.server, self.job, self.root, parent=editor)
+        w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
+        w.exec_()
+
+    @QtCore.Slot()
+    def asset_display_token_button_clicked(self):
+        k = 'asset_display_token'
+        if not hasattr(self, f'{k}_editor'):
+            raise RuntimeError(f'{k}_editor not found')
+
+        from ..tokens import tokens_editor
+        editor = getattr(self, f'{k}_editor')
+        w = tokens_editor.TokenEditor(self.server, self.job, self.root, parent=editor)
+        w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
+        w.exec_()

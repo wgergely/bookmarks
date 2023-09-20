@@ -64,6 +64,8 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import database
+from .. import log
+from ..tokens import tokens
 from ..threads import threads
 
 
@@ -158,7 +160,23 @@ class BookmarkItemModel(models.ItemModel):
             job = v['job']
             root = v['root']
 
-            database.get(server, job, root)
+            display_name = f'{server}/{job}/{root}'
+
+            try:
+                # Get the display name token from the database
+                db = database.get(server, job, root)
+                _display_name = db.value(db.source(), 'bookmark_display_token', database.BookmarkTable)
+
+                # If a token is set, expand it
+                if _display_name:
+                    config = tokens.get(server, job, root)
+                    _display_name = config.expand_tokens('{job}')
+                    print(_display_name)
+                    if tokens.invalid_token not in _display_name:
+                        display_name = _display_name
+            except Exception as e:
+                log.error(e)
+
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
@@ -179,9 +197,9 @@ class BookmarkItemModel(models.ItemModel):
             # bookmark exist
             if all(
                     (
-                            server == common.active('server'),
-                            job == common.active('job'),
-                            root == common.active('root')
+                        server == common.active('server'),
+                        job == common.active('job'),
+                        root == common.active('root')
                     )
             ) and exists:
                 flags = flags | common.MarkedAsActive
@@ -206,8 +224,8 @@ class BookmarkItemModel(models.ItemModel):
 
             data[idx] = common.DataDict(
                 {
-                    QtCore.Qt.DisplayRole: root,
-                    QtCore.Qt.EditRole: root,
+                    QtCore.Qt.DisplayRole: display_name,
+                    QtCore.Qt.EditRole: display_name,
                     common.PathRole: filepath,
                     QtCore.Qt.ToolTipRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,

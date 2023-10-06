@@ -1,12 +1,12 @@
 {
   "0": {
     "name": "AKA-ODSY-DJI | Shader Import/Export...",
-    "module": "aka_odsy_dji_shaders",
+    "module": "aka_shader_templates",
     "description": "Shader template import and export tool"
   },
   "1": {
-    "name": "AKA-ODSY-DJI | Make EXPORT Sets",
-    "module": "aka_odsy_dji_make_export_sets",
+    "name": "AKA-ODSY-DJI | Make export Sets",
+    "module": "aka_make_export_sets",
     "description": ""
   },
   "2": {

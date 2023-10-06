@@ -602,8 +602,11 @@ class PublishWidget(base.BasePropertyEditor):
             self.prepare_publish(destination, payload=payload)
             self.copy_payload_files(payload=payload)
             self.save_thumbnail(destination, payload=payload)
-            jpegs = self.make_jpegs(payload=payload)
-            self.make_videos(destination, jpegs, payload=payload)
+
+            # TODO: We can't implement this without more user control!
+            # jpegs = self.make_jpegs(payload=payload)
+            # self.make_videos(destination, jpegs, payload=payload)
+
             self.write_manifest(destination, payload=payload)
             self.post_publish(destination, kwargs)
             return True

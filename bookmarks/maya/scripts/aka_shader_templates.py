@@ -32,7 +32,7 @@ import shiboken2
 from PySide2 import QtCore, QtGui, QtWidgets
 
 
-WINDOW_TITLE = 'AKA Odyssey Shaders'
+WINDOW_TITLE = 'Aka Shader Templates'
 NUMERIC_TYPES = ['double', 'float', 'long', 'short', 'byte', 'int']
 
 DEFAULT_PREFIX = 'main'

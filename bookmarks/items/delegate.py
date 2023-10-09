@@ -42,16 +42,14 @@ null_rect = QtCore.QRect()
 BackgroundRect = 0
 IndicatorRect = 1
 ThumbnailRect = 2
-AssetNameRect = 3
-AssetDescriptionRect = 4
-AddItemRect = 5
-TodoRect = 6
-RevealRect = 7
-ArchiveRect = 8
-FavouriteRect = 9
-DataRect = 10
-PropertiesRect = 11
-InlineBackgroundRect = 12
+AddItemRect = 3
+TodoRect = 4
+RevealRect = 5
+ArchiveRect = 6
+FavouriteRect = 7
+DataRect = 8
+PropertiesRect = 9
+InlineBackgroundRect = 10
 
 #: Used to paint a DCC icon if the asset name contains any of these names
 DCC_ICONS = {
@@ -212,69 +210,6 @@ def _get_pixmap_rect(rect_height, pixmap_width, pixmap_height):
     w = pixmap_width * ratio
     h = pixmap_height * ratio
     return QtCore.QRect(0, 0, int(w), int(h))
-
-
-@functools.lru_cache(maxsize=4194304)
-def get_bookmark_text_segments(text, label):
-    """Caches and returns the text segments used to paint bookmark items.
-
-    Used to mimic rich-text like coloring of individual text elements.
-
-    Args:
-        text (str): The source text.
-        label (str): Item's label string.
-
-    Returns:
-        dict: A dict of (str, QColor) pairs.
-
-    """
-    if not text:
-        return {}
-    label = label if label else ''
-
-    k = f'{text}{label}'
-    if k in common.delegate_text_segments:
-        return common.delegate_text_segments[k]
-
-    text = text.upper().strip().strip('/').strip('\\')
-    if not text:
-        return {}
-
-    d = {}
-    v = text.split('|')
-
-    s_color = common.color(common.color_dark_blue)
-
-    for i, s in enumerate(v):
-        if i == 0:
-            c = common.color(common.color_text)
-            if '/' in s:
-                s = s.split('/')[-1]
-        else:
-            c = s_color
-
-        _v = s.split('/')
-        for _i, _s in enumerate(_v):
-            _s = _s.strip()
-
-            d[len(d)] = (_s, c)
-            if _i < (len(_v) - 1):
-                d[len(d)] = (' / ', s_color)
-        if i < (len(v) - 1):
-            d[len(d)] = ('   |    ', s_color)
-
-    if label:
-        d[len(d)] = ('    |    ', common.color(common.color_dark_background))
-        v = label.split('•')
-        for __i, s in enumerate(v):
-            s = s.strip()
-
-            d[len(d)] = (s, s_color)
-            if __i != len(v) - 1:
-                d[len(d)] = ('  ‖  ', s_color)
-
-    common.delegate_text_segments[k] = d
-    return common.delegate_text_segments[k]
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -524,7 +459,7 @@ def get_subdir_cache_key(index, rect):
         str: The cache key.
 
     """
-    return f'{index.data(common.PathRole)}_subdir_{rect.size()}'
+    return f'{index.data(QtCore.Qt.DisplayRole)}_subdir:[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
 
 
 def get_subdir_bg_cache_key(index, rect, text_edge=None):
@@ -534,8 +469,8 @@ def get_subdir_bg_cache_key(index, rect, text_edge=None):
         str: The cache key.
 
     """
-    p = index.data(common.PathRole)
-    d = index.data(common.DescriptionRole)
+    p = index.data(QtCore.Qt.DisplayRole)
+    d = index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
     return f'{p}:{d}:[{rect.x()},{rect.y()},{rect.width()},{rect.height()},{text_edge}]'
 
 
@@ -550,10 +485,10 @@ def get_clickable_cache_key(index, rect):
         str: The cache key.
 
     """
-    p = index.data(common.PathRole)
+    p = index.data(common.QtCore.Qt.DisplayRole)
     f = index.data(common.FileDetailsRole)
-    d = index.data(common.DescriptionRole)
-    return f'{p}{f}{d}[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
+    d = index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
+    return f'{p}:{f}:{d}:[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
 
 
 def get_description_cache_key(index, rect, button):
@@ -568,10 +503,10 @@ def get_description_cache_key(index, rect, button):
         str: The cache key.
 
     """
-    p = index.data(common.PathRole)
+    p = index.data(common.QtCore.Qt.DisplayRole)
     f = index.data(common.FileDetailsRole)
-    d = index.data(common.DescriptionRole)
-    return f'{p}{f}{d}{button}[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
+    d = index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
+    return f'{p}:{f}:{d}:{button}:[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
 
 
 def get_subdir_rectangles(option, index, rectangles, metrics):
@@ -657,14 +592,14 @@ def get_text_segments(index):
         return {}
 
     if len(pp) == 3:
-        return get_bookmark_text_segments(
+        return get_asset_text_segments(
             index.data(QtCore.Qt.DisplayRole),
-            index.data(common.DescriptionRole)
+            index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
         )
     elif len(pp) == 4:
         return get_asset_text_segments(
             index.data(QtCore.Qt.DisplayRole),
-            index.data(common.DescriptionRole)
+            index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
         )
     elif len(pp) > 4:
         return get_file_text_segments(
@@ -848,7 +783,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         """Sets the model data for the given index to the given value.
 
         """
-        text = f'{index.data(common.DescriptionRole)}'
+        text = index.data(common.DescriptionRole)
         if text.lower() == editor.text().lower():
             return
         source_path = index.data(common.ParentPathRole)
@@ -1022,7 +957,11 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         archived = flags & common.MarkedAsArchived
         active = flags & common.MarkedAsActive
         rectangles = self.get_rectangles(index)
-        font, metrics = common.font_db.bold_font(common.size(common.size_font_medium))
+
+        if option.rect.height() < common.size(common.size_row_height) * 1.5:
+            font, metrics = common.font_db.medium_font(common.size(common.size_font_small))
+        else:
+            font, metrics = common.font_db.bold_font(common.size(common.size_font_medium))
         painter.setFont(font)
 
         cursor_position = self.parent().viewport().mapFromGlobal(common.cursor.pos())
@@ -1174,12 +1113,10 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
 
         pp = index.data(common.ParentPathRole)
-        if len(pp) == 3:
-            return self.paint_bookmark_name(*args)
-        elif len(pp) == 4:
+        if len(pp) <= 4:
             return self.paint_asset_name(
                 *args,
-                offset=common.size(common.size_indicator) * 2
+                 offset=common.size(common.size_indicator)
             )
         elif len(pp) > 4:
             return self.paint_file_name(*args)
@@ -2403,43 +2340,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         painter.drawRect(rect)
 
     @save_painter
-    def paint_bookmark_name(self, *args):
-        """Paints name of the ``BookmarkWidget``'s items."""
-        (
-            rectangles,
-            painter,
-            option,
-            index,
-            selected,
-            focused,
-            active,
-            archived,
-            favourite,
-            hover,
-            font,
-            metrics,
-            cursor_position
-        ) = args
-
-        if not index.isValid():
-            return
-        if not index.data(QtCore.Qt.DisplayRole):
-            return
-        if not index.data(common.ParentPathRole):
-            return
-
-        # Paint the job as a clickable floating rectangle
-        bg_rect = draw_subdir_bg_rectangles(rectangles[DataRect].right(), *args)
-        text = index.data(common.ParentPathRole)[1]
-        add_clickable_rectangle(index, option, bg_rect, text)
-
-        self.draw_subdir_rectangles(bg_rect, *args)
-
-        self.paint_asset_name(
-            *args, offset=(bg_rect.right() - rectangles[DataRect].left())
-        )
-
-    @save_painter
     def paint_asset_name(self, *args, offset=0):
         """Paints name of the ``AssetWidget``'s items."""
         (
@@ -2494,7 +2394,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             painter.setBrush(common.color(common.color_secondary_text))
             text = elided_text(
                 metrics,
-                'Double-click to edit...',
+                'Double-click to edit description...',
                 QtCore.Qt.ElideRight,
                 description_rect.width(),
             )
@@ -2732,7 +2632,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         if not index.data(common.ParentPathRole):
             return
 
-        d = index.data(QtCore.Qt.DisplayRole)
+        d = index.data(common.PathRole)
         icon = next((DCC_ICONS[f] for f in DCC_ICONS if f.lower() in d.lower()), None)
         if not icon:
             return

@@ -432,10 +432,9 @@ def get_bookmark_description(bookmark_row_data):
         description = f'{sep}{v["description"]}' if v['description'] else ''
         width = v['width'] if (v['width'] and v['height']) else ''
         height = f'*{v["height"]}px' if (v['width'] and v['height']) else ''
-        framerate = f'{sep}{v["framerate"]}fps' if v['framerate'] else ''
-        prefix = f'{sep}{v["prefix"]}' if v['prefix'] else ''
+        framerate = f', {v["framerate"]}fps' if v['framerate'] else ''
 
-        s = f'{width}{height}{framerate}{prefix}{description}'
+        s = f'{description}{sep}{width}{height}{framerate}'
         s = s.replace(sep + sep, sep)
         s = s.strip(sep).strip()
         return s

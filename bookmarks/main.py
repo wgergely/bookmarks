@@ -383,7 +383,7 @@ class MainWidget(QtWidgets.QWidget):
 
         pixmaprect = QtCore.QRect(rect)
         center = pixmaprect.center()
-        s = common.size(common.size_asset_row_height) * 1.5
+        s = common.size(common.size_row_height) * 3
         o = common.size(common.size_margin)
 
         pixmaprect.setWidth(s)

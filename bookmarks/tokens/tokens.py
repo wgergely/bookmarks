@@ -747,7 +747,7 @@ class TokenConfig(QtCore.QObject):
             del kwargs[k]
 
         # To avoid KeyErrors when invalid tokens are passed we will replace
-        # the these with a custom marker
+        # these with a custom marker, e.g. {invalid_token}
         # via https://stackoverflow.com/questions/17215400/format-string-unused
         # -named-arguments
         return string.Formatter().vformat(

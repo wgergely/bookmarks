@@ -35,6 +35,7 @@ SECTIONS = {
         'settings/show_menu_icons',
         'settings/paint_thumbnail_bg',
         'settings/disable_oiio',
+        'settings/hide_item_descriptions',
         'settings/always_always_on_top',
         'settings/bin_ffmpeg',
         'settings/bin_rv',

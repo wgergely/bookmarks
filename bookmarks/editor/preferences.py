@@ -113,6 +113,16 @@ class PreferenceEditor(base.BasePropertyEditor):
                         'description': 'Check to hide thumbnail background colors'
                     },
                     3: {
+                        'name': 'Hide item descriptions',
+                        'key': 'settings/hide_item_descriptions',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Enable'
+                        ),
+                        'placeholder': 'Check to hide item descriptions',
+                        'description': 'Check to hide item descriptions',
+                    },
+                    4: {
                         'name': 'Disable Image Thumbnails',
                         'key': 'settings/disable_oiio',
                         'validator': None,

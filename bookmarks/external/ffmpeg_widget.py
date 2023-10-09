@@ -427,7 +427,7 @@ class FFMpegWidget(base.BasePropertyEditor):
                 source_path, destination_path = items
 
                 common.message_widget.body_label.setText(f'Copying image {idx} of {len(source_images)}...')
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 if not QtCore.QFile.copy(source_path, destination_path):
                     raise RuntimeError(f'Could not copy {source_path} to {destination_path}')
@@ -439,7 +439,7 @@ class FFMpegWidget(base.BasePropertyEditor):
             common.message_widget.body_label.setText(
                 f'The sequence needs pre-converting:\nConverting {len(source_images)} images, please wait...'
             )
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             if not pyimageutil.convert_images(source_images, ffmpeg_source_images, max_size=-1, release_gil=True):
                 raise RuntimeError('Failed to convert an image using OpenImageIO.')

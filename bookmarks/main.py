@@ -239,7 +239,7 @@ class MainWidget(QtWidgets.QWidget):
         self._connect_signals()
 
         self.aboutToInitialize.emit()
-        QtWidgets.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
         # Update the window title to display the current active paths
         for n in range(3):

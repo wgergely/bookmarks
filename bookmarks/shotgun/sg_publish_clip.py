@@ -327,7 +327,7 @@ class PublishWidget(base.BasePropertyEditor):
                     disable_animation=True,
                     parent=self
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 existing_version = sg.find_one(
                     'Version', [['code', 'is', data['name']]]
@@ -370,7 +370,7 @@ class PublishWidget(base.BasePropertyEditor):
                     disable_animation=True,
                     parent=self
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 cut_data = {
                     'project': data['project_entity'],
@@ -392,7 +392,7 @@ class PublishWidget(base.BasePropertyEditor):
                     disable_animation=True,
                     parent=self
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 cut_item_data = {
                     'project': data['project_entity'],
@@ -418,7 +418,7 @@ class PublishWidget(base.BasePropertyEditor):
                     disable_animation=True,
                     parent=self
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 published_file_data = {
                     'project': data['project_entity'],
@@ -459,7 +459,7 @@ class PublishWidget(base.BasePropertyEditor):
                     disable_animation=True,
                     parent=self
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 # Upload the actual file to ShotGrid
                 sg.upload("Version", version['id'], data['file_path'], field_name='sg_uploaded_movie')

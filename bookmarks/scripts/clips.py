@@ -712,7 +712,7 @@ class EdlWidget(base.BasePropertyEditor):
                     asset_data[k] = db.value(db.source(), k, database.BookmarkTable)
 
             common.message_widget.title_label.setText(f'Processing {asset}...')
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             for k in DEFAULT_SOURCES:
                 if not hasattr(self, f'{k.replace("/", "_")}_editor'):
@@ -734,7 +734,7 @@ class EdlWidget(base.BasePropertyEditor):
                     continue
 
                 common.message_widget.body_label.setText(f'Found source dir:\n{source_dir}')
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 # Get the source files
                 for source in _get_sources(source_dir, source_ext):

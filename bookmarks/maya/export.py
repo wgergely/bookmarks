@@ -710,7 +710,7 @@ class ExportWidget(base.BasePropertyEditor):
         start_time = time.time()
 
         for fr in range(start_frame, end_frame + 1):
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
             if self._interrupt_requested:
                 self._interrupt_requested = False
                 return
@@ -769,7 +769,7 @@ class ExportWidget(base.BasePropertyEditor):
         cmds.select(outliner_set, replace=True)
 
         for fr in range(start_frame, end_frame + 1):
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
             if self._interrupt_requested:
                 self._interrupt_requested = False
                 return

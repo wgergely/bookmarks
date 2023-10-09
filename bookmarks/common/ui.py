@@ -398,7 +398,7 @@ def show_message(title, body='', disable_animation=False, icon='icon', message_t
     if disable_animation:
         mbox.show()
         mbox.raise_()
-        QtWidgets.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
         return mbox
     return mbox.open()
 

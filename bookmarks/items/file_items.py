@@ -368,7 +368,7 @@ class FileItemModel(models.ItemModel):
                 common.signals.showStatusBarMessage.emit(
                     'Loading files (found ' + str(c) + ' items)...'
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             flags = models.DEFAULT_ITEM_FLAGS
             seq, sequence_path = get_sequence_elements(filepath)

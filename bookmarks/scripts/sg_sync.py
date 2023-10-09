@@ -619,7 +619,7 @@ class SyncWidget(base.BasePropertyEditor):
         # Get all ShotGrid entities
         for n, entity in enumerate(entities):
             common.message_widget.title_label.setText(f'Processing {entity["code"]} ({n + 1} of {len(entities)})')
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             if source_entity_type == 'Shot':
                 seq, shot = common.get_sequence_and_shot(entity['code'])
@@ -692,7 +692,7 @@ class SyncWidget(base.BasePropertyEditor):
 
                 if update_data:
                     common.message_widget.body_label.setText(f'Updating ShotGrid entity...')
-                    QtWidgets.QApplication.instance().processEvents()
+                    QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                     sg.update(
                         'Shot', entity['id'], update_data, )
@@ -706,7 +706,7 @@ class SyncWidget(base.BasePropertyEditor):
                     print(f'Uploading thumbnail for {entity["code"]}')
 
                     common.message_widget.body_label.setText(f'Uploading ShotGrid thumbnail...')
-                    QtWidgets.QApplication.instance().processEvents()
+                    QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                     sg.upload_thumbnail('Shot', entity['id'], thumbnail_path)
 
@@ -752,7 +752,7 @@ class SyncWidget(base.BasePropertyEditor):
                     items_data[task_path]['description'] = asset_data_item['description']
 
                 common.message_widget.body_label.setText(f'Finding tasks...')
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                 # Find the associated task entity
                 for task_entity in task_entities:
@@ -764,7 +764,7 @@ class SyncWidget(base.BasePropertyEditor):
                 # Create any missing files and folders inside the Maya work folders
                 if self.sg_sync_create_folders_editor.isChecked():
                     common.message_widget.body_label.setText(f'Making folders...')
-                    QtWidgets.QApplication.instance().processEvents()
+                    QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
                     print(f'Patching {root}/{task_path}')
                     self.patch_asset(asset_template_path, f'{root}/{task_path}')
@@ -788,7 +788,7 @@ class SyncWidget(base.BasePropertyEditor):
         if self.sg_sync_sync_data_to_bookmarks_editor.isChecked():
             common.message_widget.title_label.setText(f'Adding asset links...')
             common.message_widget.body_label.setText('')
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             for k in links:
                 if not os.path.isdir(f'{bookmark_root}/{k}'):
@@ -811,7 +811,7 @@ class SyncWidget(base.BasePropertyEditor):
 
             # Reset the filters
             common.message_widget.title_label.setText(f'Updating asset items...')
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             common.model(common.AssetTab).set_filter_text('')
             # Refresh model
@@ -819,7 +819,7 @@ class SyncWidget(base.BasePropertyEditor):
 
             # Wait for the model to refresh
             common.message_widget.body_label.setText(f'Waiting for refresh...')
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             model = common.source_model(common.AssetTab)
             p = model.source_path()
@@ -835,7 +835,7 @@ class SyncWidget(base.BasePropertyEditor):
             _time_slept = 0
             _increment = 0.1
             while not data.loaded:
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
                 if _time_slept >= max_sleep:
                     break
                 _time_slept += _increment

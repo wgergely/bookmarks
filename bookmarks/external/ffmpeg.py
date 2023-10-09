@@ -449,7 +449,7 @@ def convert(
                 common.message_widget.body_label.setText(
                     f'Converting frame {int(match.group(1))} of {int(endframe)}'
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
         # Verify the output
         if proc.returncode == 1:

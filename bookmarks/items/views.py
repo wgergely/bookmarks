@@ -235,14 +235,18 @@ class ItemDrag(QtGui.QDrag):
 
 
 class ListsWidget(QtWidgets.QStackedWidget):
-    """This stacked widget contains the main bookmark, asset, file and favourite item
-    views.
+    """This stacked widget contains the main :class:`~bookmarks.items.bookmark_items.BookmarkItemView`,
+    :class:`~bookmarks.items.asset_items.AssetItemView`, :class:`~bookmarks.items.file_items.FileItemView` and
+    :class:`~bookmarks.items.favourite_items.FavouriteItemView`.
+    widgets.
 
     """
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
+
+        self.animation_in_progress = False
 
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
@@ -289,10 +293,20 @@ class ListsWidget(QtWidgets.QStackedWidget):
                 super(ListsWidget, self).setCurrentIndex(_idx)
                 common.signals.tabChanged.emit(_idx)
 
+        @QtCore.Slot()
+        def animation_state_changed(state, old_state):
+            if state == QtCore.QAbstractAnimation.Running:
+                self.animation_in_progress = True
+            if state == QtCore.QAbstractAnimation.Stopped:
+                self.animation_in_progress = False
+
+
         animation = QtCore.QParallelAnimationGroup()
         animation.finished.connect(functools.partial(animation_finished, animation))
+        animation.stateChanged.connect(animation_state_changed)
 
         duration = 200
+
         # Create animation for outgoing widget
         out_anim = QtCore.QPropertyAnimation(self.widget(current_index), b"geometry")
         out_anim.setEasingCurve(QtCore.QEasingCurve.OutQuad)
@@ -331,7 +345,7 @@ class ListsWidget(QtWidgets.QStackedWidget):
         animation.addAnimation(out_op)
         animation.addAnimation(in_op)
 
-        animation.start()
+        animation.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
         self.widget(idx).show()
 
     def showEvent(self, event):

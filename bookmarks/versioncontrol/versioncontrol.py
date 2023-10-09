@@ -234,7 +234,7 @@ def check():
         if total_length is None:  # no content length header
             progress_widget.setMaximum(0)
             progress_widget.forceShow()
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
             f.write(response.content)
             progress_widget.close()
             return
@@ -245,7 +245,7 @@ def check():
         progress_widget.forceShow()
 
         while True:
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
             data = response.read(4096)
             if not data:
                 break

@@ -216,7 +216,7 @@ class AssetItemModel(models.ItemModel):
                 common.signals.showStatusBarMessage.emit(
                     f'Loading assets ({c} found)...'
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             filename = filepath[len(source) + 1:]
             flags = models.DEFAULT_ITEM_FLAGS

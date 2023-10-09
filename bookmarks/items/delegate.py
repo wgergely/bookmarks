@@ -2832,6 +2832,10 @@ class BookmarkItemViewDelegate(ItemDelegate):
             self.paint_hover(*args)
             self.paint_thumbnail_shadow(*args)
             self.paint_name(*args)
+
+            if common.main_widget.stacked_widget.animation_in_progress:
+                return
+
             self.paint_archived(*args)
             self.paint_inline_background(*args)
             self.paint_inline_icons(*args)
@@ -2873,6 +2877,10 @@ class AssetItemViewDelegate(ItemDelegate):
             self.paint_hover(*args)
             self.paint_thumbnail_shadow(*args)
             self.paint_name(*args)
+
+            if common.main_widget.stacked_widget.animation_in_progress:
+                return
+
             self.paint_archived(*args)
             self.paint_description_editor_background(*args)
             self.paint_inline_background(*args)
@@ -2913,12 +2921,16 @@ class FileItemViewDelegate(ItemDelegate):
             args = self.get_paint_arguments(painter, option, index)
             if not index.data(QtCore.Qt.DisplayRole):
                 return
+
             p_role = index.data(common.ParentPathRole)
             if p_role:
                 self.paint_background(*args)
                 self.paint_active(*args)
                 self.paint_hover(*args)
                 self.paint_name(*args)
+
+            if common.main_widget.stacked_widget.animation_in_progress:
+                return
 
             self.paint_thumbnail_shadow(*args)
 

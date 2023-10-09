@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Python-3.8%2B-lightgrey">
   <img src="https://img.shields.io/badge/Python-PySide2-lightgrey">
   <img src="https://img.shields.io/badge/Platform-Windows-lightgrey">
-  <img src="https://img.shields.io/badge/Version-v0.8.5-green">
+  <img src="https://img.shields.io/badge/Version-v0.8.6-green">
 </p> 
 
 <p align="center">

@@ -45,19 +45,8 @@ from .. import database
 from .. import log
 from .. import progress
 from ..threads import threads
+from ..tokens import tokens
 
-
-def get_display_name(s):
-    """Manipulate the given file name to a display friendly name.
-
-    Args:
-        s (str): Source asset item file name.
-
-    Returns:
-        str: A modified asset item display name.
-
-    """
-    return s
 
 
 class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -196,7 +185,20 @@ class AssetItemModel(models.ItemModel):
             database.BookmarkTable
         )
 
-        nth = 1
+        # ...and the display token
+        display_token = db.value(
+            source,
+            'asset_display_token',
+            database.BookmarkTable
+        )
+        prefix = db.value(
+            source,
+            'prefix',
+            database.BookmarkTable
+        )
+        config = tokens.get(*p)
+
+        nth = 17
         c = 0
 
         for entry in self.item_generator(source):
@@ -229,8 +231,26 @@ class AssetItemModel(models.ItemModel):
             if active and active == filename:
                 flags = flags | common.MarkedAsActive
 
-            # Beautify the name
-            name = get_display_name(filename)
+            display_name = filename
+
+            # Set the display name based on the bookmark item's configuration value
+            if display_token:
+                seq, shot = common.get_sequence_and_shot(filepath)
+                _display_name = config.expand_tokens(
+                    display_token,
+                    server=p[0],
+                    job=p[1],
+                    root=p[2],
+                    asset=filename,
+                    seq=seq,
+                    sequence=seq if seq else '',
+                    shot=shot if shot else '',
+                    prefix=prefix
+                )
+                if tokens.invalid_token not in _display_name:
+                    display_name = _display_name
+
+
             parent_path_role = p + (filename,)
 
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
@@ -246,7 +266,7 @@ class AssetItemModel(models.ItemModel):
 
             data[idx] = common.DataDict(
                 {
-                    QtCore.Qt.DisplayRole: name,
+                    QtCore.Qt.DisplayRole: display_name,
                     QtCore.Qt.EditRole: filename,
                     common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,
@@ -277,7 +297,7 @@ class AssetItemModel(models.ItemModel):
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: 0,
                     common.SortBySizeRole: 0,
-                    common.SortByTypeRole: name,
+                    common.SortByTypeRole: display_name,
                     #
                     common.IdRole: idx,
                     #
@@ -382,7 +402,7 @@ class AssetItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_asset_row_height))
+        return QtCore.QSize(1, common.size(common.size_row_height))
 
 
 class AssetItemView(views.ThreadedItemView):

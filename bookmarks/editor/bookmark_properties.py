@@ -164,19 +164,19 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                     0: {
                         'name': 'Bookmark Display Name',
                         'key': 'bookmark_display_token',
-                        'validator': base.name_validator,
+                        'validator': base.token_validator,
                         'widget': ui.LineEdit,
                         'placeholder': '{server}/{job}/{root}',
-                        'description': 'Specify the tokens used to display bookmark items',
+                        'description': 'Specify the token used to display bookmark items',
                         'button': '+'
                     },
                     1: {
                         'name': 'Asset Display Name',
                         'key': 'asset_display_token',
-                        'validator': base.name_validator,
+                        'validator': base.token_validator,
                         'widget': ui.LineEdit,
                         'placeholder': '{asset}',
-                        'description': 'Specify the tokens used to display asset items',
+                        'description': 'Specify the token used to display asset items',
                         'button': '+'
                     },
                 },

@@ -38,6 +38,8 @@ domain_validator = QtGui.QRegExpValidator()
 domain_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9/:\.]+'))
 version_validator = QtGui.QRegExpValidator()
 version_validator.setRegExp(QtCore.QRegExp(r'[v]?[0-9]{1,4}'))
+token_validator = QtGui.QRegExpValidator()
+token_validator.setRegExp(QtCore.QRegExp(r'.*'))
 
 span = {
     'start': f'<span style="color:{common.rgb(common.color_green)}">',

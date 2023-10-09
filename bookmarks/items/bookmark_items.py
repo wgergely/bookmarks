@@ -160,23 +160,27 @@ class BookmarkItemModel(models.ItemModel):
             job = v['job']
             root = v['root']
 
-            display_name = f'{server}/{job}/{root}'
+            # Get the display name based on the value set in the database
 
-            try:
-                # Get the display name token from the database
-                db = database.get(server, job, root)
-                _display_name = db.value(db.source(), 'bookmark_display_token', database.BookmarkTable)
+            db = database.get(server, job, root)
+            display_name_token = db.value(db.source(), 'bookmark_display_token', database.BookmarkTable)
 
-                # If a token is set, expand it
-                if _display_name:
-                    config = tokens.get(server, job, root)
-                    _display_name = config.expand_tokens('{job}')
-                    print(_display_name)
-                    if tokens.invalid_token not in _display_name:
-                        display_name = _display_name
-            except Exception as e:
-                log.error(e)
+            # Default display name
+            display_name = root
 
+            # If a token is set, expand it
+            if display_name_token:
+                config = tokens.get(server, job, root)
+                _display_name = config.expand_tokens(
+                    display_name_token,
+                    server=server,
+                    job=job,
+                    root=root,
+                    prefix=db.value(db.source(), 'prefix', database.BookmarkTable)
+                )
+
+                if tokens.invalid_token not in _display_name:
+                    display_name = _display_name
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
@@ -308,7 +312,7 @@ class BookmarkItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_bookmark_row_height))
+        return QtCore.QSize(1, common.size(common.size_row_height))
 
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings

@@ -16,7 +16,6 @@ from .. import log
 from .. import ui
 from ..editor import base
 from ..external import rv
-from ..threads import threads
 from ..tokens import tokens
 
 
@@ -219,7 +218,7 @@ class FFMpegWidget(base.BasePropertyEditor):
     def __init__(self, index, parent=None):
         super().__init__(
             None, None, None, fallback_thumb='convert', hide_thumbnail_editor=True, buttons=(
-            'Convert', 'Cancel'), parent=parent
+                'Convert', 'Cancel'), parent=parent
         )
         self._index = index
         self._connect_settings_save_signals(common.SECTIONS['ffmpeg'])
@@ -287,9 +286,9 @@ class FFMpegWidget(base.BasePropertyEditor):
         if _f.exists():
             if common.show_message(
                     'File already exists', f'{destination} already exists.\nDo you want to replace it with a new '
-                                           f'version?', buttons=[
-                        common.YesButton,
-                        common.NoButton], message_type='error', modal=True, ) == QtWidgets.QDialog.Rejected:
+                                           f'version?', buttons=[common.YesButton,
+                                                                 common.NoButton], message_type='error', modal=True,
+            ) == QtWidgets.QDialog.Rejected:
                 return False
             if not _f.remove():
                 raise RuntimeError(f'Could not remove {destination}')
@@ -312,8 +311,6 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         for f in source_image_paths:
             images.ImageCache.flush(f)
-            if not QtCore.QFile(f).remove():
-                log.error(f'Failed to remove {f}')
 
         if not mov:
             common.close_message()
@@ -340,7 +337,7 @@ class FFMpegWidget(base.BasePropertyEditor):
     def preprocess_sequence(self, preconversion_format='jpg'):
         """Preprocesses the source image sequence.
 
-        FFMpeg can't handle missing frames, so we'll check for them and fill in the gaps and convert the source images
+        FFMpeg can't handle missing frames, so we'll check and fill in the gaps and convert the source images
         to jpeg images using OpenImageIO if they're not already supported by FFMpeg.
 
         Args:
@@ -432,8 +429,6 @@ class FFMpegWidget(base.BasePropertyEditor):
                 if not QtCore.QFile.copy(source_path, destination_path):
                     raise RuntimeError(f'Could not copy {source_path} to {destination_path}')
 
-            raise RuntimeError('needs_conversion')
-
         # Convert the source images to jpeg images using OpenImageIO
         if needs_conversion:
             common.message_widget.body_label.setText(
@@ -471,7 +466,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         self.move(corner)
         self.setGeometry(
             self.geometry().x() + (item_rect.width() / 2) - (
-                        self.geometry().width() / 2), self.geometry().y(), self.geometry().width(), self.geometry(
+                    self.geometry().width() / 2), self.geometry().y(), self.geometry().width(), self.geometry(
 
             ).height()
         )

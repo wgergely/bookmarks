@@ -570,6 +570,15 @@ class InfoWorker(BaseWorker):
         # Asset Progress Data
         if len(pp) == 4 and asset_row_data['progress']:
             ref()[common.AssetProgressRole] = asset_row_data['progress']
+        # Asset entry data
+        if len(pp) == 4:
+            ref()[common.EntryRole].append(
+                common.get_entry_from_path(
+                    ref()[common.PathRole],
+                    is_dir=True,
+                    force_exists=True
+                )
+            )
         # ShotGrid status
         if len(pp) <= 4:
             update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)

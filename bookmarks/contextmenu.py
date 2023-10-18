@@ -1669,19 +1669,38 @@ class BaseContextMenu(QtWidgets.QMenu):
         @common.error
         def _run(name):
             module = importlib.import_module(f'.scripts.{name}', package=__package__)
+
+            if not hasattr(module, 'run'):
+                raise RuntimeError(f'Failed to run module: {name} - Missing run() function in {module}!')
+
             module.run()
 
         for v in data.values():
-            # Check if the script needs_active
+            if v['name'] == 'separator':
+                self.separator(menu=self.menu[k])
+                continue
+
+            # Check if the script needs active item
             if 'needs_active' in v and v['needs_active']:
                 if not common.active(v['needs_active'], args=True):
+                    continue
+            # Check if the script needs an application to be set
+            if 'needs_application' in v and v['needs_application']:
+                if not common.active('root', args=True):
+                    continue
+                # Get the bookmark database
+                db = database.get(*common.active('root', args=True))
+                applications = db.value(db.source(), 'applications', database.BookmarkTable)
+                if not applications:
+                    continue
+                if not [app for app in applications.values() if v['needs_application'].lower() in app['name'].lower()]:
                     continue
             if 'icon' in v and v['icon']:
                 icon = ui.get_icon(v['icon'])
             else:
                 icon = ui.get_icon('icon')
 
-            self.menu[k][v['name']] = {
+            self.menu[k][key()] = {
                 'text': v['name'],
                 'action': functools.partial(_run, v['module']),
                 'icon': icon,

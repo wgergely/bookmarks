@@ -1,26 +1,27 @@
 {
   "0": {
-    "name": "Synchronize Asset & Entity Data",
+    "name": "Synchronize Asset and Entity Data",
     "module": "sync_asset_data",
     "description": "Synchronizes bookmark asset items and ShotGrid entities with a source data file.",
     "needs_active": "root",
-    "icon": "sg"
+    "icon": "spinner"
   },
   "1": {
-    "name": "Build Playlists",
+    "name": "Preview and Save Playlists",
     "module": "clips",
     "description": "View clips and export them to editorial",
     "needs_active": "root",
-    "icon": "sg"
+    "icon": "image"
   },
   "2": {
     "name": "separator"
   },
   "3": {
-    "name": "Send images to After Effects",
-    "module": "render_layers_to_ae",
+    "name": "Send Images to After Effects",
+    "module": "send_images_to_after_effects",
     "description": "View clips and export them to editorial",
     "needs_active": "task",
-    "icon": "file"
+    "needs_application": "after effects",
+    "icon": "add_file"
   }
 }

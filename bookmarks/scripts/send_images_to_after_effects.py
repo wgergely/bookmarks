@@ -1,8 +1,16 @@
+"""
+This is a utility script to send image sequences to After Effects rendered with Maya.
+
+The script expects the images sequences to use the Maya specified render template format.
+Any valid image sequences will be included in an ExtendScript export script.
+
+"""
 import os
 import re
 
 from PySide2 import QtCore
 
+from .. import actions
 from .. import common
 from .. import database
 from ..tokens import tokens
@@ -27,6 +35,9 @@ def recursive_parse(path):
 
 
 def get_footage_sources():
+    """Traverse over the active task folder's subdirectories and return a dictionary of image sequences.
+
+    """
     source_dir = common.active('task', path=True)
     if not source_dir:
         raise RuntimeError('No active task')
@@ -109,30 +120,49 @@ if (!cgi_folder) {
 }
 
 function importFootage(path, framerate, name) {
+    var existingFootageItem = null;
+
     // Check if the footage item already exists
-    for (var i = 1; i <= project.numItems; i++) {
-        if (project.item(i) instanceof FootageItem && project.item(i).name == name) {
-            return;  // Footage item already exists, skip importing
+    for (var i = 1; i <= app.project.numItems; i++) {
+        var currentItem = app.project.item(i);
+        if (currentItem instanceof FootageItem && currentItem.name == name) {
+            existingFootageItem = currentItem;
+            break;
         }
     }
-    var importOptions = new ImportOptions(File(path));
-    importOptions.sequence = true;
-    var footageItem = project.importFile(importOptions);
-    footageItem.name = name;
-    footageItem.mainSource.conformFrameRate = framerate;
-    footageItem.parentFolder = cgi_folder;
-    return footageItem;
+
+    var io = new ImportOptions();
+    io.file = File(path);
+    io.sequence = true;
+    
+    if (io.canImportAs(ImportAsType.FOOTAGE)) {
+        io.importAs = ImportAsType.FOOTAGE;
+    } else {
+        alert('Could not import footage as a sequence. Please check the file path and try again.');
+        return;
+    }
+
+    // If the footage exists and its source differs from the intended source
+    if (existingFootageItem && existingFootageItem.mainSource.file.path != path) {
+        var newFootage = app.project.importFile(io);
+        
+        existingFootageItem.replaceWithSequence(newFootage.mainSource.file, true);
+        existingFootageItem.mainSource.conformFrameRate = framerate;
+        
+        // Clean up by removing the temporarily imported footage
+        newFootage.remove();
+
+    } else if (!existingFootageItem) {  // If footage doesn't exist
+        
+        var footageItem = app.project.importFile(io);
+        footageItem.name = name;
+        footageItem.mainSource.conformFrameRate = framerate;
+        footageItem.parentFolder = cgi_folder;
+        return footageItem;
+    }
 }
 
-app.beginUndoGroup('Import Footage');
-    """
-
-    # Iterate over footage sources and add to the ExtendScript
-    for name, data in footage_sources.items():
-        # Sort the files to get the first one
-        files = sorted(data['files'])
-        first_file = files[0]
-        jsx_script += f'var footageItem = importFootage("{first_file}", {data["framerate"]}, "{data["name"]}");\n'
+app.beginUndoGroup('Import Footage');"""
 
     # Create new composition if it doesn't exist yet
     jsx_script += f"""
@@ -145,23 +175,59 @@ for (var i = 1; i <= project.numItems; i++) {{
 }}
 if (!comp) {{
     comp = project.items.addComp('{comp_name}', {width}, {height}, 1, ({cut_out}-{cut_in})/{framerate}, {framerate});
-    comp.layers.add(footageItem);
+    comp.displayStartTime = {cut_in}/{framerate};
 }}
-comp.workAreaStart = {cut_in}/{framerate};
-    """
+
+"""
+
+    # Iterate over footage sources and add to the ExtendScript
+    for name, data in footage_sources.items():
+        # Sort the files to get the first one
+        files = sorted(data['files'])
+        first_file = files[0]
+        jsx_script += f'var footageItem = importFootage("{first_file}", {data["framerate"]}, "{data["name"]}");\n'
 
     # Close the undo group
     jsx_script += "app.endUndoGroup();\n"
 
-    return jsx_script
+    return jsx_script, footage_sources
+
+
+def send_to_after_effects(script_path):
+    if not common.active('root', args=True):
+        return False
+
+    db = database.get(*common.active('root', args=True))
+    applications = db.value(db.source(), 'applications', database.BookmarkTable)
+
+    if not applications:
+        return False
+    apps = [app for app in applications.values() if 'after effects' in app['name'].lower()]
+    if not apps:
+        return False
+    app = apps[0]['path']
+    if not os.path.isfile(app):
+        return False
+
+    # Call after effects using with the generated script as an argument:
+    actions.execute_detached(app, ['-r', os.path.normpath(script_path)])
+
+    return True
 
 
 def run():
     data = get_footage_sources()
-    with open(f'{common.active("task", path=True)}/import_footage.jsx', 'w') as f:
-        f.write(generate_jsx_script(data))
-        common.show_message(
-            'Render Layers to After Effects',
-            body=f'Import script generated successfully and saved to:\n{common.active("task", path=True)}/import_footage.jsx',
-            message_type='success',
-        )
+    script_path = f'{common.active("task", path=True)}/import_footage.jsx'
+    jsx_script, footage_sources = generate_jsx_script(data)
+    with open(script_path, 'w') as f:
+        f.write(jsx_script)
+
+    if not send_to_after_effects(script_path):
+        print('Could not find After Effects. Footage was not sent.')
+
+    common.show_message(
+        'Success.',
+        body=f'Found {len(footage_sources)} items. An import script was saved to:\n'
+             f'{common.active("task", path=True)}/import_footage.jsx',
+        message_type='success',
+    )

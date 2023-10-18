@@ -17,6 +17,7 @@ except ImportError:
 from .. import common
 from .. import ui
 from .. import contextmenu
+from .. import database
 from . import actions
 from . import export
 
@@ -213,12 +214,12 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def scripts_menu(self):
-        """Custom Maya scripts deployed with the Maya module.
+        """Custom scripts deployed with the Maya module.
 
         """
         k = 'Scripts'
         self.menu[k] = collections.OrderedDict()
-        self.menu[f'{k}:icon'] = ui.get_icon('maya')
+        self.menu[f'{k}:icon'] = ui.get_icon('icon')
 
         p = os.path.normpath(f'{__file__}/../scripts/scripts.json')
         if not os.path.isfile(p):
@@ -227,15 +228,45 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         with open(p, 'r') as f:
             data = json.load(f)
 
+        @common.debug
+        @common.error
         def _run(name):
             module = importlib.import_module(f'.scripts.{name}', package=__package__)
+
+            if not hasattr(module, 'run'):
+                raise RuntimeError(f'Failed to run module: {name} - Missing run() function in {module}!')
+
             module.run()
 
         for v in data.values():
-            self.menu[k][v['name']] = {
+            if v['name'] == 'separator':
+                self.separator(menu=self.menu[k])
+                continue
+
+            # Check if the script needs_active
+            if 'needs_active' in v and v['needs_active']:
+                if not common.active(v['needs_active'], args=True):
+                    continue
+            # Check if the script needs_active
+            if 'needs_application' in v and v['needs_application']:
+                if not common.active('root', args=True):
+                    continue
+                # Get the bookmark database
+                db = database.get(*common.active('root', args=True))
+                applications = db.value(db.source(), 'applications', database.BookmarkTable)
+                if not applications:
+                    continue
+                if not [app for app in applications.values() if v['needs_application'].lower() in app['name'].lower()]:
+                    continue
+            if 'icon' in v and v['icon']:
+                icon = ui.get_icon(v['icon'])
+            else:
+                icon = ui.get_icon('icon')
+
+            self.menu[k][contextmenu.key()] = {
                 'text': v['name'],
                 'action': functools.partial(_run, v['module']),
-                'icon': ui.get_icon('maya'),
+                'icon': icon,
             }
 
     def hud_menu(self):

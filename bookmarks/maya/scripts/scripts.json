@@ -1,17 +1,30 @@
 {
   "0": {
-    "name": "AKA-ODSY-DJI | Shader Import/Export...",
+    "name": "Studio Aka  |  Odyssey  |  Shader Import/Export...",
     "module": "aka_shader_templates",
     "description": "Shader template import and export tool"
   },
   "1": {
-    "name": "AKA-ODSY-DJI | Make export Sets",
+    "name": "Studio Aka  |  Odyssey  |  Make Export Sets",
     "module": "aka_make_export_sets",
     "description": ""
   },
   "2": {
+    "name": "Studio Aka  |  Odyssey  |  Export IbogaineMarcus Cloth caches for Simulation (static)",
+    "module": "aka_cloth_cache",
+    "description": "Exports cloth caches for simulation"
+  },
+  "3": {
+    "name": "Studio Aka  |  Odyssey  |  Export IbogaineMarcus Cloth caches for Simulation (animated)",
+    "module": "aka_cloth_cache_animated",
+    "description": "Exports cloth caches for simulation"
+  },
+  "4": {
+    "name": "separator"
+  },
+  "5": {
     "name": "Reset joint orientations",
     "module": "reset_joint_orientations",
-    "description": "Resets bone orientation values too zero without moving the bones"
+    "description": "Resets bone orientation values to zero without moving the bones"
   }
 }

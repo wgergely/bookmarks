@@ -1505,20 +1505,36 @@ def pick_thumbnail_from_library(index):
     )
 
 
-def execute_detached(path):
+def execute_detached(path, args=None):
     """Utility function used to execute a file as a detached process.
 
-    On Windows, we'll call the give file through the explorer. This is so, that the
-    new process does not inherit the current environment.
+    On Windows, we'll call the given file using the file explorer as we want to
+    avoid the process inheriting the parent process' environment variables.
 
     """
     if common.get_platform() == common.PlatformWindows:
         proc = QtCore.QProcess()
-        proc.setProgram('cmd.exe')
-        proc.setArguments(
-            ['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)]
-        )
+
+        proc.setProgram(os.path.normpath(path))
+        if args:
+            proc.setArguments(args)
+
+        # We don't want to pass on our current environment (we might be calling from inside a DCC)
+        env = QtCore.QProcessEnvironment.systemEnvironment()
+
+        # But we do want to pass on the currently active items. This information can be used in an
+        # unsupported DCC to manipulate context
+        env.insert('BOOKMARKS_ROOT', os.environ['BOOKMARKS_ROOT'])
+        env.insert('BOOKMARKS_ACTIVE_SERVER', common.active('server'))
+        env.insert('BOOKMARKS_ACTIVE_JOB', common.active('job'))
+        env.insert('BOOKMARKS_ACTIVE_ROOT', common.active('root'))
+        env.insert('BOOKMARKS_ACTIVE_ASSET', common.active('asset'))
+        env.insert('BOOKMARKS_ACTIVE_TASK', common.active('task'))
+
+        proc.setProcessEnvironment(env)
         proc.startDetached()
+    else:
+        raise NotImplementedError('Not implemented.')
 
 
 @common.debug

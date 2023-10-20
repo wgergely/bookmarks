@@ -86,14 +86,19 @@ def process(func):
             if not ref() or self.interrupt:
                 return
 
-            # Let the source model know that we loaded a data segment fully
             if ref().data_type in (common.FileItem, common.SequenceItem):
-                # Mark the model loaded
+                # Mark the internal model loaded
                 ref().loaded = True
 
                 if not ref() or self.interrupt:
                     return
-                self.sort_data_type(ref)
+
+                # Sort the data
+                data = self.sort_internal_data(ref)
+
+                # Signal the world
+                common.signals.internalDataReady.emit(weakref.ref(data))
+
                 return
 
             if not ref() or self.interrupt:
@@ -136,6 +141,7 @@ class BaseWorker(QtCore.QObject):
 
     coreDataLoaded = QtCore.Signal(weakref.ref, weakref.ref)
     coreDataReset = QtCore.Signal()
+    dataTypeAboutToBeSorted = QtCore.Signal(int)
     dataTypeSorted = QtCore.Signal(int)
     queueItems = QtCore.Signal(list)
 
@@ -170,7 +176,7 @@ class BaseWorker(QtCore.QObject):
         from . import threads
 
         self.queue_timer = common.Timer(parent=self)
-        self.queue_timer.setObjectName('{}Timer_{}'.format(self.queue, uuid.uuid1().hex))
+        self.queue_timer.setObjectName(f'{self.queue}Timer_{uuid.uuid1().hex}')
         self.queue_timer.setInterval(1)
 
         # Local direct worker signal connections
@@ -205,7 +211,10 @@ class BaseWorker(QtCore.QObject):
 
         if threads.THREADS[q]['preload'] and model and widget:
             model.coreDataLoaded.connect(self.coreDataLoaded, cnx)
-            self.dataTypeSorted.connect(model.dataTypeSorted, cnx)
+
+            self.dataTypeAboutToBeSorted.connect(model.internal_data_about_to_be_sorted, cnx)
+            self.dataTypeSorted.connect(model.internal_data_sorted, cnx)
+
             common.signals.databaseValueUpdated.connect(self.databaseValueUpdated, cnx)
 
         self.sgEntityDataReady.connect(common.signals.sgEntityDataReady, cnx)
@@ -214,10 +223,10 @@ class BaseWorker(QtCore.QObject):
         """Process changes when any bookmark database value changes.
 
         Args:
-            tab_type (idx): A tab type used to match the slot with the model type.
+            table (str): The database table.
             source (str): A file path.
-            role (int): An item role.
-            v (object): The value to set.
+            key (str): The database value key (column).
+            value (object): The value to set.
 
         Returns:
             type: Description of returned object.
@@ -320,7 +329,7 @@ class BaseWorker(QtCore.QObject):
         self.queue_timer.start()
 
     @common.error
-    def sort_data_type(self, ref):
+    def sort_internal_data(self, ref):
         """Sorts the data of the given data type.
 
         Args:
@@ -331,7 +340,7 @@ class BaseWorker(QtCore.QObject):
 
         model = _model(self.queue)
         if not model:
-            return
+            return None
 
         sort_by = model.sort_by()
         sort_order = model.sort_order()
@@ -341,14 +350,22 @@ class BaseWorker(QtCore.QObject):
         t = ref().data_type
 
         if not ref():
-            return
+            return None
+
+        if model.data_type() == t:
+            self.dataTypeAboutToBeSorted.emit(t)
+
         d = common.sort_data(ref, sort_by, sort_order)
+
         if not ref():
-            return
-        common.set_data(p, k, t, d)
+            return None
+
+        data = common.set_data(p, k, t, d)
 
         if model.data_type() == t:
             self.dataTypeSorted.emit(t)
+
+        return data
 
     @QtCore.Slot()
     def clear_queue(self):
@@ -371,6 +388,12 @@ class BaseWorker(QtCore.QObject):
     @common.error
     @QtCore.Slot(weakref.ref)
     def process_data(self, ref):
+        """Processes the given data item.
+
+        Args:
+            ref (weakref.ref): A data item.
+
+        """
         # Do nothing by default
         if not ref() or self.interrupt:
             return False
@@ -511,7 +534,7 @@ class InfoWorker(BaseWorker):
         """Populates the item with the missing file information.
 
         Args:
-            ref (weakref): An internal model data item's weakref.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         Returns:
             bool: `True` on success, `False` otherwise.
@@ -536,6 +559,8 @@ class InfoWorker(BaseWorker):
 
     def _process_data(self, ref):
         """Utility method for :meth:`process_data.
+
+        ref (weakref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         """
         pp = ref()[common.ParentPathRole]
@@ -579,6 +604,24 @@ class InfoWorker(BaseWorker):
                     force_exists=True
                 )
             )
+
+        # Asset ShotGrid task to list
+        if len(pp) == 4 and asset_row_data['sg_task_name'] and ref()[common.DataDictRole]:
+            if ref():
+                _ref = ref()[common.DataDictRole]
+
+            # TODO: This does not seem to be thread safe (?) but since we only have one asset worker
+            #       it should be fine for now.
+            if _ref():
+                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'].lower() not in _ref().sg_task_names:
+                    if _ref():
+                        _ref().sg_task_names.append(asset_row_data['sg_task_name'].lower())
+
+            if _ref():
+                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'].lower() not in _ref().shotgun_names:
+                    if _ref():
+                        _ref().shotgun_names.append(asset_row_data['shotgun_name'].lower())
+
         # ShotGrid status
         if len(pp) <= 4:
             update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
@@ -730,7 +773,7 @@ class ThumbnailWorker(BaseWorker):
         for details.
 
         Args:
-            ref (weakref.ref): A weakref to a data segment.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         Returns:
             ref or None: `ref` if loaded successfully, else `None`.
@@ -824,7 +867,7 @@ class TransactionsWorker(BaseWorker):
     """
 
     @common.error
-    def process_data(self):
+    def process_data(self, *args, **kwargs):
         verify_thread_affinity()
 
         if self.interrupt:
@@ -843,7 +886,7 @@ class SGWorker(BaseWorker):
     """This worker is used to retrieve data from ShotGrid."""
 
     @common.error
-    def process_data(self):
+    def process_data(self, *args, **kwargs):
         verify_thread_affinity()
 
         if self.interrupt:

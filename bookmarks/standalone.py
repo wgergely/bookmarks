@@ -141,7 +141,7 @@ class Tray(QtWidgets.QSystemTrayIcon):
         w = TrayMenu(parent=self.window())
         self.setContextMenu(w)
 
-        self.setToolTip(common.product)
+        self.setToolTip(common.product.title())
 
         self.activated.connect(self.tray_activated)
 
@@ -405,7 +405,7 @@ class BookmarksApp(QtWidgets.QApplication):
         super().__init__([__file__, '-platform', 'windows:dpiawareness=2'])
         _set_application_properties(app=self)
         self.setApplicationVersion(__version__)
-        self.setApplicationName(common.product)
+        self.setApplicationName(common.product.title())
         self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, bool=True)
 
         self._set_model_id()

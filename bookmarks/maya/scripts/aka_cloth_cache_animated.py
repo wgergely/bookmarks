@@ -28,7 +28,7 @@ from ...tokens import tokens
 studiolibrary_dir = f'{common.active("server")}/{common.active("job")}/070_Assets/Character/studiolibrary'
 reset_pose = f'{studiolibrary_dir}/Characters/IbogaineMarcus/Reset/A-Pose-v2-FullFK.pose/pose.json'
 
-cache_destination_dir = '{studiolibrary_dir}/Shots/MAB/{asset0}_{shot}'
+cache_destination_dir = '{studiolibrary_dir}/Shots/{prefix}/{asset0}_{shot}'
 
 namespace = 'IbogaineMarcus_01'
 controllers_set = f'{namespace}:rig_controllers_grp'
@@ -103,12 +103,18 @@ def run():
 
     config = tokens.get(*common.active('root', args=True))
 
+    db = database.get(*common.active('root', args=True))
+    cut_in = db.value(common.active('asset', path=True), 'cut_in', database.AssetTable)
+    cut_out = db.value(common.active('asset', path=True), 'cut_out', database.AssetTable)
+    prefix = db.value(common.active('root', path=True), 'prefix', database.BookmarkTable)
+
     seq, shot = common.get_sequence_and_shot(common.active('asset'))
     destination_dir = config.expand_tokens(
         cache_destination_dir,
         asset=common.active('asset'),
         shot=shot,
         sequence=seq,
+        prefix=prefix.split('_')[-1].upper(),
         studiolibrary_dir=studiolibrary_dir
     )
 
@@ -117,10 +123,6 @@ def run():
     timeline_end = cmds.playbackOptions(animationEndTime=True, query=True)
     animation_start = cmds.playbackOptions(minTime=True, query=True)
     animation_end = cmds.playbackOptions(maxTime=True, query=True)
-
-    db = database.get(*common.active('root', args=True))
-    cut_in = db.value(common.active('asset', path=True), 'cut_in', database.AssetTable)
-    cut_out = db.value(common.active('asset', path=True), 'cut_out', database.AssetTable)
 
     cmds.select(clear=True)
 

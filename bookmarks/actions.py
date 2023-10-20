@@ -16,6 +16,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from . import common
 from . import database
 from . import images
+from. import log
 
 
 def must_be_initialized(func):
@@ -883,6 +884,14 @@ def refresh(idx=None):
     """
     w = common.widget(idx=idx)
     model = w.model().sourceModel()
+
+    # Remove the asset list cache if we're forcing a refresh on the asset tab
+    if common.current_tab() == common.AssetTab:
+        cache = f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache'
+        if os.path.exists(cache):
+            print('Removing asset cache:', cache)
+            os.remove(cache)
+
     model.reset_data(force=True)
 
 

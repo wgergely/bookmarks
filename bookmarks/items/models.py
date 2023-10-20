@@ -412,9 +412,12 @@ class ItemModel(QtCore.QAbstractTableModel):
                 log.error('Could not remove temp file.')
             return
 
-    def item_generator(self):
+    def item_generator(self, path):
         """A generator method used by :func:`init_data` to yield the items the model
         should load.
+
+        Args:
+            path (string): Path to a directory.
 
         Yields:
             DirEntry: os.scandir DirEntry objects.

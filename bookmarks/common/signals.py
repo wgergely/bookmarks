@@ -2,6 +2,7 @@
 
 """
 import functools
+import weakref
 
 from PySide2 import QtCore
 
@@ -17,6 +18,9 @@ class CoreSignals(QtCore.QObject):
     """A utility class used to store application-wide signals.
 
     """
+    #: Signal emitted by worker threads when the internal data of a model is fully loaded
+    internalDataReady = QtCore.Signal(weakref.ref)
+
     #: Update top bar widget buttons
     updateTopBarButtons = QtCore.Signal()
 
@@ -77,6 +81,9 @@ class CoreSignals(QtCore.QObject):
     toggleInlineIcons = QtCore.Signal()
     #: Signals a filter button state change
     toggleFavouritesButton = QtCore.Signal()
+
+    #: Signal emitted when the filter text changes of a list view's proxy model
+    filterTextChanged = QtCore.Signal(str)
 
     #: Signal emitted when the active path mode changes
     activeModeChanged = QtCore.Signal(int)

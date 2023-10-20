@@ -1846,11 +1846,9 @@ def pick_template(mode):
     dialog.setNameFilters(['*.zip', ])
     dialog.setFilter(QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot)
     dialog.setLabelText(
-        QtWidgets.QFileDialog.Accept, 'Select a {} template'.format(mode.title())
+        QtWidgets.QFileDialog.Accept, f'Select a {mode.title()} template'
     )
-    dialog.setWindowTitle(
-        'Select *.zip archive to use as a {} template'.format(mode.lower())
-    )
+    dialog.setWindowTitle(f'Select *.zip archive to use as a {mode.lower()} template')
     if dialog.exec_() == QtWidgets.QDialog.Rejected:
         return
     source = next((f for f in dialog.selectedFiles()), None)

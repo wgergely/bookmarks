@@ -121,6 +121,8 @@ IdRole = QtCore.Qt.ItemDataRole(idx())
 QueueRole = QtCore.Qt.ItemDataRole(idx())
 #: List item role for getting the item's data type (sequence or file)
 DataTypeRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for getting the container data dictionary
+DataDictRole = QtCore.Qt.ItemDataRole(idx())
 #: The view tab associated with the item
 ItemTabRole = QtCore.Qt.ItemDataRole(idx())
 #: Data used to sort the items by name
@@ -640,15 +642,18 @@ class DataDict(dict):
     """Custom dictionary class used to store model item data.
 
     This class adds compatibility for :class:`weakref.ref` referencing
-    and custom attributes for storing data state.
+    and custom attributes for storing data states.
 
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self._loaded = False
         self._refresh_needed = False
         self._data_type = None
+        self._shotgun_names = []
+        self._sg_task_names = []
 
     @property
     def loaded(self):
@@ -685,6 +690,24 @@ class DataDict(dict):
     @data_type.setter
     def data_type(self, v):
         self._data_type = v
+
+    @property
+    def shotgun_names(self):
+        """Returns a list of Shotgun task names associated with the data dictionary."""
+        return self._shotgun_names
+
+    @shotgun_names.setter
+    def shotgun_names(self, v):
+        self._shotgun_names = v
+
+    @property
+    def sg_task_names(self):
+        """Returns a list of Shotgun task names associated with the data dictionary."""
+        return self._sg_task_names
+
+    @sg_task_names.setter
+    def sg_task_names(self, v):
+        self._sg_task_names = v
 
 
 class Timer(QtCore.QTimer):

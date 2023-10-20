@@ -73,7 +73,7 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
             'check',
             (common.color(common.color_green), common.color(common.color_red)),
             common.size(common.size_margin),
-            description=f'Click to toggle {common.product}.',
+            description=f'Click to toggle {common.product.title()}.',
             parent=parent
         )
         self.setMouseTracking(True)

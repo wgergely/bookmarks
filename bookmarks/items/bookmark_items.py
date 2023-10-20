@@ -54,6 +54,7 @@ Model items store their path segments using the
 
 
 """
+import weakref
 
 from PySide2 import QtCore, QtWidgets
 
@@ -236,6 +237,7 @@ class BookmarkItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: t,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.BookmarkTab,
                     #
                     common.FlagsRole: flags,

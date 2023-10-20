@@ -2,6 +2,7 @@
 
 """
 import os
+import weakref
 
 from PySide2 import QtCore, QtWidgets
 
@@ -131,6 +132,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: t,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.FavouriteTab,
                     #
                     common.EntryRole: [entry, ],

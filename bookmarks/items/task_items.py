@@ -9,6 +9,7 @@ Some default task-folders are defined by :mod:`bookmarks.tokens.tokens`.
 """
 import functools
 import os
+import weakref
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -308,6 +309,7 @@ class TaskItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.TaskTab,
                     #
                     common.EntryRole: [entry, ],

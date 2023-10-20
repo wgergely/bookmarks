@@ -465,19 +465,21 @@ def get_sequence_and_shot(s):
     return seq, shot
 
 
-def get_entry_from_path(path, is_dir=True):
+def get_entry_from_path(path, is_dir=True, force_exists=False):
     """Returns a scandir entry of the given file path.
 
     Args:
         path (str): Path to directory.
         is_dir (bool): Is the path a directory or a file.
+        force_exists (bool): Force skip checking the existence of the path if we know path exist.
 
     Returns:
          scandir.DirEntry: A scandir entry, or None if not found.
 
     """
     file_info = QtCore.QFileInfo(path)
-    if not file_info.exists():
+
+    if not force_exists and not file_info.exists():
         return None
 
     for entry in os.scandir(file_info.dir().path()):
@@ -496,22 +498,21 @@ def get_links(path, section='links/asset'):
     inside job templates.
 
     If a .links file contains two relative paths,
-    `subfolder1/nested_asset1` and `subfolder2/nested_asset2`...
+    `subfolder1/nested_asset1` and `subfolder2/nested_asset2`
 
     .. code-block:: text
 
-        asset/
+        root_asset_folder/
         ├─ .links
         ├─ subfolder1/
         │  ├─ nested_asset1/
         ├─ subfolder2/
         │  ├─ nested_asset2/
 
-    ...two asset will be read, `nested_asset1` and `nested_asset2`
-    (but not the original root `asset`).
+    ...two asset items will be read - `nested_asset1` and `nested_asset2` but not the original root `root_asset_folder`.
 
     Args:
-        path (str): Path to a folder where the link file resides. E.g. an asset root folder.
+        path (str): Path to a folder where the link file resides.
         section (str):
             The settings section to look for links in.
             Optional. Defaults to 'links/asset'.

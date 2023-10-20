@@ -40,9 +40,6 @@ from .. import common
 from .. import database
 from .. import log
 
-#: The database column name
-TOKENS_DB_KEY = 'tokens'
-
 FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'
 PublishConfig = 'PublishConfig'
@@ -598,7 +595,7 @@ class TokenConfig(QtCore.QObject):
             db = database.get(self.server, self.job, self.root)
             v = db.value(
                 db.source(),
-                TOKENS_DB_KEY,
+                'tokens',
                 database.BookmarkTable
             )
             if not v or not isinstance(v, dict):
@@ -631,7 +628,7 @@ class TokenConfig(QtCore.QObject):
         db = database.get(self.server, self.job, self.root)
         db.set_value(
             db.source(),
-            TOKENS_DB_KEY,
+            'tokens',
             data,
             table=database.BookmarkTable
         )
@@ -701,7 +698,7 @@ class TokenConfig(QtCore.QObject):
         return ''
 
     def expand_tokens(
-            self, s, user=common.get_username(), version='v001',
+            self, s, use_database=True, user=common.get_username(), version='v001',
             host=socket.gethostname(), task='main',
             ext=None, prefix=None, **_kwargs
     ):
@@ -712,12 +709,7 @@ class TokenConfig(QtCore.QObject):
 
         Args:
             s (str): The string containing tokens to be expanded.
-            user (str, optional): Username.
-            version (str, optional): The version string.
-            host (str, optional): The name of the current machine/host.
-            task (str, optional): Task folder name.
-            ext (str, optional): File format extension.
-            prefix (str, optional): Bookmark item prefix.
+            use_database (bool, optional): Use values stored in the database.
             _kwargs (dict, optional): Optional token/value pairs.
 
         Returns:
@@ -726,6 +718,7 @@ class TokenConfig(QtCore.QObject):
 
         """
         kwargs = self.get_tokens(
+            use_database=use_database,
             user=user,
             version=version,
             ver=version,
@@ -756,11 +749,11 @@ class TokenConfig(QtCore.QObject):
             collections.defaultdict(lambda: invalid_token, **kwargs)
         )
 
-    def get_tokens(self, force=False, **kwargs):
+    def get_tokens(self, force=False, use_database=True, **kwargs):
         """Get all available tokens.
 
         Args:
-            force (bool, optional): Force retrieve tokens from the database.
+            force (bool, optional): Force retrieve defined tokens from the database.
 
         Returns:
             dict: A dictionary of token/value pairs.
@@ -791,34 +784,37 @@ class TokenConfig(QtCore.QObject):
             tokens[k] = v
 
         # We can also use bookmark item properties as tokens
-        db = database.get(self.server, self.job, self.root)
-        for _k in database.TABLES[database.BookmarkTable]:
-            if _k == 'id':
-                continue
-            if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
-                continue
-            if _k not in kwargs or not kwargs[_k]:
-                _v = db.value(db.source(), _k, database.BookmarkTable)
-                _v = _v if _v else invalid_token
-                tokens[_k] = _v
+        if use_database:
+            db = database.get(self.server, self.job, self.root)
+
+            for _k in database.TABLES[database.BookmarkTable]:
+                if _k == 'id':
+                    continue
+                if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
+                    continue
+                if _k not in kwargs or not kwargs[_k]:
+                    _v = db.value(db.source(), _k, database.BookmarkTable)
+                    _v = _v if _v else invalid_token
+                    tokens[_k] = _v
 
         # The asset root token will only be available when the asset is manually
         # specified
         if 'asset' in kwargs and kwargs['asset']:
             source = f'{self.server}/{self.job}/{self.root}/{kwargs["asset"]}'
 
-            for _k in database.TABLES[database.AssetTable]:
-                if _k == 'id':
-                    continue
-                if database.TABLES[database.AssetTable][_k]['type'] == dict:
-                    continue
-                if _k not in kwargs or not kwargs[_k]:
-                    _v = db.value(source, _k, database.AssetTable)
-                    _v = _v if _v else invalid_token
-                    tokens[_k] = _v
+            if use_database:
+                for _k in database.TABLES[database.AssetTable]:
+                    if _k == 'id':
+                        continue
+                    if database.TABLES[database.AssetTable][_k]['type'] == dict:
+                        continue
+                    if _k not in kwargs or not kwargs[_k]:
+                        _v = db.value(source, _k, database.AssetTable)
+                        _v = _v if _v else invalid_token
+                        tokens[_k] = _v
 
-                    # Let's also override width, height and fps tokens
-                    tokens[_k.replace('asset_', '')] = _v
+                        # Let's also override width, height and fps tokens
+                        tokens[_k.replace('asset_', '')] = _v
 
         # We also want to use the path elements as tokens.
         for k in ('server', 'job', 'root', 'asset', 'task'):

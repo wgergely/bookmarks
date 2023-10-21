@@ -10,7 +10,8 @@ from .. import ui
 
 class BaseFilterModel(ui.AbstractListModel):
 
-    def __init__(self, section_name_label, data_source, parent=None):
+    def __init__(self, section_name_label, data_source, tab_index, parent=None):
+        self.tab_index = tab_index
 
         self.show_all_label = ' - Show All -'
         self.section_name_label = section_name_label
@@ -21,12 +22,37 @@ class BaseFilterModel(ui.AbstractListModel):
         common.signals.internalDataReady.connect(self.internal_data_ready)
         common.signals.bookmarksChanged.connect(self.reset_data)
 
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DecorationRole:
+            _text = common.model(self.tab_index).filter_text()
+            _text = _text.lower().strip() if _text else ''
+
+            if not _text:
+                return super().data(index, role)
+
+            text = super().data(index, QtCore.Qt.DisplayRole)
+            if not text:
+                return super().data(index, role)
+            if text == self.show_all_label:
+                return super().data(index, role)
+            if text == self.section_name_label:
+                return super().data(index, role)
+
+            text = text.lower().strip()
+            if _text == text:
+                return ui.get_icon('check', color=common.color(common.color_green))
+
+            if _text == f'"{text}"':
+                return ui.get_icon('check', color=common.color(common.color_green))
+
+        return super().data(index, role)
+
     @QtCore.Slot(weakref.ref)
     def internal_data_ready(self, ref):
         if not ref():
             return
 
-        source_model = common.source_model(common.AssetTab)
+        source_model = common.source_model(self.tab_index)
         data = common.get_data(
             source_model.source_path(),
             source_model.task(),
@@ -49,7 +75,7 @@ class BaseFilterModel(ui.AbstractListModel):
         """
         self._data = common.DataDict()
 
-        source_model = common.source_model(common.AssetTab)
+        source_model = common.source_model(self.tab_index)
 
         data = common.get_data(
             source_model.source_path(),
@@ -68,6 +94,7 @@ class BaseFilterModel(ui.AbstractListModel):
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.show_all_label,
+            QtCore.Qt.DecorationRole: ui.get_icon('archivedVisible', color=common.color(common.color_green)),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.TextAlignmentRole: QtCore.Qt.AlignCenter,
         }
@@ -91,17 +118,19 @@ class BaseFilterButton(QtWidgets.QComboBox):
     """The combo box used to set a text filter based on the available ShotGrid task names.
 
     """
-    def __init__(self, Model, parent=None):
+    def __init__(self, Model, tab_index, parent=None):
         super().__init__(parent=parent)
+
+        self.tab_index = tab_index
         self.setView(QtWidgets.QListView(parent=self))
-        self.view().setMinimumWidth(int(common.size(common.size_width) * 0.66))
         self.setModel(Model())
 
+        self.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.setFixedHeight(common.size(common.size_margin))
-        self.setMinimumWidth(common.size(common.size_margin) * 6)
+        self.setMinimumWidth(common.size(common.size_margin))
 
-        common.signals.updateTopBarButtons.connect(lambda: self.setHidden(not common.current_tab() == common.AssetTab))
-        common.model(common.AssetTab).filterTextChanged.connect(self.select_text)
+        common.signals.updateTopBarButtons.connect(lambda: self.setHidden(not common.current_tab() == self.tab_index))
+        common.model(self.tab_index).filterTextChanged.connect(self.select_text)
         common.signals.internalDataReady.connect(self.select_text)
 
         self.textActivated.connect(self.update_filter_text)
@@ -119,16 +148,16 @@ class BaseFilterButton(QtWidgets.QComboBox):
         else:
             text = f'"{text.lower().strip()}"'
 
-        common.model(common.AssetTab).set_filter_text(text)
+        common.model(self.tab_index).set_filter_text(text)
 
     @QtCore.Slot()
     def select_text(self, *args, **kwargs):
         """Update the filter text.
 
         """
-        self.setCurrentIndex(-1)
+        self.setCurrentIndex(0)
 
-        _text = common.model(common.AssetTab).filter_text()
+        _text = common.model(self.tab_index).filter_text()
         _text = _text.lower().strip() if _text else ''
 
         if not _text:
@@ -157,8 +186,9 @@ class TaskFilterModel(BaseFilterModel):
 
     def __init__(self, parent=None):
         super().__init__(
-            'ShotGrid Tasks',
+            'Tasks',
             'sg_task_names',
+            common.AssetTab,
             parent=parent
         )
 
@@ -170,6 +200,7 @@ class TaskFilterButton(BaseFilterButton):
     def __init__(self, parent=None):
         super().__init__(
             TaskFilterModel,
+            common.AssetTab,
             parent=parent
         )
 
@@ -178,8 +209,9 @@ class EntityFilterModel(BaseFilterModel):
 
     def __init__(self, parent=None):
         super().__init__(
-            'ShotGrid Entities',
+            'Assets',
             'shotgun_names',
+            common.AssetTab,
             parent=parent
         )
 
@@ -191,5 +223,30 @@ class EntityFilterButton(BaseFilterButton):
     def __init__(self, parent=None):
         super().__init__(
             EntityFilterModel,
+            common.AssetTab,
+            parent=parent
+        )
+
+
+
+class TypeFilterModel(BaseFilterModel):
+
+    def __init__(self, parent=None):
+        super().__init__(
+            'File Types',
+            'file_types',
+            common.FileTab,
+            parent=parent
+        )
+
+
+class TypeFilterButton(BaseFilterButton):
+    """The combo box used to set a text filter based on the available file types
+
+    """
+    def __init__(self, parent=None):
+        super().__init__(
+            TypeFilterModel,
+            common.FileTab,
             parent=parent
         )

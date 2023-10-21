@@ -701,15 +701,6 @@ def import_camera_preset():
 
 
 @QtCore.Slot()
-def show_shader_tool():
-    """Shows the bundled shader utility tool.
-
-    """
-    from . import shadertool
-    shadertool.show()
-
-
-@QtCore.Slot()
 @common.error
 @common.debug
 def add_hud(*args, **kwargs):

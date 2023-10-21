@@ -613,14 +613,23 @@ class InfoWorker(BaseWorker):
             # TODO: This does not seem to be thread safe (?) but since we only have one asset worker
             #       it should be fine for now.
             if _ref():
-                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'].lower() not in _ref().sg_task_names:
+                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'] not in _ref().sg_task_names:
                     if _ref():
-                        _ref().sg_task_names.append(asset_row_data['sg_task_name'].lower())
+                        _ref().sg_task_names.append(asset_row_data['sg_task_name'])
 
             if _ref():
-                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'].lower() not in _ref().shotgun_names:
+                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'] not in _ref().shotgun_names:
                     if _ref():
-                        _ref().shotgun_names.append(asset_row_data['shotgun_name'].lower())
+                        _ref().shotgun_names.append(asset_row_data['shotgun_name'])
+
+        # File type filters
+        if len(pp) == 4:
+            if ref():
+                file_type = ref()[common.PathRole].split('.')[-1]
+                _ref = ref()[common.DataDictRole]
+                if _ref() and file_type.lower() not in _ref().file_types:
+                    _ref().file_types.append(file_type.lower())
+
 
         # ShotGrid status
         if len(pp) <= 4:

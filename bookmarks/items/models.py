@@ -287,7 +287,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         return QtCore.Qt.MoveAction | QtCore.Qt.CopyAction
 
     def supportedDragActions(self):
-        return QtCore.Qt.MoveAction
+        return QtCore.Qt.CopyAction
 
     def mimeData(self, indexes):
         """Returns the drag mime data for the given indexes.

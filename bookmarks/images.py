@@ -546,7 +546,7 @@ def rsc_pixmap(
         file_info = QtCore.QFileInfo(source)
         return file_info.absoluteFilePath()
 
-    size = size if isinstance(size, (float, int)) else -1
+    size = size * common.pixel_ratio if isinstance(size, (float, int)) else -1
     _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
     k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
 

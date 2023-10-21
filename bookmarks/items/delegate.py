@@ -739,6 +739,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # 3. Create a QPixmap and fill it with transparent color
         pixmap = QtGui.QPixmap(width, 1)
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
         pixmap.fill(QtCore.Qt.transparent)
 
         # 4. Render the gradient onto the QPixmap

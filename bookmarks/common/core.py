@@ -654,6 +654,7 @@ class DataDict(dict):
         self._data_type = None
         self._shotgun_names = []
         self._sg_task_names = []
+        self._file_types = []
 
     @property
     def loaded(self):
@@ -708,6 +709,15 @@ class DataDict(dict):
     @sg_task_names.setter
     def sg_task_names(self, v):
         self._sg_task_names = v
+
+    @property
+    def file_types(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._file_types
+
+    @file_types.setter
+    def file_types(self, v):
+        self._file_types = v
 
 
 class Timer(QtCore.QTimer):

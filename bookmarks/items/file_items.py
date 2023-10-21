@@ -457,6 +457,7 @@ class FileItemModel(models.ItemModel):
                             #
                             common.QueueRole: self.queues,
                             common.DataTypeRole: common.SequenceItem,
+                            common.DataDictRole: weakref.ref(sequence_data),
                             common.ItemTabRole: common.FileTab,
                             #
                             common.EntryRole: [],
@@ -487,7 +488,8 @@ class FileItemModel(models.ItemModel):
                 sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
                 sequence_data[sequence_path][common.EntryRole].append(entry)
             else:
-                # Copy the existing file item
+                # The sequence dictionary should contain not only sequence items but single files also,
+                # so we'll add them here
                 sequence_data[filepath] = common.DataDict(data[idx])
                 sequence_data[filepath][common.IdRole] = -1
 

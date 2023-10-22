@@ -149,6 +149,10 @@ class BookmarkItemModel(models.ItemModel):
         data = common.get_data(p, _k, t)
         database.remove_all_connections()
 
+        _servers = []
+        _jobs = []
+        _roots = []
+
         for k, v in self.item_generator():
             common.check_type(v, dict)
 
@@ -160,6 +164,10 @@ class BookmarkItemModel(models.ItemModel):
             server = v['server']
             job = v['job']
             root = v['root']
+
+            _servers.append(server)
+            _jobs.append(job)
+            _roots.append(root)
 
             # Get the display name based on the value set in the database
 
@@ -267,6 +275,10 @@ class BookmarkItemModel(models.ItemModel):
 
             if not exists:
                 continue
+
+        data.servers = sorted(set(_servers))
+        data.jobs = sorted(set(_jobs))
+        data.roots = sorted(set(_roots))
 
         self.activeChanged.emit(self.active_index())
 

@@ -555,10 +555,10 @@ class BaseItemView(QtWidgets.QTableView):
         self.filter_editor = filter_editor.TextFilterEditor(parent=self.parent())
         self.filter_editor.setHidden(True)
 
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.viewport().setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.viewport().setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        self.viewport().setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
+        self.viewport().setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
 
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -1854,41 +1854,58 @@ class InlineIconView(BaseItemView):
             if not text:
                 continue
 
-            text = text.lower()
+            _text = text.lower().strip('\\/-_\'" ')
 
             if not rect.contains(cursor_position):
                 continue
 
             filter_text = self.model().filter_text()
-            filter_text = filter_text.lower() if filter_text else ''
+            filter_text = filter_text if filter_text else ''
 
+            filter_texts = filter_text.split(' ') if filter_text else []
+            _filter_texts = [
+                ('--' + f.lower().strip('\\/-_\'" ') if f.startswith('--') else f.lower().strip('\\/-_\'" '))
+                for f in filter_texts
+            ]
+            filter_texts_ = [f.lower().strip('\\/-_\'" ') for f in filter_texts]
+
+            # Shift modifier toggles a text filter
             if shift_modifier:
-                # Shift modifier will add a "positive" filter and hide all items
-                # that does not contain the given text.
-                folder_filter = f'"{text}"'
+                # If the filter is empty we'll add a positive filter
+                if not filter_texts:
+                    self.model().set_filter_text(f'"/{_text}"')
+                    self.repaint(self.rect())
+                    return
 
-                if folder_filter in filter_text:
-                    filter_text = filter_text.replace(folder_filter, '')
-                else:
-                    filter_text = f'{filter_text} {folder_filter}'
-
-                self.model().set_filter_text(filter_text)
+                # If the clicked item is already in the filter, we'll remove it
+                for idx, filter_text_element in enumerate(_filter_texts):
+                    if _text in filter_text_element:
+                        del filter_texts[idx]
+                        self.model().set_filter_text(' '.join(filter_texts))
+                        self.repaint(self.rect())
+                        return
+                # If the filter has items we'll append
+                self.model().set_filter_text(f'{filter_text} "/{_text}"')
                 self.repaint(self.rect())
                 return
 
+            # Alt or control modifiers toggle a negative filter
             if alt_modifier or control_modifier:
-                # The alt or control modifiers will add a "negative filter"
-                # and hide the selected sub-folder from the view
-                folder_filter = f'--"{text}"'
-                _folder_filter = f'"{text}"'
+                # If the filter is empty we'll add a negative filter
+                if not filter_texts:
+                    self.model().set_filter_text(f'--"/{_text}"')
+                    self.repaint(self.rect())
+                    return
 
-                if filter_text:
-                    if _folder_filter in filter_text:
-                        filter_text = filter_text.replace(_folder_filter, '')
-                    if folder_filter not in filter_text:
-                        folder_filter = f'{filter_text} {folder_filter}'
+                # If the clicked item is already in the filter, we'll remove it
+                for idx, filter_text_element in enumerate(filter_texts_):
+                    if _text in filter_text_element:
+                        del filter_texts[idx]
 
-                self.model().set_filter_text(folder_filter)
+                filter_texts.append(f'--"/{_text}"')
+
+                # add negative filter
+                self.model().set_filter_text(' '.join(filter_texts))
                 self.repaint(self.rect())
                 return
 

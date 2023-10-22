@@ -5,7 +5,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import buttons
 from . import tabs
-from . import sgfilter
+from . import filters
 from .. import common
 from .. import images
 
@@ -28,12 +28,32 @@ BUTTONS = {
         'widget': tabs.FavouritesTabButton,
         'hidden': False,
     },
+    # next(n): {
+    #     'widget': filters.ServersFilterButton,
+    #     'hidden': False,
+    # },
     next(n): {
-        'widget': sgfilter.EntityFilterButton,
+        'widget': filters.JobsFilterButton,
+        'hidden': False,
+    },
+    # next(n): {
+    #     'widget': filters.RootsFilterButton,
+    #     'hidden': False,
+    # },
+    next(n): {
+        'widget': filters.EntityFilterButton,
         'hidden': False,
     },
     next(n): {
-        'widget': sgfilter.TaskFilterButton,
+        'widget': filters.TaskFilterButton,
+        'hidden': False,
+    },
+    next(n): {
+        'widget': filters.SubdirFilterButton,
+        'hidden': False,
+    },
+    next(n): {
+        'widget': filters.TypeFilterButton,
         'hidden': False,
     },
     next(n): {

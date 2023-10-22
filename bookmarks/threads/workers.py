@@ -14,6 +14,7 @@ from .. import common
 from .. import database
 from .. import images
 from .. import log
+from ..tokens import tokens
 from ..shotgun import shotgun
 
 
@@ -606,21 +607,26 @@ class InfoWorker(BaseWorker):
             )
 
         # Asset ShotGrid task to list
-        if len(pp) == 4 and asset_row_data['sg_task_name'] and ref()[common.DataDictRole]:
+        if (
+                len(pp) == 4 and
+                asset_row_data['sg_task_name'] and
+                ref()[common.DataDictRole] and
+                not asset_row_data['flags'] & common.MarkedAsArchived
+        ):
             if ref():
                 _ref = ref()[common.DataDictRole]
 
             # TODO: This does not seem to be thread safe (?) but since we only have one asset worker
             #       it should be fine for now.
             if _ref():
-                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'].lower() not in _ref().sg_task_names:
+                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'] not in _ref().sg_task_names:
                     if _ref():
-                        _ref().sg_task_names.append(asset_row_data['sg_task_name'].lower())
+                        _ref().sg_task_names.append(asset_row_data['sg_task_name'])
 
             if _ref():
-                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'].lower() not in _ref().shotgun_names:
+                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'] not in _ref().shotgun_names:
                     if _ref():
-                        _ref().shotgun_names.append(asset_row_data['shotgun_name'].lower())
+                        _ref().shotgun_names.append(asset_row_data['shotgun_name'])
 
         # ShotGrid status
         if len(pp) <= 4:
@@ -639,7 +645,64 @@ class InfoWorker(BaseWorker):
             flags |= _proxy_flags if _proxy_flags else 0
         ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
 
-        self.count_items(ref, st)
+        if ref() and ref()[common.ItemTabRole] == common.TaskTab:
+            # Let's get the token config instance to check what extensions are
+            # currently allowed to be displayed in the task folder
+            config = tokens.get(*pp[0:3])
+
+            description = config.get_description(pp[-1])
+            ref()[common.DescriptionRole] = description
+
+            is_valid_task = config.check_task(pp[-1])
+            if is_valid_task:
+                valid_extensions = config.get_task_extensions(pp[-1])
+            else:
+                valid_extensions = config.get_extensions(tokens.AllFormat)
+
+            def _file_it(path):
+                for entry in os.scandir(path):
+                    if entry.is_symlink():
+                        continue
+                    if entry.name.startswith('.'):
+                        continue
+                    if entry.name == 'thumbs.db':
+                        continue
+
+                    if entry.is_dir():
+                        yield from _file_it(entry.path)
+
+                    if not entry.is_file():
+                        continue
+
+                    if QtCore.QFileInfo(entry.path).suffix().lower() not in valid_extensions:
+                        continue
+
+                    yield entry.path
+
+            _idx = 0
+            _max = 199
+            for _idx, _ in enumerate(_file_it(st)):
+                if not ref():
+                    break
+
+                ref()[common.NoteCountRole] = _idx + 1
+
+                if _idx == 1:
+                    _s = 'a' + pp[-1].lower()
+                    ref()[common.SortByNameRole] = _s
+                    ref()[common.SortByLastModifiedRole] = _s
+                    ref()[common.SortBySizeRole] = _s
+                    ref()[common.SortByTypeRole] = _s
+
+                if _idx > _max:
+                    break
+
+            _suffix = f'{_idx + 1} items' if _idx < _max else f'{_max}+ items'
+            _suffix = _suffix if _idx > 0 else '#empty#'
+            _suffix = f' ({_suffix})' if description else _suffix
+
+            ref()[common.DescriptionRole] += _suffix
+
 
         self._process_bookmark_item(ref, db.source(), bookmark_row_data, pp)
         self._process_file_item(ref, item_type)
@@ -744,9 +807,6 @@ class InfoWorker(BaseWorker):
         ref()[common.SortByLastModifiedRole] = _mtime
         ref()[common.FileDetailsRole] = info_string
         ref()[common.SortBySizeRole] = size
-
-    def count_items(self, ref, source):
-        pass
 
 
 class ThumbnailWorker(BaseWorker):

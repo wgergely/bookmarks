@@ -2,7 +2,6 @@
 """
 import functools
 import os
-import re
 
 import opentimelineio as otio
 from PySide2 import QtWidgets, QtCore
@@ -10,6 +9,7 @@ from PySide2 import QtWidgets, QtCore
 from .. import actions
 from .. import common
 from .. import database
+from .. import log
 from .. import ui
 from ..editor import base
 from ..external import rv
@@ -716,7 +716,7 @@ class EdlWidget(base.BasePropertyEditor):
 
             for k in DEFAULT_SOURCES:
                 if not hasattr(self, f'{k.replace("/", "_")}_editor'):
-                    print(f'No editor found for {k}, skipping.')
+                    log.debug(f'No editor found for {k}, skipping.')
                     continue
 
                 editor = getattr(self, f'{k.replace("/", "_")}_editor')
@@ -730,7 +730,7 @@ class EdlWidget(base.BasePropertyEditor):
                 source_ext = source_info.suffix()
 
                 if not QtCore.QFileInfo(source_dir).exists():
-                    print(f'{source_dir} does not exist, skipping.')
+                    log.debug(f'{source_dir} does not exist, skipping.')
                     continue
 
                 common.message_widget.body_label.setText(f'Found source dir:\n{source_dir}')

@@ -28,12 +28,28 @@ BUTTONS = {
         'widget': tabs.FavouritesTabButton,
         'hidden': False,
     },
+    # next(n): {
+    #     'widget': filters.ServersFilterButton,
+    #     'hidden': False,
+    # },
+    next(n): {
+        'widget': filters.JobsFilterButton,
+        'hidden': False,
+    },
+    # next(n): {
+    #     'widget': filters.RootsFilterButton,
+    #     'hidden': False,
+    # },
     next(n): {
         'widget': filters.EntityFilterButton,
         'hidden': False,
     },
     next(n): {
         'widget': filters.TaskFilterButton,
+        'hidden': False,
+    },
+    next(n): {
+        'widget': filters.SubdirFilterButton,
         'hidden': False,
     },
     next(n): {

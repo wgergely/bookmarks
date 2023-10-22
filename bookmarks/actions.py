@@ -889,7 +889,7 @@ def refresh(idx=None):
     if common.current_tab() == common.AssetTab:
         cache = f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache'
         if os.path.exists(cache):
-            print('Removing asset cache:', cache)
+            log.debug('Removing asset cache:', cache)
             os.remove(cache)
 
     model.reset_data(force=True)

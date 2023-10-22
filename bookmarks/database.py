@@ -749,7 +749,7 @@ class BookmarkDB(QtCore.QObject):
             table (str, optional): Optional table parameter, defaults to `AssetTable`.
 
         Returns:
-            The value stored in the database, or None.
+            object: The value stored in the database, or None.
 
         """
         if not self.is_valid():

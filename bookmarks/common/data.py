@@ -41,14 +41,20 @@ def sort_data(ref, sort_by, sort_order):
     )
 
     d = common.DataDict()
+
+    # Copy over the property values from the source data
     d.loaded = ref().loaded
     d.data_type = ref().data_type
+    d.refresh_needed = ref().refresh_needed
+    d.shotgun_names = ref().shotgun_names
+    d.sg_task_names = ref().sg_task_names
 
     for n, idx in enumerate(sorted_idxs):
         if not ref():
             raise RuntimeError('Model mutated during sorting.')
         d[n] = ref()[idx]
         d[n][common.IdRole] = n
+
     return d
 
 
@@ -209,6 +215,9 @@ def set_data(key, task, data_type, data):
         data_type (int): One of :attr:`bookmarks.common.FileItem` or :attr:`bookmarks.common.SequenceItem`.
         data (common.DataDict): The data to set in the cache.
 
+    Returns:
+        common.DataDict: The cached data.
+
     """
     common.check_type(key, tuple)
     common.check_type(task, str)
@@ -219,3 +228,5 @@ def set_data(key, task, data_type, data):
     elif task not in common.item_data[key]:
         reset_data(key, task)
     common.item_data[key][task][data_type] = data
+
+    return common.item_data[key][task][data_type]

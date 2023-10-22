@@ -161,8 +161,6 @@ class ItemModel(QtCore.QAbstractTableModel):
             missing data.
         coreDataReset (QtCore.Signal): Signals that the underlying model data has
             been reset. Used by the thread workers to empty their queues.
-        dataTypeSorted (QtCore.Signal -> int): Signals that the underlying model
-            data was sorted.
         sortingChanged (QtCore.Signal -> int, bool): Emitted when the sorting
             order or sorting role was changed by the user.
         activeChanged (QtCore.Signal): Signals :meth:`.ItemModel.active_index`
@@ -177,7 +175,6 @@ class ItemModel(QtCore.QAbstractTableModel):
     coreDataLoaded = QtCore.Signal(weakref.ref, weakref.ref)
     coreDataReset = QtCore.Signal()
 
-    dataTypeSorted = QtCore.Signal(int)
     sortingChanged = QtCore.Signal(int, bool)  # (SortRole, SortOrder)
 
     activeChanged = QtCore.Signal(QtCore.QModelIndex)
@@ -207,7 +204,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         self._datatype = {}  # used  by the files model only
 
         self.sortingChanged.connect(self.set_sorting)
-        self.dataTypeSorted.connect(self.emit_reset_model)
 
         self.modelAboutToBeReset.connect(common.signals.updateTopBarButtons)
         self.modelReset.connect(common.signals.updateTopBarButtons)
@@ -485,14 +481,19 @@ class ItemModel(QtCore.QAbstractTableModel):
             self.set_active(index)
 
     @QtCore.Slot(int)
-    def emit_reset_model(self, data_type):
+    def internal_data_about_to_be_sorted(self, data_type):
+        if self.data_type() != data_type:
+            return
+        self.layoutAboutToBeChanged.emit()
+
+    @QtCore.Slot(int)
+    def internal_data_sorted(self, data_type):
         """Slot used to emit the reset model signals.
 
         """
         if self.data_type() != data_type:
             return
-        self.beginResetModel()
-        self.endResetModel()
+        self.layoutChanged.emit()
 
     @QtCore.Slot(bool)
     @QtCore.Slot(int)
@@ -847,6 +848,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.modelReset.connect(common.signals.updateTopBarButtons)
 
         self.queued_invalidate_timer.timeout.connect(self.delayed_invalidate)
+
+        # Notify the outside world that the filter text has changed
+        self.filterTextChanged.connect(common.signals.filterTextChanged)
 
     def verify(self):
         """Verify the filter model contents to make sure archived items

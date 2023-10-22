@@ -832,7 +832,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if common.init_mode == common.EmbeddedMode:
             return
         self.menu[key()] = {
-            'text': 'Quit {}'.format(common.product),
+            'text': f'Quit {common.product.title()}',
             'action': common.uninitialize,
             'icon': ui.get_icon('close'),
             'shortcut': shortcuts.get(

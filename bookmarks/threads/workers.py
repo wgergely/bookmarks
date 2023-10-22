@@ -606,7 +606,12 @@ class InfoWorker(BaseWorker):
             )
 
         # Asset ShotGrid task to list
-        if len(pp) == 4 and asset_row_data['sg_task_name'] and ref()[common.DataDictRole]:
+        if (
+                len(pp) == 4 and
+                asset_row_data['sg_task_name'] and
+                ref()[common.DataDictRole] and
+                not asset_row_data['flags'] & common.MarkedAsArchived
+        ):
             if ref():
                 _ref = ref()[common.DataDictRole]
 
@@ -621,15 +626,6 @@ class InfoWorker(BaseWorker):
                 if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'] not in _ref().shotgun_names:
                     if _ref():
                         _ref().shotgun_names.append(asset_row_data['shotgun_name'])
-
-        # File type filters
-        if len(pp) == 4:
-            if ref():
-                file_type = ref()[common.PathRole].split('.')[-1]
-                _ref = ref()[common.DataDictRole]
-                if _ref() and file_type.lower() not in _ref().file_types:
-                    _ref().file_types.append(file_type.lower())
-
 
         # ShotGrid status
         if len(pp) <= 4:

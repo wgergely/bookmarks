@@ -38,7 +38,8 @@ from .. import images
 from .. import importexport
 from .. import log
 
-MAX_HISTORY = 20
+MAX_HISTORY = 15
+
 DEFAULT_ITEM_FLAGS = (
         QtCore.Qt.ItemNeverHasChildren |
         QtCore.Qt.ItemIsEnabled |
@@ -52,8 +53,15 @@ DEFAULT_ITEM_FLAGS = (
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
 
+# Filter expressions used by the filter proxy model
+re_negative = re.compile(r'--([^\"\'\[\]\*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
+re_quoted_negative = re.compile(r'--"(.*?)"', flags=re.IGNORECASE | re.MULTILINE)
+re_positive = re.compile(r'(--[^\"\'\[\]*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
+re_quoted_positive = re.compile(r'(--".*?")', flags=re.IGNORECASE | re.MULTILINE)
+
+
 def initdata(func):
-    """The decorator is responsible validating the current active paths, and emitting
+    """Decorator used by init_data to validate the active items, and emitting
     the ``beginResetModel``, ``endResetModel`` and :attr:`.ItemModel.coreDataLoaded`
     signals.
 
@@ -66,11 +74,11 @@ def initdata(func):
         """
         common.settings.load_active_values()
 
-        self.beginResetModel()
         self._interrupt_requested = False
         self._load_in_progress = True
 
         try:
+            self.beginResetModel()
             func(self, *args, **kwargs)
         except:
             raise
@@ -79,7 +87,6 @@ def initdata(func):
             self._load_in_progress = False
             self.endResetModel()
 
-        # Emit  references to the just loaded core data
         p = self.source_path()
         k = self.task()
         t1 = self.data_type()
@@ -103,20 +110,10 @@ def filter_includes_row(filter_text, searchable):
 
     """
     _filter_text = filter_text
-    it = re.finditer(
-        r'(--[^\"\'\[\]\*\s]+)',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
-    it_quoted = re.finditer(
-        r'(--".*?")',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
 
-    for match in it:
+    for match in re_positive.finditer(filter_text):
         _filter_text = re.sub(match.group(1), '', _filter_text)
-    for match in it_quoted:
+    for match in re_quoted_positive.finditer(filter_text):
         _filter_text = re.sub(match.group(1), '', _filter_text)
 
     for text in _filter_text.split():
@@ -127,23 +124,22 @@ def filter_includes_row(filter_text, searchable):
 
 
 @functools.lru_cache(maxsize=4194304)
-def _filter_excludes_row(filter_text, searchable):
-    it = re.finditer(
-        r'--([^\"\'\[\]\*\s]+)',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
-    it_quoted = re.finditer(
-        r'--"(.*?)"',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
+def filter_excludes_row(filter_text, searchable_text):
+    """Checks whether the given filter text matches the given searchable text.
 
-    for match in it:
-        if match.group(1).lower() in searchable:
+    Args:
+        filter_text (str): The filter text.
+        searchable_text (str): The searchable text.
+
+    Returns:
+        bool: True if the filter text matches the searchable text, False otherwise.
+
+    """
+    for match in re_negative.finditer(filter_text):
+        if match.group(1).lower() in searchable_text:
             return True
-    for match in it_quoted:
-        if match.group(1).lower() in searchable:
+    for match in re_quoted_negative.finditer(filter_text):
+        if match.group(1).lower() in searchable_text:
             return True
     return False
 
@@ -1053,7 +1049,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             )
             if not filter_includes_row(filter_text, searchable):
                 return False
-            if _filter_excludes_row(filter_text, searchable):
+            if filter_excludes_row(filter_text, searchable):
                 return False
 
         if self.filter_flag(common.MarkedAsActive) and active:

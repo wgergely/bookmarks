@@ -152,7 +152,7 @@ def get_sequence_elements(filepath):
 
     sequence_path = None
     if seq:
-        sequence_path = f'{seq.group(1)}{common.SEQPROXY}{seq.group(3)}.{seq.group(4)}'
+        sequence_path = seq.group(1) + common.SEQPROXY + seq.group(3) + '.' + seq.group(4)
     return seq, sequence_path
 
 
@@ -301,6 +301,8 @@ class FileItemModel(models.ItemModel):
             return
 
         _dirs = []
+        _extensions = []
+
         data = common.get_data(p, k, t)
 
         sequence_data = common.DataDict()  # temporary dict for temp data
@@ -356,6 +358,7 @@ class FileItemModel(models.ItemModel):
                 _source_path
             )
             _dirs.append(_dir)
+            _extensions.append(ext)
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the token config,
@@ -457,7 +460,7 @@ class FileItemModel(models.ItemModel):
                             #
                             common.QueueRole: self.queues,
                             common.DataTypeRole: common.SequenceItem,
-                            common.DataDictRole: weakref.ref(sequence_data),
+                            common.DataDictRole: None,
                             common.ItemTabRole: common.FileTab,
                             #
                             common.EntryRole: [],
@@ -490,7 +493,6 @@ class FileItemModel(models.ItemModel):
             else:
                 # The sequence dictionary should contain not only sequence items but single files also,
                 # so we'll add them here
-                sequence_data[filepath] = common.DataDict(data[idx])
                 sequence_data[filepath][common.IdRole] = -1
 
         # Cast the sequence data back onto the model
@@ -528,11 +530,18 @@ class FileItemModel(models.ItemModel):
                 v[common.DataTypeRole] = common.FileItem
 
             data[idx] = v
+            data[idx][common.DataDictRole] = weakref.ref(data)
             data[idx][common.IdRole] = idx
 
         watcher = common.get_watcher(common.FileTab)
         watcher.reset()
         watcher.add_directories(list(set(_dirs)))
+
+        # Add the list of file extensions to the model's data
+        _extensions = sorted(set([('.' + f) for f in _extensions]))
+        common.get_data(p, k, common.FileItem).file_types = _extensions
+        common.get_data(p, k, common.SequenceItem).file_types = _extensions
+
         self.set_refresh_needed(False)
 
     def disable_filter(self):

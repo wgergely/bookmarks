@@ -3,8 +3,8 @@ import weakref
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-
 from .. import common
+from .. import log
 from .. import ui
 
 
@@ -21,6 +21,7 @@ class BaseFilterModel(ui.AbstractListModel):
 
         common.signals.internalDataReady.connect(self.internal_data_ready)
         common.signals.bookmarksChanged.connect(self.reset_data)
+        common.signals.bookmarkActivated.connect(self.reset_data)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if role == QtCore.Qt.DecorationRole:
@@ -82,6 +83,10 @@ class BaseFilterModel(ui.AbstractListModel):
             source_model.task(),
             source_model.data_type()
         )
+
+        if not hasattr(data, self.data_source):
+            log.error(f'No {self.data_source} found in data!')
+            return
         if not getattr(data, self.data_source):
             return
 
@@ -238,6 +243,9 @@ class TypeFilterModel(BaseFilterModel):
             common.FileTab,
             parent=parent
         )
+
+        common.signals.assetActivated.connect(self.reset_data)
+        common.signals.taskFolderChanged.connect(self.reset_data)
 
 
 class TypeFilterButton(BaseFilterButton):

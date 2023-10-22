@@ -184,6 +184,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                             #
                             common.QueueRole: self.queues,
                             common.DataTypeRole: common.SequenceItem,
+                            common.DataDictRole: None,
                             common.ItemTabRole: common.FavouriteTab,
                             #
                             common.EntryRole: [],
@@ -253,6 +254,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                 v[common.DataTypeRole] = common.FileItem
 
             data[idx] = v
+            data[idx][common.DataDictRole] = weakref.ref(data)
             data[idx][common.IdRole] = idx
 
     def source_path(self):

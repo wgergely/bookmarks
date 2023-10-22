@@ -406,7 +406,6 @@ class BookmarksApp(QtWidgets.QApplication):
         super().__init__([__file__,])
         _set_application_properties(app=self)
         self.setApplicationVersion(__version__)
-
         self.setApplicationName(common.product.title())
         self.setOrganizationName(common.organization)
         self.setOrganizationDomain(common.organization_domain)

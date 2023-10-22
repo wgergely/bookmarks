@@ -32,6 +32,7 @@ database. See :mod:`bookmarks.database` for more details.
 import copy
 import functools
 import os
+import weakref
 
 from PySide2 import QtCore, QtWidgets
 
@@ -265,6 +266,7 @@ class AssetItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: t,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.AssetTab,
                     #
                     common.EntryRole: [],

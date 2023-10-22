@@ -1372,6 +1372,7 @@ class GalleryWidget(QtWidgets.QDialog):
     ):
         super().__init__(parent=parent)
 
+        self.anim = None
         self.scroll_area = None
         self.columns = columns
         self._label = label
@@ -1524,7 +1525,7 @@ class GalleryWidget(QtWidgets.QDialog):
             self.anim.start()
             self.anim.finished.connect(lambda: super(GalleryWidget, self).done(r))
         else:
-            super(GalleryWidget, self).done(r)
+            super().done(r)
 
 
 class AbstractListModel(QtCore.QAbstractListModel):
@@ -1538,16 +1539,19 @@ class AbstractListModel(QtCore.QAbstractListModel):
         super().__init__(parent=parent)
 
         self._data = {}
-
-        self.beginResetModel()
-        self.init_data()
-        self.endResetModel()
+        self.reset_data()
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self._data)
 
     def display_name(self, v):
         return v.replace('/', '  |   ')
+
+    def reset_data(self):
+        """Resets the model's data."""
+        self.beginResetModel()
+        self.init_data()
+        self.endResetModel()
 
     def init_data(self, *args, **kwargs):
         raise NotImplementedError('Abstract method must be implemented by subclass.')

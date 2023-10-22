@@ -40,6 +40,7 @@ See the :mod:`~bookmarks.common.sequence` module for details on sequence definit
 """
 import functools
 import os
+import weakref
 
 from PySide2 import QtWidgets, QtCore
 
@@ -399,6 +400,7 @@ class FileItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.FileTab,
                     #
                     common.EntryRole: [entry, ],

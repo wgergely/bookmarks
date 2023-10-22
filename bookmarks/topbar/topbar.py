@@ -37,6 +37,10 @@ BUTTONS = {
         'hidden': False,
     },
     next(n): {
+        'widget': filters.TypeFilterButton,
+        'hidden': False,
+    },
+    next(n): {
         'widget': buttons.FilterButton,
         'hidden': False,
     },

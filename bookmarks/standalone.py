@@ -82,7 +82,7 @@ def _set_application_properties(app=None):
         app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
         return
 
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseOpenGLES, False)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseOpenGLES, True)
     QtWidgets.QApplication.setAttribute(
         QtCore.Qt.AA_EnableHighDpiScaling, True
     )

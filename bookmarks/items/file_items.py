@@ -300,7 +300,8 @@ class FileItemModel(models.ItemModel):
         if not p or not all(p) or not k or t is None:
             return
 
-        _dirs = []
+        _subdirectories = []
+        _watch_paths = []
         _extensions = []
 
         data = common.get_data(p, k, t)
@@ -311,7 +312,7 @@ class FileItemModel(models.ItemModel):
         _source_path = '/'.join(p + (k,))
         if not QtCore.QFileInfo(_source_path).exists():
             return
-        _dirs.append(_source_path)
+        _watch_paths.append(_source_path)
 
         # Let's get the token config instance to check what extensions are
         # currently allowed to be displayed in the task folder
@@ -357,14 +358,18 @@ class FileItemModel(models.ItemModel):
                 entry.path,
                 _source_path
             )
-            _dirs.append(_dir)
-            _extensions.append(ext)
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the token config,
             # we'll allow all extensions
             if not disable_filter and ext not in valid_extensions:
                 continue
+
+            if _dir:
+                _watch_paths.append(_dir)
+                _d = _dir[len(_source_path) + 1:]
+                _subdirectories += [('/' + f) for f in _d.split('/')]
+            _extensions.append(ext)
 
             # Progress bar
             c += 1
@@ -493,6 +498,7 @@ class FileItemModel(models.ItemModel):
             else:
                 # The sequence dictionary should contain not only sequence items but single files also,
                 # so we'll add them here
+                sequence_data[filepath] = common.DataDict(data[idx])
                 sequence_data[filepath][common.IdRole] = -1
 
         # Cast the sequence data back onto the model
@@ -535,12 +541,17 @@ class FileItemModel(models.ItemModel):
 
         watcher = common.get_watcher(common.FileTab)
         watcher.reset()
-        watcher.add_directories(list(set(_dirs)))
+        watcher.add_directories(sorted(set([f for f in _watch_paths if f])))
 
         # Add the list of file extensions to the model's data
-        _extensions = sorted(set([('.' + f) for f in _extensions]))
+        _extensions = sorted(set([('.' + f) for f in _extensions if f]))
         common.get_data(p, k, common.FileItem).file_types = _extensions
         common.get_data(p, k, common.SequenceItem).file_types = _extensions
+
+        # Add the list of subdirectories to the model's data
+        _subdirectories = sorted(set([f for f in _subdirectories if f]))
+        common.get_data(p, k, common.FileItem).subdirectories = _subdirectories
+        common.get_data(p, k, common.SequenceItem).subdirectories = _subdirectories
 
         self.set_refresh_needed(False)
 

@@ -1013,6 +1013,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         )
 
         filter_text = self.parent().model().filter_text()
+        filter_text = filter_text.lower().strip('\\/-_\'" ') if filter_text else ''
 
         # Paint the background rectangle of the sub-folder
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
@@ -1045,8 +1046,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             color = common.color(common.color_dark_background)
 
             # Green the sub-folder is set as a text filter
-            ftext = f'"{text}"'
-            if filter_text and ftext.lower() in filter_text.lower():
+            if text.lower() in filter_text.lower():
                 color = common.color(common.color_green)
 
             if rect.contains(cursor_position):
@@ -1198,9 +1198,10 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         label_text_color = common.color(common.color_text)
 
         filter_text = self.parent().model().filter_text()
-        filter_text = filter_text.lower() if filter_text else ''
-        filter_texts = re.split(f'\s', filter_text, flags=re.IGNORECASE)
-        filter_texts = {f.lower().strip('"').strip('-').strip() for f in filter_texts}
+        filter_text = filter_text.lower().strip('\\/-_\'" ') if filter_text else ''
+
+        filter_texts = re.split(r'\s', filter_text, flags=re.IGNORECASE)
+        filter_texts = {f.lower().strip('\\/-_\'" ') for f in filter_texts}
 
         for s in reversed(it):
             width = metrics.horizontalAdvance(s)
@@ -2458,6 +2459,8 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         painter.setPen(QtCore.Qt.NoPen)
 
         filter_text = self.parent().model().filter_text()
+        filter_text = filter_text.lower().strip('\\/-_\'" ') if filter_text else ''
+
         overlay_rect_left_edge = None
 
         for segment in text_segments.values():

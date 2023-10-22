@@ -86,10 +86,6 @@ class FavouriteItemModel(file_items.FileItemModel):
             if self._interrupt_requested:
                 break
 
-            # Skipping directories
-            if entry.is_dir():
-                continue
-
             filename = entry.name
 
             _source_path = '/'.join(source_paths)
@@ -256,6 +252,8 @@ class FavouriteItemModel(file_items.FileItemModel):
             data[idx] = v
             data[idx][common.DataDictRole] = weakref.ref(data)
             data[idx][common.IdRole] = idx
+
+        self.set_refresh_needed(False)
 
     def source_path(self):
         """The path of the source file.

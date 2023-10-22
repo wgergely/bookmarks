@@ -49,6 +49,10 @@ def sort_data(ref, sort_by, sort_order):
     d.shotgun_names = ref().shotgun_names
     d.sg_task_names = ref().sg_task_names
     d.file_types = ref().file_types
+    d.subdirectories = ref().subdirectories
+    d.servers = ref().servers
+    d.jobs = ref().jobs
+    d.roots = ref().roots
 
     for n, idx in enumerate(sorted_idxs):
         if not ref():

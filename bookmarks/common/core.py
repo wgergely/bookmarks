@@ -654,6 +654,11 @@ class DataDict(dict):
         self._data_type = None
         self._shotgun_names = []
         self._sg_task_names = []
+        self._file_types = []
+        self._subdirectories = []
+        self._servers = []
+        self._jobs = []
+        self._roots = []
 
     @property
     def loaded(self):
@@ -708,6 +713,51 @@ class DataDict(dict):
     @sg_task_names.setter
     def sg_task_names(self, v):
         self._sg_task_names = v
+
+    @property
+    def file_types(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._file_types
+
+    @file_types.setter
+    def file_types(self, v):
+        self._file_types = v
+
+    @property
+    def subdirectories(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._subdirectories
+
+    @subdirectories.setter
+    def subdirectories(self, v):
+        self._subdirectories = v
+
+    @property
+    def servers(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._servers
+
+    @servers.setter
+    def servers(self, v):
+        self._servers = v
+
+    @property
+    def jobs(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._jobs
+
+    @jobs.setter
+    def jobs(self, v):
+        self._jobs = v
+
+    @property
+    def roots(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._roots
+
+    @roots.setter
+    def roots(self, v):
+        self._roots = v
 
 
 class Timer(QtCore.QTimer):

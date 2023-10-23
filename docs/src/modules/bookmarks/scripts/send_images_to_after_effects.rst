@@ -2,9 +2,9 @@
     :description: Developer documentation page for the Bookmarks python modules
     :keywords: Bookmarks, bookmarksvfx, pipeline, pipe, asset manager, assets, PySide, Qt, PySide,Python, vfx, animation, film, production, open-source, opensource, ShotGun, ShotGrid, RV, ffmpeg, openimageio, publish, manage, digital content management
 
-items.asset_items
-=========================
+scripts.send_images_to_after_effects
+===========================
 
-.. automodule:: bookmarks.items.asset_items
+.. automodule:: bookmarks.scripts.send_images_to_after_effects
     :members:
     :show-inheritance:

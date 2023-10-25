@@ -123,7 +123,7 @@ from .env import *
 from .font import *
 from .monitor import *
 from .sequence import *
-from .session_lock import *
+from .active_mode import *
 from .settings import *
 from .setup import *
 from .signals import *

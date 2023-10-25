@@ -9,9 +9,9 @@ from PySide2 import QtCore
 from .. import common
 
 
-def init_signals():
+def init_signals(connect_signals=True):
     """Initialize signals."""
-    common.signals = CoreSignals()
+    common.signals = CoreSignals(connect_signals=connect_signals)
 
 
 class CoreSignals(QtCore.QObject):
@@ -132,8 +132,11 @@ class CoreSignals(QtCore.QObject):
     #: Signals an item is ready to be processed by a thread
     threadItemsQueued = QtCore.Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, connect_signals=True, parent=None):
         super().__init__(parent=parent)
+
+        if not connect_signals:
+            return
 
         from .. import actions
 

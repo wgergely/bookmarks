@@ -1,5 +1,4 @@
-"""Module defines the classes and methods needed to set and edit session lock
-files.
+"""Defines active path reading mode.
 
 The app has two session modes. When `common.active_mode` is
 `common.SynchronisedActivePaths`, the app will save active paths in the user settings
@@ -10,6 +9,11 @@ Hence, when a second app instance is launched `common.active_mode` is
 automatically set to `common.PrivateActivePaths`. When this mode is active, the initial
 active path values are read from the user settings, but active paths changes won't be
 saved to the settings file.
+
+The session mode will also be set to `common.PrivateActivePaths` if any of the
+`BOOKMARKS_ACTIVE_SERVER`, `BOOKMARKS_ACTIVE_JOB`, `BOOKMARKS_ACTIVE_ROOT`,
+`BOOKMARKS_ACTIVE_ASSET` and `BOOKMARKS_ACTIVE_TASK` environment variables are set
+as these will take precedence over the user settings.
 
 To toggle between the two modes use :func:`bookmarks.actions.toggle_active_mode`. Also see
 :class:`bookmarks.statusbar.ToggleSessionModeButton`.
@@ -34,11 +38,7 @@ def get_lock_path():
     return LOCK_PATH.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation
-        ),
-        product=common.product,
-        prefix=PREFIX,
-        pid=os.getpid(),
-        ext=FORMAT
+        ), product=common.product, prefix=PREFIX, pid=os.getpid(), ext=FORMAT
     )
 
 
@@ -49,9 +49,7 @@ def prune_lock():
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation
-        ),
-        product=common.product,
-    )
+        ), product=common.product, )
 
     r = fr'{PREFIX}_([0-9]+)\.{FORMAT}'
     pids = psutil.pids()
@@ -79,21 +77,23 @@ def init_active_mode():
     ``PrivateActivePaths`` when the Bookmarks sessions set the active paths values internally without changing the user
     settings.
 
-    The session mode can be toggled via the ui (there's a button in the lower right hand corner) and will be initialised
-    to a default value based on the following conditions:
+    The session mode will be initialised to a default value based on the following conditions:
 
-        If any of the `BOOKMARKS_ACTIVE_SERVER`, `BOOKMARKS_ACTIVE_JOB`, `BOOKMARKS_ACTIVE_ROOT`, `BOOKMARKS_ACTIVE_ASSET`
-        and `BOOKMARKS_ACTIVE_TASK` environment values have valid values, the session will automatically be marked
-        ``PrivateActivePaths``.
+        If any of the `BOOKMARKS_ACTIVE_SERVER`, `BOOKMARKS_ACTIVE_JOB`, `BOOKMARKS_ACTIVE_ROOT`,
+        `BOOKMARKS_ACTIVE_ASSET` and `BOOKMARKS_ACTIVE_TASK` environment values have valid values, the session will
+        automatically be marked ``PrivateActivePaths``.
 
-        If the environment has not been set but there's already an active ``SynchronisedActivePaths`` session running the
-        current session will be set to ``PrivateActivePaths``.
+        If the environment has not been set but there's already an active ``SynchronisedActivePaths`` session
+        running, the current session will be set to ``PrivateActivePaths``.
 
-        Any sessions that doesn't have environment values set and does not find synchronized session lock files will be
-        marked ``SynchronisedActivePaths``.
+        Any sessions that doesn't have environment values set and does not find synchronized session lock files will
+        be marked ``SynchronisedActivePaths``.
 
 
     """
+    # Remove stale lock files
+    prune_lock()
+
     # Check if any of the environment variables are set
     _env_active_server = os.environ.get('BOOKMARKS_ACTIVE_SERVER', None)
     _env_active_job = os.environ.get('BOOKMARKS_ACTIVE_JOB', None)
@@ -108,9 +108,7 @@ def init_active_mode():
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation
-        ),
-        product=common.product,
-    )
+        ), product=common.product, )
 
     # Iterate over all lock files and check their contents
     for entry in os.scandir(path):

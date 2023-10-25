@@ -700,7 +700,7 @@ class BookmarkDB(QtCore.QObject):
 
         Args:
             source (str): A source file path.
-            table (str): A database 01table name.
+            table (str): A database table name.
 
         Returns:
             dict: A dictionary of column/value pairs.

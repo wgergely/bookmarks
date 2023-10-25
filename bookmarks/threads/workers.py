@@ -308,10 +308,6 @@ class BaseWorker(QtCore.QObject):
             if ref().loaded:
                 continue  # Skip if the model is loaded already
 
-            # Skip if the model has already been queued
-            if ref in threads.THREADS[q]['queue']:
-                continue
-
             idxs = ref().keys()
             for idx in idxs:
                 if not ref() or self.interrupt:
@@ -698,11 +694,10 @@ class InfoWorker(BaseWorker):
                     break
 
             _suffix = f'{_idx + 1} items' if _idx < _max else f'{_max}+ items'
-            _suffix = _suffix if _idx > 0 else '#empty#'
-            _suffix = f' ({_suffix})' if description else _suffix
+            _suffix = _suffix if _idx > 0 else ''
+            _suffix = f' ({_suffix})' if description and _idx > 0 else _suffix
 
             ref()[common.DescriptionRole] += _suffix
-
 
         self._process_bookmark_item(ref, db.source(), bookmark_row_data, pp)
         self._process_file_item(ref, item_type)

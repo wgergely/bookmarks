@@ -1024,10 +1024,6 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         if not ref():
             return False
 
-        # Task item specific filter
-        if '#empty#' in ref()[idx][common.DescriptionRole]:
-            return False
-
         filter_text = self.filter_text()
         if filter_text:
             filter_text = filter_text.strip().lower()

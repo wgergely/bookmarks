@@ -330,6 +330,8 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.Refresh, actions.refresh)
         connect(shortcuts.AltRefresh, actions.refresh)
 
+        connect(shortcuts.ApplicationLauncher, actions.pick_launcher_item)
+
         connect(shortcuts.CopyItemPath, actions.copy_selected_path)
         connect(shortcuts.CopyAltItemPath, actions.copy_selected_alt_path)
         connect(shortcuts.RevealItem, actions.reveal_selected)

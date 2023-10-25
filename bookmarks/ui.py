@@ -1379,13 +1379,19 @@ class GalleryWidget(QtWidgets.QDialog):
         self._item_height = item_height
 
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowOpacity(0.8)
+        self.setWindowOpacity(0.95)
+
+        self.installEventFilter(self)
 
         self._create_ui()
         self.init_data()
+
+    def eventFilter(self, widget, event):
+        if event.type() == QtCore.QEvent.WindowDeactivate:
+            self.close()
+            return True
+        return False
 
     def _create_ui(self):
         if not self.parent():
@@ -1406,6 +1412,7 @@ class GalleryWidget(QtWidgets.QDialog):
             parent=self
         )
         self.layout().addWidget(label)
+        self.layout().addSpacing(common.size(common.size_margin) * 1.5)
 
         _width = (
                 (common.size(common.size_indicator) * 2) +
@@ -1430,9 +1437,7 @@ class GalleryWidget(QtWidgets.QDialog):
         )
 
         widget = QtWidgets.QWidget(parent=self)
-        widget.setStyleSheet(
-            f'background-color: {common.rgb(common.color_separator)};'
-        )
+        widget.eventFilter = self.eventFilter
 
         QtWidgets.QGridLayout(widget)
         widget.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -1444,10 +1449,8 @@ class GalleryWidget(QtWidgets.QDialog):
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(widget)
 
-        # self.layout().addSpacing(common.size(common.size_margin))
         self.layout().addWidget(self.scroll_area, 1)
-
-        self.setFocusProxy(widget)
+        self.setFocusProxy(self.scroll_area.widget())
 
     def init_data(self):
         """Initializes data.
@@ -1481,21 +1484,6 @@ class GalleryWidget(QtWidgets.QDialog):
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
-    def paintEvent(self, event):
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        painter.setBrush(common.color(common.color_separator))
-        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 150))
-        pen.setWidth(common.size(common.size_separator))
-        painter.setPen(pen)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.size(common.size_indicator) * 2.0
-        painter.drawRoundedRect(
-            self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o)),
-            o, o
-        )
-        painter.end()
-
     def focusOutEvent(self, event):
         self.accept()  # or self.reject()
 
@@ -1503,17 +1491,18 @@ class GalleryWidget(QtWidgets.QDialog):
         """Show event handler.
 
         """
-        if not self.parent():
-            common.center_window(self)
+        common.center_to_parent(self, common.main_widget)
+        common.move_widget_to_available_geo(self)
 
         self.anim = QtCore.QPropertyAnimation(self, b'windowOpacity')
         self.anim.setDuration(500)  # Animation duration in milliseconds
         self.anim.setStartValue(0)
         self.anim.setEndValue(0.95)
         self.anim.setEasingCurve(QtCore.QEasingCurve.OutCubic)
-        self.anim.start()
+        self.anim.start(QtCore.QAbstractAnimation.DeleteWhenStopped)
 
-        self.scroll_area.widget().setFocus(QtCore.Qt.PopupFocusReason)
+        self.anim.finished.connect(self.raise_)
+        self.anim.finished.connect(lambda: self.setFocus(QtCore.Qt.PopupFocusReason))
 
     def done(self, r):
         if r == QtWidgets.QDialog.Rejected:

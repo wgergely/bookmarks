@@ -651,9 +651,20 @@ QWidget#mainRow {{
 }}
 
 
-GalleryWidget QWidget:focus {{
-    border: {size_separator}px solid transparent;
+GalleryWidget {{
+    border: {size_separator}px solid {color_blue};
 }}
+
+GalleryWidget,
+GalleryWidget > QScrollArea,
+GalleryWidget QScrollArea,
+GalleryWidget QScrollArea > QWidget,
+GalleryWidget QScrollArea > QWidget > QWidget
+{{
+    background-color: {color_dark_background};
+}}
+
+
 
 Viewer,
 ImageViewer {{

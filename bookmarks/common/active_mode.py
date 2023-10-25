@@ -72,23 +72,46 @@ def prune_lock():
                 raise RuntimeError('Failed to remove a lockfile.')
 
 
-def init_lock():
-    """Initialises the Bookmark's session lock.
+def init_active_mode():
+    """Initialises the Bookmark's active path reading mode.
 
-    We'll check all lock-files and to see if there's already a
-    ``SynchronisedActivePaths`` session. As we want only one session controlling
-    the active path settings we'll set all subsequent application sessions
-    to be ``PrivateActivePaths`` (when ``PrivateActivePaths`` is on, all active path
-    settings will be kept in memory, instead of writing them out to the
-    disk).
+    We define two modes, ``SynchronisedActivePaths`` (when Bookmarks is in sync with the user settings) and
+    ``PrivateActivePaths`` when the Bookmarks sessions set the active paths values internally without changing the user
+    settings.
+
+    The session mode can be toggled via the ui (there's a button in the lower right hand corner) and will be initialised
+    to a default value based on the following conditions:
+
+        If any of the `BOOKMARKS_ACTIVE_SERVER`, `BOOKMARKS_ACTIVE_JOB`, `BOOKMARKS_ACTIVE_ROOT`, `BOOKMARKS_ACTIVE_ASSET`
+        and `BOOKMARKS_ACTIVE_TASK` environment values have valid values, the session will automatically be marked
+        ``PrivateActivePaths``.
+
+        If the environment has not been set but there's already an active ``SynchronisedActivePaths`` session running the
+        current session will be set to ``PrivateActivePaths``.
+
+        Any sessions that doesn't have environment values set and does not find synchronized session lock files will be
+        marked ``SynchronisedActivePaths``.
+
 
     """
+    # Check if any of the environment variables are set
+    _env_active_server = os.environ.get('BOOKMARKS_ACTIVE_SERVER', None)
+    _env_active_job = os.environ.get('BOOKMARKS_ACTIVE_JOB', None)
+    _env_active_root = os.environ.get('BOOKMARKS_ACTIVE_ROOT', None)
+    _env_active_asset = os.environ.get('BOOKMARKS_ACTIVE_ASSET', None)
+    _env_active_task = os.environ.get('BOOKMARKS_ACTIVE_TASK', None)
+
+    if any((_env_active_server, _env_active_job, _env_active_root, _env_active_asset, _env_active_task)):
+        common.active_mode = common.PrivateActivePaths
+        return write_current_mode_to_lock()
+
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation
         ),
         product=common.product,
     )
+
     # Iterate over all lock files and check their contents
     for entry in os.scandir(path):
         if entry.is_dir():

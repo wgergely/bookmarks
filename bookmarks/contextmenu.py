@@ -1295,6 +1295,10 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('icon'),
             'text': 'Application Launcher',
             'action': actions.pick_launcher_item,
+            'shortcut': shortcuts.get(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.ApplicationLauncher
+            ).key(),
         }
 
     def sg_thumbnail_menu(self):

@@ -10,7 +10,7 @@ from .. import ui
 
 
 def close():
-    """Opens the :class:`LauncherGallery` editor.
+    """Opens the :class:`ApplicationLauncherWidget` editor.
 
     """
     if common.launcher_widget is None:
@@ -24,23 +24,23 @@ def close():
 
 
 def show():
-    """Shows the :class:`LauncherGallery` editor.
+    """Shows the :class:`ApplicationLauncherWidget` editor.
 
     """
     close()
-    common.launcher_widget = LauncherGallery()
+    common.launcher_widget = ApplicationLauncherWidget()
     common.launcher_widget.open()
     return common.launcher_widget
 
 
-class LauncherGallery(ui.GalleryWidget):
+class ApplicationLauncherWidget(ui.GalleryWidget):
     """A generic gallery widget used to let the user pick an item.
 
     """
 
     def __init__(self, parent=None):
         super().__init__(
-            'Applications',
+            'Application Launcher',
             item_height=common.size(common.size_row_height) * 4,
             parent=parent
         )
@@ -78,9 +78,3 @@ class LauncherGallery(ui.GalleryWidget):
 
         for k in sorted(v, key=lambda _k: v[_k]['name']):
             yield v[k]['name'], v[k]['path'], v[k]['thumbnail']
-
-    def focusOutEvent(self, event):
-        """Event handler.
-
-        """
-        self.close()

@@ -30,6 +30,8 @@ RemoveItem = common.idx()
 Refresh = common.idx()
 AltRefresh = common.idx()
 
+ApplicationLauncher = common.idx()
+
 CopyItemPath = common.idx()
 CopyAltItemPath = common.idx()
 RevealItem = common.idx()
@@ -170,6 +172,13 @@ MainWidgetShortcuts = {
         'default': 'Ctrl+R',
         'repeat': False,
         'description': 'Refresh',
+        'shortcut': None,
+    },
+    ApplicationLauncher: {
+        'value': 'Alt+L',
+        'default': 'Alt+L',
+        'repeat': False,
+        'description': 'Application Launcher',
         'shortcut': None,
     },
     CopyItemPath: {

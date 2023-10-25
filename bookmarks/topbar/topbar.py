@@ -28,13 +28,9 @@ BUTTONS = {
         'widget': tabs.FavouritesTabButton,
         'hidden': False,
     },
-    # next(n): {
-    #     'widget': filters.ServersFilterButton,
-    #     'hidden': False,
-    # },
     next(n): {
         'widget': filters.JobsFilterButton,
-        'hidden': False,
+        'hidden': True,
     },
     # next(n): {
     #     'widget': filters.RootsFilterButton,
@@ -42,22 +38,26 @@ BUTTONS = {
     # },
     next(n): {
         'widget': filters.EntityFilterButton,
-        'hidden': False,
+        'hidden': True,
     },
     next(n): {
         'widget': filters.TaskFilterButton,
-        'hidden': False,
+        'hidden': True,
     },
     next(n): {
         'widget': filters.SubdirFilterButton,
-        'hidden': False,
+        'hidden': True,
     },
     next(n): {
         'widget': filters.TypeFilterButton,
-        'hidden': False,
+        'hidden': True,
     },
     next(n): {
         'widget': buttons.FilterButton,
+        'hidden': False,
+    },
+    next(n): {
+        'widget': buttons.ApplicationLauncherButton,
         'hidden': False,
     },
     next(n): {

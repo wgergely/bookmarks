@@ -293,3 +293,47 @@ class RefreshButton(BaseControlButton):
             return True
 
         return False
+
+
+class ApplicationLauncherButton(BaseControlButton):
+    """A button used to launch applications.
+
+    """
+
+    def __init__(self, parent=None):
+        s = shortcuts.string(
+            shortcuts.MainWidgetShortcuts,
+            shortcuts.ApplicationLauncher
+        )
+        super().__init__(
+            'icon',
+            f'Application Launcher  -  {s}',
+            parent=parent
+        )
+        self.clicked.connect(actions.pick_launcher_item)
+        self.clicked.connect(self.update)
+
+    def state(self):
+        """The state of the auto-thumbnails"""
+        if not common.widget():
+            return False
+
+        model = common.widget().model().sourceModel()
+        p = model.source_path()
+        k = model.task()
+        t = model.data_type()
+
+        if not p or not all(p) or not k or t is None:
+            return False
+
+        data = common.get_task_data(p, k)
+        if not data:
+            return False
+
+        if any(
+                (data[common.FileItem].refresh_needed,
+                 data[common.SequenceItem].refresh_needed)
+        ):
+            return True
+
+        return False

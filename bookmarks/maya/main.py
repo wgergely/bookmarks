@@ -127,7 +127,7 @@ def show():
 
 def init_maya_widget():
     """Initializes the maya widget.
-    Usually the Maya plugin will call this method.
+    Usually the Maya plugin will call this function.
 
     """
     if isinstance(common.maya_widget, MayaWidget):

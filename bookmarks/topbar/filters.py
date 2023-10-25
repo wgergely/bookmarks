@@ -157,6 +157,7 @@ class BaseFilterButton(QtWidgets.QComboBox):
         self.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.setFixedHeight(common.size(common.size_margin))
         self.setMinimumWidth(common.size(common.size_margin) * 3)
+        self.setMaxVisibleItems(48)
 
         min_width = self.minimumSizeHint().width()
         self.view().setMinimumWidth(min_width * 3)

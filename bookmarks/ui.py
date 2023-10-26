@@ -283,7 +283,7 @@ class LineEdit(QtWidgets.QLineEdit):
     """Custom line edit widget with a single underline."""
 
     def __init__(self, parent=None):
-        super(LineEdit, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -1196,7 +1196,7 @@ def add_line_edit(label, parent=None):
 
 
 def add_description(
-        text, label=' ', color=common.color(common.color_secondary_text), parent=None
+        text, label=' ', height=None, color=common.color(common.color_secondary_text), parent=None
 ):
     """Utility method for adding a description field.
 
@@ -1204,7 +1204,7 @@ def add_description(
         QLabel: the added QLabel.
 
     """
-    row = add_row(label, height=None, parent=parent)
+    row = add_row(label, height=height, parent=parent)
     row.layout().setSpacing(0)
 
     label = Label(text, color=color, parent=parent)

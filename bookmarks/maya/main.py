@@ -68,6 +68,11 @@ def show():
     for widget in QtWidgets.QApplication.instance().allWidgets():
         # Skipping workspaceControls objects, just in case there's a name conflict
         # between what the parent().objectName() and this method yields
+        try:
+            widget.objectName()
+        except:
+            continue
+
         if re.match(f'{common.product}_.*WorkspaceControl', widget.objectName()):
             continue
 

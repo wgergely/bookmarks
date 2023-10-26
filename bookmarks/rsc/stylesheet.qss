@@ -185,10 +185,8 @@ QComboBox QListView::item:hover {{
 
 
 QLineEdit,
-QLineEdit:disabled,
-QTextEdit,
-QTextEdit:disabled {{
-    background-color: {color_opaque};
+QTextEdit {{
+    background-color: transparent;
     height: {size_row_height2}px;
     max-height: {size_row_height2}px;
     min-height: {size_row_height2}px;
@@ -201,7 +199,12 @@ QTextEdit:disabled {{
 QTextEdit:disabled,
 QLineEdit:disabled {{
     color: {color_disabled_text};
-    background-color: {color_dark_background};
+    background-color: transparent;
+}}
+
+QLineEdit:focus,
+QTextEdit:focus {{
+    background-color: {color_opaque};
 }}
 
 QTextBrowser {{

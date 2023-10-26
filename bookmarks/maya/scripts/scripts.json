@@ -10,19 +10,15 @@
     "description": ""
   },
   "2": {
-    "name": "Studio Aka  |  Odyssey  |  Export IbogaineMarcus Cloth caches for Simulation (static)",
-    "module": "aka_cloth_cache",
+    "name": "Studio Aka  |  Odyssey  |  Export Character Caches",
+    "module": "aka_character_caches",
+    "needs_active": "asset",
     "description": "Exports cloth caches for simulation"
   },
   "3": {
-    "name": "Studio Aka  |  Odyssey  |  Export IbogaineMarcus Cloth caches for Simulation (animated)",
-    "module": "aka_cloth_cache_animated",
-    "description": "Exports cloth caches for simulation"
-  },
-  "4": {
     "name": "separator"
   },
-  "5": {
+  "4": {
     "name": "Reset joint orientations",
     "module": "reset_joint_orientations",
     "description": "Resets bone orientation values to zero without moving the bones"

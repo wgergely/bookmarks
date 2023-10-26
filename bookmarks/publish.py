@@ -587,12 +587,10 @@ class PublishWidget(base.BasePropertyEditor):
             payload = get_payload(kwargs, destination)
 
             config = tokens.get(*common.active('root', args=True))
-            data = config.data()
-            flag = next(
-                (v['filter'] for v in data[tokens.PublishConfig].values() if
-                 v['value'] == kwargs['publish_template']), None
-            )
-            exts = config.get_extensions(flag)
+
+            flag = tokens.SceneFormat | tokens.ImageFormat | tokens.MovieFormat | tokens.AudioFormat | tokens.CacheFormat
+            exts = config.get_extensions(flag, force=True)
+
             if kwargs['ext'] not in exts:
                 raise RuntimeError(
                     f'"{kwargs["ext"]}" is not a valid publish format.\n'

@@ -71,6 +71,7 @@ invalid_token = '{invalid_token}'
 
 SceneFolder = 'scene'
 CacheFolder = 'cache'
+CaptureFolder = 'captures'
 RenderFolder = 'render'
 DataFolder = 'data'
 ReferenceFolder = 'reference'
@@ -81,7 +82,7 @@ MiscFolder = 'other'
 #: The default token value configuration
 DEFAULT_TOKEN_CONFIG = {
     FileFormatConfig: {
-        0: {
+        common.idx(reset=True, start=0): {
             'name': 'Scene Formats',
             'flag': SceneFormat,
             'value': common.sort_words(
@@ -90,7 +91,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Scene file formats'
         },
-        1: {
+        common.idx(): {
             'name': 'Image Formats',
             'flag': ImageFormat,
             'value': common.sort_words(
@@ -98,7 +99,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Image file formats'
         },
-        2: {
+        common.idx(): {
             'name': 'Cache Formats',
             'flag': CacheFormat,
             'value': common.sort_words(
@@ -107,7 +108,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'CG cache formats'
         },
-        3: {
+        common.idx(): {
             'name': 'Movie Formats',
             'flag': MovieFormat,
             'value': common.sort_words(
@@ -115,7 +116,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Movie file formats'
         },
-        4: {
+        common.idx(): {
             'name': 'Audio Formats',
             'flag': AudioFormat,
             'value': common.sort_words(
@@ -123,7 +124,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Audio file formats'
         },
-        5: {
+        common.idx(): {
             'name': 'Document Formats',
             'flag': DocFormat,
             'value': common.sort_words(
@@ -131,7 +132,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Audio file formats'
         },
-        6: {
+        common.idx(): {
             'name': 'Script Formats',
             'flag': ScriptFormat,
             'value': common.sort_words(
@@ -139,7 +140,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Various script file formats'
         },
-        7: {
+        common.idx(): {
             'name': 'Miscellaneous Formats',
             'flag': MiscFormat,
             'value': common.sort_words(
@@ -149,103 +150,36 @@ DEFAULT_TOKEN_CONFIG = {
         },
     },
     FileNameConfig: {
-        0: {
-            'name': 'Asset Scene Task',
-            'value': '{prefix}_{asset}_{mode}_{element}_{user}_{version}.{ext}',
+        common.idx(reset=True, start=0): {
+            'name': 'Asset Scene',
+            'value': '{prefix}_{asset}_{element}.{version}.{ext}',
             'description': 'Uses the project prefix, asset, task, element, '
-                           'user and version names'
+                           'user and version names',
         },
-        1: {
-            'name': 'Asset Scene File (without task and element)',
-            'value': '{prefix}_{asset}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, asset, user and version names'
-        },
-        2: {
-            'name': 'Shot Scene Task',
-            'value': '{prefix}_{seq}_{shot}_{mode}_{element}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, sequence, shot, mode, element, '
-                           'user and version names'
-        },
-        3: {
-            'name': 'Shot Scene Task (without task and element)',
-            'value': '{prefix}_{seq}_{shot}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, sequence, shot, user and '
-                           'version names'
-        },
-        4: {
-            'name': 'Versioned Element',
-            'value': '{element}_{version}.{ext}',
-            'description': 'File name with an element and version name'
-        },
-        5: {
-            'name': 'Non-Versioned Element',
-            'value': '{element}.{ext}',
-            'description': 'A non-versioned element file'
-        },
-        6: {
-            'name': 'Studio Aka - Shot',
+        common.idx(): {
+            'name': 'Shot Scene',
             'value': '{prefix}_{seq}_{shot}_{mode}_{element}.{version}.{ext}',
-            'description': 'Studio Aka - ShotGrid file template'
-        },
-        7: {
-            'name': 'Studio Aka - Asset',
-            'value': '{asset1}_{asset5}_{element}.{version}.{ext}',
-            'description': 'Studio Aka - ShotGrid file template'
+            'description': 'Template name used save shot scene files',
         }
     },
     PublishConfig: {
-        0: {
-            'name': 'Shot Task',
-            'value': '{server}/{job}/publish/{sequence}_{shot}/{task}/{element}/{prefix}_{sequence}_{shot}_{task}_{'
-                     'element}.{ext}',
-            'description': 'Publish a shot task element',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        common.idx(): {
+            'name': 'Publish: Asset Item',
+            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset}_{task}_{element}.{ext}',
+            'description': 'Publish an asset scene',
         },
-        1: {
-            'name': 'Asset Task',
-            'value': '{server}/{job}/publish/asset_{asset}/{task}/{element}/{prefix}_{asset}_{task}_{element}.{ext}',
-            'description': 'Publish an asset task element',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
-        3: {
-            'name': 'Shot Thumbnail',
-            'value': '{server}/{job}/publish/{sequence}_{shot}/thumbnail.{ext}',
-            'description': 'Publish an shot thumbnail',
-            'filter': ImageFormat,
-        },
-        4: {
-            'name': 'Asset Thumbnail',
-            'value': '{server}/{job}/publish/asset_{asset}/thumbnail.{ext}',
-            'description': 'Publish an asset thumbnail',
-            'filter': ImageFormat,
-        },
-        5: {
-            'name': 'Asset (local publish)',
-            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset1}_{task}_{element}.{ext}',
-            'description': 'Publish an asset',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
-        6: {
-            'name': 'Shot (local publish)',
+        common.idx(): {
+            'name': 'Publish: Shot Item',
             'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{seq}_{shot}_{element}.{ext}',
-            'description': 'Publish a shot element',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
-        7: {
-            'name': 'Studio Aka - vCur',
-            'value': '{server}/{job}/{root}/{asset0}/{asset1}/{asset2}/publish/{asset4}/{asset5}/{asset1}_{asset5}_{'
-                     'element}.vCur.{ext}',
-            'description': 'Studio Aka - vCur',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+            'description': 'Publish a shot scene',
         },
     },
     AssetFolderConfig: {
-        0: {
+        common.idx(reset=True, start=0): {
             'name': CacheFolder,
             'value': CacheFolder,
             'description': 'Alembic, FBX, OBJ and other CG caches',
-            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat |
-                      CacheFormat,
+            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat | CacheFormat,
             'subfolders': {
                 0: {
                     'name': 'abc',
@@ -314,29 +248,26 @@ DEFAULT_TOKEN_CONFIG = {
                 }
             }
         },
-        1: {
+        common.idx(): {
             'name': DataFolder,
             'value': DataFolder,
             'description': 'Temporary data files, or content generated by '
                            'applications',
             'filter': AllFormat,
-            'subfolders': {},
         },
-        2: {
+        common.idx(): {
             'name': ReferenceFolder,
             'value': ReferenceFolder,
             'description': 'References, e.g., images, videos or sound files',
             'filter': ImageFormat | DocFormat | AudioFormat | MovieFormat,
-            'subfolders': {},
         },
-        3: {
+        common.idx(): {
             'name': RenderFolder,
             'value': 'images',
             'description': 'Render layer outputs',
             'filter': ImageFormat | AudioFormat | MovieFormat,
-            'subfolders': {},
         },
-        4: {
+        common.idx(): {
             'name': SceneFolder,
             'value': 'scenes',
             'description': 'Project and scene files',
@@ -389,39 +320,43 @@ DEFAULT_TOKEN_CONFIG = {
                 },
             },
         },
-        5: {
+        common.idx(): {
             'name': PublishFolder,
             'value': 'publish',
             'description': 'Asset publish files',
+            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat
+        },
+        common.idx(): {
+            'name': CaptureFolder,
+            'value': 'captures',
+            'description': 'Viewport captures and preview files',
             'filter': ImageFormat | MovieFormat | AudioFormat
         },
-        6: {
+        common.idx(): {
             'name': TextureFolder,
             'value': 'sourceimages',
             'description': '2D and 3D texture files',
             'filter': ImageFormat | MovieFormat | AudioFormat,
-            'subfolders': {},
         },
-        7: {
+        common.idx(): {
             'name': MiscFolder,
             'value': 'other',
             'description': 'Miscellaneous asset files',
             'filter': AllFormat,
-            'subfolders': {},
         }
     },
     FFMpegTCConfig: {
-        0: {
+        common.idx(reset=True, start=0): {
             'name': 'Shot',
             'value': '{job} | {sequence}-{shot}-{task}-{version} | {date} {user} | {in_frame}-{out_frame}',
             'description': 'Timecode to use for shots'
         },
-        1: {
+        common.idx(): {
             'name': 'Asset',
             'value': '{job} | {asset}-{task}-{version} | {date} {user}',
             'description': 'Timecode to use for assets'
         },
-        2: {
+        common.idx(): {
             'name': 'Date and user',
             'value': '{job} | {date} {user}',
             'description': 'Sparse timecode with the date and username'

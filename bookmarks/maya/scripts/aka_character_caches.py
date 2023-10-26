@@ -90,6 +90,37 @@ DEFAULT_VALUES = {
 }
 
 
+def export_nullLocator_to_alembic(output_file_path, cut_in, cut_out):
+    """Export the nullLocator to Alembic.
+
+    Args:
+        output_file_path (str): The output file path.
+        cut_in (int): The cut in frame.
+        cut_out (int): The cut out frame.
+
+    """
+    # Check if the nullLocator exists
+    if not cmds.objExists('nullLocator'):
+        raise ValueError('nullLocator does not exist in the scene.')
+
+    # Ensure that the nullLocator is in world space
+    parent = cmds.listRelatives('nullLocator', parent=True)
+    if parent:
+        # Parent it to the world
+        cmds.parent('nullLocator', world=True)
+
+    # Export to Alembic
+    export_command = (
+        f'-frameRange {cut_in} {cut_out} '
+        f'-worldSpace '  # Ensures the object is exported in world space
+        f'-root nullLocator '  # The object we want to export
+        f'-file "{output_file_path}"'
+    )
+    cmds.AbcExport(j=export_command)
+
+    print("Exported nullLocator to: {}".format(output_file_path))
+
+
 def find_studio_library():
     for path in sys.path:
         if not os.path.isdir(path):
@@ -597,6 +628,12 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
             log.success(f'Studio Library clip saved to:\n{p}')
         except UnicodeDecodeError as e:
             print(e)
+
+        # Export the nullLocator to Alembic
+        self.statusChanged.emit('Exporting...', 'Saving nullLocator animation...')
+        p = get_cache_path('nullLocator', 'abc')
+        output_paths.append(p)
+        export_nullLocator_to_alembic(p, cut_in, cut_out)
 
         # Cleanup
         cmds.delete(constraint)

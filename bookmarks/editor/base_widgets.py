@@ -16,8 +16,7 @@ THUMBNAIL_EDITOR_SIZE = common.size(common.size_margin) * 10
 HEIGHT = common.size(common.size_row_height) * 0.8
 TEMP_THUMBNAIL_PATH = '{temp}/{product}/temp/{uuid}.{ext}'
 
-ProjectTypes = ('Project',)
-AssetTypes = ('Episode', 'Asset', 'Sequence', 'Shot')
+AssetTypes = ('Asset', 'Sequence', 'Shot')
 
 
 @common.error
@@ -142,8 +141,19 @@ class SGProjectTypesWidget(BaseComboBox):
         """Initialize items.
         
         """
-        for entity_type in ProjectTypes:
-            self.addItem(entity_type)
+        self.addItem('Project')
+
+
+class SGEpisodeTypesWidget(BaseComboBox):
+    """ShotGrid entity type picker.
+
+    """
+
+    def init_items(self):
+        """Initialize items.
+
+        """
+        self.addItem('Episode')
 
 
 class SGAssetTypesWidget(BaseComboBox):

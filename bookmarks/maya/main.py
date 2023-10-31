@@ -591,7 +591,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         width = (width * 0.5) if width > common.size(common.size_width) else width
         width = width - common.size(common.size_indicator)
 
-        widget = contextmenu.MayaWidgetContextMenu(index, parent=parent)
+        widget = contextmenu.PluginContextMenu(index, parent=parent)
         if index.isValid():
             rect = parent.visualRect(index)
             widget.move(

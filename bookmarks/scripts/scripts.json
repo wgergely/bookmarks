@@ -19,7 +19,7 @@
   "3": {
     "name": "Send Images to After Effects",
     "module": "send_images_to_after_effects",
-    "description": "View clips and export them to editorial",
+    "description": "Send image sequences to After Effects",
     "needs_active": "task",
     "needs_application": "after effects",
     "icon": "add_file"

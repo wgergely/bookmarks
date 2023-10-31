@@ -746,7 +746,7 @@ class FileItemView(views.ThreadedItemView):
     queues = (threads.FileInfo, threads.FileThumbnail)
 
     def __init__(self, icon='file', parent=None):
-        super(FileItemView, self).__init__(
+        super().__init__(
             icon=icon,
             parent=parent
         )

@@ -148,7 +148,7 @@ class SizeComboBox(QtWidgets.QComboBox):
         """
         db = database.get(*common.active('root', args=True))
         bookmark_width = db.value(db.source(), 'width', database.BookmarkTable)
-        bookmark_height = db.value(db.source(), 'width', database.BookmarkTable)
+        bookmark_height = db.value(db.source(), 'height', database.BookmarkTable)
         asset_width = db.value(common.active('asset', path=True), 'asset_width', database.AssetTable)
         asset_height = db.value(common.active('asset', path=True), 'asset_height', database.AssetTable)
 

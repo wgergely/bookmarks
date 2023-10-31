@@ -247,6 +247,9 @@ class SGProperties(QtCore.QObject):
         self.bookmark_id = None
         self.bookmark_name = None
 
+        self.episode_id = None
+        self.episode_name = None
+
         self.asset_type = None
         self.asset_id = None
         self.asset_name = None
@@ -297,11 +300,15 @@ class SGProperties(QtCore.QObject):
         self.bookmark_id = db.value(s, 'shotgun_id', t)
         self.bookmark_name = db.value(s, 'shotgun_name', t)
 
+        self.episode_id = db.value(s, 'sg_episode_id', t)
+        self.episode_name = db.value(s, 'sg_episode_name', t)
+
         if not self.asset:
             return
 
         t = database.AssetTable
         s = db.source(self.asset)
+
         self.asset_type = db.value(s, 'shotgun_type', t)
         self.asset_id = db.value(s, 'shotgun_id', t)
         self.asset_name = db.value(s, 'shotgun_name', t)
@@ -442,13 +449,17 @@ class SGProperties(QtCore.QObject):
             return []
 
         urls = []
+
         urls.append(self.domain)
         if all((self.bookmark_id, self.bookmark_type)):
-            urls.append(
-                ENTITY_URL.format(domain=self.domain, entity_type=self.bookmark_type, entity_id=self.bookmark_id)
-            )
+            urls.append(ENTITY_URL.format(domain=self.domain, entity_type=self.bookmark_type, entity_id=self.bookmark_id))
+        if not self.episode_id is None:
+            urls.append(ENTITY_URL.format(domain=self.domain, entity_type='Episode', entity_id=self.episode_id))
         if all((self.asset_id, self.asset_type)):
             urls.append(ENTITY_URL.format(domain=self.domain, entity_type=self.asset_type, entity_id=self.asset_id))
+        if not self.asset_task_id is None:
+            urls.append(ENTITY_URL.format(domain=self.domain, entity_type='Task', entity_id=self.asset_task_id))
+
         return urls
 
 

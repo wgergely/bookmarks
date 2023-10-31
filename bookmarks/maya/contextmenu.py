@@ -31,11 +31,11 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.save_menu()
+        self.separator()
         self.scripts_menu()
         self.separator()
         self.apply_bookmark_settings_menu()
-        self.separator()
-        self.save_menu()
         self.separator()
         self.open_import_scene_menu()
         self.separator()
@@ -47,6 +47,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.capture_menu()
         self.separator()
         self.hud_menu()
+        self.separator()
+        self.maya_preferences_menu()
 
     def apply_bookmark_settings_menu(self):
         """Apply settings action.
@@ -265,6 +267,39 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             'action': actions.toggle_hud
         }
 
+    def maya_preferences_menu(self):
+        item_on_icon = ui.get_icon('check', color=common.color(common.color_green))
+        item_off_icon = ui.get_icon('close', color=common.color(common.color_red))
+
+        k = 'Options'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('settings')
+
+        for item in (
+            ('maya/sync_workspace', 'Set Workspace'),
+            ('maya/set_sg_context', 'Set ShotGrid Context'),
+            'separator',
+            ('maya/reveal_capture', 'Reveal capture in explorer'),
+            ('maya/publish_capture', 'Copy capture to \'latest\''),
+            'separator',
+            ('maya/workspace_save_warnings', 'Show Warnings'),
+        ):
+            if item == 'separator':
+                self.separator(menu=self.menu[k])
+                continue
+
+            key, name = item
+
+            value = common.settings.value(key)
+            value = value if value is not None else False
+
+            # "True" values refer to the functionality in "disabled" state, so we need to flip the values
+            self.menu[k][contextmenu.key()] = {
+                'text': name,
+                'icon': item_on_icon if not value else item_off_icon,
+                'action': functools.partial(common.settings.setValue, key, not value)
+            }
+
 
 class MayaButtonWidgetContextMenu(PluginContextMenu):
     """The context-menu associated with the BrowserButton."""
@@ -273,30 +308,3 @@ class MayaButtonWidgetContextMenu(PluginContextMenu):
         super().__init__(
             QtCore.QModelIndex(), parent=parent
         )
-
-
-class MayaWidgetContextMenu(PluginContextMenu):
-    """Context menu associated with :class:`MayaWidget`.
-
-    """
-
-    @common.error
-    @common.debug
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.apply_bookmark_settings_menu()
-        self.separator()
-        self.save_menu()
-        self.separator()
-        self.open_import_scene_menu()
-        self.separator()
-        self.export_menu()
-        self.separator()
-        self.import_camera_menu()
-        self.separator()
-        self.viewport_presets_menu()
-        self.capture_menu()
-        self.separator()
-        self.hud_menu()

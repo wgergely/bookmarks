@@ -36,6 +36,7 @@ SECTIONS = {
         'settings/paint_thumbnail_bg',
         'settings/disable_oiio',
         'settings/hide_item_descriptions',
+        'settings/default_to_scenes_folder',
         'settings/always_always_on_top',
         'settings/bin_ffmpeg',
         'settings/bin_rv',
@@ -92,6 +93,15 @@ SECTIONS = {
         'ffmpeg/size',
         'ffmpeg/timecode_preset',
         'ffmpeg/pushtorv',
+    ),
+    'akaconvert': (
+        'akaconvert/preset',
+        'akaconvert/size',
+        'akaconvert/acesprofile',
+        'akaconvert/inputcolor',
+        'akaconvert/outputcolor',
+        'akaconvert/videoburnin',
+        'akaconvert/pushtorv',
     ),
     'maya': (
         'maya/sync_workspace',
@@ -352,6 +362,7 @@ class UserSettings(QtCore.QSettings):
         self.verify_timer.setSingleShot(False)
         self.verify_timer.setTimerType(QtCore.Qt.CoarseTimer)
         self.verify_timer.timeout.connect(self.load_active_values)
+        self.verify_timer.start()
 
     def load_active_values(self):
         """Load active path elements from the settings file.

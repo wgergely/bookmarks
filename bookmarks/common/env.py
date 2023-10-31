@@ -9,6 +9,7 @@ import re
 
 from PySide2 import QtCore, QtWidgets
 
+
 external_binaries = (
     'ffmpeg',
     'rvpush',
@@ -18,36 +19,54 @@ external_binaries = (
 
 
 def get_binary(binary_name):
-    """External binary paths must be set explicitly by the environment or by the
-    user in the user settings.
+    """Binary path getter.
 
-    Bookmarks will look for user defined binary paths, or failing that,
-    environment values in a ``{PREFIX}_{BINARY_NAME}`` format,
-    e.g. ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
-    should point to an appropriate executable, e.g.
-    ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
+    The paths are resolved from the following sources and order:
+        - active bookmark item's application launcher items
+        - user settings
+        - environment variables in a ``{PREFIX}_{BINARY_NAME}`` format,
+        e.g. ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
+        should point to an appropriate executable, e.g.
+        ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
 
-    If the environment variable is absent, we'll look at the PATH environment to
-    see if the binary is available there.
+        If the environment variable is absent, we'll look at the PATH environment to
+        see if the binary is available there.
 
     Args:
-        binary_name (str): One of the pre-defined external binary names.
-            E.g. `ffmpeg`.
+        binary_name (str): Name of a binary, lower-case, without spaces. E.g. `aftereffects`, `oiiotool`, `ffmpeg`, etc.
 
     Returns:
-        str: Path to an executable binary, or `None` if the binary is not found.
+        str: Path to an executable binary, or `None` if the binary is not found in any of the sources.
 
     """
-    if binary_name.lower() not in [f.lower() for f in external_binaries]:
-        raise ValueError(f'{binary_name} is not a recognised binary name.')
+    # Sanitize the binary name
+    binary_name = re.sub(r'\s+', '', binary_name).lower().strip()
 
+    # Check the active bookmark item's database for possible values
+    from .. import database
+    from .. import common
+
+    args = common.active('root', args=True)
+
+    if args:
+        db = database.get(*args)
+        applications = db.value(db.source(), 'applications', database.BookmarkTable)
+        if applications:
+            # Sanitize names, so they're all lower-case and without spaces
+            names = [re.sub(r'\s+', '', v['name']).lower().strip() for v in applications.values()]
+            if binary_name in names:
+                # We have a match, return the path
+                v = applications[names.index(binary_name)]['path']
+                if v and QtCore.QFileInfo(v).exists():
+                    return v
+
+    # Check the user settings for possible values
     v = get_user_setting(binary_name)
     if v:
         return v
 
-    from . import product
-
-    key = f'{product}_{binary_name}'.upper()
+    # Check the environment variables for possible values
+    key = f'{common.product}_{binary_name}'.upper()
     if key in os.environ:
         v = os.environ[key]
         try:

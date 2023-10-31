@@ -106,6 +106,7 @@ file_saver_widget = None
 publish_widget = None
 maya_export_widget = None
 ffmpeg_export_widget = None
+akaconvert_widget = None
 screen_capture_widget = None
 pick_thumbnail_widget = None
 notes_widget = None

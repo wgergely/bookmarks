@@ -72,7 +72,7 @@ DEFAULT_VALUES = {
             'widget': ui.LineEdit,
         },
         'exclude_reset_pose_from': {
-            'default': 'legUI_L0_ctl, armUI_R0_ctl, faceUI_C0_ctl, legUI_R0_ctl, spineUI_C0_ctl, armUI_L0_ctl',
+            'default': 'legUI_L0_ctl, armUI_R0_ctl, faceUI_C0_ctl, legUI_R0_ctl, spineUI_C0_ctl, armUI_L0_ctl, body_C0_ctl, world_ctl, root_C0_ctl',
             'placeholder': 'list, of, controllers, to, exclude',
             'widget': ui.LineEdit,
         },
@@ -662,13 +662,13 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
         # Studio Library: Apply the reset pose at cut_in - preroll
         # We only want to apply the reset pose to the controllers that are not excluded
         _s1 = set(cmds.sets(options['controllers_set'], query=True))
-        _s2 = set(options['exclude_animation_from']) if options["apply_animation_exclusions"] else set()
         _s3 = set(options["exclude_reset_pose_from"])
 
         mutils.loadPose(
-            os.path.normpath(
-                options["studio_library_reset_pose"]
-            ), objects=list(_s1 - _s2 - _s3), key=True, namespaces=[options['namespace'], ]
+            os.path.normpath(options["studio_library_reset_pose"]),
+            objects=list(_s1 - _s3),
+            key=True,
+            namespaces=[options['namespace'], ]
         )
 
         # -- Cache exports --
@@ -889,11 +889,16 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
 def run():
     global instance
+    if instance:
+        try:
+            instance.close()
+            instance.deleteLater()
+            instance = None
+        except:
+            pass
 
-    if instance is None:
-        instance = ExportCharacterCachesDialog()
-        instance.accepted.connect(lambda: common.source_model(common.FileTab).reset_data(force=True))
-
+    instance = ExportCharacterCachesDialog()
+    instance.accepted.connect(lambda: common.source_model(common.FileTab).reset_data(force=True))
     actions.change_tab(common.FileTab)
     actions.set_task_folder(tokens.get_folder(tokens.CacheFolder))
 

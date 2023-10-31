@@ -1,9 +1,10 @@
 """The application launcher item viewer.
 
 """
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 
 from .. import actions
+from .. import images
 from .. import common
 from .. import database
 from .. import ui
@@ -76,5 +77,56 @@ class ApplicationLauncherWidget(ui.GalleryWidget):
                 return
             actions.edit_bookmark()
 
-        for k in sorted(v, key=lambda _k: v[_k]['name']):
-            yield v[k]['name'], v[k]['path'], v[k]['thumbnail']
+        for k in sorted(v, key=lambda idx: v[idx]['name']):
+            yield v[k]
+
+    def init_data(self):
+        """Initializes data.
+
+        """
+        row = 0
+        idx = 0
+
+
+        for v in self.item_generator():
+            if 'name' not in v or not v['name']:
+                continue
+            label = v['name']
+
+            if 'path' not in v or not v['path']:
+                continue
+            path = v['path']
+
+            if not QtCore.QFileInfo(path).exists():
+                continue
+
+            if 'thumbnail' not in v or not v['thumbnail']:
+                thumbnail = images.rsc_pixmap(
+                    'icon',
+                    None,
+                    None,
+                    get_path=True,
+                )
+            else:
+                thumbnail = v['thumbnail']
+            if 'hidden' not in v or not v['hidden']:
+                is_hidden = False
+            else:
+                is_hidden = v['hidden']
+
+            if is_hidden:
+                continue
+
+            item = ui.GalleryItem(
+                label, path, thumbnail, height=self._item_height, parent=self
+            )
+
+            column = idx % self.columns
+            if column == 0:
+                row += 1
+
+            self.scroll_area.widget().layout().addWidget(item, row, column)
+            item.clicked.connect(self.itemSelected)
+            item.clicked.connect(self.close)
+
+            idx += 1

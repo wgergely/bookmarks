@@ -29,13 +29,13 @@ BUTTONS = {
         'hidden': False,
     },
     next(n): {
+        'widget': buttons.ApplicationLauncherButton,
+        'hidden': False,
+    },
+    next(n): {
         'widget': filters.JobsFilterButton,
         'hidden': True,
     },
-    # next(n): {
-    #     'widget': filters.RootsFilterButton,
-    #     'hidden': False,
-    # },
     next(n): {
         'widget': filters.EntityFilterButton,
         'hidden': True,
@@ -54,10 +54,6 @@ BUTTONS = {
     },
     next(n): {
         'widget': buttons.FilterButton,
-        'hidden': False,
-    },
-    next(n): {
-        'widget': buttons.ApplicationLauncherButton,
         'hidden': False,
     },
     next(n): {

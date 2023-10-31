@@ -345,7 +345,6 @@ class BookmarksAppWindow(main.MainWidget):
         """Extra signal connections when Bookmarks runs in standalone mode.
 
         """
-        func = functools.partial(common.save_window_state, self)
         self.files_widget.activated.connect(actions.execute)
         self.favourites_widget.activated.connect(actions.execute)
 
@@ -446,6 +445,8 @@ class BookmarksApp(QtWidgets.QApplication):
             if hasattr(widget, 'statusTip') and widget.statusTip():
                 common.signals.showStatusTipMessage.emit(widget.statusTip())
         if event.type() == QtCore.QEvent.Leave:
+            if not common.signals:
+                return False
             common.signals.clearStatusBarMessage.emit()
 
         return False

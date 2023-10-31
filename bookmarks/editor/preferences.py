@@ -137,6 +137,21 @@ class PreferenceEditor(base.BasePropertyEditor):
                 },
                 1: {
                     0: {
+                        'name': 'Default to scene folder',
+                        'key': 'settings/default_to_scenes_folder',
+                        'validator': None,
+                        'widget': functools.partial(
+                            QtWidgets.QCheckBox, 'Enable'
+                        ),
+                        'placeholder': 'Default to scene folder',
+                        'description': 'Default to the scene Folder when the active asset changes',
+                        'help': 'If enabled, the files tab will always show the '
+                                'contents of the scene folder (instead of the last '
+                                'selected folder) when the active asset changes.',
+                    },
+                },
+                2: {
+                    0: {
                         'name': 'Bookmark item search depth',
                         'key': 'settings/job_scan_depth',
                         'validator': base.int_validator,
@@ -244,13 +259,13 @@ class PreferenceEditor(base.BasePropertyEditor):
                                        'captures in the file explorer.',
                     },
                     2: {
-                        'name': 'Disable "Latest" Capture',
+                        'name': 'Copy capture to "latest" folder',
                         'key': 'maya/publish_capture',
                         'validator': None,
                         'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                         'placeholder': None,
                         'description': 'The last capture by default will be '
-                                       'published into a "Latest" folder with using a '
+                                       'published into a "latest" folder with using a '
                                        'generic filename.\nThis can be useful for '
                                        'creating quick edits in RV. Check the box '
                                        'above to disable.',

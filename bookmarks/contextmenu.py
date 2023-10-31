@@ -1510,7 +1510,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Add as source',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.execute_rvpush_command, path, rv.Add, basecommand=rv.MERGE)
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.Add)
         }
 
         self.separator(self.menu[k])
@@ -1533,7 +1533,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
         self.menu[k][key()] = {
-            'text': 'SG Publish: MP4 as Version',
+            'text': 'Publish Video',
             'icon': ui.get_icon('sg', color=common.color(common.color_green)),
             'action': functools.partial(sg_actions.publish, formats=('mp4', 'mov')),
         }
@@ -1585,12 +1585,21 @@ class BaseContextMenu(QtWidgets.QMenu):
         if ext.lower() not in images.get_oiio_extensions():
             return
 
+        # AkaConvert
+        from .external import akaconvert
+        if akaconvert.KEY in os.environ and os.environ[akaconvert.KEY]:
+            self.menu[key()] = {
+                'text': 'AkaConvert...',
+                'icon': ui.get_icon('convert', color=common.color(common.color_blue)),
+                'action': actions.convert_image_sequence_with_akaconvert
+            }
+
         # Can only convert when FFMpeg is present
         if not common.get_binary('ffmpeg'):
             return
 
         self.menu[key()] = {
-            'text': 'Convert Sequence',
+            'text': 'Convert Sequence...',
             'icon': ui.get_icon('convert'),
             'action': actions.convert_image_sequence
         }
@@ -1690,14 +1699,9 @@ class BaseContextMenu(QtWidgets.QMenu):
                     continue
             # Check if the script needs an application to be set
             if 'needs_application' in v and v['needs_application']:
-                if not common.active('root', args=True):
-                    continue
-                # Get the bookmark database
-                db = database.get(*common.active('root', args=True))
-                applications = db.value(db.source(), 'applications', database.BookmarkTable)
-                if not applications:
-                    continue
-                if not [app for app in applications.values() if v['needs_application'].lower() in app['name'].lower()]:
+                afxs = ('aftereffects', 'afx', 'afterfx')
+                if not any(([common.get_binary(f)] for f in afxs)):
+                    print(f'Could not find After Effects. Tried: {afxs}')
                     continue
             if 'icon' in v and v['icon']:
                 icon = ui.get_icon(v['icon'])

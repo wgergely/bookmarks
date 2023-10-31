@@ -121,12 +121,41 @@ def apply_settings(*args, **kwargs):
     ) == QtWidgets.QDialog.Rejected:
         return
 
-    base.patch_workspace_file_rules()
-    base.set_framerate(props.framerate)
-    base.set_startframe(props.startframe)
-    base.set_endframe(props.endframe)
-    base.apply_default_render_values()
-    base.set_render_resolution(props.width, props.height)
+    try:
+        base.patch_workspace_file_rules()
+    except Exception as e:
+        log.error(f'Could not patch workspace.mel:\n{e}')
+        return
+
+    try:
+        base.set_framerate(props.framerate)
+    except Exception as e:
+        log.error(f'Could not set framerate:\n{e}')
+        return
+
+    try:
+        base.set_startframe(props.startframe)
+    except Exception as e:
+        log.error(f'Could not set startframe:\n{e}')
+        return
+
+    try:
+        base.set_endframe(props.endframe)
+    except Exception as e:
+        log.error(f'Could not set endframe:\n{e}')
+        return
+
+    try:
+        base.apply_default_render_values()
+    except Exception as e:
+        log.error(f'Could not apply default render values:\n{e}')
+        return
+
+    try:
+        base.set_render_resolution(props.width, props.height)
+    except Exception as e:
+        log.error(f'Could not set render resolution:\n{e}')
+        return
 
 
 @common.error

@@ -1434,6 +1434,68 @@ def execute(index, first=False):
     else:
         path = common.get_sequence_end_path(path)
 
+    ext = QtCore.QFileInfo(path).suffix()
+
+    # Handle Maya files
+    if ext in ('ma', 'mb'):
+        for app in (
+                'maya', 'maya2017', 'maya2018', 'maya2019', 'maya2020', 'maya2022', 'maya2023', 'maya2024',
+                'maya2025', 'maya2026'
+         ):
+            executable = common.get_binary(app)
+            if not executable:
+                continue
+            execute_detached(executable, args=['-file', path])
+            return
+
+    # Handle Nuke files
+    if ext in ('nk', 'nknc'):
+        executable = common.get_binary('nuke')
+        if executable:
+            execute_detached(path, args=[path,])
+            return
+
+    # Handle Houdini files
+    if ext == 'hiplc':
+        for app in ('houdiniinidie', 'houindie', 'houind', 'houdiniind', 'hindie'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    if ext == 'hip':
+        for app in ('houdini', 'houdinifx', 'houfx', 'hfx', 'houdinicore', 'hcore'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    # Handle RV files
+    if ext == 'rv':
+        for app in ('rv', 'tweakrv', 'shotgunrv', 'shotgridrv', 'sgrv'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    # Handle blender files
+    if ext in ('blend', ):
+        for app in ('blender', 'blender2.8', 'blender2.9', 'blender3', 'blender3.0', 'blender3.1', 'blender3.2',
+                    'blender3.3', 'blender3.4', 'blender3.5'
+        ):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    # Handle After Effects files
+    if ext in ('aep', ):
+        for app in ('afterfx', 'aftereffects', 'ae', 'afx'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
     url = QtCore.QUrl.fromLocalFile(path)
     QtGui.QDesktopServices.openUrl(url)
 
@@ -1544,6 +1606,9 @@ def execute_detached(path, args=None):
     On Windows, we'll call the given file using the file explorer as we want to
     avoid the process inheriting the parent process' environment variables.
 
+    Args:
+        path (str): The path to the file to execute.
+        args (list): A list of optional arguments to pass to the process.
     """
     if common.get_platform() == common.PlatformWindows:
         proc = QtCore.QProcess()

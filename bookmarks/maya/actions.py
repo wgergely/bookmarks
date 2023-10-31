@@ -217,7 +217,7 @@ def save_scene(increment=False, type='mayaAscii'):
 @common.error
 @common.debug
 def execute(index):
-    """Action used to execute a selected file item.
+    """Action used to execute a selected file item in Maya.
 
     """
     file_path = common.get_sequence_end_path(
@@ -226,7 +226,7 @@ def execute(index):
     file_info = QtCore.QFileInfo(file_path)
 
     # Open alembic, and maya files:
-    if file_info.suffix().lower() in ('ma', 'mb', 'abc'):
+    if file_info.suffix().lower() in ('ma', 'mb', 'abc', 'obj', 'fbx', 'usd', 'usda', 'usdc'):
         open_scene(file_info.filePath())
         return
 

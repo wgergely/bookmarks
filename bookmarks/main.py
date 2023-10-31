@@ -182,6 +182,9 @@ class MainWidget(QtWidgets.QWidget):
         )
         # Asset -> File
         a.model().sourceModel().activeChanged.connect(
+            actions.apply_default_to_scenes_folder
+        )
+        a.model().sourceModel().activeChanged.connect(
             f.model().sourceModel().reset_data
         )
         # Asset -> Task
@@ -219,6 +222,7 @@ class MainWidget(QtWidgets.QWidget):
             )
         )
 
+        # Load bookmark items upon initialization
         self.initialized.connect(b.model().sourceModel().reset_data)
 
     @QtCore.Slot()

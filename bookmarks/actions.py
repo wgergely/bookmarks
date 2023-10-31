@@ -450,6 +450,30 @@ def set_active(k, v):
         common.settings.setValue(f'active/{k}', v)
 
 
+@QtCore.Slot(QtCore.QModelIndex)
+def apply_default_to_scenes_folder(index):
+    """Slot responsible for applying the default to scenes folder setting.
+
+    The slot is connected to the :class:`bookmarks.items.file_items.FileItemModel`'s
+    `activeChanged` signal, and we're using it to modify the active 'task' path before
+    resetting the file model.
+
+    Args:
+        index (QtCore.QModelIndex): The index of the activated asset items.
+
+    """
+    v = common.settings.value('settings/default_to_scenes_folder')
+    if not v:
+        return
+
+    if not index.isValid():
+        return
+
+    # Get the current scene folder name from the token configuration.
+    from .tokens import tokens
+    set_active('task', tokens.get_folder(tokens.SceneFolder))
+
+
 @common.error
 @common.debug
 def set_task_folder(v):
@@ -1679,6 +1703,12 @@ def convert_image_sequence(index):
     from .external import ffmpeg_widget
     ffmpeg_widget.show(index)
 
+@common.debug
+@common.error
+@selection
+def convert_image_sequence_with_akaconvert(index):
+    from .external import akaconvert
+    akaconvert.show(index)
 
 def add_zip_template(source, mode, prompt=False):
     """Adds the selected source zip archive as a `mode` template file.

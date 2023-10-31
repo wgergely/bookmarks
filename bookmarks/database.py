@@ -259,6 +259,14 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
+        'sg_episode_id': {
+            'sql': 'INT',
+            'type': int
+        },
+        'sg_episode_name': {
+            'sql': 'TEXT',
+            'type': str
+        },
         'url1': {
             'sql': 'TEXT',
             'type': str,

@@ -121,10 +121,8 @@ SECTIONS = {
     'publish': (
         'publish/archive_existing',
         'publish/template',
-        'publish/task',
         'publish/copy_path',
         'publish/reveal',
-        'publish/teams_notification',
     ),
 }
 

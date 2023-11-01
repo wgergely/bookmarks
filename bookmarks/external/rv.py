@@ -69,7 +69,7 @@ def execute_rvpush_command(source, command):
     process1.waitForFinished(7000)
 
     # Wait 3 seconds for the process
-    QtCore.QThread.msleep(3000)
+    QtCore.QThread.msleep(2000)
 
     # Format the command
     cmd = command.format(
@@ -82,3 +82,7 @@ def execute_rvpush_command(source, command):
     process2.setProcessEnvironment(env)
     process2.start(cmd)
     process2.waitForFinished(7000)
+
+    errors = process2.readAllStandardError().data().decode('utf-8')
+    if errors:
+        raise RuntimeError(errors)

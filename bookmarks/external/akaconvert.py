@@ -9,7 +9,6 @@ from PySide2 import QtCore, QtWidgets
 
 from .. import common
 from .. import database
-from .. import log
 from ..editor import base
 
 
@@ -288,8 +287,8 @@ class AkaConvertWidget(base.BasePropertyEditor):
     #: UI layout definition
     sections = {
         0: {
-            'name': 'Convert Image Sequence',
-            'icon': 'convert',
+            'name': 'AkaConvert',
+            'icon': 'studioaka',
             'color': common.color(common.color_dark_background),
             'groups': {
                 0: {
@@ -429,7 +428,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
 
         self.process = QtCore.QProcess(parent=self)
         self.process.readyReadStandardOutput.connect(self.read_output)
-        self.process.finished.connect(self.on_finished)
+        self.process.finished.connect(self.convert_process_finished)
 
         self.process.setProgram(get_convert_script_path())
         self.process.setArguments(args)
@@ -443,8 +442,24 @@ class AkaConvertWidget(base.BasePropertyEditor):
         data = self.process.readAllStandardOutput().data().decode('utf-8')
 
         for line in data.splitlines():
+            if 'Movie saved to' in line:
+
+                # Get the path to the output video
+                video_path = line.split('Movie saved to')[-1].strip().strip('"')
+
+                if not QtCore.QFileInfo(video_path).exists():
+                    print(f'Could not find the output video: {video_path}')
+                else:
+                    # Show the video in the files tab
+                    common.signals.fileAdded.emit(video_path)
+
+                    # Push to RV
+                    if self.akaconvert_pushtorv_editor.isChecked():
+                        from ..external import rv
+                        rv.execute_rvpush_command(video_path, rv.PushAndClear)
+
             if 'Finished' in line:
-                self.on_finished(0, QtCore.QProcess.NormalExit)
+                self.convert_process_finished(0, QtCore.QProcess.NormalExit)
                 return
 
             if line.startswith('[AkaConvert Error]'):
@@ -460,7 +475,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
                 'Converting...', body=current_progress_line.replace('[AkaConvert Info]', ''), message_type=None,
                 buttons=[], disable_animation=True, )
 
-    def on_finished(self, exit_code, exit_status):
+    def convert_process_finished(self, exit_code, exit_status):
         # I don't know why, but the process doesn't terminate itself and will
         # keep running in the background. So we need to terminate it manually I guess!
         if exit_code != 0:
@@ -472,6 +487,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
             common.show_message(
                 'Finished.', f'Conversion has finished successfully.'
             )
+
         raise RuntimeError('Finished.')
 
     def sizeHint(self):

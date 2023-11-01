@@ -361,7 +361,10 @@ class PaintedButton(QtWidgets.QPushButton):
 
 
 class PaintedLabel(QtWidgets.QLabel):
-    """QLabel used for static aliased label."""
+    """QLabel used for static aliased label.
+
+    """
+    clicked = QtCore.Signal()
 
     def __init__(
             self, text, color=common.color(common.color_text),
@@ -369,9 +372,21 @@ class PaintedLabel(QtWidgets.QLabel):
             parent=None
     ):
         super().__init__(text, parent=parent)
+
         self._size = size
         self._color = color
         self._text = text
+
+        self.update_size()
+
+    def setText(self, v):
+        self._text = v
+        self.update_size()
+
+        super().setText(v)
+
+    def set_color(self, v):
+        self._color = v
         self.update_size()
 
     def update_size(self):
@@ -393,12 +408,12 @@ class PaintedLabel(QtWidgets.QLabel):
         painter.begin(self)
 
         hover = option.state & QtWidgets.QStyle.State_MouseOver
-        pressed = option.state & QtWidgets.QStyle.State_Sunken
-        focus = option.state & QtWidgets.QStyle.State_HasFocus
+        # pressed = option.state & QtWidgets.QStyle.State_Sunken
+        # focus = option.state & QtWidgets.QStyle.State_HasFocus
         disabled = not self.isEnabled()
 
         o = 1.0 if hover else 0.8
-        o = 0.3 if disabled else 1.0
+        o = 0.3 if disabled else o
         painter.setOpacity(o)
 
         rect = self.rect()
@@ -424,6 +439,18 @@ class PaintedLabel(QtWidgets.QLabel):
 
         """
         self.update()
+
+    def mouseReleaseEvent(self, event):
+        """Event handler.
+
+        """
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+        # Check if the click was inside the label
+        if not self.rect().contains(event.pos()):
+            return
+        if event.button() == QtCore.Qt.LeftButton:
+            self.clicked.emit()
 
 
 class ClickableIconButton(QtWidgets.QLabel):

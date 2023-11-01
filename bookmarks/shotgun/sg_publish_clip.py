@@ -1,11 +1,12 @@
 """The publishing widget used by Bookmarks to create new PublishedFiles and Version
 entities on ShotGrid.
 
-Our publishing logic creates `Version` and `PublishFile` entities linked against
+The publish logic creates `Version` and `PublishFile` entities linked against
 the current active project and asset and uploads any custom thumbnails set.
 
 """
 import re
+import time
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -313,7 +314,6 @@ class PublishWidget(base.BasePropertyEditor):
         if not sg_properties.verify(asset=True):
             raise ValueError('Asset not configured.')
 
-
         errors = []
 
         with sg_properties.connection() as sg:
@@ -347,11 +347,19 @@ class PublishWidget(base.BasePropertyEditor):
                     )
 
                 # Publish steps for creating the Cut, CutInfo and Version entities
+                # Get the entity type
+                if 'task_entity' in data and data['task_entity']:
+                    entity = data['task_entity']
+                elif 'asset_entity' in data and data['asset_entity']:
+                    entity = data['asset_entity']
+                else:
+                    raise RuntimeError('No asset or task entity found to associate with the publish.')
+
                 version_data = {
                     'project': data['project_entity'],
                     'code': data['name'],
                     'description': data['description'],
-                    'entity': data['asset_entity'],
+                    'entity': entity,
                     'user': user_entity
                 }
                 version = sg.create('Version', version_data)
@@ -372,7 +380,7 @@ class PublishWidget(base.BasePropertyEditor):
 
                 cut_data = {
                     'project': data['project_entity'],
-                    'entity': data['asset_entity'],
+                    'entity': entity,
                     'description': data['description'],
                     'version': version
                 }
@@ -474,6 +482,8 @@ class PublishWidget(base.BasePropertyEditor):
 
         common.close_message()
 
+        self.annotate_local_file(data)
+
         errs = '\n\n'.join([str(e) for e in errors])
         body = f'Publish successful.\n{len(errors)} errors occurred:\n\n{errs}' if errors else 'Publish successful.'
         common.show_message(
@@ -482,7 +492,38 @@ class PublishWidget(base.BasePropertyEditor):
             message_type='success',
             parent=common.main_widget
         )
-        return True
+
+    def annotate_local_file(self, data):
+        # Stamp the file
+        # Get the source's description from the database
+        db = database.get(*common.active('root', args=True))
+        description = db.value(data['file_path'], 'description', database.AssetTable)
+        description = description if description else ''
+
+        if '#sg_published' not in description:
+            description += f' #sg_published'
+        db.set_value(data['file_path'], 'description', description, database.AssetTable)
+
+        # Add a note to the database
+        note = (
+            f'Publish Log (ShotGrid)'
+            f'\nName: {data["name"]}'
+            f'\nDescription: {data["description"]}'
+            f'\nTime: {time.strftime("%d/%m/%Y %H:%M:%S")}'
+            f'\nUser: {common.get_username()}'
+        )
+        notes = db.value(data['file_path'], 'notes', database.AssetTable)
+        notes = notes if notes else {}
+        notes[len(notes)] = {
+            'title': 'Publish Log (ShotGrid)',
+            'body': note,
+            'extra_data': {
+                'created_by': common.get_username(),
+                'created_at': time.strftime('%d/%m/%Y %H:%M:%S'),
+                'fold': False,
+            }
+        }
+        db.set_value(data['file_path'], 'notes', notes, database.AssetTable)
 
     def get_publish_args(self):
         """Get all necessary arguments for publishing.

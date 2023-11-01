@@ -8,7 +8,6 @@ This currently entails
 import functools
 import json
 import os
-import re
 import time
 
 import pyimageutil
@@ -122,7 +121,7 @@ def get_payload(kwargs, destination):
 
 
 class TemplateModel(ui.AbstractListModel):
-    """Model used to list all available publish templates.
+    """Model used to list all available publish templates from the active bookmark item's token configuration.
 
     """
 
@@ -141,6 +140,16 @@ class TemplateModel(ui.AbstractListModel):
 
         template = common.settings.value('publish/template')
         for v in data[tokens.PublishConfig].values():
+            if 'name' not in v:
+                print(f'Warning: Invalid publish template: {v}')
+                continue
+            if 'value' not in v:
+                print(f'Warning: Invalid publish template: {v}')
+                continue
+            if 'description' not in v:
+                print(f'Warning: Invalid publish template: {v}')
+                continue
+
             if template == v['name']:
                 pixmap = images.rsc_pixmap(
                     'check', common.color(common.color_green), common.size(common.size_margin) * 2
@@ -166,6 +175,8 @@ class TemplateModel(ui.AbstractListModel):
 class TemplateComboBox(QtWidgets.QComboBox):
     """Publish template picker.
 
+    The editor will list all relevant templates stored in the bookmark item database's token configuration.
+
     """
 
     def __init__(self, parent=None):
@@ -173,82 +184,6 @@ class TemplateComboBox(QtWidgets.QComboBox):
         self.setView(QtWidgets.QListView())
         self.setModel(TemplateModel())
 
-
-class TaskModel(ui.AbstractListModel):
-    def __init__(self, parent=None):
-        super(TaskModel, self).__init__(parent=parent)
-
-    @common.error
-    @common.debug
-    def init_data(self):
-        """Initializes data.
-
-        """
-        self._data = {}
-
-        k = common.active('asset', path=True)
-        if not k or not QtCore.QFileInfo(k).exists():
-            return
-
-        # Load the available task folders from the active bookmark item's `tokens`.
-        self._add_sub_folders(tokens.SceneFolder)
-        self._add_separator('Custom (click \'Add\' to add new)')
-
-    def _add_separator(self, label):
-        self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: label,
-            QtCore.Qt.DecorationRole: None,
-            QtCore.Qt.ForegroundRole: common.color(common.color_disabled_text),
-            QtCore.Qt.SizeHintRole: self.row_size,
-            QtCore.Qt.UserRole: None,
-            common.FlagsRole: QtCore.Qt.NoItemFlags
-        }
-
-    def _add_sub_folders(self, token):
-        _icon = ui.get_icon('icon_bw', size=common.size(common.size_margin) * 2)
-        description = tokens.get_description(token)
-        for sub_folder in tokens.get_subfolders(token):
-            self._data[len(self._data)] = {
-                QtCore.Qt.DisplayRole: self.display_name(sub_folder),
-                QtCore.Qt.DecorationRole: _icon,
-                QtCore.Qt.ForegroundRole: common.color(common.color_text),
-                QtCore.Qt.SizeHintRole: self.row_size,
-                QtCore.Qt.StatusTipRole: description,
-                QtCore.Qt.AccessibleDescriptionRole: description,
-                QtCore.Qt.WhatsThisRole: description,
-                QtCore.Qt.ToolTipRole: description,
-                QtCore.Qt.UserRole: sub_folder,
-            }
-
-    def add_item(self, task):
-        """Adds a new task item.
-
-        """
-        icon = ui.get_icon('icon_bw', size=common.size(common.size_margin) * 2)
-
-        self.modelAboutToBeReset.emit()
-        self.beginResetModel()
-
-        self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: self.display_name(task),
-            QtCore.Qt.DecorationRole: icon,
-            QtCore.Qt.ForegroundRole: common.color(common.color_text),
-            QtCore.Qt.SizeHintRole: self.row_size,
-            QtCore.Qt.UserRole: task,
-        }
-
-        self.endResetModel()
-
-
-class TaskComboBox(QtWidgets.QComboBox):
-    """Task picker.
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setView(QtWidgets.QListView())
-        self.setModel(TaskModel())
 
 
 class PublishWidget(base.BasePropertyEditor):
@@ -258,16 +193,20 @@ class PublishWidget(base.BasePropertyEditor):
     #: UI layout definition
     sections = {
         0: {
-            'name': None,
-            'icon': None,
-            'color': common.color(common.color_dark_background),
+            'name': 'Publish File',
+            'icon': 'icon',
+            'color': common.color(common.color_green),
             'groups': {
                 0: {
                     0: {
                         'name': 'Source',
                         'key': 'source',
                         'validator': None,
-                        'widget': QtWidgets.QLabel,
+                        'widget': functools.partial(
+                            ui.PaintedLabel,
+                            '',
+                            color=common.color(common.color_selected_text)
+                        ),
                         'placeholder': '',
                         'description': 'Source file path',
                     },
@@ -275,9 +214,13 @@ class PublishWidget(base.BasePropertyEditor):
                         'name': 'Destination',
                         'key': 'destination',
                         'validator': None,
-                        'widget': QtWidgets.QLabel,
+                        'widget': functools.partial(
+                            ui.PaintedLabel,
+                            '',
+                            color=common.color(common.color_green)
+                        ),
                         'placeholder': '',
-                        'description': 'Final output path',
+                        'description': 'The publish\'s destination path',
                     },
                 },
             },
@@ -285,7 +228,7 @@ class PublishWidget(base.BasePropertyEditor):
         1: {
             'name': 'Template',
             'icon': None,
-            'color': common.color(common.color_dark_background),
+            'color': None,
             'groups': {
                 0: {
                     0: {
@@ -294,17 +237,13 @@ class PublishWidget(base.BasePropertyEditor):
                         'validator': None,
                         'widget': TemplateComboBox,
                         'placeholder': None,
-                        'description': 'Select the publish template',
+                        'description': 'Select a publish template',
+                        'help': 'Select a publish template from the list. The templates can be customized in the '
+                                'bookmark item\'s property editor.',
                     },
-                    1: {
-                        'name': 'Task',
-                        'key': 'publish/task',
-                        'validator': None,
-                        'widget': TaskComboBox,
-                        'placeholder': None,
-                        'description': 'Select the publish template',
-                    },
-                    2: {
+                },
+                1: {
+                    0: {
                         'name': 'Description',
                         'key': 'description',
                         'validator': None,
@@ -314,7 +253,7 @@ class PublishWidget(base.BasePropertyEditor):
                                        'publish.\nIndicate significant changes and '
                                        'notes here.',
                     },
-                    3: {
+                    1: {
                         'name': 'Specify Element',
                         'key': 'element',
                         'validator': base.text_validator,
@@ -327,7 +266,7 @@ class PublishWidget(base.BasePropertyEditor):
             },
         },
         2: {
-            'name': 'Settings',
+            'name': 'Options',
             'icon': None,
             'color': common.color(common.color_dark_background),
             'groups': {
@@ -343,15 +282,15 @@ class PublishWidget(base.BasePropertyEditor):
                 },
                 1: {
                     0: {
-                        'name': 'Copy Path to Clipboard',
+                        'name': 'Copy publish path',
                         'key': 'publish/copy_path',
                         'validator': None,
                         'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
                         'placeholder': None,
-                        'description': 'Copy the path to the clipboard after finish.',
+                        'description': 'Copy the publish path to the clipboard after finish.',
                     },
                     1: {
-                        'name': 'Reveal Publish',
+                        'name': 'Reveal files',
                         'key': 'publish/reveal',
                         'validator': None,
                         'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
@@ -379,6 +318,44 @@ class PublishWidget(base.BasePropertyEditor):
         self.update_timer.timeout.connect(self.update_expanded_template)
 
         self._connect_settings_save_signals(common.SECTIONS['publish'])
+
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+        self.source_editor.clicked.connect(self.source_editor_clicked)
+        self.destination_editor.clicked.connect(self.destination_editor_clicked)
+
+    @QtCore.Slot()
+    def source_editor_clicked(self):
+        v = self.source_editor.text()
+        if not v:
+            return
+        v = common.get_sequence_start_path(v)
+        file_info = QtCore.QFileInfo(v)
+        if not file_info.exists():
+            common.show_message(
+                'Warning',
+                f'Publish source file does not exist:\n\n{v}'
+            )
+            return
+
+        actions.reveal(v)
+
+    @QtCore.Slot()
+    def destination_editor_clicked(self):
+        text = self.destination_editor.text()
+        if not text:
+            return
+
+        file_info = QtCore.QFileInfo(text)
+        _dir = file_info.dir()
+        if not _dir.exists():
+            common.show_message(
+                'Publish directory does not exist',
+                f'Publish has not yet been created:\n\n{_dir.path()}'
+            )
+            return
+
+        actions.reveal(_dir.path())
 
     def init_progress_bar(self):
         """Initializes the progress bar.
@@ -412,58 +389,11 @@ class PublishWidget(base.BasePropertyEditor):
             raise ValueError('Invalid index value.')
 
         self.load_saved_user_settings(common.SECTIONS['publish'])
-        self.guess_task_and_element()
 
         self.init_db_data()
         self.init_thumbnail()
         self.set_source_text()
-        self.update_timer.start()
         self.init_progress_bar()
-
-    def guess_task_and_element(self):
-        """Guess the task and element name from the input source file name.
-
-        Publishing an element requires both the task and the element
-        to be specified. The user can set these manually but if we can suggest them
-        based on the input name we'll set them for the user.
-
-        """
-        kwargs = self.get_publish_kwargs()
-
-        p = self._index.data(common.PathRole)
-        p = common.get_sequence_start_path(p)
-
-        i = QtCore.QFileInfo(p)
-
-        s = f'{i.dir().path()}/{i.baseName()}'
-        s = s.replace(kwargs['prefix'], '')  # remove prefix
-        s = _strip(s)
-        s = re.sub(r'v[0-9]{1,9}', '', s)  # remove version string
-        s = _strip(s)
-        s = s.replace(kwargs['asset'], '')  # remove asset name
-        s = _strip(s)
-        s = s.replace(common.get_username(), '')  # remove username
-        s = _strip(s)
-
-        u = common.settings.value('file_saver/user')
-        u = u if u else ''
-        s = s.replace(u, '')
-        s = _strip(s)
-
-        sub_dirs = tokens.get_subfolders(tokens.SceneFolder)
-        if sub_dirs:
-            task_candidates = [f for f in sub_dirs if f in s]
-            if len(task_candidates) == 1:
-                self.publish_task_editor.setCurrentText(task_candidates[0])
-                s = s.replace(task_candidates[0], '')
-                s = _strip(s)
-
-        if s and len(s) >= 3 and 'main' not in s and '_' not in s:
-            if common.show_message(
-                    'Publish', body=f'Found a possible element name. Is it correct?\n\n{s}', buttons=[common.YesButton,
-                                                                                                      common.NoButton], modal=True, ) == QtWidgets.QDialog.Rejected:
-                return
-            self.element_editor.setText(s)
 
     def init_thumbnail(self):
         """Load the item's current thumbnail.
@@ -483,19 +413,15 @@ class PublishWidget(base.BasePropertyEditor):
         """Set source item label.
 
         """
-        c = common.rgb(common.color_green)
-        n = self._index.data(common.PathRole)
-
-        self.source_editor.setText(
-            f'<span style="color:{c};">{n}</span>'
-        )
+        self.source_editor.setText(self._index.data(common.PathRole))
 
     @QtCore.Slot()
     def update_expanded_template(self):
-        """Slot connected to the update timer used to preview the output file name.
+        """Slot used update the source and destination editors.
 
         """
         kwargs = self.get_publish_kwargs()
+
         if not kwargs['publish_template']:
             return tokens.invalid_token
 
@@ -550,7 +476,6 @@ class PublishWidget(base.BasePropertyEditor):
         kwargs['sq'] = kwargs['sequence']
         kwargs['seq'] = kwargs['sequence']
 
-        kwargs['task'] = self.publish_task_editor.currentData()
         kwargs['element'] = self.element_editor.text()
         kwargs['element'] = kwargs['element'] if kwargs['element'] else 'main'
 
@@ -851,3 +776,70 @@ class PublishWidget(base.BasePropertyEditor):
             actions.reveal(QtCore.QFileInfo(destination).dir().path())
         if kwargs['publish_copy_path']:
             actions.copy_path(destination)
+
+        # Get the source's description from the database
+        index = self._index
+        if not index.isValid():
+            return
+
+        path = index.data(common.PathRole)
+        if kwargs['is_collapsed']:
+            path = common.proxy_path(path)
+
+        db = database.get(*common.active('root', args=True))
+        description = db.value(path, 'description', database.AssetTable)
+        description = description if description else ''
+
+        if '#published' not in description:
+            description += f' #published'
+        db.set_value(path, 'description', description, database.AssetTable)
+
+        # Add a note to the database
+        note = (
+            f'\nTime: {time.strftime("%d/%m/%Y %H:%M:%S")}'
+            f'\nUser: {common.get_username()}'
+            f'\nDestination:\n{QtCore.QFileInfo(destination).dir().path()}'
+        )
+        notes = db.value(path, 'notes', database.AssetTable)
+        notes = notes if notes else {}
+        notes[len(notes)] = {
+            'title': 'Publish Log (server)',
+            'body': note,
+            'extra_data': {
+                'created_by': common.get_username(),
+                'created_at': time.strftime('%d/%m/%Y %H:%M:%S'),
+                'fold': False,
+            }
+        }
+        db.set_value(path, 'notes', notes, database.AssetTable)
+
+    def showEvent(self, event):
+        """Called when the widget is shown.
+
+        Args:
+            event (QtCore.QEvent): The event that triggered this slot.
+
+        """
+        super().showEvent(event)
+        self.update_timer.start()
+
+    def hideEvent(self, event):
+        """Called when the widget is hidden.
+
+        Args:
+            event (QtCore.QEvent): The event that triggered this slot.
+
+        """
+        super().hideEvent(event)
+        self.update_timer.stop()
+
+    def closeEvent(self, event):
+        """Called when the widget is closed.
+
+        Args:
+            event (QtCore.QEvent): The event that triggered this slot.
+
+        """
+        super().closeEvent(event)
+        self.update_timer.stop()
+        close()

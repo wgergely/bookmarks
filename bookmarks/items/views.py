@@ -1873,7 +1873,9 @@ class InlineIconView(BaseItemView):
             if shift_modifier:
                 # If the filter is empty we'll add a positive filter
                 if not filter_texts:
-                    self.model().set_filter_text(f'"/{_text}"')
+                    if '#' not in _text:
+                        _text = f'"/{_text}"'
+                    self.model().set_filter_text(_text)
                     self.repaint(self.rect())
                     return
 
@@ -1885,7 +1887,10 @@ class InlineIconView(BaseItemView):
                         self.repaint(self.rect())
                         return
                 # If the filter has items we'll append
-                self.model().set_filter_text(f'{filter_text} "/{_text}"')
+                if '#' not in _text:
+                    _text = f'"/{_text}"'
+                self.model().set_filter_text(f'{filter_text} {_text}')
+
                 self.repaint(self.rect())
                 return
 
@@ -1893,7 +1898,9 @@ class InlineIconView(BaseItemView):
             if alt_modifier or control_modifier:
                 # If the filter is empty we'll add a negative filter
                 if not filter_texts:
-                    self.model().set_filter_text(f'--"/{_text}"')
+                    if '#' not in _text:
+                        _text = f'"/{_text}"'
+                    self.model().set_filter_text(f'--{_text}')
                     self.repaint(self.rect())
                     return
 
@@ -1902,7 +1909,9 @@ class InlineIconView(BaseItemView):
                     if _text in filter_text_element:
                         del filter_texts[idx]
 
-                filter_texts.append(f'--"/{_text}"')
+                if '#' not in _text:
+                    _text = f'"/{_text}"'
+                filter_texts.append(f'--{_text}')
 
                 # add negative filter
                 self.model().set_filter_text(' '.join(filter_texts))

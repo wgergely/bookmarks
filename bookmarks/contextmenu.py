@@ -1011,7 +1011,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         item_on_pixmap = ui.get_icon('check', color=common.color(common.color_green))
         item_off_pixmap = ui.get_icon('folder')
 
-        k = 'Select Task Folder...'
+        k = 'Select asset folder...'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon(
             'folder', color=common.color(common.color_green)
@@ -1590,7 +1590,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if akaconvert.KEY in os.environ and os.environ[akaconvert.KEY]:
             self.menu[key()] = {
                 'text': 'AkaConvert...',
-                'icon': ui.get_icon('convert', color=common.color(common.color_blue)),
+                'icon': ui.get_icon('studioaka', color=common.color(common.color_blue)),
                 'action': actions.convert_image_sequence_with_akaconvert
             }
 

@@ -261,8 +261,8 @@ def save_warning(*args):
     if workspace_info.path().lower() not in scene_file.filePath().lower():
         p = workspace_info.path()
         common.show_message(
-            f'Scene is not in the current project.',
-            body=f'Look like "{scene_file.fileName()}" is being saved to another project:\n"{p}"\n\n'
+            f'Scene not part of the current project.',
+            body=f'"{scene_file.fileName()}" is being saved to: \n"{p}"\n\n'
                  f'You can safely ignore this message, it\'s just a friendly reminder.',
             message_type=None,
             disable_animation=True

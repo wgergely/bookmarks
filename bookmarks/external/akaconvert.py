@@ -293,7 +293,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
             'groups': {
                 0: {
                     common.idx(reset=True, start=0): {
-                        'name': 'Video Preset',
+                        'name': 'Video preset',
                         'key': 'akaconvert_preset',
                         'validator': None,
                         'widget': PresetComboBox,
@@ -301,7 +301,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
                         'description': 'Select the video preset',
                     },
                     common.idx(): {
-                        'name': 'Output Size',
+                        'name': 'Output size',
                         'key': 'akaconvert_size',
                         'validator': None,
                         'widget': SizeComboBox,
@@ -309,7 +309,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
                         'description': 'Set the output video size',
                     },
                     common.idx(): {
-                        'name': 'Aces Config',
+                        'name': 'ACES version',
                         'key': 'akaconvert_acesprofile',
                         'validator': None,
                         'widget': AcesComboBox,
@@ -319,7 +319,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
                 },
                 1: {
                     common.idx(): {
-                        'name': 'Input Colour Profile',
+                        'name': 'Input colour profile',
                         'key': 'akaconvert_inputcolor',
                         'validator': None,
                         'widget': ColorComboBox,
@@ -327,7 +327,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
                         'description': 'Select the image source\'s colour profile',
                     },
                     common.idx(): {
-                        'name': 'Output Colour Profile',
+                        'name': 'Output colour profile',
                         'key': 'akaconvert_outputcolor',
                         'validator': None,
                         'widget': ColorComboBox,
@@ -337,10 +337,10 @@ class AkaConvertWidget(base.BasePropertyEditor):
                 },
                 2: {
                     common.idx(): {
-                        'name': 'Add Burn-In',
+                        'name': 'Add burn-in',
                         'key': 'akaconvert_videoburnin',
                         'validator': None,
-                        'widget': functools.partial(QtWidgets.QCheckBox, 'Add Label'),
+                        'widget': functools.partial(QtWidgets.QCheckBox, 'Add burn-in to video'),
                         'placeholder': None,
                         'description': 'Add video burn-in with timecode to the output video',
                     },

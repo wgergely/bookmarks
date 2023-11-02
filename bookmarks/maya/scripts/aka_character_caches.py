@@ -436,7 +436,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         # apply_animation_exclusions
         # Change the value to a boolean
-        options['apply_animation_exclusions'] = options['apply_animation_exclusions'] == QtCore.Qt.Checked
+        options['apply_animation_exclusions'] = self.apply_animation_exclusions_editor.isChecked()
 
         # exclude_animation_from
         if options['apply_animation_exclusions']:
@@ -456,6 +456,8 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
         else:
             options['exclude_animation_from'] = []
 
+        print(f'Excluding animation from: {options["exclude_animation_from"]}')
+
         # exclude_reset_pose_from
         _not_found = options['exclude_reset_pose_from'].split(',')
         _not_found = [x.strip() for x in _not_found]
@@ -470,6 +472,8 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
         options['exclude_reset_pose_from'] = [f'{options["namespace"]}:{x}' for x in options['exclude_reset_pose_from']
                                               if
                                               x and cmds.objExists(f'{options["namespace"]}:{x}')]
+
+        print(f'Excluding reset pose from: {options["exclude_reset_pose_from"]}')
 
         options['cut_in'] = cut_in
         options['cut_out'] = cut_out
@@ -581,6 +585,9 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         # Studio Library: Save the animation start pose
         try:
+            # Move the current time to cut_in
+            cmds.currentTime(cut_in)
+
             mutils.savePose(
                 os.path.normpath(
                     f'{options["studio_library_output_folder"]}/{options["namespace"]}_animstart.pose/pose.json'
@@ -641,12 +648,9 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         # Remove all animation from any specified excluded controllers
         if options['apply_animation_exclusions'] and options['exclude_animation_from']:
-            for obj in options['exclude_animation_from']:
-                attrs = cmds.listAnimatable(obj)
-                if not attrs:
-                    continue
-                for attr in attrs:
-                    cmds.cutKey(attr, clear=True)
+            for node in options['exclude_animation_from']:
+                print(f'Removing animation from: {node}')
+                cmds.cutKey(node, clear=True)
 
         # Make sure the pose is unaltered at cut_in
         cmds.currentTime(cut_in)
@@ -878,7 +882,6 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         # Parent constrain the selection to the locator
         cmds.parentConstraint(locator, node, maintainOffset=True)[0]
-
     def showEvent(self, event):
         super().showEvent(event)
         common.center_window(self)

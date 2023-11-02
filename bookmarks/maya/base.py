@@ -495,13 +495,9 @@ def report_export_progress(start, current, end, start_time):
     else:
         progress = float(_current) / float(_end) * 100
 
-    progress = '[{}{}] {}%'.format(
-        '#' * int(progress), ' ' * (100 - int(progress)), int(progress)
-    )
-
-    msg = '# Exporting frame {current} of {end}\n# {progress}\n# Elapsed: {' \
+    msg = '# Exporting frame {current} of {end}\n# Elapsed: {' \
           'elapsed}\n'.format(
-        current=current, end=end, progress=progress, elapsed=elapsed
+        current=current, end=end, elapsed=elapsed
     )
     sys.stdout.write(msg)
 

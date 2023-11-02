@@ -374,13 +374,18 @@ class ProgressWidget(QtWidgets.QWidget):
     """Widget responsible for indicating files are being loaded."""
 
     def __init__(self, parent=None):
-        super(ProgressWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setWindowFlags(QtCore.Qt.Widget)
         self._message = 'Loading...'
+
+        self._connect_signals()
+
+    def _connect_signals(self):
+        pass
 
     def showEvent(self, event):
         """Event handler.
@@ -428,6 +433,14 @@ class FilterOnOverlayWidget(ProgressWidget):
     if a model has filters set or if it requires a refresh.
 
     """
+    def _connect_signals(self):
+        super()._connect_signals()
+
+        common.signals.bookmarkActivated.connect(self.update)
+        common.signals.assetActivated.connect(self.update)
+        common.signals.tabChanged.connect(self.update)
+        common.signals.updateTopBarButtons.connect(self.update)
+        common.signals.filterTextChanged.connect(self.update)
 
     def paintEvent(self, event):
         """Event handler.
@@ -831,6 +844,11 @@ class BaseItemView(QtWidgets.QTableView):
                     index,
                     hint=QtWidgets.QAbstractItemView.PositionAtCenter
                 )
+                self.selectionModel().select(
+                    index,
+                    QtCore.QItemSelectionModel.ClearAndSelect |
+                    QtCore.QItemSelectionModel.Rows
+                )
                 self.selectionModel().setCurrentIndex(
                     index,
                     QtCore.QItemSelectionModel.ClearAndSelect |
@@ -841,16 +859,30 @@ class BaseItemView(QtWidgets.QTableView):
         # Select the active item
         index = proxy.sourceModel().active_index()
         if index.isValid():
+            self.selectionModel().select(
+                index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
             self.selectionModel().setCurrentIndex(
-                index, QtCore.QItemSelectionModel.ClearAndSelect
+                index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
             self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
             return
 
         # Select the first item in the list
         index = proxy.index(0, 0)
+        self.selectionModel().select(
+            index,
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
+        )
         self.selectionModel().setCurrentIndex(
-            index, QtCore.QItemSelectionModel.ClearAndSelect
+            index,
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
         )
         self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
 
@@ -1067,8 +1099,12 @@ class BaseItemView(QtWidgets.QTableView):
         item in the list, we'll jump to the beginning, and vice-versa.
 
         """
-        sel = self.selectionModel()
-        current_index = sel.currentIndex()
+        model = self.selectionModel()
+        if model.hasSelection():
+            current_index = next(f for f in model.selectedIndexes())
+        else:
+            current_index = QtCore.QModelIndex()
+
         first_index = self.model().index(0, 0)
         last_index = self.model().index(
             self.model().rowCount() - 1, 0
@@ -1077,22 +1113,40 @@ class BaseItemView(QtWidgets.QTableView):
         if first_index == last_index:
             return
         if not current_index.isValid():  # No selection
-            sel.setCurrentIndex(
+            model.select(
                 first_index,
-                QtCore.QItemSelectionModel.ClearAndSelect
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
+            model.setCurrentIndex(
+                first_index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
             return
 
         if current_index == last_index:  # Last item is selected
-            sel.setCurrentIndex(
+            model.select(
                 first_index,
-                QtCore.QItemSelectionModel.ClearAndSelect
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
+            model.setCurrentIndex(
+                first_index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
             return
 
-        sel.setCurrentIndex(
+        model.select(
             self.model().index(current_index.row() + 1, 0),
-            QtCore.QItemSelectionModel.ClearAndSelect
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
+        )
+        model.setCurrentIndex(
+            self.model().index(current_index.row() + 1, 0),
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
         )
 
     def key_up(self):
@@ -1103,8 +1157,15 @@ class BaseItemView(QtWidgets.QTableView):
         item in the list, we'll jump to the beginning, and vice-versa.
 
         """
-        sel = self.selectionModel()
-        current_index = sel.currentIndex()
+
+        model = self.selectionModel()
+        if model.hasSelection():
+            current_index = next(f for f in model.selectedIndexes())
+        else:
+            current_index = QtCore.QModelIndex()
+
+        self.itemDelegate().closeEditor.emit(None, QtWidgets.QAbstractItemDelegate.NoHint)
+
         first_index = self.model().index(0, 0)
         last_index = self.model().index(self.model().rowCount() - 1, 0)
 
@@ -1112,21 +1173,39 @@ class BaseItemView(QtWidgets.QTableView):
             return
 
         if not current_index.isValid():  # No selection
-            sel.setCurrentIndex(
+            model.select(
                 last_index,
-                QtCore.QItemSelectionModel.ClearAndSelect
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
+            model.setCurrentIndex(
+                last_index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
             return
         if current_index == first_index:  # First item is selected
-            sel.setCurrentIndex(
+            model.select(
                 last_index,
-                QtCore.QItemSelectionModel.ClearAndSelect
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
+            model.setCurrentIndex(
+                last_index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
             return
 
-        sel.setCurrentIndex(
+        model.select(
             self.model().index(current_index.row() - 1, 0),
-            QtCore.QItemSelectionModel.ClearAndSelect
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
+        )
+        model.setCurrentIndex(
+            self.model().index(current_index.row() - 1, 0),
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
         )
 
     def key_tab(self):
@@ -1301,8 +1380,15 @@ class BaseItemView(QtWidgets.QTableView):
         # Restore the selection
         if row >= 0:
             index = proxy.index(row, 0)
+            self.selectionModel().select(
+                index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
             self.selectionModel().setCurrentIndex(
-                index, QtCore.QItemSelectionModel.ClearAndSelect
+                index,
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
             self.scrollTo(
                 index, QtWidgets.QAbstractItemView.PositionAtCenter
@@ -1370,13 +1456,15 @@ class BaseItemView(QtWidgets.QTableView):
 
             if v == k:
                 index = proxy.mapFromSource(model.index(idx, 0))
-                self.selectionModel().setCurrentIndex(
-                    index,
-                    QtCore.QItemSelectionModel.ClearAndSelect
-                )
                 self.selectionModel().select(
                     index,
-                    QtCore.QItemSelectionModel.ClearAndSelect
+                    QtCore.QItemSelectionModel.ClearAndSelect |
+                    QtCore.QItemSelectionModel.Rows
+                )
+                self.selectionModel().setCurrentIndex(
+                    index,
+                    QtCore.QItemSelectionModel.ClearAndSelect |
+                    QtCore.QItemSelectionModel.Rows
                 )
                 self.scrollTo(
                     index,
@@ -1554,8 +1642,15 @@ class BaseItemView(QtWidgets.QTableView):
                 self.interruptRequested.emit()
 
                 if self.selectionModel().hasSelection():
+                    self.selectionModel().select(
+                        QtCore.QModelIndex(),
+                        QtCore.QItemSelectionModel.ClearAndSelect |
+                        QtCore.QItemSelectionModel.Rows
+                    )
                     self.selectionModel().setCurrentIndex(
-                        QtCore.QModelIndex(), QtCore.QItemSelectionModel.ClearAndSelect
+                        QtCore.QModelIndex(),
+                        QtCore.QItemSelectionModel.ClearAndSelect |
+                        QtCore.QItemSelectionModel.Rows
                     )
                 return
             if event.key() == QtCore.Qt.Key_Space:
@@ -1625,9 +1720,15 @@ class BaseItemView(QtWidgets.QTableView):
 
                     if index.data(QtCore.Qt.DisplayRole)[
                         0].lower() == self.timed_search_string.lower():
-                        sel.setCurrentIndex(
+                        self.selectionModel().select(
                             index,
-                            QtCore.QItemSelectionModel.ClearAndSelect
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
+                        )
+                        self.selectionModel().setCurrentIndex(
+                            index,
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
                         )
                         self.delay_save_selection()
                         break
@@ -1642,9 +1743,15 @@ class BaseItemView(QtWidgets.QTableView):
                         match = None
 
                     if match:
-                        sel.setCurrentIndex(
+                        self.selectionModel().select(
                             index,
-                            QtCore.QItemSelectionModel.ClearAndSelect
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
+                        )
+                        self.selectionModel().setCurrentIndex(
+                            index,
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
                         )
                         self.delay_save_selection()
                         return
@@ -1729,9 +1836,15 @@ class BaseItemView(QtWidgets.QTableView):
         cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid():
+            self.selectionModel().select(
+                QtCore.QModelIndex(),
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
             self.selectionModel().setCurrentIndex(
                 QtCore.QModelIndex(),
-                QtCore.QItemSelectionModel.ClearAndSelect
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
             )
         super().mousePressEvent(event)
 
@@ -2355,7 +2468,7 @@ class ThreadedItemView(InlineIconView):
         """Queues an update request by the threads for later processing."""
         if not ref():
             return
-        if ref not in self.update_queue:
+        if ref not in self.update_queue.copy():
             self.update_queue.append(ref)
             self.update_queue_timer.start(self.update_queue_timer.interval())
 

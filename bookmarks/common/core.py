@@ -646,6 +646,14 @@ class DataDict(dict):
 
     """
 
+    def __str__(self):
+        return (
+            f'<DataDict ({len(self)} items); '
+            f'(loaded={self.loaded}, '
+            f'refresh_needed={self.refresh_needed}, '
+            f'data_type={self.data_type})>'
+        )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

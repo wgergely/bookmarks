@@ -51,13 +51,9 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
             'disabled': True
         }
 
-        active = False
         model = common.model(idx)
         for n in range(model.rowCount()):
-            index = QtCore.QPersistentModelIndex(model.index(n, 0))
-            path = index.data(common.PathRole)
-
-            active = active_index.isValid() and active_index.data(common.PathRole) == path
+            index = model.index(n, 0)
 
             pixmap, _ = images.get_thumbnail(
                 index.data(common.ParentPathRole)[0],
@@ -67,22 +63,14 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
                 size=common.size(common.size_margin) * 4,
                 fallback_thumb='icon_bw'
             )
-            if pixmap and not pixmap.isNull():
-                icon = QtGui.QIcon(pixmap)
-            else:
-                icon = item_icon
-            if active:
+            if not pixmap or pixmap.isNull():
+                icon = ui.get_icon('icon_bw')
+            elif active_index.isValid() and active_index.data(common.PathRole) == index.data(common.PathRole):
                 icon = on_icon
+            else:
+                icon = QtGui.QIcon(pixmap)
 
-            name = path
-            if len(index.data(common.ParentPathRole)) > 3:
-                name = '/'.join(index.data(common.ParentPathRole)[3:])
-            elif len(index.data(common.ParentPathRole)) <= 3:
-                name = '/'.join(index.data(common.ParentPathRole)[1:])
-            if index.data(common.AssetCountRole):
-                name = f'{name}   |   {index.data(common.AssetCountRole)} items'
-            name = name.replace('/', ' > ')
-
+            name = index.data(QtCore.Qt.DisplayRole)
             self.menu[contextmenu.key()] = {
                 'text': name,
                 'icon': icon,

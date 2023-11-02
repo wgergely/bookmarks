@@ -88,6 +88,27 @@ def get_data(key, task, data_type):
     return common.item_data[key][task][data_type]
 
 
+def get_data_from_value(value, data_type, role=common.PathRole):
+    """Get the internal data dictionary associated with a path.
+
+    Args:
+        value (object): A value to match.
+        data_type (int): One of :attr:`~bookmarks.common.FileItem` or :attr:`~bookmarks.common.SequenceItem`.
+
+    Returns:
+        common.DataDict: The cached data or None if not found.
+
+    """
+    for key in common.item_data:
+        for task in common.item_data[key]:
+            if data_type not in common.item_data[key][task]:
+                return None
+            data = common.item_data[key][task][data_type]
+            for idx in data:
+                if value in data[idx][role]:
+                    return data
+    return None
+
 def get_task_data(key, task):
     """Get cached data from :attr:`~bookmarks.common.item_data`.
 

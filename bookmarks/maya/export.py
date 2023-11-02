@@ -244,14 +244,8 @@ def export_alembic(
         raise RuntimeError('Failed to prepare scene.')
 
     try:
-        # Our custom progress callback
-        perframecallback = f'"from bookmarks.maya import base;' \
-                           f'base.report_export_progress(' \
-                           f'{start_frame}, #FRAME#, {end_frame}, ' \
-                           f'{time.time()})"'
-
         # Build the export command
-        cmd = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {wcs} {wfs} {sn} {rt} {df} {pfc} {ro}'
+        cmd = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {wcs} {wfs} {sn} {rt} {df} {ro}'
         cmd = cmd.format(
             f=f'-file "{destination}"',
             fr=f'-framerange {start_frame} {end_frame}',
@@ -266,7 +260,6 @@ def export_alembic(
             sn='-stripNamespaces',
             rt=f'-root {" -root ".join(world_transforms)}',
             df='-dataFormat ogawa',
-            pfc=f'-pythonperframecallback {perframecallback}',
             ro='-renderableOnly'
         )
         s = f'Alembic Export Job Arguments:\n{cmd}'

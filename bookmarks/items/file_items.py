@@ -540,8 +540,9 @@ class FileItemModel(models.ItemModel):
             data[idx][common.IdRole] = idx
 
         watcher = common.get_watcher(common.FileTab)
-        watcher.reset()
-        watcher.add_directories(sorted(set([f for f in _watch_paths if f])))
+        _directories = watcher.directories()
+        # watcher.reset()
+        watcher.add_directories(sorted(set([f for f in _watch_paths if f] + _directories)))
 
         # Add the list of file extensions to the model's data
         _extensions = sorted(set([('.' + f) for f in _extensions if f]))
@@ -553,7 +554,9 @@ class FileItemModel(models.ItemModel):
         common.get_data(p, k, common.FileItem).subdirectories = _subdirectories
         common.get_data(p, k, common.SequenceItem).subdirectories = _subdirectories
 
-        self.set_refresh_needed(False)
+        # Model does not need a refresh at this point
+        common.get_data(p, k, common.FileItem).refresh_needed = False
+        common.get_data(p, k, common.SequenceItem).refresh_needed = False
 
     def disable_filter(self):
         """Overrides the token config and disables file filters."""
@@ -780,7 +783,7 @@ class FileItemView(views.ThreadedItemView):
         model = self.model().sourceModel()
         k = model.task()
         if not k:
-            return 'Click the File tab to select a folder'
+            return 'No asset folder select. Click the file tab to select a folder to browse'
         return f'No files found in "{k}"'
 
     @common.error

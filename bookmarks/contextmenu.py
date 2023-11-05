@@ -950,7 +950,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[key()] = {
             'text': 'Manage Bookmark Items...',
             'icon': icon,
-            'action': actions.show_bookmarker,
+            'action': actions.show_job_editor,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem

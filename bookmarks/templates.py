@@ -132,25 +132,6 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
         }
 
 
-class TemplateListDelegate(ui.ListWidgetDelegate):
-    """Delegate associated with :class:`TemplateListWidget`.
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-    def createEditor(self, parent, option, index):
-        """Custom editor for editing the template's name.
-
-        """
-        editor = super().createEditor(parent, option, index)
-        validator = QtGui.QRegExpValidator(parent=editor)
-        validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
-        editor.setValidator(validator)
-        return editor
-
-
 class TemplateListWidget(ui.ListWidget):
     """Widget used to display a list of zip template files associated with
     the given `mode`.
@@ -170,12 +151,6 @@ class TemplateListWidget(ui.ListWidget):
         self.setDragDropMode(QtWidgets.QAbstractItemView.DropOnly)
         self.installEventFilter(self)
         self.viewport().installEventFilter(self)
-        self.setItemDelegate(TemplateListDelegate(parent=self))
-
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.viewport().setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.viewport().setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self._connect_signals()
 
@@ -208,11 +183,11 @@ class TemplateListWidget(ui.ListWidget):
         dir_ = QtCore.QDir(get_template_folder(self.mode()))
         dir_.setNameFilters(['*.zip', ])
 
-        h = common.size(common.size_row_height)
-        size = QtCore.QSize(1, h)
+        h = common.size(common.size_row_height) * 0.8
+        size = QtCore.QSize(0, h)
 
         off_pixmap = images.rsc_pixmap(
-            'close', common.color(common.color_separator), h
+            'folder_sm', common.color(common.color_separator), h
         )
         on_pixmap = images.rsc_pixmap(
             'check', common.color(common.color_green), h
@@ -259,7 +234,7 @@ class TemplateListWidget(ui.ListWidget):
         self.selectionModel().blockSignals(False)
 
         common.restore_selection(self)
-        self.progressUpdate.emit('')
+        self.progressUpdate.emit('', '')
 
     def mode(self):
         """The TemplateWidget's current mode.
@@ -410,12 +385,6 @@ class TemplateListWidget(ui.ListWidget):
                 painter.drawRoundedRect(rect, o, o)
                 painter.setOpacity(op)
 
-            pen = QtGui.QPen(common.color(common.color_separator))
-            pen.setWidthF(common.size(common.size_separator))
-            painter.setPen(pen)
-            painter.setBrush(common.color(common.color_separator))
-            painter.drawRoundedRect(rect, o, o)
-
         return False
 
     def showEvent(self, event):
@@ -445,7 +414,7 @@ class TemplateListWidget(ui.ListWidget):
         )
 
 
-class TemplatesPreviewWidget(QtWidgets.QListWidget):
+class TemplatesPreviewWidget(ui.ListWidget):
     """List widget used to peak into the contents of a zip template file.
 
     """

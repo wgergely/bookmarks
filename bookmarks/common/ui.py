@@ -366,7 +366,7 @@ def show_message(title, body='', disable_animation=False, icon='icon', message_t
         body (str): The body of the message box.
         disable_animation (bool): Whether to show the message box without animation.
         icon (str): The icon to use.
-        message_type (str): The message type.
+        message_type (str): The message type. One of 'info', 'success' or 'error'.
         buttons (list): The buttons to show.
         modal (bool): Whether the message box should be modal.
         parent (QWidget): The parent widget.
@@ -496,6 +496,11 @@ def select_index(widget, v, *args, role=QtCore.Qt.DisplayRole, **kwargs):
             return
 
         widget.selectionModel().select(
+            index,
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
+        )
+        widget.selectionModel().setCurrentIndex(
             index,
             QtCore.QItemSelectionModel.ClearAndSelect |
             QtCore.QItemSelectionModel.Rows

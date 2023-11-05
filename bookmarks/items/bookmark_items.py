@@ -390,4 +390,4 @@ class BookmarkItemView(views.ThreadedItemView):
         """Returns an informative hint text.
 
         """
-        return 'Right-click and select \'Manage Bookmark Items\' to add items'
+        return 'Right-click and select \'Edit Jobs\' to add bookmark items'

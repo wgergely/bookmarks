@@ -58,7 +58,7 @@ ToggleItemFavourite = common.idx()
 PushToRV = common.idx()
 PushToRVFullScreen = common.idx()
 
-BookmarkEditorShortcuts = {
+JobEditorShortcuts = {
     AddItem: {
         'value': QtGui.QKeySequence.New,
         'default': QtGui.QKeySequence.New,

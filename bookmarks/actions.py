@@ -728,11 +728,11 @@ def reset_row_size():
 
 @common.error
 @common.debug
-def show_bookmarker():
-    """Shows :class:`~bookmarks.bookmarker.main.BookmarkerWidget`.
+def show_job_editor():
+    """Shows :class:`~bookmarks.editor.jobs.JobsEditor` widget.
 
     """
-    from .bookmarker import main as editor
+    from .editor import jobs as editor
     widget = editor.show()
     return widget
 
@@ -868,7 +868,7 @@ def add_item():
     """
     idx = common.current_tab()
     if idx == common.BookmarkTab:
-        show_bookmarker()
+        show_job_editor()
     elif idx == common.AssetTab:
         show_add_asset()
     elif idx == common.FileTab:

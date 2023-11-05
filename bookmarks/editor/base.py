@@ -1,14 +1,19 @@
-"""Contains :class:`.BasePropertyEditor` and its required attributes and methods.
+"""Contains :class:`.BasePropertyEditor` the property editor base class used
+across the application.
 
-The property editor's layout is defined by a previously specified SECTIONS
+The editor is designed to interact with the bookmark item database and user
+settings file but can be used without either as a general dialog for user actions.
+
+The editor's layout is defined by SECTIONS
 dictionary. This contains the sections, rows and editor widget definitions - plus
 linkage information needed to associate the widget with a bookmark database columns or
 user setting keys.
 
 :class:`BasePropertyEditor` is relatively flexible and has a number of
 abstract methods that need implementing in subclasses depending on the desired
-functionality. See, :meth:`.BasePropertyEditor.db_source`,
-:meth:`.BasePropertyEditor.init_data` and :meth:`.BasePropertyEditor.save_changes`.
+functionality. In all subclasses, the :meth:`.BasePropertyEditor.db_source`,
+:meth:`.BasePropertyEditor.init_data` and :meth:`.BasePropertyEditor.save_changes`
+methods must be implemented.
 
 """
 import datetime
@@ -95,7 +100,7 @@ def add_section(icon, label, parent, color=None):
 
 
 class BasePropertyEditor(QtWidgets.QDialog):
-    """Base class for constructing a property editor widget.
+    """Base class for constructing a property editor widgets.
 
     Args:
         server (str or None): `server` path segment.
@@ -103,8 +108,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
         root (str or None): `root` path segment.
         asset (str or None): `asset` path segment.
         db_table (str or None):
-            An optional name of a bookmark database table. When not `None`, the editor
-            will load and save data to the database. Defaults to `None`.
+            An optional name of a bookmark database table. When set, the editor
+            will load and save data to and from the bookmark item database. Defaults to `None`.
         buttons (tuple): Button labels. Defaults to `('Save', 'Cancel')`.
         alignment (int): Text alignment. Defaults to `QtCore.Qt.AlignRight`.
         fallback_thumb (str): An image name. Defaults to `'placeholder'`.
@@ -129,8 +134,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
             alignment=QtCore.Qt.AlignRight,
             fallback_thumb='placeholder',
             hide_thumbnail_editor=False,
+            section_buttons=True,
+            frameless=False,
             parent=None,
-            section_buttons=True
     ):
         super().__init__(
             parent=parent,
@@ -143,13 +149,30 @@ class BasePropertyEditor(QtWidgets.QDialog):
             )
         )
 
+        common.check_type(server, (str, None))
+        common.check_type(job, (str, None))
+        common.check_type(root, (str, None))
+        common.check_type(asset, (str, None))
+        common.check_type(db_table, (str, None))
+        common.check_type(buttons, (tuple, list))
+        common.check_type(alignment, int)
+        common.check_type(fallback_thumb, str)
+        common.check_type(hide_thumbnail_editor, bool)
+        common.check_type(section_buttons, bool)
+        common.check_type(frameless, bool)
+        common.check_type(parent, (QtWidgets.QWidget, None))
+
+        if len(buttons) > 2:
+            raise ValueError('`buttons` must be a tuple of 1 or 2 items.')
+
         self._fallback_thumb = fallback_thumb
         self._alignment = alignment
-        self._section_widgets = []
         self._buttons = buttons
         self._db_table = db_table
+        self._frameless = frameless
 
         self.section_buttons = section_buttons
+        self._section_widgets = []
 
         self.server = server
         self.job = job
@@ -180,6 +203,23 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 self.setWindowTitle(f'{server}/{job}/{root}')
             else:
                 self.setWindowTitle(f'{server}/{job}/{root}/{asset}')
+
+        if self._frameless:
+            self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+            self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+
+            self.setWindowFlags(
+                QtCore.Qt.Dialog |
+                QtCore.Qt.FramelessWindowHint
+            )
+
+            # Shadow effect
+            self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
+            self.effect.setBlurRadius(common.size(common.size_margin) * 2)
+            self.effect.setXOffset(0)
+            self.effect.setYOffset(0)
+            self.effect.setColor(QtGui.QColor(0, 0, 0, 200))
+            self.setGraphicsEffect(self.effect)
 
         self._create_ui()
         self._connect_signals()
@@ -227,7 +267,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         QtWidgets.QVBoxLayout(self.section_headers_widget)
         self.section_headers_widget.layout().setContentsMargins(0, 0, 0, 0)
         self.section_headers_widget.layout().setSpacing(
-            common.size(common.size_indicator)
+            common.size(common.size_indicator) * 2
         )
 
         parent = QtWidgets.QWidget(parent=self)
@@ -266,13 +306,96 @@ class BasePropertyEditor(QtWidgets.QDialog):
         parent.layout().addStretch(1)
         self._add_buttons()
 
+    def _connect_signals(self):
+        self.cancel_button.clicked.connect(
+            lambda: self.done(QtWidgets.QDialog.Rejected)
+        )
+        self.save_button.clicked.connect(
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
+
+        common.signals.databaseValueUpdated.connect(self.update_changed_database_value)
+
+    def _connect_data_changed_signals(self, key, _type, editor):
+        """Utility method for connecting an editor's change signal to `data_changed`.
+
+        `data_changed` will save the changed current value internally. This data
+        later can be used, for instance, to save the changed values to the
+        database.
+
+        """
+        if hasattr(editor, 'dataUpdated'):
+            editor.dataUpdated.connect(
+                functools.partial(
+                    self.data_changed,
+                    key,
+                    _type,
+                    editor
+                )
+            )
+        elif hasattr(editor, 'textChanged'):
+            editor.textChanged.connect(
+                functools.partial(
+                    self.data_changed,
+                    key,
+                    _type,
+                    editor
+                )
+            )
+        elif hasattr(editor, 'currentTextChanged'):
+            editor.currentTextChanged.connect(
+                functools.partial(
+                    self.data_changed,
+                    key,
+                    _type,
+                    editor
+                )
+            )
+        elif hasattr(editor, 'stateChanged'):
+            editor.stateChanged.connect(
+                functools.partial(
+                    self.data_changed,
+                    key,
+                    _type,
+                    editor
+                )
+            )
+
+    def _connect_settings_save_signals(self, keys):
+        """Utility method for connecting editor signals to save their current
+        value in the user setting file.
+
+        Args:
+            keys (tuple): A tuple of user setting keys.
+
+        """
+        for k in keys:
+            _k = k.replace('/', '_')
+            if not hasattr(self, f'{_k}_editor'):
+                print(f'No editor found for {k}')
+                continue
+
+            editor = getattr(self, f'{_k}_editor')
+
+            if hasattr(editor, 'currentTextChanged'):
+                signal = getattr(editor, 'currentTextChanged')
+            elif hasattr(editor, 'textChanged'):
+                signal = getattr(editor, 'textChanged')
+            elif hasattr(editor, 'stateChanged'):
+                signal = getattr(editor, 'stateChanged')
+            else:
+                continue
+
+            func = functools.partial(common.settings.setValue, k)
+            signal.connect(func)
+
     def _create_sections(self):
         """Translates the section data into a UI layout.
 
         """
         parent = self.scroll_area.widget()
         for section in self.sections.values():
-            grp = add_section(
+            section_widget = add_section(
                 section['icon'],
                 section['name'],
                 parent,
@@ -280,18 +403,27 @@ class BasePropertyEditor(QtWidgets.QDialog):
             )
 
             if self.section_buttons:
-                self.add_section_header_button(section['name'], grp)
+                self.add_section_header_button(section['name'], section_widget)
 
             for item in section['groups'].values():
-                _grp = ui.get_group(parent=grp)
+                group_widget = ui.get_group(parent=section_widget)
                 for v in item.values():
-                    self._add_row(v, grp, _grp)
+                    self._add_row(v, group_widget)
 
-    def _add_row(self, v, grp, _grp):
-        row = ui.add_row(v['name'], parent=_grp, height=None)
+    def _add_row(self, v, group_widget):
+        """Utility method for translating a row item in the section data to a UI layout.
+
+        Args:
+            v (dict): The row data.
+            group_widget.parent() (QWidget): The parent group widget.
+            group_widget (QWidget): The child group widget.
+
+        """
+        row = ui.add_row(v['name'], parent=group_widget, height=None)
 
         k = v['key']
         _k = k.replace('/', '_') if k else k
+
         name = v['name']
         _name = name.lower() if name else name
         _name = re.sub(r'\W+', '_', _name) if _name else _name
@@ -303,12 +435,13 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if 'widget' in v and v['widget']:
             if 'no_group' in v and v['no_group']:
-                editor = v['widget'](parent=grp)
-                grp.layout().insertWidget(1, editor, 1)
+                editor = v['widget'](parent=group_widget.parent())
+                group_widget.parent().layout().insertWidget(1, editor, 1)
             else:
                 editor = v['widget'](parent=row)
                 if isinstance(editor, QtWidgets.QCheckBox):
                     # We don't want checkboxes to fully extend across a row
+
                     editor.setSizePolicy(
                         QtWidgets.QSizePolicy.Maximum,
                         QtWidgets.QSizePolicy.Maximum,
@@ -370,7 +503,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if 'help' in v and v['help']:
             ui.add_description(
-                v['help'], label=None, parent=_grp
+                v['help'], label=None, parent=group_widget
             )
 
         if 'button' in v and v['button']:
@@ -405,34 +538,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     )
             row.layout().addWidget(button2, 0)
 
-    def add_section_header_button(self, name, widget):
-        """Add a header button to help reveal the given section widget.
-
-        """
-        if not name:
-            return
-        button = QtWidgets.QPushButton(
-            name,
-            parent=self.section_headers_widget
-        )
-        button.setFocusPolicy(QtCore.Qt.NoFocus)
-
-        font, _ = common.font_db.bold_font(common.size(common.size_font_small))
-        button.setStyleSheet(
-            'outline: none;'
-            'border: none;'
-            f'color: {common.rgb(common.color_light_background)};'
-            'text-align: left;'
-            'padding: 0px;'
-            'margin: 0px;'
-            f'font-size: {common.size(common.size_font_small)}px;'
-            f'font-family: "{font.family()}"'
-        )
-        self.section_headers_widget.layout().addWidget(button)
-        button.clicked.connect(
-            functools.partial(self.scroll_to_section, widget)
-        )
-
     def _add_buttons(self):
         if not self._buttons:
             return
@@ -441,9 +546,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton(
             self._buttons[0], parent=self
         )
-        self.cancel_button = ui.PaintedButton(
-            self._buttons[1], parent=self
-        )
+        if len(self._buttons) > 1:
+            self.cancel_button = ui.PaintedButton(
+                self._buttons[1], parent=self
+            )
+        else:
+            self.cancel_button = ui.PaintedButton(
+                'Close', parent=self
+            )
+            self.cancel_button.setHidden(True)
 
         row = ui.add_row(
             None, height=h * 2, parent=self.right_row
@@ -454,6 +565,19 @@ class BasePropertyEditor(QtWidgets.QDialog):
         row.layout().addWidget(self.cancel_button, 0)
         row.layout().addSpacing(common.size(common.size_margin))
 
+    def add_section_header_button(self, name, widget):
+        """Add a header button to help reveal the given section widget.
+
+        """
+        if not name:
+            return
+        button = ui.PaintedLabel(name, parent=self.section_headers_widget)
+
+        self.section_headers_widget.layout().addWidget(button)
+        button.clicked.connect(
+            functools.partial(self.scroll_to_section, widget)
+        )
+
     @QtCore.Slot(QtWidgets.QWidget)
     def scroll_to_section(self, widget):
         """Slot used to scroll to a section when a section header is clicked.
@@ -463,89 +587,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.scroll_area.verticalScrollBar().setValue(
             point.y() + self.scroll_area.verticalScrollBar().value()
         )
-
-    def _connect_data_changed_signals(self, key, _type, editor):
-        """Utility method for connecting an editor's change signal to `data_changed`.
-
-        `data_changed` will save the changed current value internally. This data
-        later can be used, for instance, to save the changed values to the
-        database.
-
-        """
-        if hasattr(editor, 'dataUpdated'):
-            editor.dataUpdated.connect(
-                functools.partial(
-                    self.data_changed,
-                    key,
-                    _type,
-                    editor
-                )
-            )
-        elif hasattr(editor, 'textChanged'):
-            editor.textChanged.connect(
-                functools.partial(
-                    self.data_changed,
-                    key,
-                    _type,
-                    editor
-                )
-            )
-        elif hasattr(editor, 'currentTextChanged'):
-            editor.currentTextChanged.connect(
-                functools.partial(
-                    self.data_changed,
-                    key,
-                    _type,
-                    editor
-                )
-            )
-        elif hasattr(editor, 'stateChanged'):
-            editor.stateChanged.connect(
-                functools.partial(
-                    self.data_changed,
-                    key,
-                    _type,
-                    editor
-                )
-            )
-
-    def _connect_signals(self):
-        self.cancel_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Rejected)
-        )
-        self.save_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted)
-        )
-
-        common.signals.databaseValueUpdated.connect(self.update_changed_database_value)
-
-    def _connect_settings_save_signals(self, keys):
-        """Utility method for connecting editor signals to save their current
-        value in the user setting file.
-
-        Args:
-            keys (tuple): A tuple of user setting keys.
-
-        """
-        for k in keys:
-            _k = k.replace('/', '_')
-            if not hasattr(self, f'{_k}_editor'):
-                print(f'No editor found for {k}')
-                continue
-
-            editor = getattr(self, f'{_k}_editor')
-
-            if hasattr(editor, 'currentTextChanged'):
-                signal = getattr(editor, 'currentTextChanged')
-            elif hasattr(editor, 'textChanged'):
-                signal = getattr(editor, 'textChanged')
-            elif hasattr(editor, 'stateChanged'):
-                signal = getattr(editor, 'stateChanged')
-            else:
-                continue
-
-            func = functools.partial(common.settings.setValue, k)
-            signal.connect(func)
 
     def load_saved_user_settings(self, keys):
         """Utility method will load user setting values and apply them to the
@@ -759,29 +800,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 f'color: {common.rgb(common.color_text)};'
             )
 
-    def db_source(self):
-        """A file path to use as the source of database values.
-
-        Returns:
-            str: The database source file.
-
-        """
-        raise NotImplementedError('Abstract method must be implemented by subclass.')
-
-    @QtCore.Slot()
-    def init_data(self):
-        """Initializes data.
-
-        """
-        raise NotImplementedError('Abstract method must be implemented by subclass.')
-
-    @QtCore.Slot()
-    def save_changes(self):
-        """Perform save actions and/or data saving.
-
-        """
-        raise NotImplementedError('Abstract method must be implemented by subclass.')
-
     @QtCore.Slot()
     def done(self, result):
         """Finish editing the item.
@@ -802,6 +820,18 @@ class BasePropertyEditor(QtWidgets.QDialog):
             return
 
         return super().done(result)
+
+    def paintEvent(self, event):
+        if self._frameless:
+            painter = QtGui.QPainter(self)
+            painter.setPen(QtCore.Qt.NoPen)
+            painter.setBrush(common.color(common.color_background))
+
+            o = common.size(common.size_margin) * 2
+            painter.drawRect(self.rect().adjusted(o, o, -o, -o))
+            painter.end()
+
+        super().paintEvent(event)
 
     def changeEvent(self, event):
         """Change event handler.
@@ -844,6 +874,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     @QtCore.Slot(str)
     @QtCore.Slot(str)
+    @QtCore.Slot(str)
     @QtCore.Slot(object)
     def update_changed_database_value(self, table, source, key, value):
         """Slot responsible updating the widget when a database value has changed.
@@ -855,6 +886,12 @@ class BasePropertyEditor(QtWidgets.QDialog):
             value (object): The new database value.
 
         """
+        try:
+            self.db_source()
+        except NotImplementedError:
+            print('Skipping database updates, no db source set.')
+            return
+
         if source != self.db_source():
             return
 
@@ -897,3 +934,33 @@ class BasePropertyEditor(QtWidgets.QDialog):
         if not v:
             return
         QtGui.QDesktopServices.openUrl(v)
+
+    def db_source(self):
+        """A file path to use as the source of database values.
+
+        When returns `None`, the editor will not load or save data to the
+        database.
+
+        Returns:
+            str: A file or folder path.
+
+        """
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
+
+    @QtCore.Slot()
+    def init_data(self):
+        """Implement this method to initialize the editor's data.
+
+        """
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
+
+    @QtCore.Slot()
+    def save_changes(self):
+        """Implement to execute any actions and/or save data before closing the
+        editor.
+
+        For editors that interact with the user database, this method should call
+        :meth:`save_changed_data_to_db` to save the changed data to the database.
+
+        """
+        raise NotImplementedError('Abstract method must be implemented by subclass.')

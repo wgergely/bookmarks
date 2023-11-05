@@ -30,7 +30,6 @@ SECTIONS = {
         'user/favourites',
     ),
     'settings': (
-        'settings/job_scan_depth',
         'settings/ui_scale',
         'settings/show_menu_icons',
         'settings/paint_thumbnail_bg',
@@ -42,6 +41,9 @@ SECTIONS = {
         'settings/bin_rv',
         'settings/bin_rvpush',
         'settings/bin_oiiotool',
+    ),
+    'jobs': (
+        'jobs/scandepth',
     ),
     'filters': (
         'filters/active',
@@ -82,11 +84,6 @@ SECTIONS = {
         'file_saver/extension',
         'file_saver/template',
         'file_saver/user',
-    ),
-    'bookmarker': (
-        'bookmarker/server',
-        'bookmarker/job',
-        'bookmarker/root',
     ),
     'ffmpeg': (
         'ffmpeg/preset',

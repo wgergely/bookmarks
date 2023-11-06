@@ -82,6 +82,8 @@ class BaseControlButton(ui.ClickableIconButton):
         )
         common.signals.updateTopBarButtons.connect(self.update)
 
+        self.setFixedWidth(common.size(common.size_margin) * 1.4)
+
 
 class FilterButton(BaseControlButton):
     def __init__(self, parent=None):
@@ -309,8 +311,8 @@ class ApplicationLauncherButton(BaseControlButton):
             'icon',
             f'Application Launcher  -  {s}',
             color=(
-                    common.color(common.color_green),
-                    common.color(common.color_green),
+                common.color(common.color_green),
+                common.color(common.color_green),
             ),
             parent=parent
         )

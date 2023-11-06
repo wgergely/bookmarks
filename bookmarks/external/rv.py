@@ -10,7 +10,6 @@ from PySide2 import QtCore
 from .. import common
 from .. import database
 
-
 tag = f'{common.product}{uuid.uuid4().hex}'
 
 PushAndClear = common.idx(reset=True, start=0)
@@ -20,7 +19,8 @@ InitializeSession = common.idx()
 
 RV_COMMANDS = {
     InitializeSession: '-tag {tag} py-eval-return "print(\'Starting RV\')"',
-    PushAndClearFullScreen: '-tag {tag} url rvlink:// "-reuse 1 -inferSequence -l -play -fullscreen -nofloat -lookback 0 -nomb -fps {framerate} "{source}""',
+    PushAndClearFullScreen: '-tag {tag} url rvlink:// "-reuse 1 -inferSequence -l -play -fullscreen -nofloat '
+                            '-lookback 0 -nomb -fps {framerate} "{source}""',
     PushAndClear: '-tag {tag} url rvlink:// "-reuse 1 -inferSequence -l -play -lookback 0 -fps {framerate} "{source}""',
     Add: '-tag {tag} merge "{source}"',
 }
@@ -47,8 +47,10 @@ def execute_rvpush_command(source, command):
     # Get the path to the executable
     executable = common.get_binary('rvpush')
     if not executable:
-        raise RuntimeError(f'Could not find RV. Make sure the app is added as an Application Launcher Item,'
-                           f'or that the RV binary is added to the PATH environment variable.')
+        raise RuntimeError(
+            f'Could not find RV. Make sure the app is added as an Application Launcher Item,'
+            f'or that the RV binary is added to the PATH environment variable.'
+            )
 
     # Get the framerate from the database
     db = database.get(*common.active('root', args=True))

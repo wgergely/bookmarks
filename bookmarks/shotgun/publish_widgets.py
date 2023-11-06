@@ -6,8 +6,8 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from . import actions as sg_actions
 from . import shotgun
 from .. import common
-from .. import images
 from .. import database
+from .. import images
 
 NOT_SELECTED = 'Not selected...'
 NOT_CONFIGURED = 'Not configured'

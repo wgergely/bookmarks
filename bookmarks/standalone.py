@@ -8,7 +8,6 @@ widget.
 
 """
 import ctypes
-import functools
 import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -402,7 +401,7 @@ class BookmarksApp(QtWidgets.QApplication):
     def __init__(self, args):
         _set_application_properties()
 
-        super().__init__([__file__,])
+        super().__init__([__file__, ])
         _set_application_properties(app=self)
         self.setApplicationVersion(__version__)
 

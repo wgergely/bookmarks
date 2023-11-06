@@ -109,6 +109,7 @@ def get_data_from_value(value, data_type, role=common.PathRole):
                     return data
     return None
 
+
 def get_task_data(key, task):
     """Get cached data from :attr:`~bookmarks.common.item_data`.
 

@@ -6,10 +6,10 @@ from PySide2 import QtCore, QtGui
 from . import base
 from . import base_widgets
 from .. import actions
+from .. import application_launcher
 from .. import common
 from .. import database
 from .. import ui
-from ..launcher import main as launcher
 from ..shotgun import actions as sg_actions
 from ..shotgun import shotgun
 
@@ -49,7 +49,6 @@ def show(server, job, root):
     common.restore_window_geometry(common.bookmark_property_editor)
     common.restore_window_state(common.bookmark_property_editor)
     return common.bookmark_property_editor
-
 
 
 class BookmarkPropertyEditor(base.BasePropertyEditor):
@@ -330,7 +329,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'name': 'Applications:',
                         'key': 'applications',
                         'validator': None,
-                        'widget': launcher.LauncherListWidget,
+                        'widget': application_launcher.ApplicationLauncherListWidget,
                         'placeholder': None,
                         'description': 'Edit the list of applications this bookmark '
                                        'item uses.',

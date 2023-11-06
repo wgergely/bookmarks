@@ -8,7 +8,7 @@ the current active project and asset and uploads any custom thumbnails set.
 import re
 import time
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui
 
 from . import actions as sg_actions
 from . import publish_widgets
@@ -191,8 +191,10 @@ class PublishWidget(base.BasePropertyEditor):
         ext = file_info.suffix()
         if not ext or ext.lower() not in self.formats:
             self.setDisabled(True)
-            raise RuntimeError(f'Unsupported format for this publish: {ext}\n'
-                               f'Expected: {", ".join(self.formats)}')
+            raise RuntimeError(
+                f'Unsupported format for this publish: {ext}\n'
+                f'Expected: {", ".join(self.formats)}'
+                )
 
         self.set_path(v)
 

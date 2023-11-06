@@ -42,9 +42,8 @@ def show():
     return common.maya_export_widget
 
 
-
 def export_maya(
-    destination, outliner_set, start_frame, end_frame, step=1.0
+        destination, outliner_set, start_frame, end_frame, step=1.0
 ):
     """Main Maya scene export function.
 
@@ -75,8 +74,9 @@ def export_maya(
         options="v=0;"
     )
 
+
 def export_alembic(
-    destination, outliner_set, start_frame, end_frame, step=1.0
+        destination, outliner_set, start_frame, end_frame, step=1.0
 ):
     """Main alembic export function.
 
@@ -272,8 +272,9 @@ def export_alembic(
     finally:
         teardown()
 
+
 def export_ass(
-    destination, outliner_set, start_frame, end_frame, step=1.0
+        destination, outliner_set, start_frame, end_frame, step=1.0
 ):
     """Main Arnold ASS export function.
 
@@ -335,8 +336,9 @@ def export_ass(
 
         mayabase.report_export_progress(start_frame, fr, end_frame, start_time)
 
+
 def export_obj(
-    destination, outliner_set, start_frame, end_frame, step=1.0
+        destination, outliner_set, start_frame, end_frame, step=1.0
 ):
     """Main obj export function.
 
@@ -387,7 +389,6 @@ def export_obj(
         )
 
         mayabase.report_export_progress(start_frame, fr, end_frame, start_time)
-
 
 
 #: Maya cache export presets
@@ -482,7 +483,6 @@ class VersionsComboBox(QtWidgets.QComboBox):
         for v in [f'v{str(n).zfill(3)}' for n in range(1, 1000)]:
             self.addItem(v, userData=v)
         self.blockSignals(False)
-
 
 
 class ExportWidget(base.BasePropertyEditor):

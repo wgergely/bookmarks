@@ -21,7 +21,6 @@ from .. import contextmenu
 from .. import images
 from .. import log
 from ..threads import threads
-from ..tokens import tokens
 
 
 class TaskItemContextMenu(contextmenu.BaseContextMenu):
@@ -314,7 +313,7 @@ class TaskItemModel(models.ItemModel):
                     #
                     common.EntryRole: [entry, ],
                     common.FlagsRole: flags,
-                    common.ParentPathRole: list(source_path) + [entry.name,],
+                    common.ParentPathRole: list(source_path) + [entry.name, ],
                     common.DescriptionRole: '',
                     common.NoteCountRole: 0,
                     common.FileDetailsRole: '',
@@ -367,7 +366,7 @@ class TaskItemView(views.ThreadedItemView):
     Delegate = TaskItemViewDelegate
     ContextMenu = TaskItemContextMenu
 
-    queues = (threads.FileInfo2, )
+    queues = (threads.FileInfo2,)
 
     def __init__(self, parent=None):
         super().__init__(

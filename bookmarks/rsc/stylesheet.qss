@@ -320,19 +320,19 @@ TableWidget::item {{
 }}
 
 QHeaderView {{
-    font-family: "{font_secondary}";
+    font-family: "{font_primary}";
     font-size: {size_font_small}px;
     border: none;
-    background-color: {color_background};
+    background-color: transparent;
     border-top-left-radius: {size_indicator}px;
     border-top-right-radius: {size_indicator}px;
 }}
 QHeaderView::section {{
     padding-left: {size_margin}px;
-    background-color: {color_background};
-    color: {color_secondary_text};
+    background-color: transparent;
+    color: {color_background};
     border: none;
-    border-right: {size_separator}px solid {color_dark_background};
+    border-right: {size_separator}px solid transparent;
 }}
 QHeaderView::section:down-arrow,
 QHeaderView::up-arrow {{

@@ -1,15 +1,13 @@
 """Defines :class:`.TopBarWidget`, the main widget containing all control buttons.
 
 """
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
 from . import buttons
 from . import filters
 from . import tabs
 from .. import common
-from .. import images
 from .. import ui
-
 
 BUTTONS = {
     common.BookmarkTab: {
@@ -125,7 +123,6 @@ class ContextStatusBar(QtWidgets.QWidget):
             size=common.size(common.size_font_medium) * 0.9,
             parent=self
         )
-
 
         self.arrow_left_button = ui.ClickableIconButton(
             'arrow_left',
@@ -257,7 +254,6 @@ class ContextStatusBar(QtWidgets.QWidget):
         )
         menu.exec_()
 
-
     @QtCore.Slot()
     def update(self, *args, **kwargs):
         """Update the informative labels based on the current context.
@@ -308,8 +304,6 @@ class ContextStatusBar(QtWidgets.QWidget):
             self.note_widget.setText('')
 
 
-
-
 class TopBarWidget(QtWidgets.QWidget):
     """The bar above the stacked widget containing the main app control buttons.
 
@@ -345,7 +339,7 @@ class TopBarWidget(QtWidgets.QWidget):
         QtWidgets.QHBoxLayout(widget)
 
         widget.layout().setContentsMargins(0, 0, o, 0)
-        widget.layout().setSpacing(o)
+        widget.layout().setSpacing(0)
         widget.setFixedHeight(height)
 
         widget.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
@@ -357,6 +351,7 @@ class TopBarWidget(QtWidgets.QWidget):
 
             if idx > common.FavouriteTab:
                 widget.layout().addWidget(self._buttons[idx], 0)
+                # widget.layout().addSpacing(o * 0.5)
             else:
                 widget.layout().addWidget(self._buttons[idx], 1)
 

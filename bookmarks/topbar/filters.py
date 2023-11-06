@@ -97,7 +97,7 @@ class BaseFilterModel(ui.AbstractListModel):
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole:QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
         }
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
@@ -115,12 +115,12 @@ class BaseFilterModel(ui.AbstractListModel):
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole:QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
         }
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole:QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
         }
 
         icon = ui.get_icon(self.icon)
@@ -315,6 +315,7 @@ class SubdirFilterModel(BaseFilterModel):
 
         self._data = data
 
+
 class SubdirFilterButton(BaseFilterButton):
     """The combo box used to set a text filter based on the available file types
 
@@ -324,7 +325,6 @@ class SubdirFilterButton(BaseFilterButton):
         super().__init__(
             SubdirFilterModel, common.FileTab, parent=parent
         )
-
 
     @QtCore.Slot(str)
     def update_filter_text(self, text):
@@ -350,6 +350,8 @@ class SubdirFilterButton(BaseFilterButton):
                 common.model(self.tab_index).set_filter_text(' '.join(filter_texts))
         else:
             super().update_filter_text(text)
+
+
 class ServersFilterModel(BaseFilterModel):
 
     def __init__(self, parent=None):

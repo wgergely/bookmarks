@@ -25,12 +25,9 @@ import json
 import os
 import re
 
-import maya.OpenMayaUI as OpenMayaUI
 import maya.api.OpenMaya as OpenMaya
 import maya.cmds as cmds
-import shiboken2
 from PySide2 import QtCore, QtGui, QtWidgets
-
 
 WINDOW_TITLE = 'Aka Shader Templates'
 NUMERIC_TYPES = ['double', 'float', 'long', 'short', 'byte', 'int']

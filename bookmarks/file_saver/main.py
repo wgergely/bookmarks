@@ -85,6 +85,7 @@ INACTIVE_KEYS = (
     'file_saver_template',
 )
 
+
 def increment_version(v, dir, name, func, increment):
     """Increments a version number considering existing versions in a directory.
 

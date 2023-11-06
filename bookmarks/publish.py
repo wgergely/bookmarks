@@ -185,7 +185,6 @@ class TemplateComboBox(QtWidgets.QComboBox):
         self.setModel(TemplateModel())
 
 
-
 class PublishWidget(base.BasePropertyEditor):
     """Publishes a footage.
 
@@ -306,7 +305,7 @@ class PublishWidget(base.BasePropertyEditor):
         super().__init__(
             common.active('server'), common.active('job'), common.active('root'), db_table=database.AssetTable,
             buttons=(
-            'Publish', 'Cancel'), parent=parent
+                'Publish', 'Cancel'), parent=parent
         )
         self._index = index
         self.progress_widget = None
@@ -513,7 +512,8 @@ class PublishWidget(base.BasePropertyEditor):
 
             config = tokens.get(*common.active('root', args=True))
 
-            flag = tokens.SceneFormat | tokens.ImageFormat | tokens.MovieFormat | tokens.AudioFormat | tokens.CacheFormat
+            flag = (tokens.SceneFormat | tokens.ImageFormat | tokens.MovieFormat | tokens.AudioFormat |
+                    tokens.CacheFormat)
             exts = config.get_extensions(flag, force=True)
 
             if kwargs['ext'] not in exts:
@@ -714,7 +714,7 @@ class PublishWidget(base.BasePropertyEditor):
             jpegs[0],
             ffmpeg.PRESETS[ffmpeg.H264HQ]['preset'], server=payload['kwargs']['server'], job=payload['kwargs'][
                 'job'], root=payload['kwargs']['root'], asset=asset, task=payload['kwargs']['task'], size=(
-            None, None), timecode=False, output_path=o
+                None, None), timecode=False, output_path=o
         )
         payload['videos'].append(o)
 
@@ -725,7 +725,7 @@ class PublishWidget(base.BasePropertyEditor):
             jpegs[0],
             ffmpeg.PRESETS[ffmpeg.H264HQ]['preset'], server=payload['kwargs']['server'], job=payload['kwargs'][
                 'job'], root=payload['kwargs']['root'], asset=asset, task=payload['kwargs']['task'], size=(
-            1920, 1080), timecode=True, output_path=o
+                1920, 1080), timecode=True, output_path=o
         )
         payload['videos'].append(o)
 

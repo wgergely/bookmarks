@@ -26,7 +26,8 @@ class MessageBox(QtWidgets.QDialog):
     """
     buttonClicked = QtCore.Signal(str)
 
-    def __init__(self, title=None, body='', buttons=None, icon='icon', disable_animation=False, message_type=None, parent=None):
+    def __init__(self, title=None, body='', buttons=None, icon='icon', disable_animation=False, message_type=None,
+                 parent=None):
         super().__init__(parent=parent if parent else QtWidgets.QApplication.activeWindow())
 
         common.set_stylesheet(self)
@@ -511,6 +512,8 @@ class ClickableIconButton(QtWidgets.QLabel):
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
+        self.setScaledContents(False)
+
         self.setAttribute(QtCore.Qt.WA_NoBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
@@ -595,7 +598,18 @@ class ClickableIconButton(QtWidgets.QLabel):
             painter.setOpacity(0.5)
 
         pixmap = self.pixmap()
-        painter.drawPixmap(self.rect(), pixmap, pixmap.rect())
+
+        # Make sure the pixmap is never stretched
+        rect = self.rect()
+        center = rect.center()
+        if rect.width() != rect.height():
+            if rect.width() > rect.height():
+                rect.setWidth(rect.height())
+            else:
+                rect.setHeight(rect.width())
+        rect.moveCenter(center)
+
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
         painter.end()
 
 
@@ -1268,6 +1282,7 @@ def add_description(
     row.setFocusPolicy(QtCore.Qt.NoFocus)
     label.setFocusPolicy(QtCore.Qt.NoFocus)
     return row
+
 
 def paint_background_icon(name, widget):
     """Paints a decorative background icon to the middle of the given widget.

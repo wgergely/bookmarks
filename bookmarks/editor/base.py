@@ -224,14 +224,18 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self._create_ui()
         self._connect_signals()
 
-        self.setFocusProxy(self.scroll_area)
-        self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.init_data()
 
     def _create_ui(self):
         o = common.size(common.size_margin)
 
         QtWidgets.QHBoxLayout(self)
-        self.layout().setContentsMargins(0, 0, 0, 0)
+
+        if self._frameless:
+            o = common.size(common.size_margin) * 2
+            self.layout().setContentsMargins(o, o, o, o)
+        else:
+            self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
         self.thumbnail_editor = base_widgets.ThumbnailEditorWidget(
@@ -292,6 +296,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.scroll_area = QtWidgets.QScrollArea(parent=self)
         self.scroll_area.setWidgetResizable(True)
+
+        self.setFocusProxy(self.scroll_area)
+        self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
+
         self.right_row.layout().addWidget(self.scroll_area)
 
         parent = QtWidgets.QWidget(parent=self)

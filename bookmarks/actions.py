@@ -16,7 +16,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from . import common
 from . import database
 from . import images
-from. import log
+from . import log
 
 
 def must_be_initialized(func):
@@ -1441,7 +1441,7 @@ def execute(index, first=False):
         for app in (
                 'maya', 'maya2017', 'maya2018', 'maya2019', 'maya2020', 'maya2022', 'maya2023', 'maya2024',
                 'maya2025', 'maya2026'
-         ):
+        ):
             executable = common.get_binary(app)
             if not executable:
                 continue
@@ -1452,7 +1452,7 @@ def execute(index, first=False):
     if ext in ('nk', 'nknc'):
         executable = common.get_binary('nuke')
         if executable:
-            execute_detached(path, args=[path,])
+            execute_detached(path, args=[path, ])
             return
 
     # Handle Houdini files
@@ -1460,14 +1460,14 @@ def execute(index, first=False):
         for app in ('houdiniinidie', 'houindie', 'houind', 'houdiniind', 'hindie'):
             executable = common.get_binary(app)
             if executable:
-                execute_detached(executable, args=[path,])
+                execute_detached(executable, args=[path, ])
                 return
 
     if ext == 'hip':
         for app in ('houdini', 'houdinifx', 'houfx', 'hfx', 'houdinicore', 'hcore'):
             executable = common.get_binary(app)
             if executable:
-                execute_detached(executable, args=[path,])
+                execute_detached(executable, args=[path, ])
                 return
 
     # Handle RV files
@@ -1475,25 +1475,25 @@ def execute(index, first=False):
         for app in ('rv', 'tweakrv', 'shotgunrv', 'shotgridrv', 'sgrv'):
             executable = common.get_binary(app)
             if executable:
-                execute_detached(executable, args=[path,])
+                execute_detached(executable, args=[path, ])
                 return
 
     # Handle blender files
-    if ext in ('blend', ):
+    if ext in ('blend',):
         for app in ('blender', 'blender2.8', 'blender2.9', 'blender3', 'blender3.0', 'blender3.1', 'blender3.2',
                     'blender3.3', 'blender3.4', 'blender3.5'
-        ):
+                    ):
             executable = common.get_binary(app)
             if executable:
-                execute_detached(executable, args=[path,])
+                execute_detached(executable, args=[path, ])
                 return
 
     # Handle After Effects files
-    if ext in ('aep', ):
+    if ext in ('aep',):
         for app in ('afterfx', 'aftereffects', 'ae', 'afx'):
             executable = common.get_binary(app)
             if executable:
-                execute_detached(executable, args=[path,])
+                execute_detached(executable, args=[path, ])
                 return
 
     url = QtCore.QUrl.fromLocalFile(path)
@@ -1641,7 +1641,7 @@ def pick_launcher_item():
     """Slot called when a launcher item was clicked.
 
     """
-    from .launcher import gallery as editor
+    from . import application_launcher as editor
     widget = editor.show()
     widget.itemSelected.connect(execute_detached)
 
@@ -1768,12 +1768,14 @@ def convert_image_sequence(index):
     from .external import ffmpeg_widget
     ffmpeg_widget.show(index)
 
+
 @common.debug
 @common.error
 @selection
 def convert_image_sequence_with_akaconvert(index):
     from .external import akaconvert
     akaconvert.show(index)
+
 
 def add_zip_template(source, mode, prompt=False):
     """Adds the selected source zip archive as a `mode` template file.

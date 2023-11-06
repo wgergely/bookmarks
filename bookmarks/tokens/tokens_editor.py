@@ -496,7 +496,6 @@ class TokenConfigEditor(QtWidgets.QWidget):
                     else:
                         button.setDisabled(True)
 
-
     def init_data(self):
         """Initializes data.
 
@@ -540,7 +539,13 @@ class TokenConfigEditor(QtWidgets.QWidget):
             section (str): The section to add the item to.
 
         """
-        grp = self._add_section_item(parent, section, {'name': '', 'value': '', 'description': ''})
+        grp = self._add_section_item(
+            parent, section, {
+                'name': '',
+                'value': '',
+                'description': ''
+            }
+        )
 
         # Find the value editor
         editor = next(

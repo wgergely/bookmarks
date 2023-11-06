@@ -182,8 +182,10 @@ class SG(shotgun_api3.Shotgun):
             missing_fields = list(set(fields) - set(entity.keys()))
             if missing_fields:
                 _f = '", "'.join(missing_fields)
-                log.error(f'Missing fields: "{_f}" in return data. Check if you have permission to access these '
-                          f'fields.')
+                log.error(
+                    f'Missing fields: "{_f}" in return data. Check if you have permission to access these '
+                    f'fields.'
+                    )
         return entities
 
     def find_one(self, entity_type, filters, fields=None, **kwargs):
@@ -452,7 +454,8 @@ class SGProperties(QtCore.QObject):
 
         urls.append(self.domain)
         if all((self.bookmark_id, self.bookmark_type)):
-            urls.append(ENTITY_URL.format(domain=self.domain, entity_type=self.bookmark_type, entity_id=self.bookmark_id))
+            urls.append(ENTITY_URL.format(domain=self.domain, entity_type=self.bookmark_type,
+                                          entity_id=self.bookmark_id))
         if not self.episode_id is None:
             urls.append(ENTITY_URL.format(domain=self.domain, entity_type='Episode', entity_id=self.episode_id))
         if all((self.asset_id, self.asset_type)):

@@ -65,9 +65,8 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import database
-from .. import log
-from ..tokens import tokens
 from ..threads import threads
+from ..tokens import tokens
 
 
 class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -210,9 +209,9 @@ class BookmarkItemModel(models.ItemModel):
             # bookmark exist
             if all(
                     (
-                        server == common.active('server'),
-                        job == common.active('job'),
-                        root == common.active('root')
+                            server == common.active('server'),
+                            job == common.active('job'),
+                            root == common.active('root')
                     )
             ) and exists:
                 flags = flags | common.MarkedAsActive

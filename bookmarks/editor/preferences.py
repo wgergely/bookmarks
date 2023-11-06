@@ -279,7 +279,8 @@ class PreferenceEditor(base.BasePropertyEditor):
                         'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                         'placeholder': None,
                         'description': 'If an asset is associated with a valid ShotGrid task, activating it will'
-                                       'automatically set the ShotGrid context in Maya. Check the box above to disable.',
+                                       'automatically set the ShotGrid context in Maya. Check the box above to '
+                                       'disable.',
                     },
                 },
             },

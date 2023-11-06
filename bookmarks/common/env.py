@@ -9,7 +9,6 @@ import re
 
 from PySide2 import QtCore, QtWidgets
 
-
 external_binaries = (
     'ffmpeg',
     'rvpush',

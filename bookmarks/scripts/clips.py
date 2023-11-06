@@ -491,7 +491,8 @@ class EdlWidget(base.BasePropertyEditor):
         common.widget(common.AssetTab).model().invalidated.connect(self.select_latest_sources)
 
         self.edl_push_to_rv_editor.stateChanged.connect(
-            lambda x: self.save_button.setText('Push to RV' if x else 'Export'))
+            lambda x: self.save_button.setText('Push to RV' if x else 'Export')
+        )
 
     @QtCore.Slot()
     def update_selection_status(self):
@@ -895,8 +896,11 @@ class EdlWidget(base.BasePropertyEditor):
             # set the range for the clip
             clip.source_range = otio.opentime.TimeRange(
                 start_time=otio.opentime.RationalTime(node.data(CutInRole), node.data(FramerateRole)),
-                duration=otio.opentime.RationalTime(node.data(CutOutRole) - node.data(CutInRole), node.data(
-                    FramerateRole))
+                duration=otio.opentime.RationalTime(
+                    node.data(CutOutRole) - node.data(CutInRole), node.data(
+                        FramerateRole
+                    )
+                    )
             )
 
             # add metadata to the clip
@@ -913,7 +917,8 @@ class EdlWidget(base.BasePropertyEditor):
                 }
             )
 
-            # add a gap if necessary, if checkbox is checked, if it's not the first clip, and if gap is at least one frame long
+            # add a gap if necessary, if checkbox is checked, if it's not the first clip, and if gap is at least one
+            # frame long
             if i > 0 and self.edl_gaps_editor.isChecked() and last_edit_out is not None:
                 gap_duration = edit_in - last_edit_out
                 if gap_duration >= node.data(FramerateRole):  # Ensure gap is at least one frame long

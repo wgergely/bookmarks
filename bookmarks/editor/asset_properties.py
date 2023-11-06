@@ -100,9 +100,11 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'placeholder': None,
                         'description': 'Select a folder template to create this asset.',
                         'help': 'Select a folder template to create this asset. Templates are simple zip files that '
-                                'contain a folder structure and a set of files. The template can contain a `.link` file '
+                                'contain a folder structure and a set of files. The template can contain a `.link` '
+                                'file '
                                 'which will be used to read nested assets inside the template. This can be useful if an'
-                                'asset is made up of multiple tasks, e.g. a shot asset may contain a `lighting` and `anim`'
+                                'asset is made up of multiple tasks, e.g. a shot asset may contain a `lighting` and '
+                                '`anim`'
                                 'tasks.',
                     },
                 },
@@ -405,9 +407,6 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                 if _v is None:
                     continue
                 getattr(self, f'{k}_editor').setPlaceholderText(f'{_v}')
-
-
-
 
     def _disable_shotgun(self):
         sg_properties = shotgun.SGProperties(

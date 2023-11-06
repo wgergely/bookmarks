@@ -300,7 +300,6 @@ class ListsWidget(QtWidgets.QStackedWidget):
             if state == QtCore.QAbstractAnimation.Stopped:
                 self.animation_in_progress = False
 
-
         animation = QtCore.QParallelAnimationGroup()
         animation.finished.connect(functools.partial(animation_finished, animation))
         animation.stateChanged.connect(animation_state_changed)
@@ -433,6 +432,7 @@ class FilterOnOverlayWidget(ProgressWidget):
     if a model has filters set or if it requires a refresh.
 
     """
+
     def _connect_signals(self):
         super()._connect_signals()
 

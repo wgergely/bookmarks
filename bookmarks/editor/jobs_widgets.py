@@ -556,9 +556,6 @@ class AddJobDialog(base.BasePropertyEditor):
 
         self.setWindowTitle(f'{self.server}: Add job')
 
-        o = common.size(common.size_margin) * 2
-        self.layout().setContentsMargins(o, o, o, o)
-
         self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scroll_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
@@ -579,7 +576,14 @@ class AddJobDialog(base.BasePropertyEditor):
         """Initialize data.
 
         """
-        pass
+        # Add a QCompleter to the name_editor
+        editor = self.parent().window().job_editor
+        model = editor.model()
+        server = model.root_node.name
+        jobs = [f.name[len(server)+1:] for f in model.root_node.children if isinstance(f, JobNode)]
+        completer = QtWidgets.QCompleter(sorted(jobs))
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.name_editor.setCompleter(completer)
 
     @common.error
     @common.debug
@@ -682,8 +686,8 @@ class AddJobDialog(base.BasePropertyEditor):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 1.4,
-            common.size(common.size_height) * 1.0
+            common.size(common.size_width) * 1.5,
+            common.size(common.size_height)
         )
 
 

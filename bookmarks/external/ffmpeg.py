@@ -269,8 +269,8 @@ def _get_framerate(fallback_framerate=24.0):
 
     db = database.get(*common.active('root', args=True))
 
-    bookmark_framerate = db.value(common.active('root', path=True),'framerate', database.BookmarkTable)
-    asset_framerate = db.value(common.active('asset', path=True),'asset_framerate', database.AssetTable)
+    bookmark_framerate = db.value(common.active('root', path=True), 'framerate', database.BookmarkTable)
+    asset_framerate = db.value(common.active('asset', path=True), 'asset_framerate', database.AssetTable)
 
     v = asset_framerate or bookmark_framerate or fallback_framerate
     if not isinstance(v, (int, float)) or v < 1.0:

@@ -162,7 +162,7 @@ class CoreSignals(QtCore.QObject):
             lambda *x: common.show_message(
                 'ShotGrid is connecting, please wait.', disable_animation=True,
                 buttons=[], message_type=None
-                )
+            )
         )
         self.sgConnectionSuccessful.connect(common.close_message)
         self.sgConnectionFailed.connect(common.close_message)

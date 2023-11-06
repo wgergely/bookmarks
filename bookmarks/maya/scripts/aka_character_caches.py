@@ -72,7 +72,8 @@ DEFAULT_VALUES = {
             'widget': ui.LineEdit,
         },
         'exclude_reset_pose_from': {
-            'default': 'legUI_L0_ctl, armUI_R0_ctl, faceUI_C0_ctl, legUI_R0_ctl, spineUI_C0_ctl, armUI_L0_ctl, body_C0_ctl, world_ctl, root_C0_ctl',
+            'default': 'legUI_L0_ctl, armUI_R0_ctl, faceUI_C0_ctl, legUI_R0_ctl, spineUI_C0_ctl, armUI_L0_ctl, '
+                       'body_C0_ctl, world_ctl, root_C0_ctl',
             'placeholder': 'list, of, controllers, to, exclude',
             'widget': ui.LineEdit,
         },
@@ -610,7 +611,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         cmds.bakeResults(
             locator,
-            time=(cut_in,cut_out),
+            time=(cut_in, cut_out),
             simulation=True,
             sampleBy=1, oversamplingRate=1, disableImplicitControl=True,
             preserveOutsideKeys=True, sparseAnimCurveBake=False, removeBakedAttributeFromLayer=False,
@@ -857,8 +858,9 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         locator = cmds.spaceLocator(name='nullLocator')[0]
 
-        if not QtCore.QFileInfo(f'{options["studio_library_output_folder"]}/{options["namespace"]}_hip.anim').exists():
-            raise RuntimeError(f'Could not find hip animation: {options["studio_library_output_folder"]}/{options["namespace"]}_hip.anim')
+        s = f'{options["studio_library_output_folder"]}/{options["namespace"]}'
+        if not QtCore.QFileInfo(f'{s}_hip.anim').exists():
+            raise RuntimeError(f'Could not find hip animation: {s}_hip.anim')
 
         self.statusChanged.emit('Working...', 'Importing animation...')
 
@@ -867,7 +869,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
             [os.path.normpath(
                 f'{options["studio_library_output_folder"]}/{options["namespace"]}_hip.anim'
             ), ],
-            objects=[locator,],
+            objects=[locator, ],
             currentTime=False,
             option='replaceCompletely'
         )
@@ -882,6 +884,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         # Parent constrain the selection to the locator
         cmds.parentConstraint(locator, node, maintainOffset=True)[0]
+
     def showEvent(self, event):
         super().showEvent(event)
         common.center_window(self)

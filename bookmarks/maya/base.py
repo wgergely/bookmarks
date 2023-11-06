@@ -315,7 +315,7 @@ def set_render_resolution(width, height):
             'Pixel Aspect Ratio Warning',
             'The current pixel aspect ratio is not 1.0. This may cause issues '
             'with the render output.',
-            buttons=[common.OkButton,],
+            buttons=[common.OkButton, ],
             message_type='info',
             modal=True,
         )

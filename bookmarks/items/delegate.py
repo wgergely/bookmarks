@@ -703,7 +703,6 @@ def draw_subdir_bg_rectangles(text_edge, *args):
     return QtCore.QRect()
 
 
-
 class ItemDelegate(QtWidgets.QStyledItemDelegate):
     """The main delegate used to represent lists derived from `base.BaseItemView`.
 
@@ -717,7 +716,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         self._max = 0
         self._gradient_pixmap = self._create_gradient_pixmap()
 
-
     def _get_largest_screen_width(self):
         # Get all available screens
         screens = QtWidgets.QApplication.screens()
@@ -729,7 +727,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # 1. Set up the linear gradient
         gradient = QtGui.QLinearGradient()
-        gradient.setStart(QtCore.QPoint(0,0))
+        gradient.setStart(QtCore.QPoint(0, 0))
         gradient.setFinalStop(QtCore.QPoint(width, 0))
 
         # 2. Define the color stops
@@ -1117,7 +1115,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         if len(pp) <= 4:
             return self.paint_asset_name(
                 *args,
-                 offset=common.size(common.size_indicator)
+                offset=common.size(common.size_indicator)
             )
         elif len(pp) > 4:
             return self.paint_file_name(*args)

@@ -276,13 +276,13 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.menu[f'{k}:icon'] = ui.get_icon('settings')
 
         for item in (
-            ('maya/sync_workspace', 'Set Workspace'),
-            ('maya/set_sg_context', 'Set ShotGrid Context'),
-            'separator',
-            ('maya/reveal_capture', 'Reveal capture in explorer'),
-            ('maya/publish_capture', 'Copy capture to \'latest\''),
-            'separator',
-            ('maya/workspace_save_warnings', 'Show Warnings'),
+                ('maya/sync_workspace', 'Set Workspace'),
+                ('maya/set_sg_context', 'Set ShotGrid Context'),
+                'separator',
+                ('maya/reveal_capture', 'Reveal capture in explorer'),
+                ('maya/publish_capture', 'Copy capture to \'latest\''),
+                'separator',
+                ('maya/workspace_save_warnings', 'Show Warnings'),
         ):
             if item == 'separator':
                 self.separator(menu=self.menu[k])

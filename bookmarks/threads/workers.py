@@ -14,8 +14,8 @@ from .. import common
 from .. import database
 from .. import images
 from .. import log
-from ..tokens import tokens
 from ..shotgun import shotgun
+from ..tokens import tokens
 
 
 def _widget(q):

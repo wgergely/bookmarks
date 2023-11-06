@@ -773,7 +773,8 @@ class SyncWidget(base.BasePropertyEditor):
                     audio_file_path = f"{bookmark_root}/{entity['code']}.wav"
 
                     if os.path.exists(audio_file_path):
-                        print(f'Copying audio file {entity["code"]}.wav to {root}/{task_path}/audio/{entity["code"]}.wav')
+                        print(f'Copying audio file {entity["code"]}.wav to {root}/{task_path}/audio/'
+                              f'{entity["code"]}.wav')
                         task_audio_dir = os.path.join(f'{root}', task_path, 'audio')
                         destination_audio_path = os.path.join(task_audio_dir, f"{entity['code']}.wav")
 

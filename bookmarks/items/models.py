@@ -52,7 +52,6 @@ DEFAULT_ITEM_FLAGS = (
 #: A default container used to sort items by name
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
-
 # Filter expressions used by the filter proxy model
 re_negative = re.compile(r'--([^\"\'\[\]\*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
 re_quoted_negative = re.compile(r'--"(.*?)"', flags=re.IGNORECASE | re.MULTILINE)

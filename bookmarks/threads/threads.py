@@ -101,18 +101,7 @@ THREADS = {
         },
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
-        'tab': common.FileTab,
-    },
-    FileInfo3: {
-        'queue': collections.deque([], common.max_list_items),
-        'preload': True,
-        'data_types': {
-            common.FileItem: DataType(FileInfo, common.FileItem),
-            common.SequenceItem: DataType(FileInfo, common.SequenceItem),
-        },
-        'worker': workers.InfoWorker,
-        'role': common.FileInfoLoaded,
-        'tab': common.FileTab,
+        'tab': common.TaskTab,
     },
     FileThumbnail: {
         'queue': collections.deque([], 99),

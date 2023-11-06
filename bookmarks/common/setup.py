@@ -75,8 +75,7 @@ def initialize(mode):
         os.makedirs(os.path.normpath(common.temp_path()))
 
     common.init_signals()
-    common.prune_lock()
-    common.init_lock()  # Sets the current active mode
+    common.init_active_mode()
     common.init_settings()
 
     _init_ui_scale()
@@ -118,6 +117,25 @@ def initialize(mode):
         time.sleep(0.1)
         if n > 2.0:
             break
+
+
+def initialize_core():
+    """"""
+    if common.init_mode is not None:
+        raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
+
+    common.init_mode = common.EmbeddedMode
+
+    _init_config()
+
+    common.item_data = common.DataDict()
+
+    if not os.path.isdir(common.temp_path()):
+        os.makedirs(os.path.normpath(common.temp_path()))
+
+    common.init_signals(connect_signals=False)
+    common.init_active_mode()
+    common.init_settings()
 
 
 def uninitialize():

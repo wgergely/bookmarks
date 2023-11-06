@@ -199,18 +199,31 @@ class MessageBox(QtWidgets.QDialog):
         self._clicked_button = button
 
     def set_labels(self, title, body):
+        """Sets the message box's labels.
+
+        Args:
+            title (str): The message box's title.
+            body (str): The message box's body.
+
+        """
         self.title_label.setText(title)
         self.body_label.setText(body)
 
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
+
     def sizeHint(self):
-        """Returns a size hint."""
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
             common.size(common.size_width * 0.90),
             common.size(common.size_height * 0.66)
         )
 
     def showEvent(self, event):
-        """Override the show event to start the fade in animation."""
+        """Override the show event to start the fade in animation.
+
+        """
         common.center_to_parent(self)
         common.move_widget_to_available_geo(self)
 
@@ -283,7 +296,7 @@ class LineEdit(QtWidgets.QLineEdit):
     """Custom line edit widget with a single underline."""
 
     def __init__(self, parent=None):
-        super(LineEdit, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -361,7 +374,10 @@ class PaintedButton(QtWidgets.QPushButton):
 
 
 class PaintedLabel(QtWidgets.QLabel):
-    """QLabel used for static aliased label."""
+    """QLabel used for static aliased label.
+
+    """
+    clicked = QtCore.Signal()
 
     def __init__(
             self, text, color=common.color(common.color_text),
@@ -369,9 +385,21 @@ class PaintedLabel(QtWidgets.QLabel):
             parent=None
     ):
         super().__init__(text, parent=parent)
+
         self._size = size
         self._color = color
         self._text = text
+
+        self.update_size()
+
+    def setText(self, v):
+        self._text = v
+        self.update_size()
+
+        super().setText(v)
+
+    def set_color(self, v):
+        self._color = v
         self.update_size()
 
     def update_size(self):
@@ -393,12 +421,12 @@ class PaintedLabel(QtWidgets.QLabel):
         painter.begin(self)
 
         hover = option.state & QtWidgets.QStyle.State_MouseOver
-        pressed = option.state & QtWidgets.QStyle.State_Sunken
-        focus = option.state & QtWidgets.QStyle.State_HasFocus
+        # pressed = option.state & QtWidgets.QStyle.State_Sunken
+        # focus = option.state & QtWidgets.QStyle.State_HasFocus
         disabled = not self.isEnabled()
 
         o = 1.0 if hover else 0.8
-        o = 0.3 if disabled else 1.0
+        o = 0.3 if disabled else o
         painter.setOpacity(o)
 
         rect = self.rect()
@@ -424,6 +452,18 @@ class PaintedLabel(QtWidgets.QLabel):
 
         """
         self.update()
+
+    def mouseReleaseEvent(self, event):
+        """Event handler.
+
+        """
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+        # Check if the click was inside the label
+        if not self.rect().contains(event.pos()):
+            return
+        if event.button() == QtCore.Qt.LeftButton:
+            self.clicked.emit()
 
 
 class ClickableIconButton(QtWidgets.QLabel):
@@ -577,11 +617,12 @@ class ListOverlayWidget(QtWidgets.QWidget):
         )
 
     @QtCore.Slot(str)
-    def set_message(self, message):
-        if message == self._message:
+    @QtCore.Slot(str)
+    def set_message(self, title, body):
+        if title == self._message:
             return
 
-        self._message = message
+        self._message = title
         self.update()
 
     def paintEvent(self, event):
@@ -637,11 +678,14 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         checked = index.data(QtCore.Qt.CheckStateRole) == QtCore.Qt.Checked
+
         hover = option.state & QtWidgets.QStyle.State_MouseOver
         selected = option.state & QtWidgets.QStyle.State_Selected
         focus = option.state & QtWidgets.QStyle.State_HasFocus
+        opened = option.state & QtWidgets.QStyle.State_Open
         checkable = index.flags() & QtCore.Qt.ItemIsUserCheckable
         decoration = index.data(QtCore.Qt.DecorationRole)
+
         text = index.data(QtCore.Qt.DisplayRole)
         disabled = index.flags() == QtCore.Qt.NoItemFlags
 
@@ -656,37 +700,41 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         rect = option.rect.adjusted(o * 0.3, o * 0.3, -o * 0.3, -o * 0.3)
 
         # Background
-        _o = 0.6 if hover else 0.2
-        _o = 0.1 if disabled else _o
-        _o = 1.0 if selected else _o
-        painter.setOpacity(_o)
-        painter.setPen(QtCore.Qt.NoPen)
+        if index.column() == 0:
+            _o = 0.6 if hover else 0.2
+            _o = 0.1 if disabled else _o
+            _o = 1.0 if selected else _o
+            painter.setOpacity(_o)
+            painter.setPen(QtCore.Qt.NoPen)
 
-        if selected or hover:
-            painter.setBrush(common.color(common.color_light_background))
-        else:
-            painter.setBrush(common.color(common.color_separator))
-        painter.drawRoundedRect(rect, o, o)
+            if selected or hover:
+                color = common.color(common.color_light_background)
+            elif opened:
+                color = common.color(common.color_separator)
+            else:
+                color = QtGui.QColor(0, 0, 0, 0)
 
-        if focus:
-            painter.setBrush(QtCore.Qt.NoBrush)
-            pen = QtGui.QPen(common.color(common.color_blue))
-            pen.setWidthF(common.size(common.size_separator))
-            painter.setPen(pen)
+            painter.setBrush(color)
             painter.drawRoundedRect(rect, o, o)
 
-        # Checkbox
-        rect = QtCore.QRect(rect)
+            if focus:
+                painter.setBrush(QtCore.Qt.NoBrush)
+                pen = QtGui.QPen(common.color(common.color_blue))
+                pen.setWidthF(common.size(common.size_separator))
+                painter.setPen(pen)
+                painter.drawRoundedRect(rect, o, o)
+
+        # image rectangle
+        painter.setPen(QtCore.Qt.NoPen)
+        _ = painter.setOpacity(1.0) if hover else painter.setOpacity(0.9)
+
+        rect = QtCore.QRect(option.rect)
         rect.setWidth(rect.height())
         center = rect.center()
+
         h = common.size(common.size_margin)
         rect.setSize(QtCore.QSize(h, h))
         rect.moveCenter(center)
-
-        h = rect.height() / 2.0
-        painter.setPen(QtCore.Qt.NoPen)
-
-        _ = painter.setOpacity(1.0) if hover else painter.setOpacity(0.9)
 
         if checkable and checked:
             pixmap = images.rsc_pixmap(
@@ -713,26 +761,27 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
                 mode,
                 QtGui.QIcon.On
             )
-        else:
-            rect.setWidth(o * 2)
-
-        # Label
-        font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small)
-        )
 
         _fg = index.data(QtCore.Qt.ForegroundRole)
         color = _fg if _fg else common.color(common.color_text)
         color = common.color(common.color_selected_text) if selected else color
         color = common.color(common.color_text) if checked else color
-
+        color = common.color(common.color_selected_text) if opened else color
         painter.setBrush(color)
 
-        x = rect.right() + common.size(common.size_indicator) * 3
+        # Label
+        padding = common.size(common.size_indicator) * 2
+        x = rect.right() + padding
+
+        font, metrics = common.font_db.bold_font(
+            common.size(common.size_font_small)
+        )
+
+        width = option.rect.width() - (rect.right() - option.rect.left()) - padding * 2
         text = metrics.elidedText(
             text,
             QtCore.Qt.ElideRight,
-            option.rect.width() - x - common.size(common.size_indicator),
+            width
         )
 
         y = option.rect.center().y() + (metrics.ascent() / 2.0)
@@ -745,19 +794,22 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         painter.drawPath(path)
 
     def sizeHint(self, option, index):
-        _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small)
-        )
+        opened = option.state & QtWidgets.QStyle.State_Open
+        x = 1 if not opened else 1.4
 
-        width = (
-                metrics.horizontalAdvance(index.data(QtCore.Qt.DisplayRole)) +
-                common.size(common.size_row_height) +
-                common.size(common.size_margin)
-        )
-        return QtCore.QSize(
-            width,
-            common.size(common.size_row_height)
-        )
+        if index.isValid() and index.data(QtCore.Qt.SizeHintRole):
+            height = index.data(QtCore.Qt.SizeHintRole).height() * x
+        else:
+            height = common.size(common.size_row_height) * x
+
+        padding = common.size(common.size_indicator) * 2
+        if index.data(QtCore.Qt.DisplayRole):
+            _, metrics = common.font_db.bold_font(common.size(common.size_font_small))
+            text_width = metrics.boundingRect(index.data(QtCore.Qt.DisplayRole)).width()
+            width = padding + common.size(common.size_margin) + padding + text_width + padding
+        else:
+            width = 0
+        return QtCore.QSize(width, height)
 
     def createEditor(self, parent, option, index):
         """Custom editor for editing the template's name.
@@ -783,7 +835,7 @@ class ListWidget(QtWidgets.QListWidget):
     """A custom list widget used to display selectable item.
 
     """
-    progressUpdate = QtCore.Signal(str)
+    progressUpdate = QtCore.Signal(str, str)
     resized = QtCore.Signal(QtCore.QSize)
 
     def __init__(self, default_message='No items', default_icon='icon', parent=None):
@@ -806,10 +858,13 @@ class ListWidget(QtWidgets.QListWidget):
         self.setAcceptDrops(False)
         self.setDragEnabled(False)
         self.setSpacing(0)
+
         self.setItemDelegate(ListWidgetDelegate(parent=self))
+
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+
         self.setMouseTracking(True)
         self.viewport().setMouseTracking(True)
 
@@ -838,7 +893,7 @@ class ListWidget(QtWidgets.QListWidget):
         self.resized.connect(self.overlay.resize)
 
         self.progressUpdate.connect(self.overlay.set_message)
-        self.progressUpdate.connect(common.signals.showStatusTipMessage)
+        self.progressUpdate.connect(lambda x, y: common.signals.showStatusTipMessage.emit(x))
 
         self.itemEntered.connect(
             lambda item: common.signals.showStatusTipMessage.emit(
@@ -900,7 +955,7 @@ class ListViewWidget(QtWidgets.QListView):
     """A custom list widget used to display selectable item.
 
     """
-    progressUpdate = QtCore.Signal(str)
+    progressUpdate = QtCore.Signal(str, str)
     resized = QtCore.Signal(QtCore.QSize)
     itemEntered = QtCore.Signal(QtCore.QModelIndex)
 
@@ -960,7 +1015,7 @@ class ListViewWidget(QtWidgets.QListView):
     def _connect_signals(self):
         self.resized.connect(self.overlay.resize)
         self.progressUpdate.connect(self.overlay.set_message)
-        self.progressUpdate.connect(common.signals.showStatusTipMessage)
+        self.progressUpdate.connect(lambda x, y: common.signals.showStatusTipMessage.emit(x))
 
         self.itemEntered.connect(
             lambda item: common.signals.showStatusTipMessage.emit(
@@ -1036,7 +1091,7 @@ class ListViewWidget(QtWidgets.QListView):
 def get_icon(
         name,
         color=common.color(common.color_disabled_text),
-        size=common.size(common.size_row_height),
+        size=common.size(common.size_row_height) * 2,
         opacity=1.0,
         resource=common.GuiResource
 ):
@@ -1196,7 +1251,7 @@ def add_line_edit(label, parent=None):
 
 
 def add_description(
-        text, label=' ', color=common.color(common.color_secondary_text), parent=None
+        text, label=' ', height=None, color=common.color(common.color_secondary_text), parent=None
 ):
     """Utility method for adding a description field.
 
@@ -1204,7 +1259,7 @@ def add_description(
         QLabel: the added QLabel.
 
     """
-    row = add_row(label, height=None, parent=parent)
+    row = add_row(label, height=height, parent=parent)
     row.layout().setSpacing(0)
 
     label = Label(text, color=color, parent=parent)
@@ -1213,7 +1268,6 @@ def add_description(
     row.setFocusPolicy(QtCore.Qt.NoFocus)
     label.setFocusPolicy(QtCore.Qt.NoFocus)
     return row
-
 
 def paint_background_icon(name, widget):
     """Paints a decorative background icon to the middle of the given widget.
@@ -1372,19 +1426,26 @@ class GalleryWidget(QtWidgets.QDialog):
     ):
         super().__init__(parent=parent)
 
+        self.anim = None
         self.scroll_area = None
         self.columns = columns
         self._label = label
         self._item_height = item_height
 
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowOpacity(0.8)
+        self.setWindowOpacity(0.95)
+
+        self.installEventFilter(self)
 
         self._create_ui()
         self.init_data()
+
+    def eventFilter(self, widget, event):
+        if event.type() == QtCore.QEvent.WindowDeactivate:
+            self.close()
+            return True
+        return False
 
     def _create_ui(self):
         if not self.parent():
@@ -1405,6 +1466,7 @@ class GalleryWidget(QtWidgets.QDialog):
             parent=self
         )
         self.layout().addWidget(label)
+        self.layout().addSpacing(common.size(common.size_margin) * 1.5)
 
         _width = (
                 (common.size(common.size_indicator) * 2) +
@@ -1429,9 +1491,7 @@ class GalleryWidget(QtWidgets.QDialog):
         )
 
         widget = QtWidgets.QWidget(parent=self)
-        widget.setStyleSheet(
-            f'background-color: {common.rgb(common.color_separator)};'
-        )
+        widget.eventFilter = self.eventFilter
 
         QtWidgets.QGridLayout(widget)
         widget.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -1443,10 +1503,8 @@ class GalleryWidget(QtWidgets.QDialog):
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(widget)
 
-        # self.layout().addSpacing(common.size(common.size_margin))
         self.layout().addWidget(self.scroll_area, 1)
-
-        self.setFocusProxy(widget)
+        self.setFocusProxy(self.scroll_area.widget())
 
     def init_data(self):
         """Initializes data.
@@ -1480,21 +1538,6 @@ class GalleryWidget(QtWidgets.QDialog):
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
-    def paintEvent(self, event):
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        painter.setBrush(common.color(common.color_separator))
-        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 150))
-        pen.setWidth(common.size(common.size_separator))
-        painter.setPen(pen)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.size(common.size_indicator) * 2.0
-        painter.drawRoundedRect(
-            self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o)),
-            o, o
-        )
-        painter.end()
-
     def focusOutEvent(self, event):
         self.accept()  # or self.reject()
 
@@ -1502,17 +1545,18 @@ class GalleryWidget(QtWidgets.QDialog):
         """Show event handler.
 
         """
-        if not self.parent():
-            common.center_window(self)
+        common.center_to_parent(self, common.main_widget)
+        common.move_widget_to_available_geo(self)
 
         self.anim = QtCore.QPropertyAnimation(self, b'windowOpacity')
         self.anim.setDuration(500)  # Animation duration in milliseconds
         self.anim.setStartValue(0)
         self.anim.setEndValue(0.95)
         self.anim.setEasingCurve(QtCore.QEasingCurve.OutCubic)
-        self.anim.start()
+        self.anim.start(QtCore.QAbstractAnimation.DeleteWhenStopped)
 
-        self.scroll_area.widget().setFocus(QtCore.Qt.PopupFocusReason)
+        self.anim.finished.connect(self.raise_)
+        self.anim.finished.connect(lambda: self.setFocus(QtCore.Qt.PopupFocusReason))
 
     def done(self, r):
         if r == QtWidgets.QDialog.Rejected:
@@ -1524,7 +1568,7 @@ class GalleryWidget(QtWidgets.QDialog):
             self.anim.start()
             self.anim.finished.connect(lambda: super(GalleryWidget, self).done(r))
         else:
-            super(GalleryWidget, self).done(r)
+            super().done(r)
 
 
 class AbstractListModel(QtCore.QAbstractListModel):
@@ -1538,16 +1582,19 @@ class AbstractListModel(QtCore.QAbstractListModel):
         super().__init__(parent=parent)
 
         self._data = {}
-
-        self.beginResetModel()
-        self.init_data()
-        self.endResetModel()
+        self.reset_data()
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self._data)
 
     def display_name(self, v):
         return v.replace('/', '  |   ')
+
+    def reset_data(self):
+        """Resets the model's data."""
+        self.beginResetModel()
+        self.init_data()
+        self.endResetModel()
 
     def init_data(self, *args, **kwargs):
         raise NotImplementedError('Abstract method must be implemented by subclass.')

@@ -9,6 +9,7 @@ Some default task-folders are defined by :mod:`bookmarks.tokens.tokens`.
 """
 import functools
 import os
+import weakref
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -19,6 +20,7 @@ from .. import common
 from .. import contextmenu
 from .. import images
 from .. import log
+from ..threads import threads
 from ..tokens import tokens
 
 
@@ -126,14 +128,22 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
             return
 
         active = index.data(QtCore.Qt.DisplayRole) == common.active('task')
+        o = common.size(common.size_margin)
+        rect = option.rect
 
         if index.data(common.NoteCountRole):
             color = common.color(
                 common.color_selected_text
             ) if hover else common.color(common.color_text)
+            pixmap = images.rsc_pixmap(
+                'folder', common.color(common.color_separator), o
+            )
         else:
             color = common.color(common.color_text) if hover else common.color(
                 common.color_light_background
+            )
+            pixmap = images.rsc_pixmap(
+                'folder', common.color(common.color_dark_background), o
             )
         color = common.color(common.color_selected_text) if active else color
         color = common.color(common.color_selected_text) if selected else color
@@ -141,18 +151,6 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         font = common.font_db.bold_font(
             common.size(common.size_font_medium)
         )[0]
-
-        o = common.size(common.size_margin)
-        rect = QtCore.QRect(option.rect)
-
-        if index.data(common.NoteCountRole):
-            pixmap = images.rsc_pixmap(
-                'folder', common.color(common.color_separator), o
-            )
-        else:
-            pixmap = images.rsc_pixmap(
-                'folder', common.color(common.color_dark_background), o
-            )
 
         _rect = QtCore.QRect(0, 0, o, o)
         _rect.moveCenter(option.rect.center())
@@ -172,13 +170,14 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
 
         items = []
 
-        if index.data(QtCore.Qt.ToolTipRole):
+        if index.data(common.DescriptionRole):
+
             color = common.color(
-                common.color_selected_text
-            ) if active else common.color(common.color_text)
-            color = common.color(common.color_selected_text) if hover else color
-            color = common.color(common.color_selected_text) if selected else color
-            items.append((index.data(QtCore.Qt.ToolTipRole), color))
+                common.color_green
+            ) if active else common.color(common.color_secondary_text)
+            color = common.color(common.color_text) if hover else color
+            color = common.color(common.color_text) if selected else color
+            items.append((index.data(common.DescriptionRole), color))
 
         for idx, val in enumerate(items):
             text, color = val
@@ -211,6 +210,11 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         """Size hint.
 
         """
+        if index.data(common.NoteCountRole) == 0:
+            return QtCore.QSize(
+                self.parent().model().sourceModel().row_size.width(),
+                self.parent().model().sourceModel().row_size.height() * 0.5
+            )
         return self.parent().model().sourceModel().row_size
 
 
@@ -281,8 +285,6 @@ class TaskItemModel(models.ItemModel):
             return
         _source_path = '/'.join(source_path)
 
-        config = tokens.get(*source_path[0:3])
-
         for entry in self.item_generator(source):
             if entry.name.startswith('.'):
                 continue
@@ -292,7 +294,6 @@ class TaskItemModel(models.ItemModel):
             path = entry.path.replace('\\', '/')
 
             idx = len(data)
-            description = config.get_description(entry.name)
 
             data[idx] = common.DataDict(
                 {
@@ -301,20 +302,21 @@ class TaskItemModel(models.ItemModel):
                     common.PathRole: path,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     #
-                    QtCore.Qt.StatusTipRole: description,
-                    QtCore.Qt.AccessibleDescriptionRole: description,
-                    QtCore.Qt.WhatsThisRole: description,
-                    QtCore.Qt.ToolTipRole: description,
+                    QtCore.Qt.StatusTipRole: path,
+                    QtCore.Qt.AccessibleDescriptionRole: path,
+                    QtCore.Qt.WhatsThisRole: path,
+                    QtCore.Qt.ToolTipRole: path,
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.TaskTab,
                     #
                     common.EntryRole: [entry, ],
                     common.FlagsRole: flags,
-                    common.ParentPathRole: source_path,
-                    common.DescriptionRole: description,
-                    common.NoteCountRole: self.file_count(path),
+                    common.ParentPathRole: list(source_path) + [entry.name,],
+                    common.DescriptionRole: '',
+                    common.NoteCountRole: 0,
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,
                     common.FramesRole: [],
@@ -324,10 +326,10 @@ class TaskItemModel(models.ItemModel):
                     common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: True,
                     #
-                    common.SortByNameRole: entry.name.lower(),
-                    common.SortByLastModifiedRole: entry.name.lower(),
-                    common.SortBySizeRole: entry.name.lower(),
-                    common.SortByTypeRole: entry.name.lower(),
+                    common.SortByNameRole: 'z' + entry.name.lower(),
+                    common.SortByLastModifiedRole: 'z' + entry.name.lower(),
+                    common.SortBySizeRole: 'z' + entry.name.lower(),
+                    common.SortByTypeRole: 'z' + entry.name.lower(),
                     #
                     common.IdRole: idx,
                     #
@@ -357,17 +359,6 @@ class TaskItemModel(models.ItemModel):
         """
         return 'task'
 
-    def file_count(self, source):
-        """Counts the number of file items the current task folder has.
-
-        """
-        count = 0
-        for _ in self.item_generator(source):
-            count += 1
-            if count > 9:
-                break
-        return count
-
 
 class TaskItemView(views.ThreadedItemView):
     """The view responsible for displaying the available data-keys.
@@ -376,13 +367,15 @@ class TaskItemView(views.ThreadedItemView):
     Delegate = TaskItemViewDelegate
     ContextMenu = TaskItemContextMenu
 
-    queues = ()
+    queues = (threads.FileInfo2, )
 
     def __init__(self, parent=None):
         super().__init__(
             icon='folder',
             parent=parent
         )
+        self.filter_indicator_widget.setHidden(True)
+
         self._context_menu_active = False
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
@@ -451,6 +444,12 @@ class TaskItemView(views.ThreadedItemView):
 
         """
         return 0
+
+    def paint_hint(self, widget, event):
+        return
+
+    def paint_status_message(self, widget, event):
+        return
 
     def hideEvent(self, event):
         """Event handler.

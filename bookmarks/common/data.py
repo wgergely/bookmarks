@@ -41,14 +41,25 @@ def sort_data(ref, sort_by, sort_order):
     )
 
     d = common.DataDict()
+
+    # Copy over the property values from the source data
     d.loaded = ref().loaded
     d.data_type = ref().data_type
+    d.refresh_needed = ref().refresh_needed
+    d.shotgun_names = ref().shotgun_names
+    d.sg_task_names = ref().sg_task_names
+    d.file_types = ref().file_types
+    d.subdirectories = ref().subdirectories
+    d.servers = ref().servers
+    d.jobs = ref().jobs
+    d.roots = ref().roots
 
     for n, idx in enumerate(sorted_idxs):
         if not ref():
             raise RuntimeError('Model mutated during sorting.')
         d[n] = ref()[idx]
         d[n][common.IdRole] = n
+
     return d
 
 
@@ -76,6 +87,27 @@ def get_data(key, task, data_type):
         reset_data(key, task)
     return common.item_data[key][task][data_type]
 
+
+def get_data_from_value(value, data_type, role=common.PathRole):
+    """Get the internal data dictionary associated with a path.
+
+    Args:
+        value (object): A value to match.
+        data_type (int): One of :attr:`~bookmarks.common.FileItem` or :attr:`~bookmarks.common.SequenceItem`.
+
+    Returns:
+        common.DataDict: The cached data or None if not found.
+
+    """
+    for key in common.item_data:
+        for task in common.item_data[key]:
+            if data_type not in common.item_data[key][task]:
+                return None
+            data = common.item_data[key][task][data_type]
+            for idx in data:
+                if value in data[idx][role]:
+                    return data
+    return None
 
 def get_task_data(key, task):
     """Get cached data from :attr:`~bookmarks.common.item_data`.
@@ -209,6 +241,9 @@ def set_data(key, task, data_type, data):
         data_type (int): One of :attr:`bookmarks.common.FileItem` or :attr:`bookmarks.common.SequenceItem`.
         data (common.DataDict): The data to set in the cache.
 
+    Returns:
+        common.DataDict: The cached data.
+
     """
     common.check_type(key, tuple)
     common.check_type(task, str)
@@ -219,3 +254,5 @@ def set_data(key, task, data_type, data):
     elif task not in common.item_data[key]:
         reset_data(key, task)
     common.item_data[key][task][data_type] = data
+
+    return common.item_data[key][task][data_type]

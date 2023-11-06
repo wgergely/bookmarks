@@ -159,7 +159,27 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                                 'left empty, all folders in the bookmark will be '
                                 'interpreted as assets.',
                     }
-                }
+                },
+                4: {
+                    0: {
+                        'name': 'Bookmark Display Name',
+                        'key': 'bookmark_display_token',
+                        'validator': base.token_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': '{server}/{job}/{root}',
+                        'description': 'Specify the token used to display bookmark items',
+                        'button': '+'
+                    },
+                    1: {
+                        'name': 'Asset Display Name',
+                        'key': 'asset_display_token',
+                        'validator': base.token_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': '{asset}',
+                        'description': 'Specify the token used to display asset items',
+                        'button': '+'
+                    },
+                },
             }
         },
         1: {
@@ -222,30 +242,51 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'description': 'Link item with a ShotGrid Entity',
                         'button': 'Link with ShotGrid Entity',
                     },
-                    1: {
-                        'name': 'Type',
+                },
+                1: {
+                    0: {
+                        'name': 'ShotGrid Entity Type',
                         'key': 'shotgun_type',
                         'validator': base.int_validator,
                         'widget': base_widgets.SGProjectTypesWidget,
                         'placeholder': None,
                         'description': 'Select the item\'s ShotGrid type',
                     },
-                    2: {
-                        'name': 'ID',
+                    1: {
+                        'name': 'ShotGrid Project Id',
                         'key': 'shotgun_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
                         'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
-                        'description': 'The ShotGrid ID number this item is associated '
+                        'description': 'The ShotGrid entity id number this item is associated '
                                        'with. e.g. \'123\'.',
                     },
-                    3: {
-                        'name': 'Name',
+                    2: {
+                        'name': 'ShotGrid Project Name',
                         'key': 'shotgun_name',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'ShotGrid project name, e.g. \'MyProject\'',
                         'description': 'The ShotGrid project name',
+                    },
+                },
+                2: {
+                    0: {
+                        'name': 'ShotGrid Episode Id',
+                        'key': 'sg_episode_id',
+                        'validator': base.int_validator,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'ShotGrid episode id, e.g. \'123\'',
+                        'description': 'The ShotGrid episode entity number this item is associated '
+                                       'with. e.g. \'123\'.',
+                    },
+                    1: {
+                        'name': 'ShotGrid Episode Name',
+                        'key': 'sg_episode_name',
+                        'validator': None,
+                        'widget': ui.LineEdit,
+                        'placeholder': 'ShotGrid episode entity name, e.g. \'Episode1\'',
+                        'description': 'The ShotGrid episode entity name',
                     },
                 }
             }
@@ -476,3 +517,27 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
         """
         self.applications_editor.add_new_item()
+
+    @QtCore.Slot()
+    def bookmark_display_token_button_clicked(self):
+        k = 'bookmark_display_token'
+        if not hasattr(self, f'{k}_editor'):
+            raise RuntimeError(f'{k}_editor not found')
+
+        from ..tokens import tokens_editor
+        editor = getattr(self, f'{k}_editor')
+        w = tokens_editor.TokenEditor(self.server, self.job, self.root, parent=editor)
+        w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
+        w.exec_()
+
+    @QtCore.Slot()
+    def asset_display_token_button_clicked(self):
+        k = 'asset_display_token'
+        if not hasattr(self, f'{k}_editor'):
+            raise RuntimeError(f'{k}_editor not found')
+
+        from ..tokens import tokens_editor
+        editor = getattr(self, f'{k}_editor')
+        w = tokens_editor.TokenEditor(self.server, self.job, self.root, parent=editor)
+        w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
+        w.exec_()

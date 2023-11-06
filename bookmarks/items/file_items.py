@@ -40,6 +40,7 @@ See the :mod:`~bookmarks.common.sequence` module for details on sequence definit
 """
 import functools
 import os
+import weakref
 
 from PySide2 import QtWidgets, QtCore
 
@@ -151,7 +152,7 @@ def get_sequence_elements(filepath):
 
     sequence_path = None
     if seq:
-        sequence_path = f'{seq.group(1)}{common.SEQPROXY}{seq.group(3)}.{seq.group(4)}'
+        sequence_path = seq.group(1) + common.SEQPROXY + seq.group(3) + '.' + seq.group(4)
     return seq, sequence_path
 
 
@@ -299,7 +300,10 @@ class FileItemModel(models.ItemModel):
         if not p or not all(p) or not k or t is None:
             return
 
-        _dirs = []
+        _subdirectories = []
+        _watch_paths = []
+        _extensions = []
+
         data = common.get_data(p, k, t)
 
         sequence_data = common.DataDict()  # temporary dict for temp data
@@ -308,7 +312,7 @@ class FileItemModel(models.ItemModel):
         _source_path = '/'.join(p + (k,))
         if not QtCore.QFileInfo(_source_path).exists():
             return
-        _dirs.append(_source_path)
+        _watch_paths.append(_source_path)
 
         # Let's get the token config instance to check what extensions are
         # currently allowed to be displayed in the task folder
@@ -354,7 +358,6 @@ class FileItemModel(models.ItemModel):
                 entry.path,
                 _source_path
             )
-            _dirs.append(_dir)
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the token config,
@@ -362,13 +365,19 @@ class FileItemModel(models.ItemModel):
             if not disable_filter and ext not in valid_extensions:
                 continue
 
+            if _dir:
+                _watch_paths.append(_dir)
+                _d = _dir[len(_source_path) + 1:]
+                _subdirectories += [('/' + f) for f in _d.split('/')]
+            _extensions.append(ext)
+
             # Progress bar
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
                     'Loading files (found ' + str(c) + ' items)...'
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             flags = models.DEFAULT_ITEM_FLAGS
             seq, sequence_path = get_sequence_elements(filepath)
@@ -399,6 +408,7 @@ class FileItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.FileTab,
                     #
                     common.EntryRole: [entry, ],
@@ -455,6 +465,7 @@ class FileItemModel(models.ItemModel):
                             #
                             common.QueueRole: self.queues,
                             common.DataTypeRole: common.SequenceItem,
+                            common.DataDictRole: None,
                             common.ItemTabRole: common.FileTab,
                             #
                             common.EntryRole: [],
@@ -485,7 +496,8 @@ class FileItemModel(models.ItemModel):
                 sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
                 sequence_data[sequence_path][common.EntryRole].append(entry)
             else:
-                # Copy the existing file item
+                # The sequence dictionary should contain not only sequence items but single files also,
+                # so we'll add them here
                 sequence_data[filepath] = common.DataDict(data[idx])
                 sequence_data[filepath][common.IdRole] = -1
 
@@ -524,12 +536,27 @@ class FileItemModel(models.ItemModel):
                 v[common.DataTypeRole] = common.FileItem
 
             data[idx] = v
+            data[idx][common.DataDictRole] = weakref.ref(data)
             data[idx][common.IdRole] = idx
 
         watcher = common.get_watcher(common.FileTab)
-        watcher.reset()
-        watcher.add_directories(list(set(_dirs)))
-        self.set_refresh_needed(False)
+        _directories = watcher.directories()
+        # watcher.reset()
+        watcher.add_directories(sorted(set([f for f in _watch_paths if f] + _directories)))
+
+        # Add the list of file extensions to the model's data
+        _extensions = sorted(set([('.' + f) for f in _extensions if f]))
+        common.get_data(p, k, common.FileItem).file_types = _extensions
+        common.get_data(p, k, common.SequenceItem).file_types = _extensions
+
+        # Add the list of subdirectories to the model's data
+        _subdirectories = sorted(set([f for f in _subdirectories if f]))
+        common.get_data(p, k, common.FileItem).subdirectories = _subdirectories
+        common.get_data(p, k, common.SequenceItem).subdirectories = _subdirectories
+
+        # Model does not need a refresh at this point
+        common.get_data(p, k, common.FileItem).refresh_needed = False
+        common.get_data(p, k, common.SequenceItem).refresh_needed = False
 
     def disable_filter(self):
         """Overrides the token config and disables file filters."""
@@ -722,7 +749,7 @@ class FileItemView(views.ThreadedItemView):
     queues = (threads.FileInfo, threads.FileThumbnail)
 
     def __init__(self, icon='file', parent=None):
-        super(FileItemView, self).__init__(
+        super().__init__(
             icon=icon,
             parent=parent
         )
@@ -756,7 +783,7 @@ class FileItemView(views.ThreadedItemView):
         model = self.model().sourceModel()
         k = model.task()
         if not k:
-            return 'Click the File tab to select a folder'
+            return 'No asset folder select. Click the file tab to select a folder to browse'
         return f'No files found in "{k}"'
 
     @common.error

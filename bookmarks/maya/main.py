@@ -68,6 +68,11 @@ def show():
     for widget in QtWidgets.QApplication.instance().allWidgets():
         # Skipping workspaceControls objects, just in case there's a name conflict
         # between what the parent().objectName() and this method yields
+        try:
+            widget.objectName()
+        except:
+            continue
+
         if re.match(f'{common.product}_.*WorkspaceControl', widget.objectName()):
             continue
 
@@ -127,7 +132,7 @@ def show():
 
 def init_maya_widget():
     """Initializes the maya widget.
-    Usually the Maya plugin will call this method.
+    Usually the Maya plugin will call this function.
 
     """
     if isinstance(common.maya_widget, MayaWidget):
@@ -464,7 +469,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self._workspacecontrol = None
         self._callbacks = []  # Maya api callbacks
 
-        self.setWindowTitle(common.product)
+        self.setWindowTitle(common.product.title())
         common.set_stylesheet(self)
 
         # Rename object
@@ -586,7 +591,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         width = (width * 0.5) if width > common.size(common.size_width) else width
         width = width - common.size(common.size_indicator)
 
-        widget = contextmenu.MayaWidgetContextMenu(index, parent=parent)
+        widget = contextmenu.PluginContextMenu(index, parent=parent)
         if index.isValid():
             rect = parent.visualRect(index)
             widget.move(

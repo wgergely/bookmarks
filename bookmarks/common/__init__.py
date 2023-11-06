@@ -99,13 +99,14 @@ gallery_widget = None
 launcher_widget = None
 message_widget = None
 preference_editor_widget = None
-bookmarker_widget = None
+job_editor = None
 bookmark_property_editor = None
 asset_property_editor = None
 file_saver_widget = None
 publish_widget = None
 maya_export_widget = None
 ffmpeg_export_widget = None
+akaconvert_widget = None
 screen_capture_widget = None
 pick_thumbnail_widget = None
 notes_widget = None
@@ -123,7 +124,7 @@ from .env import *
 from .font import *
 from .monitor import *
 from .sequence import *
-from .session_lock import *
+from .active_mode import *
 from .settings import *
 from .setup import *
 from .signals import *

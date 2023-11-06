@@ -1,6 +1,7 @@
 """QFileSystemWatchers used to monitor for file and directory changes.
 
 """
+import weakref
 
 from PySide2 import QtCore
 
@@ -17,29 +18,43 @@ def get_watcher(tab_idx):
 
 
 class FileWatcher(QtCore.QFileSystemWatcher):
+    modelNeedsRefresh = QtCore.Signal(weakref.ref)
+
     def __init__(self, tab_idx, parent=None):
         super().__init__(parent=parent)
 
         self.tab_idx = tab_idx
 
-        self.update_queue_timer = common.Timer(parent=self)
-        self.update_queue_timer.setSingleShot(True)
-        self.update_queue_timer.setInterval(500)
+        #: Timer used to limit the number of updates
+        self.update_timer = common.Timer(parent=self)
+        self.update_timer.setInterval(500)
+        self.update_timer.setTimerType(QtCore.Qt.CoarseTimer)
+        self.update_timer.setSingleShot(True)
 
-        self.changed_items = set()
+        self.update_queue = set()
 
         self._connect_signals()
 
     def _connect_signals(self):
-        self.update_queue_timer.timeout.connect(self.item_changed)
+        self.update_timer.timeout.connect(self.process_update_queue)
+
         self.directoryChanged.connect(self.queue_changed_item)
 
-    QtCore.Slot(str)
+        self.modelNeedsRefresh.connect(common.signals.updateTopBarButtons)
+        self.modelNeedsRefresh.connect(self.update_model)
 
+    @QtCore.Slot(str)
     def queue_changed_item(self, v):
-        if v not in self.changed_items:
-            self.changed_items.add(v)
-        self.update_queue_timer.start(self.update_queue_timer.interval())
+        """Slot used to add an updated path to the update queue.
+
+        Args:
+            v (str): The path to add to the update queue.
+
+    """
+        if v not in self.update_queue.copy():
+            self.update_queue.add(v)
+
+        self.update_timer.start(self.update_timer.interval())
 
     def add_directories(self, paths):
         """Adds the given list of directories to the file system watcher.
@@ -55,30 +70,70 @@ class FileWatcher(QtCore.QFileSystemWatcher):
             self.addPath(path)
 
     def reset(self):
-        """Remove all watch directories.
+        """Reset the watcher to its initial state.
 
         """
         for v in self.directories():
             self.removePath(v)
         for v in self.files():
             self.removePath(v)
+        self.update_queue.clear()
 
     @QtCore.Slot()
-    def item_changed(self):
-        """Slot used to update the model status.
+    def process_update_queue(self):
+        """Slot used to mark a data dictionary as needing to be refreshed.
+
+        Emits the modelNeedsRefresh signal for each data dictionary in the update queue.
 
         """
-        if self.tab_idx == common.FileTab:
-            self._file_item_updated()
+        refs = []
+        for path in self.update_queue:
+            for data_type in (common.SequenceItem, common.FileItem):
+                data_dict = common.get_data_from_value(path, data_type, role=common.PathRole)
 
-    def _file_item_updated(self):
-        p = common.active('task', path=True)
-        if not p:
+                if not data_dict:
+                    continue
+
+                ref = weakref.ref(data_dict)
+                if not ref in refs:
+                    refs.append(data_dict)
+                else:
+                    continue
+
+                ref().refresh_needed = True
+                common.widget(self.tab_idx).filter_indicator_widget.repaint()
+                self.modelNeedsRefresh.emit(ref)
+
+        self.update_queue.clear()
+        self.update_timer.stop()
+
+    @QtCore.Slot(weakref.ref)
+    def update_model(self, ref):
+        """Slot used to update the model associated with the item tab index.
+
+        Args:
+            ref (weakref.ref): A weak reference to the data dictionary that needs updating.
+
+        """
+        if not ref():
             return
-        for v in self.changed_items.copy():
-            if p in v:
-                model = common.source_model(common.FileTab)
-                model.set_refresh_needed(True)
-                common.widget(common.FileTab).filter_indicator_widget.repaint()
-                break
-        self.changed_items = set()
+
+        # If the data is relatively small, we don't have to bail out...
+        if len(ref()) > 999:
+            return
+
+        source_model = common.source_model(self.tab_idx)
+        p = source_model.source_path()
+        k = source_model.task()
+
+        for t in (common.FileItem, common.SequenceItem,):
+            data = common.get_data(p, k, t)
+
+            if not data:
+                source_model.reset_data(force=True)
+                return
+
+            # Force reset the source model if we find a data match
+            if data == ref():
+                source_model.reset_data(force=True)
+                return

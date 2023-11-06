@@ -12,26 +12,33 @@ from .. import ui
 
 #: Default launcher item definition
 DEFAULT_ITEM = {
-    0: {
+    common.idx(reset=True, start=0): {
         'key': 'name',
         'placeholder': 'Name, e.g. "Maya"',
         'widget': ui.LineEdit,
         'description': 'Enter the item\'s name, e.g. Maya',
         'button': None,
     },
-    1: {
+    common.idx(): {
         'key': 'path',
         'placeholder': 'Path, e.g. "C:/maya/maya.exe"',
         'widget': ui.LineEdit,
         'description': 'Path to the executable.',
         'button': 'Pick',
     },
-    2: {
+    common.idx(): {
         'key': 'thumbnail',
         'placeholder': 'Path to an image, e.g. "C:/images/maya.png"',
         'widget': ui.LineEdit,
         'description': 'Path to an image file used to represent this item',
         'button': 'Pick',
+    },
+    common.idx(): {
+        'key': 'hidden',
+        'placeholder': None,
+        'widget': functools.partial(QtWidgets.QCheckBox, 'Hidden'),
+        'description': 'Hide the item from the application launcher.',
+        'button': None,
     },
 }
 
@@ -49,7 +56,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
     itemAdded = QtCore.Signal(dict)
 
     def __init__(self, data=None, parent=None):
-        super(LauncherItemEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.thumbnail_viewer_widget = None
         self.done_button = None
@@ -87,6 +94,8 @@ class LauncherItemEditor(QtWidgets.QDialog):
         w = h * len(DEFAULT_ITEM) + (common.size(common.size_indicator) * 2)
         self.thumbnail_viewer_widget.setFixedSize(QtCore.QSize(w, w))
         grp.layout().addWidget(self.thumbnail_viewer_widget, 0)
+
+        self.thumbnail_viewer_widget.setPixmap(images.rsc_pixmap('icon', color=None, size=w))
 
         _grp = ui.get_group(
             margin=common.size(
@@ -134,8 +143,22 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
         for idx in DEFAULT_ITEM:
             k = DEFAULT_ITEM[idx]['key']
+
+            if k not in item:
+                continue
+
+            if not hasattr(self, k + '_editor'):
+                continue
+
             editor = getattr(self, k + '_editor')
-            editor.setText(item[k])
+
+            if isinstance(editor, QtWidgets.QCheckBox):
+                editor.setChecked(item[k])
+                continue
+
+            if isinstance(editor, QtWidgets.QLineEdit):
+                editor.setText(item[k])
+                continue
 
     @QtCore.Slot(str)
     def update_thumbnail_image(self, path):
@@ -146,8 +169,10 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
         """
         image = QtGui.QImage(path)
-        if image.isNull():
-            self.thumbnail_viewer_widget.setPixmap(QtGui.QPixmap())
+        if not path or image.isNull():
+            h = common.size(common.size_margin) * 2
+            w = h * len(DEFAULT_ITEM) + (common.size(common.size_indicator) * 2)
+            self.thumbnail_viewer_widget.setPixmap(images.rsc_pixmap('icon', None, w))
             return
 
         image.setDevicePixelRatio(common.pixel_ratio)
@@ -171,13 +196,26 @@ class LauncherItemEditor(QtWidgets.QDialog):
             raise RuntimeError('Must specify a path to an executable.')
 
         if not self.thumbnail_editor.text():
-            raise RuntimeError('Must specify thumbnail image path.')
+            if common.show_message(
+                    'No thumbnail image specified.',
+                    body=f'Are you sure you want continue without specifying a thumbnail image?',
+                    buttons=[common.YesButton, common.CancelButton],
+                    modal=True, ) == QtWidgets.QDialog.Rejected:
+                return
 
         data = {}
         for idx in DEFAULT_ITEM:
             k = DEFAULT_ITEM[idx]['key']
             editor = getattr(self, k + '_editor')
-            v = editor.text()
+
+            if isinstance(editor, QtWidgets.QCheckBox):
+                v = editor.isChecked()
+            elif isinstance(editor, QtWidgets.QLineEdit):
+                v = editor.text()
+                v = v if v else None
+            else:
+                v = None
+
             data[k] = v
 
         if self._data and self._data != data:

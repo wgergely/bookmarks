@@ -2,21 +2,25 @@
 
 """
 import functools
+import weakref
 
 from PySide2 import QtCore
 
 from .. import common
 
 
-def init_signals():
+def init_signals(connect_signals=True):
     """Initialize signals."""
-    common.signals = CoreSignals()
+    common.signals = CoreSignals(connect_signals=connect_signals)
 
 
 class CoreSignals(QtCore.QObject):
     """A utility class used to store application-wide signals.
 
     """
+    #: Signal emitted by worker threads when the internal data of a model is fully loaded
+    internalDataReady = QtCore.Signal(weakref.ref)
+
     #: Update top bar widget buttons
     updateTopBarButtons = QtCore.Signal()
 
@@ -78,6 +82,9 @@ class CoreSignals(QtCore.QObject):
     #: Signals a filter button state change
     toggleFavouritesButton = QtCore.Signal()
 
+    #: Signal emitted when the filter text changes of a list view's proxy model
+    filterTextChanged = QtCore.Signal(str)
+
     #: Signal emitted when the active path mode changes
     activeModeChanged = QtCore.Signal(int)
 
@@ -125,8 +132,11 @@ class CoreSignals(QtCore.QObject):
     #: Signals an item is ready to be processed by a thread
     threadItemsQueued = QtCore.Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, connect_signals=True, parent=None):
         super().__init__(parent=parent)
+
+        if not connect_signals:
+            return
 
         from .. import actions
 

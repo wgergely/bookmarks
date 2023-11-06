@@ -121,12 +121,41 @@ def apply_settings(*args, **kwargs):
     ) == QtWidgets.QDialog.Rejected:
         return
 
-    base.patch_workspace_file_rules()
-    base.set_framerate(props.framerate)
-    base.set_startframe(props.startframe)
-    base.set_endframe(props.endframe)
-    base.apply_default_render_values()
-    base.set_render_resolution(props.width, props.height)
+    try:
+        base.patch_workspace_file_rules()
+    except Exception as e:
+        log.error(f'Could not patch workspace.mel:\n{e}')
+        return
+
+    try:
+        base.set_framerate(props.framerate)
+    except Exception as e:
+        log.error(f'Could not set framerate:\n{e}')
+        return
+
+    try:
+        base.set_startframe(props.startframe)
+    except Exception as e:
+        log.error(f'Could not set startframe:\n{e}')
+        return
+
+    try:
+        base.set_endframe(props.endframe)
+    except Exception as e:
+        log.error(f'Could not set endframe:\n{e}')
+        return
+
+    try:
+        base.apply_default_render_values()
+    except Exception as e:
+        log.error(f'Could not apply default render values:\n{e}')
+        return
+
+    try:
+        base.set_render_resolution(props.width, props.height)
+    except Exception as e:
+        log.error(f'Could not set render resolution:\n{e}')
+        return
 
 
 @common.error
@@ -188,7 +217,7 @@ def save_scene(increment=False, type='mayaAscii'):
 @common.error
 @common.debug
 def execute(index):
-    """Action used to execute a selected file item.
+    """Action used to execute a selected file item in Maya.
 
     """
     file_path = common.get_sequence_end_path(
@@ -197,7 +226,7 @@ def execute(index):
     file_info = QtCore.QFileInfo(file_path)
 
     # Open alembic, and maya files:
-    if file_info.suffix().lower() in ('ma', 'mb', 'abc'):
+    if file_info.suffix().lower() in ('ma', 'mb', 'abc', 'obj', 'fbx', 'usd', 'usda', 'usdc'):
         open_scene(file_info.filePath())
         return
 
@@ -230,9 +259,11 @@ def save_warning(*args):
         return
 
     if workspace_info.path().lower() not in scene_file.filePath().lower():
+        p = workspace_info.path()
         common.show_message(
-            f'Looks like you are saving "{scene_file.fileName()}" outside the current project\n\n',
-            body=f'The current project is:\n "{workspace_info.path()}"',
+            f'Scene not part of the current project.',
+            body=f'"{scene_file.fileName()}" is being saved to: \n"{p}"\n\n'
+                 f'You can safely ignore this message, it\'s just a friendly reminder.',
             message_type=None,
             disable_animation=True
         )
@@ -698,15 +729,6 @@ def import_camera_preset():
         print('An object named "camera" already exists. Nothing was imported.')
         return
     cmds.file(path, i=True, defaultNamespace=True, type="mayaAscii")
-
-
-@QtCore.Slot()
-def show_shader_tool():
-    """Shows the bundled shader utility tool.
-
-    """
-    from . import shadertool
-    shadertool.show()
 
 
 @QtCore.Slot()

@@ -50,7 +50,7 @@ class TextFilterEditor(QtWidgets.QWidget):
         self._opacity = value
         self.setWindowOpacity(value)
         self.repaint()
-        QtWidgets.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.KeyRelease:

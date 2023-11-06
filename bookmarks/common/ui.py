@@ -114,21 +114,23 @@ def center_window(w):
             return
 
 
-def center_to_parent(w):
-    """Move the given widget to the available screen geometry's middle.
+def center_to_parent(widget, parent=None):
+    """Move the given widget to the widget's parent's middle.
 
     Args:
-        w (QWidget): The widget to center.
-        p (QWidget): The widget to center to.
+        widget (QWidget): The widget to center.
+        parent (QWidget): Optional. The widget to center to.
 
     """
-    if not w.parent():
+    if not widget.parent() and not parent:
         return
+    if widget.parent() and not parent:
+        parent = widget.parent()
 
-    w.adjustSize()
-    g = w.parent().geometry()
-    r = w.rect()
-    w.move(g.center() + (r.topLeft() - r.center()))
+    widget.adjustSize()
+    g = parent.geometry()
+    r = widget.rect()
+    widget.move(g.center() + (r.topLeft() - r.center()))
     return
 
 
@@ -364,7 +366,7 @@ def show_message(title, body='', disable_animation=False, icon='icon', message_t
         body (str): The body of the message box.
         disable_animation (bool): Whether to show the message box without animation.
         icon (str): The icon to use.
-        message_type (str): The message type.
+        message_type (str): The message type. One of 'info', 'success' or 'error'.
         buttons (list): The buttons to show.
         modal (bool): Whether the message box should be modal.
         parent (QWidget): The parent widget.
@@ -398,7 +400,7 @@ def show_message(title, body='', disable_animation=False, icon='icon', message_t
     if disable_animation:
         mbox.show()
         mbox.raise_()
-        QtWidgets.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
         return mbox
     return mbox.open()
 
@@ -494,6 +496,11 @@ def select_index(widget, v, *args, role=QtCore.Qt.DisplayRole, **kwargs):
             return
 
         widget.selectionModel().select(
+            index,
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
+        )
+        widget.selectionModel().setCurrentIndex(
             index,
             QtCore.QItemSelectionModel.ClearAndSelect |
             QtCore.QItemSelectionModel.Rows

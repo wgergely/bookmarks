@@ -40,9 +40,6 @@ from .. import common
 from .. import database
 from .. import log
 
-#: The database column name
-TOKENS_DB_KEY = 'tokens'
-
 FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'
 PublishConfig = 'PublishConfig'
@@ -74,6 +71,7 @@ invalid_token = '{invalid_token}'
 
 SceneFolder = 'scene'
 CacheFolder = 'cache'
+CaptureFolder = 'captures'
 RenderFolder = 'render'
 DataFolder = 'data'
 ReferenceFolder = 'reference'
@@ -84,7 +82,7 @@ MiscFolder = 'other'
 #: The default token value configuration
 DEFAULT_TOKEN_CONFIG = {
     FileFormatConfig: {
-        0: {
+        common.idx(reset=True, start=0): {
             'name': 'Scene Formats',
             'flag': SceneFormat,
             'value': common.sort_words(
@@ -93,7 +91,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Scene file formats'
         },
-        1: {
+        common.idx(): {
             'name': 'Image Formats',
             'flag': ImageFormat,
             'value': common.sort_words(
@@ -101,7 +99,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Image file formats'
         },
-        2: {
+        common.idx(): {
             'name': 'Cache Formats',
             'flag': CacheFormat,
             'value': common.sort_words(
@@ -110,7 +108,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'CG cache formats'
         },
-        3: {
+        common.idx(): {
             'name': 'Movie Formats',
             'flag': MovieFormat,
             'value': common.sort_words(
@@ -118,7 +116,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Movie file formats'
         },
-        4: {
+        common.idx(): {
             'name': 'Audio Formats',
             'flag': AudioFormat,
             'value': common.sort_words(
@@ -126,7 +124,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Audio file formats'
         },
-        5: {
+        common.idx(): {
             'name': 'Document Formats',
             'flag': DocFormat,
             'value': common.sort_words(
@@ -134,7 +132,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Audio file formats'
         },
-        6: {
+        common.idx(): {
             'name': 'Script Formats',
             'flag': ScriptFormat,
             'value': common.sort_words(
@@ -142,7 +140,7 @@ DEFAULT_TOKEN_CONFIG = {
             ),
             'description': 'Various script file formats'
         },
-        7: {
+        common.idx(): {
             'name': 'Miscellaneous Formats',
             'flag': MiscFormat,
             'value': common.sort_words(
@@ -152,103 +150,36 @@ DEFAULT_TOKEN_CONFIG = {
         },
     },
     FileNameConfig: {
-        0: {
-            'name': 'Asset Scene Task',
-            'value': '{prefix}_{asset}_{mode}_{element}_{user}_{version}.{ext}',
+        common.idx(reset=True, start=0): {
+            'name': 'Asset Scene',
+            'value': '{prefix}_{asset}_{element}.{version}.{ext}',
             'description': 'Uses the project prefix, asset, task, element, '
-                           'user and version names'
+                           'user and version names',
         },
-        1: {
-            'name': 'Asset Scene File (without task and element)',
-            'value': '{prefix}_{asset}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, asset, user and version names'
-        },
-        2: {
-            'name': 'Shot Scene Task',
-            'value': '{prefix}_{seq}_{shot}_{mode}_{element}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, sequence, shot, mode, element, '
-                           'user and version names'
-        },
-        3: {
-            'name': 'Shot Scene Task (without task and element)',
-            'value': '{prefix}_{seq}_{shot}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, sequence, shot, user and '
-                           'version names'
-        },
-        4: {
-            'name': 'Versioned Element',
-            'value': '{element}_{version}.{ext}',
-            'description': 'File name with an element and version name'
-        },
-        5: {
-            'name': 'Non-Versioned Element',
-            'value': '{element}.{ext}',
-            'description': 'A non-versioned element file'
-        },
-        6: {
-            'name': 'Studio Aka - Shot',
+        common.idx(): {
+            'name': 'Shot Scene',
             'value': '{prefix}_{seq}_{shot}_{mode}_{element}.{version}.{ext}',
-            'description': 'Studio Aka - ShotGrid file template'
-        },
-        7: {
-            'name': 'Studio Aka - Asset',
-            'value': '{asset1}_{asset5}_{element}.{version}.{ext}',
-            'description': 'Studio Aka - ShotGrid file template'
+            'description': 'Template name used save shot scene files',
         }
     },
     PublishConfig: {
-        0: {
-            'name': 'Shot Task',
-            'value': '{server}/{job}/publish/{sequence}_{shot}/{task}/{element}/{prefix}_{sequence}_{shot}_{task}_{'
-                     'element}.{ext}',
-            'description': 'Publish a shot task element',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        common.idx(): {
+            'name': 'Publish: Asset Item',
+            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset}_{task}_{element}.{ext}',
+            'description': 'Publish an asset scene',
         },
-        1: {
-            'name': 'Asset Task',
-            'value': '{server}/{job}/publish/asset_{asset}/{task}/{element}/{prefix}_{asset}_{task}_{element}.{ext}',
-            'description': 'Publish an asset task element',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
-        3: {
-            'name': 'Shot Thumbnail',
-            'value': '{server}/{job}/publish/{sequence}_{shot}/thumbnail.{ext}',
-            'description': 'Publish an shot thumbnail',
-            'filter': ImageFormat,
-        },
-        4: {
-            'name': 'Asset Thumbnail',
-            'value': '{server}/{job}/publish/asset_{asset}/thumbnail.{ext}',
-            'description': 'Publish an asset thumbnail',
-            'filter': ImageFormat,
-        },
-        5: {
-            'name': 'Asset (local publish)',
-            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset1}_{task}_{element}.{ext}',
-            'description': 'Publish an asset',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
-        6: {
-            'name': 'Shot (local publish)',
+        common.idx(): {
+            'name': 'Publish: Shot Item',
             'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{seq}_{shot}_{element}.{ext}',
-            'description': 'Publish a shot element',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
-        7: {
-            'name': 'Studio Aka - vCur',
-            'value': '{server}/{job}/{root}/{asset0}/{asset1}/{asset2}/publish/{asset4}/{asset5}/{asset1}_{asset5}_{'
-                     'element}.vCur.{ext}',
-            'description': 'Studio Aka - vCur',
-            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+            'description': 'Publish a shot scene',
         },
     },
     AssetFolderConfig: {
-        0: {
+        common.idx(reset=True, start=0): {
             'name': CacheFolder,
             'value': CacheFolder,
             'description': 'Alembic, FBX, OBJ and other CG caches',
-            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat |
-                      CacheFormat,
+            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat | CacheFormat,
             'subfolders': {
                 0: {
                     'name': 'abc',
@@ -317,29 +248,26 @@ DEFAULT_TOKEN_CONFIG = {
                 }
             }
         },
-        1: {
+        common.idx(): {
             'name': DataFolder,
             'value': DataFolder,
             'description': 'Temporary data files, or content generated by '
                            'applications',
             'filter': AllFormat,
-            'subfolders': {},
         },
-        2: {
+        common.idx(): {
             'name': ReferenceFolder,
             'value': ReferenceFolder,
             'description': 'References, e.g., images, videos or sound files',
             'filter': ImageFormat | DocFormat | AudioFormat | MovieFormat,
-            'subfolders': {},
         },
-        3: {
+        common.idx(): {
             'name': RenderFolder,
             'value': 'images',
             'description': 'Render layer outputs',
             'filter': ImageFormat | AudioFormat | MovieFormat,
-            'subfolders': {},
         },
-        4: {
+        common.idx(): {
             'name': SceneFolder,
             'value': 'scenes',
             'description': 'Project and scene files',
@@ -392,39 +320,43 @@ DEFAULT_TOKEN_CONFIG = {
                 },
             },
         },
-        5: {
+        common.idx(): {
             'name': PublishFolder,
             'value': 'publish',
             'description': 'Asset publish files',
+            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat
+        },
+        common.idx(): {
+            'name': CaptureFolder,
+            'value': 'captures',
+            'description': 'Viewport captures and preview files',
             'filter': ImageFormat | MovieFormat | AudioFormat
         },
-        6: {
+        common.idx(): {
             'name': TextureFolder,
             'value': 'sourceimages',
             'description': '2D and 3D texture files',
             'filter': ImageFormat | MovieFormat | AudioFormat,
-            'subfolders': {},
         },
-        7: {
+        common.idx(): {
             'name': MiscFolder,
             'value': 'other',
             'description': 'Miscellaneous asset files',
             'filter': AllFormat,
-            'subfolders': {},
         }
     },
     FFMpegTCConfig: {
-        0: {
+        common.idx(reset=True, start=0): {
             'name': 'Shot',
             'value': '{job} | {sequence}-{shot}-{task}-{version} | {date} {user} | {in_frame}-{out_frame}',
             'description': 'Timecode to use for shots'
         },
-        1: {
+        common.idx(): {
             'name': 'Asset',
             'value': '{job} | {asset}-{task}-{version} | {date} {user}',
             'description': 'Timecode to use for assets'
         },
-        2: {
+        common.idx(): {
             'name': 'Date and user',
             'value': '{job} | {date} {user}',
             'description': 'Sparse timecode with the date and username'
@@ -598,7 +530,7 @@ class TokenConfig(QtCore.QObject):
             db = database.get(self.server, self.job, self.root)
             v = db.value(
                 db.source(),
-                TOKENS_DB_KEY,
+                'tokens',
                 database.BookmarkTable
             )
             if not v or not isinstance(v, dict):
@@ -631,7 +563,7 @@ class TokenConfig(QtCore.QObject):
         db = database.get(self.server, self.job, self.root)
         db.set_value(
             db.source(),
-            TOKENS_DB_KEY,
+            'tokens',
             data,
             table=database.BookmarkTable
         )
@@ -701,7 +633,7 @@ class TokenConfig(QtCore.QObject):
         return ''
 
     def expand_tokens(
-            self, s, user=common.get_username(), version='v001',
+            self, s, use_database=True, user=common.get_username(), version='v001',
             host=socket.gethostname(), task='main',
             ext=None, prefix=None, **_kwargs
     ):
@@ -712,12 +644,7 @@ class TokenConfig(QtCore.QObject):
 
         Args:
             s (str): The string containing tokens to be expanded.
-            user (str, optional): Username.
-            version (str, optional): The version string.
-            host (str, optional): The name of the current machine/host.
-            task (str, optional): Task folder name.
-            ext (str, optional): File format extension.
-            prefix (str, optional): Bookmark item prefix.
+            use_database (bool, optional): Use values stored in the database.
             _kwargs (dict, optional): Optional token/value pairs.
 
         Returns:
@@ -726,6 +653,7 @@ class TokenConfig(QtCore.QObject):
 
         """
         kwargs = self.get_tokens(
+            use_database=use_database,
             user=user,
             version=version,
             ver=version,
@@ -747,7 +675,7 @@ class TokenConfig(QtCore.QObject):
             del kwargs[k]
 
         # To avoid KeyErrors when invalid tokens are passed we will replace
-        # the these with a custom marker
+        # these with a custom marker, e.g. {invalid_token}
         # via https://stackoverflow.com/questions/17215400/format-string-unused
         # -named-arguments
         return string.Formatter().vformat(
@@ -756,11 +684,11 @@ class TokenConfig(QtCore.QObject):
             collections.defaultdict(lambda: invalid_token, **kwargs)
         )
 
-    def get_tokens(self, force=False, **kwargs):
+    def get_tokens(self, force=False, use_database=True, **kwargs):
         """Get all available tokens.
 
         Args:
-            force (bool, optional): Force retrieve tokens from the database.
+            force (bool, optional): Force retrieve defined tokens from the database.
 
         Returns:
             dict: A dictionary of token/value pairs.
@@ -791,34 +719,37 @@ class TokenConfig(QtCore.QObject):
             tokens[k] = v
 
         # We can also use bookmark item properties as tokens
-        db = database.get(self.server, self.job, self.root)
-        for _k in database.TABLES[database.BookmarkTable]:
-            if _k == 'id':
-                continue
-            if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
-                continue
-            if _k not in kwargs or not kwargs[_k]:
-                _v = db.value(db.source(), _k, database.BookmarkTable)
-                _v = _v if _v else invalid_token
-                tokens[_k] = _v
+        if use_database:
+            db = database.get(self.server, self.job, self.root)
+
+            for _k in database.TABLES[database.BookmarkTable]:
+                if _k == 'id':
+                    continue
+                if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
+                    continue
+                if _k not in kwargs or not kwargs[_k]:
+                    _v = db.value(db.source(), _k, database.BookmarkTable)
+                    _v = _v if _v else invalid_token
+                    tokens[_k] = _v
 
         # The asset root token will only be available when the asset is manually
         # specified
         if 'asset' in kwargs and kwargs['asset']:
             source = f'{self.server}/{self.job}/{self.root}/{kwargs["asset"]}'
 
-            for _k in database.TABLES[database.AssetTable]:
-                if _k == 'id':
-                    continue
-                if database.TABLES[database.AssetTable][_k]['type'] == dict:
-                    continue
-                if _k not in kwargs or not kwargs[_k]:
-                    _v = db.value(source, _k, database.AssetTable)
-                    _v = _v if _v else invalid_token
-                    tokens[_k] = _v
+            if use_database:
+                for _k in database.TABLES[database.AssetTable]:
+                    if _k == 'id':
+                        continue
+                    if database.TABLES[database.AssetTable][_k]['type'] == dict:
+                        continue
+                    if _k not in kwargs or not kwargs[_k]:
+                        _v = db.value(source, _k, database.AssetTable)
+                        _v = _v if _v else invalid_token
+                        tokens[_k] = _v
 
-                    # Let's also override width, height and fps tokens
-                    tokens[_k.replace('asset_', '')] = _v
+                        # Let's also override width, height and fps tokens
+                        tokens[_k.replace('asset_', '')] = _v
 
         # We also want to use the path elements as tokens.
         for k in ('server', 'job', 'root', 'asset', 'task'):

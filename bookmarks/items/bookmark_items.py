@@ -54,6 +54,7 @@ Model items store their path segments using the
 
 
 """
+import weakref
 
 from PySide2 import QtCore, QtWidgets
 
@@ -64,6 +65,8 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import database
+from .. import log
+from ..tokens import tokens
 from ..threads import threads
 
 
@@ -146,6 +149,10 @@ class BookmarkItemModel(models.ItemModel):
         data = common.get_data(p, _k, t)
         database.remove_all_connections()
 
+        _servers = []
+        _jobs = []
+        _roots = []
+
         for k, v in self.item_generator():
             common.check_type(v, dict)
 
@@ -158,7 +165,31 @@ class BookmarkItemModel(models.ItemModel):
             job = v['job']
             root = v['root']
 
-            database.get(server, job, root)
+            _servers.append(server)
+            _jobs.append(job)
+            _roots.append(root)
+
+            # Get the display name based on the value set in the database
+
+            db = database.get(server, job, root)
+            display_name_token = db.value(db.source(), 'bookmark_display_token', database.BookmarkTable)
+
+            # Default display name
+            display_name = root
+
+            # If a token is set, expand it
+            if display_name_token:
+                config = tokens.get(server, job, root)
+                _display_name = config.expand_tokens(
+                    display_name_token,
+                    server=server,
+                    job=job,
+                    root=root,
+                    prefix=db.value(db.source(), 'prefix', database.BookmarkTable)
+                )
+
+                if tokens.invalid_token not in _display_name:
+                    display_name = _display_name
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
@@ -179,9 +210,9 @@ class BookmarkItemModel(models.ItemModel):
             # bookmark exist
             if all(
                     (
-                            server == common.active('server'),
-                            job == common.active('job'),
-                            root == common.active('root')
+                        server == common.active('server'),
+                        job == common.active('job'),
+                        root == common.active('root')
                     )
             ) and exists:
                 flags = flags | common.MarkedAsActive
@@ -206,14 +237,15 @@ class BookmarkItemModel(models.ItemModel):
 
             data[idx] = common.DataDict(
                 {
-                    QtCore.Qt.DisplayRole: root,
-                    QtCore.Qt.EditRole: root,
+                    QtCore.Qt.DisplayRole: display_name,
+                    QtCore.Qt.EditRole: display_name,
                     common.PathRole: filepath,
                     QtCore.Qt.ToolTipRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: t,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.BookmarkTab,
                     #
                     common.FlagsRole: flags,
@@ -243,6 +275,10 @@ class BookmarkItemModel(models.ItemModel):
 
             if not exists:
                 continue
+
+        data.servers = sorted(set(_servers))
+        data.jobs = sorted(set(_jobs))
+        data.roots = sorted(set(_roots))
 
         self.activeChanged.emit(self.active_index())
 
@@ -290,7 +326,7 @@ class BookmarkItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_bookmark_row_height))
+        return QtCore.QSize(1, common.size(common.size_row_height))
 
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings
@@ -354,4 +390,4 @@ class BookmarkItemView(views.ThreadedItemView):
         """Returns an informative hint text.
 
         """
-        return 'Right-click and select \'Manage Bookmark Items\' to add items'
+        return 'Right-click and select \'Edit Jobs\' to add bookmark items'

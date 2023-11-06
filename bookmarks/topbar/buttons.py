@@ -293,3 +293,29 @@ class RefreshButton(BaseControlButton):
             return True
 
         return False
+
+
+class ApplicationLauncherButton(BaseControlButton):
+    """A button used to launch applications.
+
+    """
+
+    def __init__(self, parent=None):
+        s = shortcuts.string(
+            shortcuts.MainWidgetShortcuts,
+            shortcuts.ApplicationLauncher
+        )
+        super().__init__(
+            'icon',
+            f'Application Launcher  -  {s}',
+            color=(
+                    common.color(common.color_green),
+                    common.color(common.color_green),
+            ),
+            parent=parent
+        )
+        self.clicked.connect(actions.pick_launcher_item)
+        self.clicked.connect(self.update)
+
+    def state(self):
+        return True

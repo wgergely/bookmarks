@@ -14,6 +14,7 @@ from .. import common
 from .. import database
 from .. import images
 from .. import log
+from ..tokens import tokens
 from ..shotgun import shotgun
 
 
@@ -86,14 +87,19 @@ def process(func):
             if not ref() or self.interrupt:
                 return
 
-            # Let the source model know that we loaded a data segment fully
             if ref().data_type in (common.FileItem, common.SequenceItem):
-                # Mark the model loaded
+                # Mark the internal model loaded
                 ref().loaded = True
 
                 if not ref() or self.interrupt:
                     return
-                self.sort_data_type(ref)
+
+                # Sort the data
+                data = self.sort_internal_data(ref)
+
+                # Signal the world
+                common.signals.internalDataReady.emit(weakref.ref(data))
+
                 return
 
             if not ref() or self.interrupt:
@@ -136,6 +142,7 @@ class BaseWorker(QtCore.QObject):
 
     coreDataLoaded = QtCore.Signal(weakref.ref, weakref.ref)
     coreDataReset = QtCore.Signal()
+    dataTypeAboutToBeSorted = QtCore.Signal(int)
     dataTypeSorted = QtCore.Signal(int)
     queueItems = QtCore.Signal(list)
 
@@ -170,7 +177,7 @@ class BaseWorker(QtCore.QObject):
         from . import threads
 
         self.queue_timer = common.Timer(parent=self)
-        self.queue_timer.setObjectName('{}Timer_{}'.format(self.queue, uuid.uuid1().hex))
+        self.queue_timer.setObjectName(f'{self.queue}Timer_{uuid.uuid1().hex}')
         self.queue_timer.setInterval(1)
 
         # Local direct worker signal connections
@@ -205,7 +212,10 @@ class BaseWorker(QtCore.QObject):
 
         if threads.THREADS[q]['preload'] and model and widget:
             model.coreDataLoaded.connect(self.coreDataLoaded, cnx)
-            self.dataTypeSorted.connect(model.dataTypeSorted, cnx)
+
+            self.dataTypeAboutToBeSorted.connect(model.internal_data_about_to_be_sorted, cnx)
+            self.dataTypeSorted.connect(model.internal_data_sorted, cnx)
+
             common.signals.databaseValueUpdated.connect(self.databaseValueUpdated, cnx)
 
         self.sgEntityDataReady.connect(common.signals.sgEntityDataReady, cnx)
@@ -214,10 +224,10 @@ class BaseWorker(QtCore.QObject):
         """Process changes when any bookmark database value changes.
 
         Args:
-            tab_type (idx): A tab type used to match the slot with the model type.
+            table (str): The database table.
             source (str): A file path.
-            role (int): An item role.
-            v (object): The value to set.
+            key (str): The database value key (column).
+            value (object): The value to set.
 
         Returns:
             type: Description of returned object.
@@ -298,10 +308,6 @@ class BaseWorker(QtCore.QObject):
             if ref().loaded:
                 continue  # Skip if the model is loaded already
 
-            # Skip if the model has already been queued
-            if ref in threads.THREADS[q]['queue']:
-                continue
-
             idxs = ref().keys()
             for idx in idxs:
                 if not ref() or self.interrupt:
@@ -320,7 +326,7 @@ class BaseWorker(QtCore.QObject):
         self.queue_timer.start()
 
     @common.error
-    def sort_data_type(self, ref):
+    def sort_internal_data(self, ref):
         """Sorts the data of the given data type.
 
         Args:
@@ -331,7 +337,7 @@ class BaseWorker(QtCore.QObject):
 
         model = _model(self.queue)
         if not model:
-            return
+            return None
 
         sort_by = model.sort_by()
         sort_order = model.sort_order()
@@ -341,14 +347,22 @@ class BaseWorker(QtCore.QObject):
         t = ref().data_type
 
         if not ref():
-            return
+            return None
+
+        if model.data_type() == t:
+            self.dataTypeAboutToBeSorted.emit(t)
+
         d = common.sort_data(ref, sort_by, sort_order)
+
         if not ref():
-            return
-        common.set_data(p, k, t, d)
+            return None
+
+        data = common.set_data(p, k, t, d)
 
         if model.data_type() == t:
             self.dataTypeSorted.emit(t)
+
+        return data
 
     @QtCore.Slot()
     def clear_queue(self):
@@ -371,6 +385,12 @@ class BaseWorker(QtCore.QObject):
     @common.error
     @QtCore.Slot(weakref.ref)
     def process_data(self, ref):
+        """Processes the given data item.
+
+        Args:
+            ref (weakref.ref): A data item.
+
+        """
         # Do nothing by default
         if not ref() or self.interrupt:
             return False
@@ -432,10 +452,9 @@ def get_bookmark_description(bookmark_row_data):
         description = f'{sep}{v["description"]}' if v['description'] else ''
         width = v['width'] if (v['width'] and v['height']) else ''
         height = f'*{v["height"]}px' if (v['width'] and v['height']) else ''
-        framerate = f'{sep}{v["framerate"]}fps' if v['framerate'] else ''
-        prefix = f'{sep}{v["prefix"]}' if v['prefix'] else ''
+        framerate = f', {v["framerate"]}fps' if v['framerate'] else ''
 
-        s = f'{width}{height}{framerate}{prefix}{description}'
+        s = f'{description}{sep}{width}{height}{framerate}'
         s = s.replace(sep + sep, sep)
         s = s.strip(sep).strip()
         return s
@@ -512,7 +531,7 @@ class InfoWorker(BaseWorker):
         """Populates the item with the missing file information.
 
         Args:
-            ref (weakref): An internal model data item's weakref.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         Returns:
             bool: `True` on success, `False` otherwise.
@@ -537,6 +556,8 @@ class InfoWorker(BaseWorker):
 
     def _process_data(self, ref):
         """Utility method for :meth:`process_data.
+
+        ref (weakref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         """
         pp = ref()[common.ParentPathRole]
@@ -571,6 +592,38 @@ class InfoWorker(BaseWorker):
         # Asset Progress Data
         if len(pp) == 4 and asset_row_data['progress']:
             ref()[common.AssetProgressRole] = asset_row_data['progress']
+        # Asset entry data
+        if len(pp) == 4:
+            ref()[common.EntryRole].append(
+                common.get_entry_from_path(
+                    ref()[common.PathRole],
+                    is_dir=True,
+                    force_exists=True
+                )
+            )
+
+        # Asset ShotGrid task to list
+        if (
+                len(pp) == 4 and
+                asset_row_data['sg_task_name'] and
+                ref()[common.DataDictRole] and
+                not asset_row_data['flags'] & common.MarkedAsArchived
+        ):
+            if ref():
+                _ref = ref()[common.DataDictRole]
+
+            # TODO: This does not seem to be thread safe (?) but since we only have one asset worker
+            #       it should be fine for now.
+            if _ref():
+                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'] not in _ref().sg_task_names:
+                    if _ref():
+                        _ref().sg_task_names.append(asset_row_data['sg_task_name'])
+
+            if _ref():
+                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'] not in _ref().shotgun_names:
+                    if _ref():
+                        _ref().shotgun_names.append(asset_row_data['shotgun_name'])
+
         # ShotGrid status
         if len(pp) <= 4:
             update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
@@ -588,7 +641,63 @@ class InfoWorker(BaseWorker):
             flags |= _proxy_flags if _proxy_flags else 0
         ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
 
-        self.count_items(ref, st)
+        if ref() and ref()[common.ItemTabRole] == common.TaskTab:
+            # Let's get the token config instance to check what extensions are
+            # currently allowed to be displayed in the task folder
+            config = tokens.get(*pp[0:3])
+
+            description = config.get_description(pp[-1])
+            ref()[common.DescriptionRole] = description
+
+            is_valid_task = config.check_task(pp[-1])
+            if is_valid_task:
+                valid_extensions = config.get_task_extensions(pp[-1])
+            else:
+                valid_extensions = config.get_extensions(tokens.AllFormat)
+
+            def _file_it(path):
+                for entry in os.scandir(path):
+                    if entry.is_symlink():
+                        continue
+                    if entry.name.startswith('.'):
+                        continue
+                    if entry.name == 'thumbs.db':
+                        continue
+
+                    if entry.is_dir():
+                        yield from _file_it(entry.path)
+
+                    if not entry.is_file():
+                        continue
+
+                    if QtCore.QFileInfo(entry.path).suffix().lower() not in valid_extensions:
+                        continue
+
+                    yield entry.path
+
+            _idx = 0
+            _max = 199
+            for _idx, _ in enumerate(_file_it(st)):
+                if not ref():
+                    break
+
+                ref()[common.NoteCountRole] = _idx + 1
+
+                if _idx == 1:
+                    _s = 'a' + pp[-1].lower()
+                    ref()[common.SortByNameRole] = _s
+                    ref()[common.SortByLastModifiedRole] = _s
+                    ref()[common.SortBySizeRole] = _s
+                    ref()[common.SortByTypeRole] = _s
+
+                if _idx > _max:
+                    break
+
+            _suffix = f'{_idx + 1} items' if _idx < _max else f'{_max}+ items'
+            _suffix = _suffix if _idx > 0 else ''
+            _suffix = f' ({_suffix})' if description and _idx > 0 else _suffix
+
+            ref()[common.DescriptionRole] += _suffix
 
         self._process_bookmark_item(ref, db.source(), bookmark_row_data, pp)
         self._process_file_item(ref, item_type)
@@ -694,9 +803,6 @@ class InfoWorker(BaseWorker):
         ref()[common.FileDetailsRole] = info_string
         ref()[common.SortBySizeRole] = size
 
-    def count_items(self, ref, source):
-        pass
-
 
 class ThumbnailWorker(BaseWorker):
     """Thread worker responsible for creating and loading thumbnails.
@@ -722,7 +828,7 @@ class ThumbnailWorker(BaseWorker):
         for details.
 
         Args:
-            ref (weakref.ref): A weakref to a data segment.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         Returns:
             ref or None: `ref` if loaded successfully, else `None`.
@@ -816,7 +922,7 @@ class TransactionsWorker(BaseWorker):
     """
 
     @common.error
-    def process_data(self):
+    def process_data(self, *args, **kwargs):
         verify_thread_affinity()
 
         if self.interrupt:
@@ -835,7 +941,7 @@ class SGWorker(BaseWorker):
     """This worker is used to retrieve data from ShotGrid."""
 
     @common.error
-    def process_data(self):
+    def process_data(self, *args, **kwargs):
         verify_thread_affinity()
 
         if self.interrupt:

@@ -155,6 +155,16 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         t = common.FileItem
 
         _data = common.get_data(p, k, t)
+
+        if not _data:
+            return
+        if source_index.row() not in _data:
+            return
+        if not _data[source_index.row()][common.AssetProgressRole]:
+            return
+        if index.column() - 1 not in _data[source_index.row()][common.AssetProgressRole]:
+            return
+
         data = _data[source_index.row()][common.AssetProgressRole][index.column() - 1]
 
         right_edge = self._draw_background(painter, option, data)

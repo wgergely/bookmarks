@@ -30,6 +30,8 @@ RemoveItem = common.idx()
 Refresh = common.idx()
 AltRefresh = common.idx()
 
+ApplicationLauncher = common.idx()
+
 CopyItemPath = common.idx()
 CopyAltItemPath = common.idx()
 RevealItem = common.idx()
@@ -56,7 +58,7 @@ ToggleItemFavourite = common.idx()
 PushToRV = common.idx()
 PushToRVFullScreen = common.idx()
 
-BookmarkEditorShortcuts = {
+JobEditorShortcuts = {
     AddItem: {
         'value': QtGui.QKeySequence.New,
         'default': QtGui.QKeySequence.New,
@@ -78,7 +80,7 @@ MainWidgetShortcuts = {
         'value': 'Ctrl+Shift+N',
         'default': 'Ctrl+Shift+N',
         'repeat': False,
-        'description': f'Open a new {common.product} instance...',
+        'description': f'Open a new {common.product.title()} instance...',
         'shortcut': None,
     },
     RowIncrease: {
@@ -170,6 +172,13 @@ MainWidgetShortcuts = {
         'default': 'Ctrl+R',
         'repeat': False,
         'description': 'Refresh',
+        'shortcut': None,
+    },
+    ApplicationLauncher: {
+        'value': 'Alt+L',
+        'default': 'Alt+L',
+        'repeat': False,
+        'description': 'Application Launcher',
         'shortcut': None,
     },
     CopyItemPath: {
@@ -281,28 +290,28 @@ MainWidgetShortcuts = {
         'value': 'Ctrl+.',
         'default': 'Ctrl+.',
         'repeat': False,
-        'description': 'Show {} Preferences'.format(common.product),
+        'description': f'Show {common.product.title()} Preferences',
         'shortcut': None,
     },
     OpenTodo: {
         'value': 'Alt+N',
         'default': 'Alt+N',
         'repeat': False,
-        'description': 'Show {} Preferences'.format(common.product),
+        'description': f'Show {common.product.title()} Preferences',
         'shortcut': None,
     },
     ToggleItemArchived: {
         'value': 'Ctrl+A',
         'default': 'Ctrl+A',
         'repeat': False,
-        'description': 'Show {} Preferences'.format(common.product),
+        'description': f'Show {common.product.title()} Preferences',
         'shortcut': None,
     },
     ToggleItemFavourite: {
         'value': 'Ctrl+S',
         'default': 'Ctrl+S',
         'repeat': False,
-        'description': 'Show {} Preferences'.format(common.product),
+        'description': f'Show {common.product.title()} Preferences',
         'shortcut': None,
     },
     PushToRV: {

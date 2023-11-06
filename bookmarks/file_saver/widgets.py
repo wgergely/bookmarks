@@ -328,11 +328,10 @@ class PrefixEditor(QtWidgets.QDialog):
 
 
 class FileNameInfo(QtWidgets.QLabel):
-
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setFixedHeight(common.size(common.size_asset_row_height))
+        self.setFixedHeight(common.size(common.size_row_height) * 1.5)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding

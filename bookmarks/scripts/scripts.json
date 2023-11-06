@@ -1,23 +1,27 @@
 {
   "0": {
-    "name": "SG Sync (experimental)",
-    "module": "sg_sync",
-    "description": "Syncs editorial data with ShotGrid and server assets",
+    "name": "Synchronize Asset and Entity Data",
+    "module": "sync_asset_data",
+    "description": "Synchronizes bookmark asset items and ShotGrid entities with a source data file.",
     "needs_active": "root",
-    "icon": "sg"
+    "icon": "spinner"
   },
   "1": {
-    "name": "Auto-o-matic",
+    "name": "Preview and Save Playlists",
     "module": "clips",
     "description": "View clips and export them to editorial",
     "needs_active": "root",
-    "icon": "sg"
+    "icon": "image"
   },
   "2": {
-    "name": "Export renders to After Effects",
-    "module": "render_layers_to_ae",
-    "description": "View clips and export them to editorial",
+    "name": "separator"
+  },
+  "3": {
+    "name": "Send Images to After Effects",
+    "module": "send_images_to_after_effects",
+    "description": "Send image sequences to After Effects",
     "needs_active": "task",
-    "icon": "file"
+    "needs_application": "after effects",
+    "icon": "add_file"
   }
 }

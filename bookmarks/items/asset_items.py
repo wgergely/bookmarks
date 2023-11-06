@@ -32,6 +32,7 @@ database. See :mod:`bookmarks.database` for more details.
 import copy
 import functools
 import os
+import weakref
 
 from PySide2 import QtCore, QtWidgets
 
@@ -45,19 +46,7 @@ from .. import database
 from .. import log
 from .. import progress
 from ..threads import threads
-
-
-def get_display_name(s):
-    """Manipulate the given file name to a display friendly name.
-
-    Args:
-        s (str): Source asset item file name.
-
-    Returns:
-        str: A modified asset item display name.
-
-    """
-    return s
+from ..tokens import tokens
 
 
 class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -190,33 +179,34 @@ class AssetItemModel(models.ItemModel):
 
         # Let's get the identifier from the bookmark database
         db = database.get(*p)
-        asset_identifier = db.value(
+
+        # ...and the display token
+        display_token = db.value(
             source,
-            'identifier',
+            'asset_display_token',
             database.BookmarkTable
         )
+        prefix = db.value(
+            source,
+            'prefix',
+            database.BookmarkTable
+        )
+        config = tokens.get(*p)
 
-        nth = 1
+        nth = 17
         c = 0
 
-        for entry in self.item_generator(source):
+        for filepath in self.item_generator(source):
             if self._interrupt_requested:
                 break
 
-            filepath = entry.path.replace('\\', '/')
-
-            if asset_identifier:
-                identifier = f'{filepath}/{asset_identifier}'
-                if not os.path.isfile(identifier):
-                    continue
-
             # Progress bar
-            c += 9
+            c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
                     f'Loading assets ({c} found)...'
                 )
-                QtWidgets.QApplication.instance().processEvents()
+                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             filename = filepath[len(source) + 1:]
             flags = models.DEFAULT_ITEM_FLAGS
@@ -229,8 +219,26 @@ class AssetItemModel(models.ItemModel):
             if active and active == filename:
                 flags = flags | common.MarkedAsActive
 
-            # Beautify the name
-            name = get_display_name(filename)
+            display_name = filename
+
+            # Set the display name based on the bookmark item's configuration value
+            if display_token:
+                seq, shot = common.get_sequence_and_shot(filepath)
+                _display_name = config.expand_tokens(
+                    display_token,
+                    use_database=False,
+                    server=p[0],
+                    job=p[1],
+                    root=p[2],
+                    asset=filename,
+                    seq=seq,
+                    sequence=seq if seq else '',
+                    shot=shot if shot else '',
+                    prefix=prefix
+                )
+                if tokens.invalid_token not in _display_name:
+                    display_name = _display_name
+
             parent_path_role = p + (filename,)
 
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
@@ -246,7 +254,7 @@ class AssetItemModel(models.ItemModel):
 
             data[idx] = common.DataDict(
                 {
-                    QtCore.Qt.DisplayRole: name,
+                    QtCore.Qt.DisplayRole: display_name,
                     QtCore.Qt.EditRole: filename,
                     common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,
@@ -258,9 +266,10 @@ class AssetItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: t,
+                    common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.AssetTab,
                     #
-                    common.EntryRole: [entry, ],
+                    common.EntryRole: [],
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
@@ -277,7 +286,7 @@ class AssetItemModel(models.ItemModel):
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: 0,
                     common.SortBySizeRole: 0,
-                    common.SortByTypeRole: name,
+                    common.SortByTypeRole: display_name,
                     #
                     common.IdRole: idx,
                     #
@@ -286,6 +295,10 @@ class AssetItemModel(models.ItemModel):
                     common.AssetProgressRole: copy.deepcopy(progress.STAGES),
                 }
             )
+
+        # Cache the list of assets for later use
+        with open(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache', 'w') as f:
+            f.write('\n'.join([v[common.PathRole] for v in data.values()]))
 
         # Explicitly emit `activeChanged` to notify other dependent models
         self.activeChanged.emit(self.active_index())
@@ -306,10 +319,21 @@ class AssetItemModel(models.ItemModel):
     def item_generator(self, path):
         """Yields the asset items to be processed by :meth:`init_data`.
 
+        Args:
+            path (string): The path to a directory containing asset folders.
+
         Yields:
             DirEntry: Entry instances of valid asset folders.
 
         """
+        # Read from the cache if it exists
+        cache = f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache'
+        if os.path.isfile(cache):
+            with open(cache, 'r') as f:
+                for line in f:
+                    yield line.strip()
+            return
+
         try:
             it = os.scandir(path)
         except OSError as e:
@@ -332,17 +356,13 @@ class AssetItemModel(models.ItemModel):
             )
 
             for link in links:
-                v = f'{path}/{entry.name}/{link}'
-                _entry = common.get_entry_from_path(v)
-                if not _entry:
-                    log.error(f'Could not get entry from link {v}')
-                    continue
-                yield _entry
+                yield f'{path}/{entry.name}/{link}'
 
+            # Don't yield the asset if it has links
             if links:
                 continue
 
-            yield entry
+            yield entry.path.replace('\\', '/')
 
     def save_active(self):
         """Saves the active item.
@@ -382,7 +402,7 @@ class AssetItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_asset_row_height))
+        return QtCore.QSize(1, common.size(common.size_row_height))
 
 
 class AssetItemView(views.ThreadedItemView):

@@ -3,6 +3,7 @@
 See the :mod:`bookmarks.tokens.tokens` for the interface details.
 
 """
+import copy
 import functools
 
 from PySide2 import QtWidgets, QtCore
@@ -13,13 +14,34 @@ from .. import log
 from .. import ui
 from ..editor import base
 
-SECTIONS = (
-    (tokens.FileNameConfig, 'File name template'),
-    (tokens.AssetFolderConfig, 'Asset folders template'),
-    (tokens.FileFormatConfig, 'Format whitelist'),
-    (tokens.PublishConfig, 'Publish template'),
-    (tokens.FFMpegTCConfig, 'Timecode template'),
-)
+MoveUp = 0
+MoveDown = 1
+
+SECTIONS = {
+    tokens.FileNameConfig: {
+        'name': 'File Name Templates',
+        'description': 'File name templates are used to define the names scene files. These usually include the '
+                       'project\'s prefix, sequence and shot numbers, and the task name.',
+    },
+    tokens.PublishConfig: {
+        'name': 'Publish Templates',
+        'description': 'Publish templates are used to define the save location of published files.',
+    },
+    tokens.FFMpegTCConfig: {
+        'name': 'Timecode Template',
+        'description': 'The template used by ffmpeg for video text overlays and burn-ins.',
+    },
+    tokens.AssetFolderConfig: {
+        'name': 'Asset Folders',
+        'description': 'Common folders that define the principal folders of an asset item. These values are'
+                       'used when browsing files, saving scene files and publishing items.',
+    },
+    tokens.FileFormatConfig: {
+        'name': 'Format Whitelist',
+        'description': 'The list of file formats that are allowed to be shown.',
+
+    },
+}
 
 
 def _set(d, keys, v):
@@ -69,7 +91,7 @@ class TokenEditor(QtWidgets.QDialog):
         editor.setSpacing(0)
 
         editor.itemClicked.connect(
-            lambda x: self.tokenSelected.emit(x.data(QtCore.Qt.DisplayRole))
+            lambda x: self.tokenSelected.emit(x.data(QtCore.Qt.UserRole))
         )
         editor.itemClicked.connect(
             lambda x: self.done(QtWidgets.QDialog.Accepted)
@@ -78,34 +100,21 @@ class TokenEditor(QtWidgets.QDialog):
         self.layout().addWidget(editor, 0)
 
         config = tokens.get(self.server, self.job, self.root)
-        v = config.get_tokens(
-            user='username',
-            version='v001',
-            host='my-machine',
-            task='anim',
-            mode='anim',
-            element='main',
-            ext='ma',
-            prefix='MY_PROJECT',
-            asset='asset/with/multiple/subfolders',
-            seq='SQ010',
-            sequence='SQ010',
-            shot='SH0010',
-            project='my_project',
-        )
-        for k in sorted(v.keys()):
-            token = '{{{}}}'.format(k)
-            editor.addItem(token)
+        v = config.get_tokens()
+
+        for k in sorted(v.keys(), key=lambda x: x.strip('{}').lower()):
+            editor.addItem(f'{k}{"    >   {}".format(v[k]) if v[k] != "{invalid_token}" else ""}')
             item = editor.item(editor.count() - 1)
             item.setFlags(QtCore.Qt.ItemIsEnabled)
+
             item.setData(
                 QtCore.Qt.ToolTipRole,
                 f'Current value: "{v[k]}"'
             )
-
-    @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def item_clicked(self, item):
-        item = item.data(QtCore.Qt.DisplayRole)
+            item.setData(
+                QtCore.Qt.UserRole,
+                '{{{}}}'.format(k)
+            )
 
     def sizeHint(self):
         """Returns a size hint.
@@ -136,7 +145,7 @@ class FormatEditor(QtWidgets.QDialog):
     """
 
     def __init__(self, *args, **kwargs):
-        super(FormatEditor, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.listwidget = None
 
         self.setWindowTitle('Edit Formats')
@@ -179,18 +188,18 @@ class FormatEditor(QtWidgets.QDialog):
 
 
 class SubfolderEditor(QtWidgets.QDialog):
-    """A popup editor used to edit the subfolders of a task folder.
+    """A popup editor used to edit the sub-folders of a task folder.
 
     """
 
     def __init__(self, section, k, v, data, parent=None):
-        super(SubfolderEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.section = section
         self.k = k
         self.v = v
         self.data = data
 
-        self.setWindowTitle('Edit Subfolders')
+        self.setWindowTitle('Edit Sub-folders')
         self._create_ui()
 
     def _create_ui(self):
@@ -199,7 +208,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
-        main_grp = base.add_section('', 'Edit Subfolders', self)
+        main_grp = base.add_section('', 'Edit Sub-folders', self)
         grp = ui.get_group(parent=main_grp)
 
         for _k, _v in self.v['subfolders'].items():
@@ -248,7 +257,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
     """
 
     def __init__(self, server, job, root, parent=None):
-        super(TokenConfigEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.server = server
         self.job = job
         self.root = root
@@ -263,6 +272,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         self.init_data()
 
+        self.ui_groups = {}
+
         self._create_ui()
         self._connect_signals()
 
@@ -271,41 +282,178 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         QtWidgets.QVBoxLayout(self)
         o = common.size(common.size_margin)
-        h = common.size(common.size_row_height)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(o)
 
         # Re-fetch the config data from the database
+
+        for k in SECTIONS:
+            self._add_section(k)
+
+    def _add_section_item(self, parent, section, data):
+        """Adds a new item to a section.
+
+        Args:
+            parent (QtWidgets.QWidget): The parent widget.
+            section (str): The section to add the item to.
+            data (dict): The data to add.
+
+        Returns:
+            QtWidgets.QWidget: The widget that was added.
+
+        """
+        grp = ui.get_group(vertical=False, parent=parent)
+        grp.setObjectName('section_item_group')
+        grp.section = section
+
+        _row1 = ui.add_row(None, height=None, vertical=True, parent=grp)
+
+        for _k in ('name', 'value', 'description'):
+            row = ui.add_row(_k.title(), height=common.size(common.size_row_height), parent=_row1)
+            editor = ui.LineEdit(parent=row)
+            editor.setObjectName(f'section_item_{_k}')
+
+            editor.setAlignment(QtCore.Qt.AlignRight)
+            editor.setText(data[_k])
+            editor.setPlaceholderText(f'Edit {_k}...')
+
+            if _k in ('name', 'description'):
+                editor.setStyleSheet(
+                    f'color: {common.rgb(common.color_secondary_text)};'
+                )
+            else:
+                editor.setStyleSheet(
+                    f'color: {common.rgb(common.color_text)};'
+                )
+            row.layout().addWidget(editor, 1)
+
+        _row2 = ui.add_row(None, height=None, vertical=False, parent=None)
+        grp.layout().addWidget(_row2, 0)
+
+        button = ui.ClickableIconButton(
+            'add_circle',
+            (common.color(common.color_text), common.color(common.color_text)),
+            common.size(common.size_margin),
+            description='Insert token',
+            parent=_row2
+        )
+        _row2.layout().addWidget(button, 0)
+        value_editor = [x for x in grp.findChildren(QtWidgets.QLineEdit) if x.objectName() == 'section_item_value'][0]
+        button.clicked.connect(
+            functools.partial(self.show_token_editor, value_editor)
+        )
+
+        button = ui.ClickableIconButton(
+            'arrow_up',
+            (common.color(common.color_text), common.color(common.color_text)),
+            common.size(common.size_margin),
+            description='Move item up',
+            parent=_row2
+        )
+        _row2.layout().addWidget(button, 0)
+        button.clicked.connect(
+            functools.partial(self.move_item, grp, MoveUp)
+        )
+
+        button = ui.ClickableIconButton(
+            'arrow_down',
+            (common.color(common.color_text), common.color(common.color_text)),
+            common.size(common.size_margin),
+            description='Move item down',
+            parent=_row2
+        )
+        _row2.layout().addWidget(button, 0)
+        button.clicked.connect(
+            functools.partial(self.move_item, grp, MoveDown)
+        )
+
+        button = ui.ClickableIconButton(
+            'archive',
+            (common.color(common.color_red), common.color(common.color_red)),
+            common.size(common.size_margin),
+            description='Remove item',
+            parent=_row2
+        )
+        _row2.layout().addWidget(button, 0)
+        button.clicked.connect(
+            functools.partial(self.remove_item, grp)
+        )
+
+        return grp
+
+    def _add_section(self, section):
+        # Re-fetch the config data from the database
         data = self.tokens.data(force=True)
 
-        for section, section_name in SECTIONS:
-            if section not in data:
-                continue
-            if not isinstance(data[section], dict):
-                log.error('Invalid data.')
-                return
-            for k, v in data[section].items():
-                if not isinstance(
-                        v, dict
-                ) or 'name' not in v or 'description' not in v:
-                    log.error(f'Invalid data. Key: {k}, value: {v}')
-                    return
+        if section not in data:
+            print(f'Invalid section: {section}. Skipping.')
+            return
 
-            main_grp = base.add_section(
-                '',
-                section_name,
-                self,
-                color=common.color(common.color_dark_background)
+        if not isinstance(data[section], dict):
+            log.error('Invalid data.')
+            return
+
+        for k, v in data[section].items():
+            if not isinstance(
+                    v, dict
+            ) or 'name' not in v or 'description' not in v:
+                log.error(f'Invalid data. Key: {k}, value: {v}')
+                return
+
+        h = common.size(common.size_row_height)
+
+        main_grp = base.add_section(
+            'file',
+            SECTIONS[section]['name'],
+            self,
+            color=common.color(common.color_dark_background)
+        )
+
+        self.ui_groups[section] = main_grp
+        self.header_buttons.append((SECTIONS[section]['name'], main_grp))
+
+        _grp = ui.get_group(parent=main_grp)
+
+        # Control buttons
+        control_row = ui.add_row(
+            None, height=None, parent=_grp
+        )
+
+        ui.add_description(
+            SECTIONS[section]['description'],
+            height=None,
+            label=None,
+            parent=control_row
+        )
+        control_row.layout().addStretch(1)
+
+        if section in (tokens.PublishConfig, tokens.FFMpegTCConfig, tokens.FileNameConfig):
+            add_button = ui.ClickableIconButton(
+                'add',
+                (common.color(common.color_green), common.color(common.color_green)),
+                common.size(common.size_margin) * 1.5,
+                description='Add new item',
+                parent=control_row
+            )
+            control_row.layout().addWidget(add_button, 0)
+
+            add_button.clicked.connect(
+                functools.partial(self.add_item, _grp, section)
             )
 
-            # Save header data for later use
-            self.header_buttons.append((section_name, main_grp))
+        reset_button = ui.PaintedButton('Revert to defaults')
+        reset_button.clicked.connect(functools.partial(self.restore_defaults, section))
 
-            _grp = ui.get_group(parent=main_grp)
-            for k, v in data[section].items():
+        control_row.layout().addWidget(reset_button, 0)
+
+        for k, v in data[section].items():
+
+            if section in (tokens.PublishConfig, tokens.FFMpegTCConfig, tokens.FileNameConfig):
+                grp = self._add_section_item(_grp, section, v)
+            else:
                 _name = v['name'].title()
-                _name = f'{_name} Folder' if section == tokens.AssetFolderConfig else _name
                 row = ui.add_row(_name, height=h, parent=_grp)
+
                 row.setStatusTip(v['description'])
                 row.setWhatsThis(v['description'])
                 row.setToolTip(v['description'])
@@ -315,6 +463,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 editor.setAlignment(QtCore.Qt.AlignRight)
                 editor.setText(v['value'])
 
+                row.layout().addWidget(editor, 1)
+
                 # Save current data
                 key = f'{section}/{k}/value'
                 self.current_data[key] = v['value']
@@ -322,22 +472,6 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 editor.textChanged.connect(
                     functools.partial(self.text_changed, key, editor)
                 )
-
-                row.layout().addWidget(editor)
-
-                if section == tokens.PublishConfig or section == tokens.FFMpegTCConfig:
-                    button = ui.PaintedButton('+', parent=row)
-                    button.clicked.connect(
-                        functools.partial(self.show_token_editor, editor)
-                    )
-                    row.layout().addWidget(button, 0)
-
-                if section == tokens.FileNameConfig:
-                    button = ui.PaintedButton('+', parent=row)
-                    button.clicked.connect(
-                        functools.partial(self.show_token_editor, editor)
-                    )
-                    row.layout().addWidget(button, 0)
 
                 if section == tokens.AssetFolderConfig:
                     button = ui.PaintedButton('Formats', parent=row)
@@ -362,24 +496,119 @@ class TokenConfigEditor(QtWidgets.QWidget):
                     else:
                         button.setDisabled(True)
 
+
     def init_data(self):
         """Initializes data.
 
         """
         self.tokens = tokens.get(self.server, self.job, self.root)
 
-    def contextMenuEvent(self, event):
-        action = QtWidgets.QAction(
-            'Reset all template settings to their defaults'
-        )
-        action.triggered.connect(self.restore_to_defaults)
+    @QtCore.Slot(QtWidgets.QWidget)
+    @QtCore.Slot(int)
+    def move_item(self, widget, direction):
+        """Moves an item up or down in its own section.
 
-        menu = QtWidgets.QMenu(parent=self)
-        menu.addAction(action)
-        pos = self.mapToGlobal(event.pos())
-        menu.move(pos)
-        menu.exec_()
-        menu.deleteLater()
+        Args:
+            widget (QtWidgets.QWidget): The widget to move.
+            direction (int): The direction to move the widget in.
+
+        """
+        # Get the layout index of the widget
+        layout = widget.parent().layout()
+        index = layout.indexOf(widget)
+
+        # Get the new index
+        if direction == MoveUp:
+            min_index = 1  # Skip the first row as this is the control row
+            new_index = index - 1
+            new_index = min_index if new_index < min_index else new_index
+        else:
+            new_index = index + 1
+            new_index = layout.count() - 1 if new_index >= layout.count() else new_index
+
+        # Set the new layout index
+        layout.insertWidget(new_index, layout.takeAt(index).widget())
+
+    @QtCore.Slot(QtWidgets.QWidget)
+    @QtCore.Slot(str)
+    @common.error
+    def add_item(self, parent, section):
+        """Adds a new item to a section.
+
+        Args:
+            parent (QtWidgets.QWidget): The parent widget.
+            section (str): The section to add the item to.
+
+        """
+        grp = self._add_section_item(parent, section, {'name': '', 'value': '', 'description': ''})
+
+        # Find the value editor
+        editor = next(
+            (x for x in grp.findChildren(QtWidgets.QLineEdit) if x.objectName() == 'section_item_value'),
+            None
+        )
+        if not editor:
+            raise RuntimeError('Unable to find the value editor.')
+        editor.setFocus(QtCore.Qt.PopupFocusReason)
+        self.window().scroll_to_section(grp)
+
+    @QtCore.Slot(QtWidgets.QWidget)
+    def remove_item(self, widget):
+        """Removes an item from a section.
+
+        Args:
+            widget (QtWidgets.QWidget): The widget to remove.
+
+        """
+        # Prompt the user for confirmation
+        if common.show_message(
+                'Are you sure you want to remove this item?',
+                body='This action cannot be undone.',
+                buttons=[common.YesButton, common.CancelButton],
+                modal=True,
+        ) == QtWidgets.QDialog.Rejected:
+            return
+        layout = widget.parent().layout()
+        layout.removeWidget(widget)
+        widget.deleteLater()
+
+    @QtCore.Slot(str)
+    def restore_defaults(self, section):
+        """Restores the default values for a given section.
+
+        Args:
+            section (str): The section to restore.
+
+        """
+        if common.show_message(
+                'Are you sure you want to restore the default values?',
+                body='Any custom values will be permanently lost.',
+                buttons=[common.YesButton, common.CancelButton],
+                modal=True,
+        ) == QtWidgets.QDialog.Rejected:
+            return False
+
+        if section not in self.ui_groups:
+            print(f'Invalid section: {section}. Skipping.')
+            return
+
+        if section not in self.tokens.data():
+            print(f'Invalid section: {section}. Skipping.')
+            return
+
+        if not self.ui_groups[section]:
+            print(f'Invalid section: {section}. Skipping.')
+            return
+
+        if not self.write_default_to_database(section):
+            return
+
+        for k in SECTIONS:
+            self.ui_groups[k].deleteLater()
+            self.ui_groups[k] = None
+            del self.ui_groups[k]
+
+            self._add_section(k)
 
     @QtCore.Slot(str)
     @QtCore.Slot(dict)
@@ -411,17 +640,29 @@ class TokenConfigEditor(QtWidgets.QWidget):
         )
         editor.exec_()
 
-    @QtCore.Slot()
-    def restore_to_defaults(self):
-        if common.show_message(
-                'Are you sure you want to restore all templates to the default value?',
-                body='Your custom settings will be permanently lost.',
-                buttons=[common.YesButton, common.CancelButton],
-                modal=True,
-        ) == QtWidgets.QDialog.Rejected:
-            return
-        self.tokens.set_data(tokens.DEFAULT_TOKEN_CONFIG.copy())
-        self.window().close()
+    def write_default_to_database(self, section):
+        """Restore the default values for a given section and write them to the database.
+
+        Args:
+            section (str): The section to restore.
+
+        Returns:
+            bool: True if successful.
+
+        """
+        data = self.tokens.data(force=True)
+        if section not in data:
+            print(f'Invalid section: {section}. Skipping.')
+            return False
+        if section not in tokens.DEFAULT_TOKEN_CONFIG:
+            print(f'Invalid section: {section}. Skipping.')
+            return False
+
+        default_section = copy.deepcopy(tokens.DEFAULT_TOKEN_CONFIG[section])
+        data[section] = default_section
+
+        self.tokens.set_data(data)
+        return True
 
     @QtCore.Slot(str)
     @QtCore.Slot(dict)
@@ -436,6 +677,12 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
     @QtCore.Slot(QtWidgets.QWidget)
     def show_token_editor(self, editor):
+        """Shows the token editor.
+
+        Args:
+            editor (QtWidgets.QWidget): The editor to insert the token into.
+
+        """
         w = TokenEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(editor.insert)
         w.exec_()
@@ -475,12 +722,38 @@ class TokenConfigEditor(QtWidgets.QWidget):
         """Saves changes.
 
         """
-        if not self.changed_data:
-            return
-        data = self.tokens.data()
+        # Retrieve the current data from the database
+        data = self.tokens.data(force=True)
+
+        # Update the data with the changed values
         for keys, v in self.changed_data.copy().items():
             _set(data, keys, v)
             del self.changed_data[keys]
+
+        for section in (tokens.PublishConfig, tokens.FFMpegTCConfig, tokens.FileNameConfig):
+            if section not in data:
+                print(f'"{section}" not found in data! Skipping.')
+
+            # Reset the current data section and replace it with the values in the UI.
+            data[section] = {}
+
+            # Let's find the list of section group widgets
+            items = [f for f in self.findChildren(QtWidgets.QWidget, 'section_item_group') if f.section == section]
+            for item in items:
+
+                name_editor = item.findChildren(QtWidgets.QWidget, 'section_item_name')[0]
+                value_editor = item.findChildren(QtWidgets.QWidget, 'section_item_value')[0]
+                description_editor = item.findChildren(QtWidgets.QWidget, 'section_item_description')[0]
+
+                if not all((name_editor.text(), value_editor.text())):
+                    continue
+
+                data[section][len(data[section])] = {
+                    'name': name_editor.text(),
+                    'value': value_editor.text(),
+                    'description': description_editor.text() if description_editor.text() else '',
+                }
+
         self.tokens.set_data(data)
 
     def _connect_signals(self):

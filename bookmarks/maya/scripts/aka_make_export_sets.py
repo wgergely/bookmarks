@@ -1,3 +1,14 @@
+"""
+This script creates sets for each export group in the scene.
+Used in conjunction with Bookmarks to export character meshes for Houdini cloth simulation.
+
+Author:
+    Studio AKA, 2023 (c) All rights reserved.
+    https://www.studioaka.co.uk/
+    Gergely Wootsch,
+    hello@gergely-wootsch.com
+
+"""
 import maya.cmds as cmds
 
 
@@ -32,7 +43,6 @@ def create_set(set_name):
 
 
 def run():
-
     # Mapping of set names and their corresponding objects
     set_object_mapping = {
         'IbogaineDJ_body_export': ['*DJ*:head_geo', '*DJ*:body_geo', '*DJ*:shoes_geo'],
@@ -42,6 +52,10 @@ def run():
         'IbogaineMatty_cloth_export': ['*Matty*:cloth_geo', ],
         'IbogaineMarcus_body_export': ['*Marcus*:head_geo', '*Marcus*:body_geo', '*Marcus*:shoes_geo'],
         'IbogaineMarcus_cloth_export': ['*Marcus*:tshirt_geo', '*Marcus*:trousers_geo'],
+        'IbogaineMarcus_extra_export': ['*Marcus*:eye_L', '*Marcus*:eye_R'],
+        'IbogaineMarcus_body_mirrored_export': ['*Marcus*:head_geo_mirrored', '*Marcus*:body_geo_mirrored', '*Marcus*:shoes_geo_mirrored'],
+        'IbogaineMarcus_cloth_mirrored_export': ['*Marcus*:tshirt_geo_mirrored', '*Marcus*:trousers_geo_mirrored'],
+        'IbogaineMarcus_extra_mirrored_export': ['*Marcus*:eye_L_mirrored', '*Marcus*:eye_R_mirrored'],
         'set_ground_export': ['set_ground_geo', ],
         'set_background_export': ['set_background_geo', ],
         'set_floor_export': ['set_floor_geo', ],
@@ -49,6 +63,7 @@ def run():
     }
 
     cmds.undoInfo(openChunk=True)
+
     try:
         # Create each set and add its objects
         created_sets = []

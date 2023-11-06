@@ -141,7 +141,7 @@ class Tray(QtWidgets.QSystemTrayIcon):
         w = TrayMenu(parent=self.window())
         self.setContextMenu(w)
 
-        self.setToolTip(common.product)
+        self.setToolTip(common.product.title())
 
         self.activated.connect(self.tray_activated)
 
@@ -345,7 +345,6 @@ class BookmarksAppWindow(main.MainWidget):
         """Extra signal connections when Bookmarks runs in standalone mode.
 
         """
-        func = functools.partial(common.save_window_state, self)
         self.files_widget.activated.connect(actions.execute)
         self.favourites_widget.activated.connect(actions.execute)
 
@@ -402,11 +401,16 @@ class BookmarksApp(QtWidgets.QApplication):
 
     def __init__(self, args):
         _set_application_properties()
-        super().__init__([__file__, '-platform', 'windows:dpiawareness=2'])
+
+        super().__init__([__file__,])
         _set_application_properties(app=self)
         self.setApplicationVersion(__version__)
-        self.setApplicationName(common.product)
-        self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, bool=True)
+
+        self.setApplicationName(common.product.title())
+        self.setOrganizationName(common.organization)
+        self.setOrganizationDomain(common.organization_domain)
+
+        self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
         self._set_model_id()
         self._set_window_icon()
@@ -441,6 +445,8 @@ class BookmarksApp(QtWidgets.QApplication):
             if hasattr(widget, 'statusTip') and widget.statusTip():
                 common.signals.showStatusTipMessage.emit(widget.statusTip())
         if event.type() == QtCore.QEvent.Leave:
+            if not common.signals:
+                return False
             common.signals.clearStatusBarMessage.emit()
 
         return False

@@ -17,6 +17,7 @@ except ImportError:
 from .. import common
 from .. import ui
 from .. import contextmenu
+from .. import database
 from . import actions
 from . import export
 
@@ -30,23 +31,24 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
+        self.save_menu()
+        self.separator()
         self.scripts_menu()
         self.separator()
         self.apply_bookmark_settings_menu()
-        self.separator()
-        self.save_menu()
         self.separator()
         self.open_import_scene_menu()
         self.separator()
         self.export_menu()
         self.separator()
         self.import_camera_menu()
-        self.shader_tool_menu()
         self.separator()
         self.viewport_presets_menu()
         self.capture_menu()
         self.separator()
         self.hud_menu()
+        self.separator()
+        self.maya_preferences_menu()
 
     def apply_bookmark_settings_menu(self):
         """Apply settings action.
@@ -143,16 +145,6 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             'action': export.show
         }
 
-    def shader_tool_menu(self):
-        """Shader tool action.
-
-        """
-        k = contextmenu.key()
-        self.menu[k] = {
-            'text': 'Show Shader Tool',
-            'action': actions.show_shader_tool
-        }
-
     def import_camera_menu(self):
         """Import camera template action.
 
@@ -213,12 +205,12 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def scripts_menu(self):
-        """Custom Maya scripts deployed with the Maya module.
+        """Custom scripts deployed with the Maya module.
 
         """
         k = 'Scripts'
         self.menu[k] = collections.OrderedDict()
-        self.menu[f'{k}:icon'] = ui.get_icon('maya')
+        self.menu[f'{k}:icon'] = ui.get_icon('icon')
 
         p = os.path.normpath(f'{__file__}/../scripts/scripts.json')
         if not os.path.isfile(p):
@@ -227,15 +219,45 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         with open(p, 'r') as f:
             data = json.load(f)
 
+        @common.debug
+        @common.error
         def _run(name):
             module = importlib.import_module(f'.scripts.{name}', package=__package__)
+
+            if not hasattr(module, 'run'):
+                raise RuntimeError(f'Failed to run module: {name} - Missing run() function in {module}!')
+
             module.run()
 
         for v in data.values():
-            self.menu[k][v['name']] = {
+            if v['name'] == 'separator':
+                self.separator(menu=self.menu[k])
+                continue
+
+            # Check if the script needs_active
+            if 'needs_active' in v and v['needs_active']:
+                if not common.active(v['needs_active'], args=True):
+                    continue
+            # Check if the script needs_active
+            if 'needs_application' in v and v['needs_application']:
+                if not common.active('root', args=True):
+                    continue
+                # Get the bookmark database
+                db = database.get(*common.active('root', args=True))
+                applications = db.value(db.source(), 'applications', database.BookmarkTable)
+                if not applications:
+                    continue
+                if not [app for app in applications.values() if v['needs_application'].lower() in app['name'].lower()]:
+                    continue
+            if 'icon' in v and v['icon']:
+                icon = ui.get_icon(v['icon'])
+            else:
+                icon = ui.get_icon('icon')
+
+            self.menu[k][contextmenu.key()] = {
                 'text': v['name'],
                 'action': functools.partial(_run, v['module']),
-                'icon': ui.get_icon('maya'),
+                'icon': icon,
             }
 
     def hud_menu(self):
@@ -245,6 +267,39 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             'action': actions.toggle_hud
         }
 
+    def maya_preferences_menu(self):
+        item_on_icon = ui.get_icon('check', color=common.color(common.color_green))
+        item_off_icon = ui.get_icon('close', color=common.color(common.color_red))
+
+        k = 'Options'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('settings')
+
+        for item in (
+            ('maya/sync_workspace', 'Set Workspace'),
+            ('maya/set_sg_context', 'Set ShotGrid Context'),
+            'separator',
+            ('maya/reveal_capture', 'Reveal capture in explorer'),
+            ('maya/publish_capture', 'Copy capture to \'latest\''),
+            'separator',
+            ('maya/workspace_save_warnings', 'Show Warnings'),
+        ):
+            if item == 'separator':
+                self.separator(menu=self.menu[k])
+                continue
+
+            key, name = item
+
+            value = common.settings.value(key)
+            value = value if value is not None else False
+
+            # "True" values refer to the functionality in "disabled" state, so we need to flip the values
+            self.menu[k][contextmenu.key()] = {
+                'text': name,
+                'icon': item_on_icon if not value else item_off_icon,
+                'action': functools.partial(common.settings.setValue, key, not value)
+            }
+
 
 class MayaButtonWidgetContextMenu(PluginContextMenu):
     """The context-menu associated with the BrowserButton."""
@@ -253,31 +308,3 @@ class MayaButtonWidgetContextMenu(PluginContextMenu):
         super().__init__(
             QtCore.QModelIndex(), parent=parent
         )
-
-
-class MayaWidgetContextMenu(PluginContextMenu):
-    """Context menu associated with :class:`MayaWidget`.
-
-    """
-
-    @common.error
-    @common.debug
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.apply_bookmark_settings_menu()
-        self.separator()
-        self.save_menu()
-        self.separator()
-        self.open_import_scene_menu()
-        self.separator()
-        self.export_menu()
-        self.separator()
-        self.import_camera_menu()
-        self.shader_tool_menu()
-        self.separator()
-        self.viewport_presets_menu()
-        self.capture_menu()
-        self.separator()
-        self.hud_menu()

@@ -832,7 +832,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if common.init_mode == common.EmbeddedMode:
             return
         self.menu[key()] = {
-            'text': 'Quit {}'.format(common.product),
+            'text': f'Quit {common.product.title()}',
             'action': common.uninitialize,
             'icon': ui.get_icon('close'),
             'shortcut': shortcuts.get(
@@ -950,7 +950,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[key()] = {
             'text': 'Manage Bookmark Items...',
             'icon': icon,
-            'action': actions.show_bookmarker,
+            'action': actions.show_job_editor,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem
@@ -1011,7 +1011,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         item_on_pixmap = ui.get_icon('check', color=common.color(common.color_green))
         item_off_pixmap = ui.get_icon('folder')
 
-        k = 'Select Task Folder...'
+        k = 'Select asset folder...'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon(
             'folder', color=common.color(common.color_green)
@@ -1295,6 +1295,10 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('icon'),
             'text': 'Application Launcher',
             'action': actions.pick_launcher_item,
+            'shortcut': shortcuts.get(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.ApplicationLauncher
+            ).key(),
         }
 
     def sg_thumbnail_menu(self):
@@ -1506,7 +1510,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Add as source',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.execute_rvpush_command, path, rv.Add, basecommand=rv.MERGE)
+            'action': functools.partial(rv.execute_rvpush_command, path, rv.Add)
         }
 
         self.separator(self.menu[k])
@@ -1529,7 +1533,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
         self.menu[k][key()] = {
-            'text': 'SG Publish: MP4 as Version',
+            'text': 'Publish Video',
             'icon': ui.get_icon('sg', color=common.color(common.color_green)),
             'action': functools.partial(sg_actions.publish, formats=('mp4', 'mov')),
         }
@@ -1581,12 +1585,21 @@ class BaseContextMenu(QtWidgets.QMenu):
         if ext.lower() not in images.get_oiio_extensions():
             return
 
+        # AkaConvert
+        from .external import akaconvert
+        if akaconvert.KEY in os.environ and os.environ[akaconvert.KEY]:
+            self.menu[key()] = {
+                'text': 'AkaConvert...',
+                'icon': ui.get_icon('studioaka', color=common.color(common.color_blue)),
+                'action': actions.convert_image_sequence_with_akaconvert
+            }
+
         # Can only convert when FFMpeg is present
         if not common.get_binary('ffmpeg'):
             return
 
         self.menu[key()] = {
-            'text': 'Convert Sequence',
+            'text': 'Convert Sequence...',
             'icon': ui.get_icon('convert'),
             'action': actions.convert_image_sequence
         }
@@ -1669,19 +1682,33 @@ class BaseContextMenu(QtWidgets.QMenu):
         @common.error
         def _run(name):
             module = importlib.import_module(f'.scripts.{name}', package=__package__)
+
+            if not hasattr(module, 'run'):
+                raise RuntimeError(f'Failed to run module: {name} - Missing run() function in {module}!')
+
             module.run()
 
         for v in data.values():
-            # Check if the script needs_active
+            if v['name'] == 'separator':
+                self.separator(menu=self.menu[k])
+                continue
+
+            # Check if the script needs active item
             if 'needs_active' in v and v['needs_active']:
                 if not common.active(v['needs_active'], args=True):
+                    continue
+            # Check if the script needs an application to be set
+            if 'needs_application' in v and v['needs_application']:
+                afxs = ('aftereffects', 'afx', 'afterfx')
+                if not any(([common.get_binary(f)] for f in afxs)):
+                    print(f'Could not find After Effects. Tried: {afxs}')
                     continue
             if 'icon' in v and v['icon']:
                 icon = ui.get_icon(v['icon'])
             else:
                 icon = ui.get_icon('icon')
 
-            self.menu[k][v['name']] = {
+            self.menu[k][key()] = {
                 'text': v['name'],
                 'action': functools.partial(_run, v['module']),
                 'icon': icon,

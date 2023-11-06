@@ -259,6 +259,14 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
+        'sg_episode_id': {
+            'sql': 'INT',
+            'type': int
+        },
+        'sg_episode_name': {
+            'sql': 'TEXT',
+            'type': str
+        },
         'url1': {
             'sql': 'TEXT',
             'type': str,
@@ -274,7 +282,15 @@ TABLES = {
         'applications': {
             'sql': 'TEXT',
             'type': dict,
-        }
+        },
+        'bookmark_display_token': {
+            'sql': 'TEXT',
+            'type': str
+        },
+        'asset_display_token': {
+            'sql': 'TEXT',
+            'type': str
+        },
     }
 }
 
@@ -692,7 +708,7 @@ class BookmarkDB(QtCore.QObject):
 
         Args:
             source (str): A source file path.
-            table (str): A database 01table name.
+            table (str): A database table name.
 
         Returns:
             dict: A dictionary of column/value pairs.
@@ -741,7 +757,7 @@ class BookmarkDB(QtCore.QObject):
             table (str, optional): Optional table parameter, defaults to `AssetTable`.
 
         Returns:
-            The value stored in the database, or None.
+            object: The value stored in the database, or None.
 
         """
         if not self.is_valid():

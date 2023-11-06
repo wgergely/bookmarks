@@ -25,7 +25,7 @@ Get Bookmarks
 
 The project is hosted on `Github <https://github.com/wgergely/bookmarks>`_.
 
-.. admonition:: Download the latest Windows release: `Bookmarks v0.8.5 <https://github.com/wgergely/bookmarks/releases/download/0.8.5/Bookmarks_0.8.5.exe>`_
+.. admonition:: Download the latest Windows release: `Bookmarks v0.9.1 <https://github.com/wgergely/bookmarks/releases/download/0.9.1/Bookmarks_0.9.1.exe>`_
 
     ☹ Currently, Bookmarks only supports Windows.
 

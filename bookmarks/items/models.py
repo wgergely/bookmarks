@@ -38,7 +38,8 @@ from .. import images
 from .. import importexport
 from .. import log
 
-MAX_HISTORY = 20
+MAX_HISTORY = 15
+
 DEFAULT_ITEM_FLAGS = (
         QtCore.Qt.ItemNeverHasChildren |
         QtCore.Qt.ItemIsEnabled |
@@ -52,8 +53,15 @@ DEFAULT_ITEM_FLAGS = (
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
 
+# Filter expressions used by the filter proxy model
+re_negative = re.compile(r'--([^\"\'\[\]\*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
+re_quoted_negative = re.compile(r'--"(.*?)"', flags=re.IGNORECASE | re.MULTILINE)
+re_positive = re.compile(r'(--[^\"\'\[\]*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
+re_quoted_positive = re.compile(r'(--".*?")', flags=re.IGNORECASE | re.MULTILINE)
+
+
 def initdata(func):
-    """The decorator is responsible validating the current active paths, and emitting
+    """Decorator used by init_data to validate the active items, and emitting
     the ``beginResetModel``, ``endResetModel`` and :attr:`.ItemModel.coreDataLoaded`
     signals.
 
@@ -66,11 +74,11 @@ def initdata(func):
         """
         common.settings.load_active_values()
 
-        self.beginResetModel()
         self._interrupt_requested = False
         self._load_in_progress = True
 
         try:
+            self.beginResetModel()
             func(self, *args, **kwargs)
         except:
             raise
@@ -79,7 +87,6 @@ def initdata(func):
             self._load_in_progress = False
             self.endResetModel()
 
-        # Emit  references to the just loaded core data
         p = self.source_path()
         k = self.task()
         t1 = self.data_type()
@@ -103,20 +110,10 @@ def filter_includes_row(filter_text, searchable):
 
     """
     _filter_text = filter_text
-    it = re.finditer(
-        r'(--[^\"\'\[\]\*\s]+)',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
-    it_quoted = re.finditer(
-        r'(--".*?")',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
 
-    for match in it:
+    for match in re_positive.finditer(filter_text):
         _filter_text = re.sub(match.group(1), '', _filter_text)
-    for match in it_quoted:
+    for match in re_quoted_positive.finditer(filter_text):
         _filter_text = re.sub(match.group(1), '', _filter_text)
 
     for text in _filter_text.split():
@@ -127,23 +124,22 @@ def filter_includes_row(filter_text, searchable):
 
 
 @functools.lru_cache(maxsize=4194304)
-def _filter_excludes_row(filter_text, searchable):
-    it = re.finditer(
-        r'--([^\"\'\[\]\*\s]+)',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
-    it_quoted = re.finditer(
-        r'--"(.*?)"',
-        filter_text,
-        flags=re.IGNORECASE | re.MULTILINE
-    )
+def filter_excludes_row(filter_text, searchable_text):
+    """Checks whether the given filter text matches the given searchable text.
 
-    for match in it:
-        if match.group(1).lower() in searchable:
+    Args:
+        filter_text (str): The filter text.
+        searchable_text (str): The searchable text.
+
+    Returns:
+        bool: True if the filter text matches the searchable text, False otherwise.
+
+    """
+    for match in re_negative.finditer(filter_text):
+        if match.group(1).lower() in searchable_text:
             return True
-    for match in it_quoted:
-        if match.group(1).lower() in searchable:
+    for match in re_quoted_negative.finditer(filter_text):
+        if match.group(1).lower() in searchable_text:
             return True
     return False
 
@@ -161,8 +157,6 @@ class ItemModel(QtCore.QAbstractTableModel):
             missing data.
         coreDataReset (QtCore.Signal): Signals that the underlying model data has
             been reset. Used by the thread workers to empty their queues.
-        dataTypeSorted (QtCore.Signal -> int): Signals that the underlying model
-            data was sorted.
         sortingChanged (QtCore.Signal -> int, bool): Emitted when the sorting
             order or sorting role was changed by the user.
         activeChanged (QtCore.Signal): Signals :meth:`.ItemModel.active_index`
@@ -177,7 +171,6 @@ class ItemModel(QtCore.QAbstractTableModel):
     coreDataLoaded = QtCore.Signal(weakref.ref, weakref.ref)
     coreDataReset = QtCore.Signal()
 
-    dataTypeSorted = QtCore.Signal(int)
     sortingChanged = QtCore.Signal(int, bool)  # (SortRole, SortOrder)
 
     activeChanged = QtCore.Signal(QtCore.QModelIndex)
@@ -207,7 +200,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         self._datatype = {}  # used  by the files model only
 
         self.sortingChanged.connect(self.set_sorting)
-        self.dataTypeSorted.connect(self.emit_reset_model)
 
         self.modelAboutToBeReset.connect(common.signals.updateTopBarButtons)
         self.modelReset.connect(common.signals.updateTopBarButtons)
@@ -291,7 +283,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         return QtCore.Qt.MoveAction | QtCore.Qt.CopyAction
 
     def supportedDragActions(self):
-        return QtCore.Qt.MoveAction
+        return QtCore.Qt.CopyAction
 
     def mimeData(self, indexes):
         """Returns the drag mime data for the given indexes.
@@ -412,9 +404,12 @@ class ItemModel(QtCore.QAbstractTableModel):
                 log.error('Could not remove temp file.')
             return
 
-    def item_generator(self):
+    def item_generator(self, path):
         """A generator method used by :func:`init_data` to yield the items the model
         should load.
+
+        Args:
+            path (string): Path to a directory.
 
         Yields:
             DirEntry: os.scandir DirEntry objects.
@@ -482,14 +477,19 @@ class ItemModel(QtCore.QAbstractTableModel):
             self.set_active(index)
 
     @QtCore.Slot(int)
-    def emit_reset_model(self, data_type):
+    def internal_data_about_to_be_sorted(self, data_type):
+        if self.data_type() != data_type:
+            return
+        self.layoutAboutToBeChanged.emit()
+
+    @QtCore.Slot(int)
+    def internal_data_sorted(self, data_type):
         """Slot used to emit the reset model signals.
 
         """
         if self.data_type() != data_type:
             return
-        self.beginResetModel()
-        self.endResetModel()
+        self.layoutChanged.emit()
 
     @QtCore.Slot(bool)
     @QtCore.Slot(int)
@@ -845,6 +845,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         self.queued_invalidate_timer.timeout.connect(self.delayed_invalidate)
 
+        # Notify the outside world that the filter text has changed
+        self.filterTextChanged.connect(common.signals.filterTextChanged)
+
     def verify(self):
         """Verify the filter model contents to make sure archived items
         remain hidden when they're not meant to be visible.
@@ -1046,7 +1049,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             )
             if not filter_includes_row(filter_text, searchable):
                 return False
-            if _filter_excludes_row(filter_text, searchable):
+            if filter_excludes_row(filter_text, searchable):
                 return False
 
         if self.filter_flag(common.MarkedAsActive) and active:

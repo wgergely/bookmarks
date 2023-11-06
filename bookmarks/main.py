@@ -182,6 +182,9 @@ class MainWidget(QtWidgets.QWidget):
         )
         # Asset -> File
         a.model().sourceModel().activeChanged.connect(
+            actions.apply_default_to_scenes_folder
+        )
+        a.model().sourceModel().activeChanged.connect(
             f.model().sourceModel().reset_data
         )
         # Asset -> Task
@@ -219,6 +222,7 @@ class MainWidget(QtWidgets.QWidget):
             )
         )
 
+        # Load bookmark items upon initialization
         self.initialized.connect(b.model().sourceModel().reset_data)
 
     @QtCore.Slot()
@@ -239,7 +243,7 @@ class MainWidget(QtWidgets.QWidget):
         self._connect_signals()
 
         self.aboutToInitialize.emit()
-        QtWidgets.QApplication.instance().processEvents()
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
         # Update the window title to display the current active paths
         for n in range(3):
@@ -330,6 +334,8 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.Refresh, actions.refresh)
         connect(shortcuts.AltRefresh, actions.refresh)
 
+        connect(shortcuts.ApplicationLauncher, actions.pick_launcher_item)
+
         connect(shortcuts.CopyItemPath, actions.copy_selected_path)
         connect(shortcuts.CopyAltItemPath, actions.copy_selected_alt_path)
         connect(shortcuts.RevealItem, actions.reveal_selected)
@@ -383,7 +389,7 @@ class MainWidget(QtWidgets.QWidget):
 
         pixmaprect = QtCore.QRect(rect)
         center = pixmaprect.center()
-        s = common.size(common.size_asset_row_height) * 1.5
+        s = common.size(common.size_row_height) * 3
         o = common.size(common.size_margin)
 
         pixmaprect.setWidth(s)

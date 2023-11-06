@@ -308,7 +308,7 @@ class FavouritesTabButton(BaseTabButton):
 
     def __init__(self, parent=None):
         super().__init__(
-            'Starred',
+            'Favourites',
             common.FavouriteTab,
             'Click to see your saved favourites',
             parent=parent

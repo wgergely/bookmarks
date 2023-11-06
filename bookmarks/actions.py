@@ -16,6 +16,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from . import common
 from . import database
 from . import images
+from. import log
 
 
 def must_be_initialized(func):
@@ -449,6 +450,30 @@ def set_active(k, v):
         common.settings.setValue(f'active/{k}', v)
 
 
+@QtCore.Slot(QtCore.QModelIndex)
+def apply_default_to_scenes_folder(index):
+    """Slot responsible for applying the default to scenes folder setting.
+
+    The slot is connected to the :class:`bookmarks.items.file_items.FileItemModel`'s
+    `activeChanged` signal, and we're using it to modify the active 'task' path before
+    resetting the file model.
+
+    Args:
+        index (QtCore.QModelIndex): The index of the activated asset items.
+
+    """
+    v = common.settings.value('settings/default_to_scenes_folder')
+    if not v:
+        return
+
+    if not index.isValid():
+        return
+
+    # Get the current scene folder name from the token configuration.
+    from .tokens import tokens
+    set_active('task', tokens.get_folder(tokens.SceneFolder))
+
+
 @common.error
 @common.debug
 def set_task_folder(v):
@@ -703,11 +728,11 @@ def reset_row_size():
 
 @common.error
 @common.debug
-def show_bookmarker():
-    """Shows :class:`~bookmarks.bookmarker.main.BookmarkerWidget`.
+def show_job_editor():
+    """Shows :class:`~bookmarks.editor.jobs.JobsEditor` widget.
 
     """
-    from .bookmarker import main as editor
+    from .editor import jobs as editor
     widget = editor.show()
     return widget
 
@@ -843,7 +868,7 @@ def add_item():
     """
     idx = common.current_tab()
     if idx == common.BookmarkTab:
-        show_bookmarker()
+        show_job_editor()
     elif idx == common.AssetTab:
         show_add_asset()
     elif idx == common.FileTab:
@@ -883,6 +908,14 @@ def refresh(idx=None):
     """
     w = common.widget(idx=idx)
     model = w.model().sourceModel()
+
+    # Remove the asset list cache if we're forcing a refresh on the asset tab
+    if common.current_tab() == common.AssetTab:
+        cache = f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache'
+        if os.path.exists(cache):
+            log.debug('Removing asset cache:', cache)
+            os.remove(cache)
+
     model.reset_data(force=True)
 
 
@@ -1401,6 +1434,68 @@ def execute(index, first=False):
     else:
         path = common.get_sequence_end_path(path)
 
+    ext = QtCore.QFileInfo(path).suffix()
+
+    # Handle Maya files
+    if ext in ('ma', 'mb'):
+        for app in (
+                'maya', 'maya2017', 'maya2018', 'maya2019', 'maya2020', 'maya2022', 'maya2023', 'maya2024',
+                'maya2025', 'maya2026'
+         ):
+            executable = common.get_binary(app)
+            if not executable:
+                continue
+            execute_detached(executable, args=['-file', path])
+            return
+
+    # Handle Nuke files
+    if ext in ('nk', 'nknc'):
+        executable = common.get_binary('nuke')
+        if executable:
+            execute_detached(path, args=[path,])
+            return
+
+    # Handle Houdini files
+    if ext == 'hiplc':
+        for app in ('houdiniinidie', 'houindie', 'houind', 'houdiniind', 'hindie'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    if ext == 'hip':
+        for app in ('houdini', 'houdinifx', 'houfx', 'hfx', 'houdinicore', 'hcore'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    # Handle RV files
+    if ext == 'rv':
+        for app in ('rv', 'tweakrv', 'shotgunrv', 'shotgridrv', 'sgrv'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    # Handle blender files
+    if ext in ('blend', ):
+        for app in ('blender', 'blender2.8', 'blender2.9', 'blender3', 'blender3.0', 'blender3.1', 'blender3.2',
+                    'blender3.3', 'blender3.4', 'blender3.5'
+        ):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
+    # Handle After Effects files
+    if ext in ('aep', ):
+        for app in ('afterfx', 'aftereffects', 'ae', 'afx'):
+            executable = common.get_binary(app)
+            if executable:
+                execute_detached(executable, args=[path,])
+                return
+
     url = QtCore.QUrl.fromLocalFile(path)
     QtGui.QDesktopServices.openUrl(url)
 
@@ -1505,20 +1600,39 @@ def pick_thumbnail_from_library(index):
     )
 
 
-def execute_detached(path):
+def execute_detached(path, args=None):
     """Utility function used to execute a file as a detached process.
 
-    On Windows, we'll call the give file through the explorer. This is so, that the
-    new process does not inherit the current environment.
+    On Windows, we'll call the given file using the file explorer as we want to
+    avoid the process inheriting the parent process' environment variables.
 
+    Args:
+        path (str): The path to the file to execute.
+        args (list): A list of optional arguments to pass to the process.
     """
     if common.get_platform() == common.PlatformWindows:
         proc = QtCore.QProcess()
-        proc.setProgram('cmd.exe')
-        proc.setArguments(
-            ['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)]
-        )
+
+        proc.setProgram(os.path.normpath(path))
+        if args:
+            proc.setArguments(args)
+
+        # We don't want to pass on our current environment (we might be calling from inside a DCC)
+        env = QtCore.QProcessEnvironment.systemEnvironment()
+
+        # But we do want to pass on the currently active items. This information can be used in an
+        # unsupported DCC to manipulate context
+        env.insert('BOOKMARKS_ROOT', os.environ['BOOKMARKS_ROOT'])
+        env.insert('BOOKMARKS_ACTIVE_SERVER', common.active('server'))
+        env.insert('BOOKMARKS_ACTIVE_JOB', common.active('job'))
+        env.insert('BOOKMARKS_ACTIVE_ROOT', common.active('root'))
+        env.insert('BOOKMARKS_ACTIVE_ASSET', common.active('asset'))
+        env.insert('BOOKMARKS_ACTIVE_TASK', common.active('task'))
+
+        proc.setProcessEnvironment(env)
         proc.startDetached()
+    else:
+        raise NotImplementedError('Not implemented.')
 
 
 @common.debug
@@ -1654,6 +1768,12 @@ def convert_image_sequence(index):
     from .external import ffmpeg_widget
     ffmpeg_widget.show(index)
 
+@common.debug
+@common.error
+@selection
+def convert_image_sequence_with_akaconvert(index):
+    from .external import akaconvert
+    akaconvert.show(index)
 
 def add_zip_template(source, mode, prompt=False):
     """Adds the selected source zip archive as a `mode` template file.
@@ -1821,11 +1941,9 @@ def pick_template(mode):
     dialog.setNameFilters(['*.zip', ])
     dialog.setFilter(QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot)
     dialog.setLabelText(
-        QtWidgets.QFileDialog.Accept, 'Select a {} template'.format(mode.title())
+        QtWidgets.QFileDialog.Accept, f'Select a {mode.title()} template'
     )
-    dialog.setWindowTitle(
-        'Select *.zip archive to use as a {} template'.format(mode.lower())
-    )
+    dialog.setWindowTitle(f'Select *.zip archive to use as a {mode.lower()} template')
     if dialog.exec_() == QtWidgets.QDialog.Rejected:
         return
     source = next((f for f in dialog.selectedFiles()), None)

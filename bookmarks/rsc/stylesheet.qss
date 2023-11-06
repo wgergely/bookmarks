@@ -185,10 +185,8 @@ QComboBox QListView::item:hover {{
 
 
 QLineEdit,
-QLineEdit:disabled,
-QTextEdit,
-QTextEdit:disabled {{
-    background-color: {color_opaque};
+QTextEdit {{
+    background-color: transparent;
     height: {size_row_height2}px;
     max-height: {size_row_height2}px;
     min-height: {size_row_height2}px;
@@ -201,7 +199,12 @@ QTextEdit:disabled {{
 QTextEdit:disabled,
 QLineEdit:disabled {{
     color: {color_disabled_text};
-    background-color: {color_dark_background};
+    background-color: transparent;
+}}
+
+QLineEdit:focus,
+QTextEdit:focus {{
+    background-color: {color_opaque};
 }}
 
 QTextBrowser {{
@@ -232,6 +235,8 @@ QScrollBar::sub-line {{
 
 QTableWidget,
 QTableView,
+QTreeWidget,
+QTreeView,
 QListWidget,
 QListView {{
     border-radius: {size_indicator1}px;
@@ -239,6 +244,8 @@ QListView {{
 }}
 QTableWidget::item,
 QTableView::item,
+QTreeWidget::item,
+QTreeView::item,
 QListWidget::item,
 QListView::item {{
     outline: 0;
@@ -248,24 +255,32 @@ QListView::item {{
 }}
 QTableWidget::item:hover,
 QTableView::item:hover,
+QTreeWidget::item:hover,
+QTreeView::item:hover,
 QListWidget::item:hover,
 QListView::item:hover {{
     background: {color_light_background};
 }}
 QTableWidget::item:selected,
 QTableView::item:selected,
+QTreeWidget::item:selected,
+QTreeView::item:selected,
 QListWidget::item:selected,
 QListView::item:selected {{
     background: {color_light_background};
 }}
 QTableWidget::item:selected:hover,
 QTableView::item:selected:hover,
+QTreeWidget::item:selected:hover,
+QTreeView::item:selected:hover,
 QListWidget::item:selected:hover,
 QListView::item:selected:hover {{
     background: {color_light_background};
 }}
 QTableWidget::item:disabled,
 QTableView::item:disabled,
+QTreeWidget::item:disabled,
+QTreeView::item:disabled,
 QListWidget::item:disabled,
 QListView::item:disabled {{
   color: {color_disabled_text};
@@ -273,6 +288,8 @@ QListView::item:disabled {{
 }}
 QTableWidget::indicator,
 QListWidget::indicator,
+QTreeWidget::indicator,
+QTreeView::indicator,
 QListView::indicator {{
     width: {size_font_medium}px;
     height: {size_font_medium}px;
@@ -303,77 +320,59 @@ TableWidget::item {{
 }}
 
 QHeaderView {{
-    font-family: "{font_primary}";
+    font-family: "{font_secondary}";
+    font-size: {size_font_small}px;
     border: none;
-    background-color: rgba(0,0,10,30);
+    background-color: {color_background};
     border-top-left-radius: {size_indicator}px;
     border-top-right-radius: {size_indicator}px;
-    border-bottom: 1px solid rgba(0,0,0,50);
 }}
 QHeaderView::section {{
-    font-family: "{font_primary}";
-    font-size: {size_font_small}px;
-    background-color: transparent;
-    alignment: center;
-    text-align: center;
-    color: rgba(170,170,175,255);
+    padding-left: {size_margin}px;
+    background-color: {color_background};
+    color: {color_secondary_text};
     border: none;
-    border-right: 1px solid rgba(0,0,0,50);
+    border-right: {size_separator}px solid {color_dark_background};
 }}
-QHeaderView::down-arrow {{
-  image: none;
-}}
+QHeaderView::section:down-arrow,
 QHeaderView::up-arrow {{
   image: none;
 }}
 
 
-QTreeWidget,
-QTreeView {{
-    font-size: {size_font_medium}px;
-    background-color: {color_dark_background};
-    border: none;
-}}
-QTreeWidget::item,
-QTreeView::item {{
-    border: none;
-}}
-QTreeWidget::item:hover,
-QTreeView::item:hover {{
-  background: {color_background};
-}}
-QTreeWidget::item:focus,
-QTreeView::item:focus {{
-  background: transparent;
-}}
-QTreeWidget::item:selected,
-QTreeView::item:selected {{
-    background: {color_light_background};
-}}
-QTreeWidget:branch
-QTreeView:branch {{
-    background-color: {color_dark_background};
+QTreeWidget::branch
+QTreeView::branch,
+QTreeWidget::branch:open,
+QTreeView::branch:open,
+QTreeWidget::branch:closed,
+QTreeView::branch:closed,
+QTreeWidget::branch:has-sibling,
+QTreeView::branch:has-sibling
+QTreeWidget::branch:has-children,
+QTreeView::branch:has-children {{
     border: none;
     border-image: none;
+    background: transparent;
 }}
-QTreeWidget::branch:focus,
-QTreeView::branch:focus {{
-  background: transparent;
+
+QTreeWidget::branch:closed:has-children,
+QTreeView::branch:closed:has-children {{
+    size: {size_margin}px;
+    image: url("{branch_closed}");
 }}
-QTreeWidget:branch:selected,
-QTreeView:branch:selected {{
-    background: {color_light_background};
+
+QTreeWidget::branch:closed:!has-children,
+QTreeView::branch:closed:!has-children {{
+    image: none;
 }}
-QTreeWidget:branch:!open:has-children,
-QTreeView:branch:!open:has-children {{
-  image: url("{branch_closed}");
+
+QTreeWidget::branch:open:has-children:!has-siblings,
+QTreeWidget::branch:open:has-children:has-siblings,
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings {{
+    image: url("{branch_open}");
 }}
-QTreeWidget:branch:open:has-children:!has-siblings,
-QTreeWidget:branch:open:has-children:has-siblings,
-QTreeView:branch:open:has-children:!has-siblings,
-QTreeView:branch:open:has-children:has-siblings {{
-  image: url("{branch_open}");
-}}
+
 
 QLabel {{
     font-size: {size_font_medium}px;
@@ -651,9 +650,20 @@ QWidget#mainRow {{
 }}
 
 
-GalleryWidget QWidget:focus {{
-    border: {size_separator}px solid transparent;
+GalleryWidget {{
+    border: {size_separator}px solid {color_blue};
 }}
+
+GalleryWidget,
+GalleryWidget > QScrollArea,
+GalleryWidget QScrollArea,
+GalleryWidget QScrollArea > QWidget,
+GalleryWidget QScrollArea > QWidget > QWidget
+{{
+    background-color: {color_dark_background};
+}}
+
+
 
 Viewer,
 ImageViewer {{

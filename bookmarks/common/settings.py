@@ -30,16 +30,20 @@ SECTIONS = {
         'user/favourites',
     ),
     'settings': (
-        'settings/job_scan_depth',
         'settings/ui_scale',
         'settings/show_menu_icons',
         'settings/paint_thumbnail_bg',
         'settings/disable_oiio',
+        'settings/hide_item_descriptions',
+        'settings/default_to_scenes_folder',
         'settings/always_always_on_top',
         'settings/bin_ffmpeg',
         'settings/bin_rv',
         'settings/bin_rvpush',
         'settings/bin_oiiotool',
+    ),
+    'jobs': (
+        'jobs/scandepth',
     ),
     'filters': (
         'filters/active',
@@ -81,16 +85,20 @@ SECTIONS = {
         'file_saver/template',
         'file_saver/user',
     ),
-    'bookmarker': (
-        'bookmarker/server',
-        'bookmarker/job',
-        'bookmarker/root',
-    ),
     'ffmpeg': (
         'ffmpeg/preset',
         'ffmpeg/size',
         'ffmpeg/timecode_preset',
         'ffmpeg/pushtorv',
+    ),
+    'akaconvert': (
+        'akaconvert/preset',
+        'akaconvert/size',
+        'akaconvert/acesprofile',
+        'akaconvert/inputcolor',
+        'akaconvert/outputcolor',
+        'akaconvert/videoburnin',
+        'akaconvert/pushtorv',
     ),
     'maya': (
         'maya/sync_workspace',
@@ -110,10 +118,8 @@ SECTIONS = {
     'publish': (
         'publish/archive_existing',
         'publish/template',
-        'publish/task',
         'publish/copy_path',
         'publish/reveal',
-        'publish/teams_notification',
     ),
 }
 
@@ -139,9 +145,10 @@ def init_settings():
         for key in SECTIONS['active']:
             common.active_paths[mode][key] = None
 
-    # Create the setting object, this will load the previously saved active
-    # paths from the ini file.
+    # Initialize the user settings instance
     common.settings = UserSettings()
+
+    # Load values from the user settings file
     common.settings.load_active_values()
     common.update_private_values()
 
@@ -154,6 +161,7 @@ def init_settings():
     if not v or not isinstance(v, dict):
         v = {}
     common.favourites = v
+
     common.signals.favouritesChanged.emit()
 
     _init_bookmarks()
@@ -305,12 +313,26 @@ def bookmark_key(server, job, root):
 
 
 def update_private_values():
-    """Copy the ``SynchronisedActivePaths`` values to ``PrivateActivePaths``.
+    """Copy the controlling values to ``PrivateActivePaths``.
+
+    The source of the value is determined by the active mode and the current environment.
 
     """
+    _env_active_server = os.environ.get('BOOKMARKS_ACTIVE_SERVER', None)
+    _env_active_job = os.environ.get('BOOKMARKS_ACTIVE_JOB', None)
+    _env_active_root = os.environ.get('BOOKMARKS_ACTIVE_ROOT', None)
+    _env_active_asset = os.environ.get('BOOKMARKS_ACTIVE_ASSET', None)
+    _env_active_task = os.environ.get('BOOKMARKS_ACTIVE_TASK', None)
+
+    if any((_env_active_server, _env_active_job, _env_active_root, _env_active_asset, _env_active_task)):
+        for k in SECTIONS['active']:
+            common.active_paths[PrivateActivePaths][k] = os.environ.get(f'BOOKMARKS_ACTIVE_{k.upper()}', None)
+
     for k in SECTIONS['active']:
-        common.active_paths[PrivateActivePaths][k] = \
-            common.active_paths[SynchronisedActivePaths][k]
+        common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronisedActivePaths][k]
+
+    # Verify the values
+    common.settings.verify_active(PrivateActivePaths)
 
 
 _true = {'True', 'true', '1', True}
@@ -335,12 +357,14 @@ class UserSettings(QtCore.QSettings):
         self.verify_timer.setSingleShot(False)
         self.verify_timer.setTimerType(QtCore.Qt.CoarseTimer)
         self.verify_timer.timeout.connect(self.load_active_values)
+        self.verify_timer.start()
 
     def load_active_values(self):
-        """Load previously saved active path elements from the settings file.
+        """Load active path elements from the settings file.
 
-        If the resulting path is invalid, we'll progressively unset the invalid
-        path segments until we find a valid path.
+        Whilst the function will load the current values from the settings file,
+        it doesn't guarantee the values will actually be used. App will only use
+        these values if the active mode is set to `SynchronisedActivePaths`.
 
         """
         self.sync()
@@ -350,22 +374,21 @@ class UserSettings(QtCore.QSettings):
                 v = None
             common.active_paths[SynchronisedActivePaths][k] = v
         self.verify_active(SynchronisedActivePaths)
-        self.verify_active(PrivateActivePaths)
 
-    def verify_active(self, m):
+    def verify_active(self, active_mode):
         """Verify the active path values and unset any item, that refers to an invalid path.
 
         Args:
-            m (int): The active mode.
+            active_mode (int): One of ``SynchronisedActivePaths`` or ``Pr.
 
         """
         p = str()
         for k in SECTIONS['active']:
-            if common.active_paths[m][k]:
-                p += common.active_paths[m][k]
+            if common.active_paths[active_mode][k]:
+                p += common.active_paths[active_mode][k]
             if not os.path.exists(p):
-                common.active_paths[m][k] = None
-                if m == SynchronisedActivePaths:
+                common.active_paths[active_mode][k] = None
+                if active_mode == SynchronisedActivePaths:
                     self.setValue(f'active/{k}', None)
             p += '/'
 
@@ -451,7 +474,7 @@ class UserSettings(QtCore.QSettings):
             v (object): The value to save.
 
         """
-        # Skip saving active values when PrivateActivePaths is on
+        # We don't want to save private active values to the user settings
         if common.active_mode == PrivateActivePaths and key in SECTIONS['active']:
             return
 

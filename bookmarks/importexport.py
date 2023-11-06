@@ -387,7 +387,7 @@ def import_json_asset_properties(indexes, prompt=True, path=None):
                 continue
 
             common.message_widget.body_label.setText(f'Processing {data[item]["name"]} ({n} of {count})...')
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             # Set valid database values
             with db.connection():

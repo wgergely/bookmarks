@@ -121,6 +121,8 @@ IdRole = QtCore.Qt.ItemDataRole(idx())
 QueueRole = QtCore.Qt.ItemDataRole(idx())
 #: List item role for getting the item's data type (sequence or file)
 DataTypeRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role for getting the container data dictionary
+DataDictRole = QtCore.Qt.ItemDataRole(idx())
 #: The view tab associated with the item
 ItemTabRole = QtCore.Qt.ItemDataRole(idx())
 #: Data used to sort the items by name
@@ -465,19 +467,21 @@ def get_sequence_and_shot(s):
     return seq, shot
 
 
-def get_entry_from_path(path, is_dir=True):
+def get_entry_from_path(path, is_dir=True, force_exists=False):
     """Returns a scandir entry of the given file path.
 
     Args:
         path (str): Path to directory.
         is_dir (bool): Is the path a directory or a file.
+        force_exists (bool): Force skip checking the existence of the path if we know path exist.
 
     Returns:
          scandir.DirEntry: A scandir entry, or None if not found.
 
     """
     file_info = QtCore.QFileInfo(path)
-    if not file_info.exists():
+
+    if not force_exists and not file_info.exists():
         return None
 
     for entry in os.scandir(file_info.dir().path()):
@@ -496,22 +500,21 @@ def get_links(path, section='links/asset'):
     inside job templates.
 
     If a .links file contains two relative paths,
-    `subfolder1/nested_asset1` and `subfolder2/nested_asset2`...
+    `subfolder1/nested_asset1` and `subfolder2/nested_asset2`
 
     .. code-block:: text
 
-        asset/
+        root_asset_folder/
         ├─ .links
         ├─ subfolder1/
         │  ├─ nested_asset1/
         ├─ subfolder2/
         │  ├─ nested_asset2/
 
-    ...two asset will be read, `nested_asset1` and `nested_asset2`
-    (but not the original root `asset`).
+    ...two asset items will be read - `nested_asset1` and `nested_asset2` but not the original root `root_asset_folder`.
 
     Args:
-        path (str): Path to a folder where the link file resides. E.g. an asset root folder.
+        path (str): Path to a folder where the link file resides.
         section (str):
             The settings section to look for links in.
             Optional. Defaults to 'links/asset'.
@@ -639,15 +642,31 @@ class DataDict(dict):
     """Custom dictionary class used to store model item data.
 
     This class adds compatibility for :class:`weakref.ref` referencing
-    and custom attributes for storing data state.
+    and custom attributes for storing data states.
 
     """
 
+    def __str__(self):
+        return (
+            f'<DataDict ({len(self)} items); '
+            f'(loaded={self.loaded}, '
+            f'refresh_needed={self.refresh_needed}, '
+            f'data_type={self.data_type})>'
+        )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self._loaded = False
         self._refresh_needed = False
         self._data_type = None
+        self._shotgun_names = []
+        self._sg_task_names = []
+        self._file_types = []
+        self._subdirectories = []
+        self._servers = []
+        self._jobs = []
+        self._roots = []
 
     @property
     def loaded(self):
@@ -684,6 +703,69 @@ class DataDict(dict):
     @data_type.setter
     def data_type(self, v):
         self._data_type = v
+
+    @property
+    def shotgun_names(self):
+        """Returns a list of Shotgun task names associated with the data dictionary."""
+        return self._shotgun_names
+
+    @shotgun_names.setter
+    def shotgun_names(self, v):
+        self._shotgun_names = v
+
+    @property
+    def sg_task_names(self):
+        """Returns a list of Shotgun task names associated with the data dictionary."""
+        return self._sg_task_names
+
+    @sg_task_names.setter
+    def sg_task_names(self, v):
+        self._sg_task_names = v
+
+    @property
+    def file_types(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._file_types
+
+    @file_types.setter
+    def file_types(self, v):
+        self._file_types = v
+
+    @property
+    def subdirectories(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._subdirectories
+
+    @subdirectories.setter
+    def subdirectories(self, v):
+        self._subdirectories = v
+
+    @property
+    def servers(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._servers
+
+    @servers.setter
+    def servers(self, v):
+        self._servers = v
+
+    @property
+    def jobs(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._jobs
+
+    @jobs.setter
+    def jobs(self, v):
+        self._jobs = v
+
+    @property
+    def roots(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._roots
+
+    @roots.setter
+    def roots(self, v):
+        self._roots = v
 
 
 class Timer(QtCore.QTimer):

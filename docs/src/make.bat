@@ -22,7 +22,7 @@ if errorlevel 9009 (
 	echo.
 	echo.If you don't have Sphinx installed, grab it from
 	echo.https://www.sphinx-doc.org/
-	exit /b 1
+	exit /b %ERRORLEVEL%
 )
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%

@@ -66,8 +66,11 @@ get_qt_version()
 set(QT_LIST_FILE ${PACKAGES_DIR}/vcpkg/installed/vcpkg/info/qt${QT_VERSION_MAJOR}-base_${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}_${VCPKG_TRIPLET}.list)
 add_custom_command(
 	OUTPUT ${QT_LIST_FILE}
-	COMMAND echo "Building QT..."
+	COMMAND echo.
+	COMMAND echo "vcpkg is building Qt"
 	COMMAND ${PACKAGES_DIR}/vcpkg/vcpkg.exe install qt5[core,imageformats]:${VCPKG_TRIPLET} --overlay-ports=${VCPKG_OVERLAYS_DIR}
+	COMMAND echo "vcpkg finished building Qt"
+	COMMAND echo.
 )
 add_custom_target(
 	vcpkg-qt ALL
@@ -80,8 +83,11 @@ get_ffmpeg_version()
 set(FFMPEG_LIST_FILE ${PACKAGES_DIR}/vcpkg/installed/vcpkg/info/ffmpeg_${FFMPEG_VERSION_MAJOR}.${FFMPEG_VERSION_MINOR}.${FFMPEG_VERSION_PATCH}_${VCPKG_TRIPLET}.list)
 add_custom_command(
 	OUTPUT ${FFMPEG_LIST_FILE}
-	COMMAND echo "Building FFMPEG..."
+	COMMAND echo.
+	COMMAND echo "vcpkg is building FFMpeg"
 	COMMAND ${PACKAGES_DIR}/vcpkg/vcpkg.exe install ffmpeg[avcodec,avdevice,avfilter,avformat,avresample,bzip2,ffmpeg,fontconfig,freetype,lzma,opengl,swresample,swscale,x264,x265,zlib]:${VCPKG_TRIPLET} --overlay-ports=${VCPKG_OVERLAYS_DIR}
+	COMMAND echo "vcpkg finished building FFMpeg"
+	COMMAND echo.
 )
 add_custom_target(
 	vcpkg-ffmpeg ALL
@@ -94,8 +100,12 @@ get_oiio_version()
 set(OIIO_LIST_FILE ${PACKAGES_DIR}/vcpkg/installed/vcpkg/info/openimageio_${OIIO_VERSION_MAJOR}.${OIIO_VERSION_MINOR}.${OIIO_VERSION_PATCH}.${OIIO_VERSION_TWEAK}_${VCPKG_TRIPLET}.list)
 add_custom_command(
 	OUTPUT ${OIIO_LIST_FILE}
-	COMMAND echo "Building OpenImageIO..."
+	COMMAND echo.
+	COMMAND echo "vcpkg is building OpenImageIO"
 	COMMAND ${PACKAGES_DIR}/vcpkg/vcpkg.exe install openimageio[ffmpeg,freetype,gif,libheif,libraw,opencolorio,openjpeg,pybind11,tools,webp]:${VCPKG_TRIPLET} --overlay-ports=${VCPKG_OVERLAYS_DIR}
+	COMMAND echo "vcpkg finished building OpenImageIO"
+	COMMAND echo.
+
 )
 add_custom_target(
 	vcpkg-oiio ALL
@@ -113,7 +123,7 @@ elseif(QT_VERSION_MAJOR STREQUAL 6)
 	set(PYSIDE_VERSION_MAJOR "6")
     set(SHIBOKEN "shiboken6")
 else()
-    message(FATAL_ERROR "PySide only supports Qt5 and Qt6")
+    message(FATAL_ERROR "Build script only supports Qt5 or Qt6")
 endif()
 
 string(TOLOWER  ${PYSIDE} PYSIDE_LOWER)

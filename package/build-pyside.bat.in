@@ -23,12 +23,36 @@ mkdir "${PYTHON_DIR}/libs"
 robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/lib" "${PYTHON_DIR}/libs" python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.lib /IS /IT /NFL /NDL /NJH /NJS /R:0 /W:0
 robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/debug/lib" "${PYTHON_DIR}/libs" python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_d.lib /IS /IT /NFL /NDL /NJH /NJS /R:0 /W:0
 
-@REM Clone qt-for-python
+@REM Clone PySide/qt-for-python
 cd /d "${PACKAGES_DIR}"
 if EXIST "${PACKAGES_DIR}/pyside-setup" rmdir "${PACKAGES_DIR}/pyside-setup" /S /Q
 git clone git://code.qt.io/pyside/pyside-setup.git "${PACKAGES_DIR}/pyside-setup"
 cd pyside-setup
+
+@REM Checkout our Qt version
 git checkout ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}
+
+IF ERRORLEVEL 1 (
+    git checkout ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.2
+)
+
+IF ERRORLEVEL 1 (
+    git checkout ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.1
+)
+
+IF ERRORLEVEL 1 (
+    git checkout ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.0
+)
+
+IF ERRORLEVEL 1 (
+    git checkout ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}
+)
+
+IF ERRORLEVEL 1 (
+    echo Failed to find a suitable branch
+    exit /b %ERRORLEVEL%
+)
+
 git submodule update --init
 git submodule foreach git fetch --all
 
@@ -48,10 +72,10 @@ set "Qt${QT_VERSION_MAJOR}Widgets_DIR=${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TR
 set "LLVM_INSTALL_DIR=${LLVM_INSTALL_DIR}"
 set PATH=^
 ${PYTHON_DIR};^
-${PYTHON_DIR}/Scripts;^
+${PYTHON_DIR}\Scripts;^
 ${LLVM_INSTALL_DIR};^
-${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/tools/qt${QT_VERSION_MAJOR}/bin;^
-${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/bin;^
+${PACKAGES_DIR}\vcpkg\installed\${VCPKG_TRIPLET}\tools\qt${QT_VERSION_MAJOR}\bin;^
+${PACKAGES_DIR}\vcpkg\installed\${VCPKG_TRIPLET}\bin;^
 %PATH%
 
 @REM Build using cmake
@@ -77,11 +101,17 @@ ${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/bin;^
 -DPYTHON_DEBUG_LIBRARY:FILEPATH="${PYTHON_DIR}/libs/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_d.lib" ^
 -DQUIET_BUILD=1
 
+IF ERRORLEVEL 1 (
+    echo Could not configure PySide
+    exit /b %ERRORLEVEL%
+)
+
+
 @REM Build solution
 set "SOLUTION=${PACKAGES_DIR}/pyside-setup/build/${PYSIDE_LOWER}_super_project.sln"
 if not exist "%SOLUTION%" (
     echo Error: Could not find %SOLUTION%
-    exit /b 1
+    exit /b %ERRORLEVEL%
 )
 
 @REM Build pyside

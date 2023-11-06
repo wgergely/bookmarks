@@ -1,4 +1,4 @@
-"""Set the version string."""
+Y"""Set the version string."""
 import os
 import re
 

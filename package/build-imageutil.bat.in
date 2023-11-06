@@ -1,10 +1,13 @@
 @echo off
 
 set "CMAKE_TOOLCHAIN_FILE=${PACKAGES_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
 if not exist "%CMAKE_TOOLCHAIN_FILE%" (
     echo "%CMAKE_TOOLCHAIN_FILE% not found"
-    exit /b 1
+    exit /b %ERRORLEVEL%
 )
+
+set "PATH=${PACKAGES_DIR}\python;${PACKAGES_DIR}\python\bin;%PATH%"
 
 "${CMAKE_COMMAND}" ^
 -S "${PROJECT_SOURCE_DIR}/imageutil" ^
@@ -13,12 +16,17 @@ if not exist "%CMAKE_TOOLCHAIN_FILE%" (
 -A ${CMAKE_GENERATOR_PLATFORM} ^
 -DCMAKE_BUILD_TYPE=Release ^
 -DCMAKE_TOOLCHAIN_FILE="${PACKAGES_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" ^
--DBUILD_TEST:BOOL=OFF
+-DBUILD_TESTS=OFF
+
+if ERRORLEVEL 1 (
+    echo Failed to configure imageutil
+    exit /b %ERRORLEVEL%
+)
 
 cd "${PROJECT_BINARY_DIR}/imageutil"
 if not exist "${PROJECT_BINARY_DIR}/imageutil/imageutil.sln" (
     echo "imageutil.sln not found"
-    exit /b 1
+    exit /b %ERRORLEVEL%
 )
 
-msbuild.exe "${PROJECT_BINARY_DIR}/imageutil/imageutil.sln" /t:Build /p:Configuration=Release /p:Platform=${CMAKE_GENERATOR_PLATFORM} /m /nologo
+cmd /c msbuild.exe "${PROJECT_BINARY_DIR}/imageutil/imageutil.sln" /t:Build /p:Configuration=Release /p:Platform=${CMAKE_GENERATOR_PLATFORM} /m /nologo

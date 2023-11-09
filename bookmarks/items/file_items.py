@@ -20,7 +20,7 @@ such as the `scenes`, `cache`, `images`, `render`, etc. folders. These folders a
 main containers for file items.
 
 :class:`FileItemModel` will always load files from inside the active task folder. We
-set the active task folder using :class:`~bookmarks.items.task_items.TaskItemView`.
+set the active task folder using :class:`~bookmarks.items.switch.TaskSwitchView`.
 
 The relative file path segment is what :class:`FileItemView` displays.
 This segment often includes a series of subdirectories the view represents as
@@ -783,7 +783,7 @@ class FileItemView(views.ThreadedItemView):
         model = self.model().sourceModel()
         k = model.task()
         if not k:
-            return 'No asset folder select. Click the file tab to select a folder to browse'
+            return 'No asset folder selected'
         return f'No files found in "{k}"'
 
     @common.error

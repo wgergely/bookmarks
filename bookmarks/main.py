@@ -40,7 +40,7 @@ from .items import asset_items
 from .items import bookmark_items
 from .items import favourite_items
 from .items import file_items
-from .items import task_items
+from .items import switch
 from .items import views
 from .topbar import topbar
 
@@ -84,14 +84,18 @@ class MainWidget(QtWidgets.QWidget):
         self._contextMenu = None
 
         self.stacked_widget = None
-        self.bookmarks_widget = None
         self.topbar_widget = None
+        self.statusbar = None
+        
+        self.bookmarks_widget = None
         self.assets_widget = None
         self.files_widget = None
-        self.tasks_widget = None
         self.favourites_widget = None
-        self.statusbar = None
-
+        
+        self.bookmark_switch_widget = None
+        self.asset_switch_widget = None
+        self.task_switch_widget = None
+        
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -107,25 +111,38 @@ class MainWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
 
+        # Main stacked widget used to navigate items
         self.stacked_widget = views.ListsWidget(parent=self)
+        
+        # Item views
         self.bookmarks_widget = bookmark_items.BookmarkItemView(parent=self)
         self.assets_widget = asset_items.AssetItemView(parent=self)
         self.files_widget = file_items.FileItemView(parent=self)
-        self.tasks_widget = task_items.TaskItemView(parent=self.files_widget)
-        self.tasks_widget.setHidden(True)
         self.favourites_widget = favourite_items.FavouriteItemView(parent=self)
+        
+        # Switch views
+        self.bookmark_switch_widget = switch.BookmarkSwitchView(parent=self.bookmarks_widget)
+        self.bookmark_switch_widget.setHidden(True)
 
+        self.asset_switch_widget = switch.AssetSwitchView(parent=self.files_widget)
+        self.asset_switch_widget.setHidden(True)
+
+        self.task_switch_widget = switch.TaskSwitchView(parent=self.files_widget)
+        self.task_switch_widget.setHidden(True)
+
+        # Add items to stacked widget
         self.stacked_widget.addWidget(self.bookmarks_widget)
         self.stacked_widget.addWidget(self.assets_widget)
         self.stacked_widget.addWidget(self.files_widget)
         self.stacked_widget.addWidget(self.favourites_widget)
 
+        # Top and bottom bars
         self.topbar_widget = topbar.TopBarWidget(parent=self)
         self.statusbar = statusbar.StatusBar(parent=self)
 
-        self.layout().addWidget(self.topbar_widget)
-        self.layout().addWidget(self.stacked_widget)
-        self.layout().addWidget(self.statusbar)
+        self.layout().addWidget(self.topbar_widget, 0)
+        self.layout().addWidget(self.stacked_widget, 1)
+        self.layout().addWidget(self.statusbar, 0)
 
     def _init_current_tab(self):
         """Sets our current tab based on the current user settings.
@@ -171,7 +188,8 @@ class MainWidget(QtWidgets.QWidget):
         b = self.bookmarks_widget
         a = self.assets_widget
         f = self.files_widget
-        l = self.tasks_widget
+        
+        l = self.task_switch_widget
 
         # Make sure the active values are correctly set
         self.aboutToInitialize.connect(common.settings.load_active_values)
@@ -186,10 +204,6 @@ class MainWidget(QtWidgets.QWidget):
         )
         a.model().sourceModel().activeChanged.connect(
             f.model().sourceModel().reset_data
-        )
-        # Asset -> Task
-        a.model().sourceModel().activeChanged.connect(
-            l.model().sourceModel().reset_data
         )
 
         # Stacked widget navigation
@@ -313,7 +327,7 @@ class MainWidget(QtWidgets.QWidget):
                 actions.change_tab, common.AssetTab
             )
         )
-        connect(shortcuts.ShowFilesTab, actions.toggle_task_view)
+        connect(shortcuts.ShowFilesTab, actions.toggle_task_switch_view)
         connect(
             shortcuts.ShowFilesTab, functools.partial(
                 actions.change_tab, common.FileTab

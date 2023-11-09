@@ -33,7 +33,13 @@ import socket
 import string
 from datetime import datetime
 
-import OpenImageIO
+try:
+    import OpenImageIO
+    oiio_extensions = OpenImageIO.get_string_attribute('extension_list')
+except ImportError:
+    oiio_extensions = ''
+
+
 from PySide2 import QtCore
 
 from .. import common
@@ -94,9 +100,7 @@ DEFAULT_TOKEN_CONFIG = {
         common.idx(): {
             'name': 'Image Formats',
             'flag': ImageFormat,
-            'value': common.sort_words(
-                OpenImageIO.get_string_attribute('extension_list')
-            ),
+            'value': common.sort_words(oiio_extensions),
             'description': 'Image file formats'
         },
         common.idx(): {
@@ -401,7 +405,7 @@ def get(server, job, root, force=False):
         raise
 
 
-def get_folder(token):
+def get_folder(token, server=None, job=None, root=None, force=False):
     """Find the value an asset folder token based on
     the bookmark item's token configuration.
 
@@ -409,15 +413,16 @@ def get_folder(token):
         str: The current folder value.
 
     """
-    server = common.active('server')
-    job = common.active('job')
-    root = common.active('root')
+    if not all((server, job, root)):
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
 
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')
 
     config = get(server, job, root)
-    v = config.get_asset_folder(token)
+    v = config.get_asset_folder(token, force=force)
     return v if v else token
 
 

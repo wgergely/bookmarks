@@ -221,7 +221,7 @@ QScrollBar {{
 QScrollBar::handle {{
     background: {color_dark_background};
     border: none;
-    min-height: {size_margin3}px;
+    min-height: {size_margin4}px;
 }}
 QScrollBar::add-page,
 QScrollBar::add-line,
@@ -664,8 +664,11 @@ GalleryWidget QScrollArea > QWidget > QWidget
 }}
 
 
-
 Viewer,
 ImageViewer {{
     background-color: rgba(20,20,20,250);
+}}
+
+BaseSwitchView {{
+    margin: {size_margin3}px;
 }}

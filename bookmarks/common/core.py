@@ -26,7 +26,9 @@ BookmarkTab = 0
 AssetTab = 1
 FileTab = 2
 FavouriteTab = 3
-TaskTab = 4
+BookmarkItemSwitch = 5
+AssetItemSwitch = 6
+TaskItemSwitch = 7
 
 InfoThread = 0
 ThumbnailThread = 1

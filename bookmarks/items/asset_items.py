@@ -297,7 +297,11 @@ class AssetItemModel(models.ItemModel):
             )
 
         # Cache the list of assets for later use
-        with open(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache', 'w') as f:
+        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+        if not assets_cache_dir.exists():
+            assets_cache_dir.mkpath('.')
+        assets_cache_name = common.get_hash(source)
+        with open(f'{assets_cache_dir.path()}/{assets_cache_name}.cache', 'w') as f:
             f.write('\n'.join([v[common.PathRole] for v in data.values()]))
 
         # Explicitly emit `activeChanged` to notify other dependent models
@@ -327,7 +331,12 @@ class AssetItemModel(models.ItemModel):
 
         """
         # Read from the cache if it exists
-        cache = f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets.cache'
+        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+        if not assets_cache_dir.exists():
+            assets_cache_dir.mkpath('.')
+        assets_cache_name = common.get_hash(path)
+        cache = f'{assets_cache_dir.path()}/{assets_cache_name}.cache'
+
         if os.path.isfile(cache):
             with open(cache, 'r') as f:
                 for line in f:

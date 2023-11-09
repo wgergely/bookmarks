@@ -641,7 +641,7 @@ class InfoWorker(BaseWorker):
             flags |= _proxy_flags if _proxy_flags else 0
         ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
 
-        if ref() and ref()[common.ItemTabRole] == common.TaskTab:
+        if ref() and ref()[common.ItemTabRole] == common.TaskItemSwitch:
             # Let's get the token config instance to check what extensions are
             # currently allowed to be displayed in the task folder
             config = tokens.get(*pp[0:3])

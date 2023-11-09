@@ -110,7 +110,7 @@ class TextFilterEditor(QtWidgets.QWidget):
         common.signals.fileAdded.connect(self.close)
         common.signals.bookmarksChanged.connect(self.close)
         common.signals.tabChanged.connect(self.close)
-        common.signals.taskViewToggled.connect(self.close)
+        common.signals.switchViewToggled.connect(self.close)
         common.signals.taskFolderChanged.connect(self.close)
         common.signals.bookmarkActivated.connect(self.close)
         common.signals.assetActivated.connect(self.close)

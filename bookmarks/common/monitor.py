@@ -27,7 +27,7 @@ class FileWatcher(QtCore.QFileSystemWatcher):
 
         #: Timer used to limit the number of updates
         self.update_timer = common.Timer(parent=self)
-        self.update_timer.setInterval(500)
+        self.update_timer.setInterval(5000)
         self.update_timer.setTimerType(QtCore.Qt.CoarseTimer)
         self.update_timer.setSingleShot(True)
 
@@ -41,7 +41,7 @@ class FileWatcher(QtCore.QFileSystemWatcher):
         self.directoryChanged.connect(self.queue_changed_item)
 
         self.modelNeedsRefresh.connect(common.signals.updateTopBarButtons)
-        self.modelNeedsRefresh.connect(self.update_model)
+        # self.modelNeedsRefresh.connect(self.update_model)
 
     @QtCore.Slot(str)
     def queue_changed_item(self, v):
@@ -87,7 +87,7 @@ class FileWatcher(QtCore.QFileSystemWatcher):
 
         """
         refs = []
-        for path in self.update_queue:
+        for path in self.update_queue.copy():
             for data_type in (common.SequenceItem, common.FileItem):
                 data_dict = common.get_data_from_value(path, data_type, role=common.PathRole)
 

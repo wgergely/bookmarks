@@ -214,6 +214,8 @@ class AddServerDialog(QtWidgets.QDialog):
         """Show event handler.
 
         """
+        super().showEvent(event)
+
         common.center_to_parent(self, self.parent().window())
         self.editor.setFocus()
 
@@ -678,8 +680,11 @@ class AddJobDialog(base.BasePropertyEditor):
         """Show event handler.
 
         """
+        super().showEvent(event)
+
         common.center_to_parent(self, self.parent().window())
         self.name_editor.setFocus()
+
 
     def sizeHint(self):
         """Returns a size hint.

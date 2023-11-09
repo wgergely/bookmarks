@@ -7,6 +7,8 @@ from .. import common
 from .. import log
 from .. import ui
 
+show_all_label = 'Show all'
+hide_all_label = 'Hide all'
 
 class BaseFilterModel(ui.AbstractListModel):
 
@@ -14,7 +16,6 @@ class BaseFilterModel(ui.AbstractListModel):
         self.tab_index = tab_index
 
         self.icon = icon
-        self.show_all_label = ' - Show All -'
         self.section_name_label = section_name_label
         self.data_source = data_source
 
@@ -35,7 +36,7 @@ class BaseFilterModel(ui.AbstractListModel):
             text = super().data(index, QtCore.Qt.DisplayRole)
             if not text:
                 return super().data(index, role)
-            if text == self.show_all_label:
+            if text == show_all_label:
                 return super().data(index, role)
             if text == self.section_name_label:
                 return super().data(index, role)
@@ -77,9 +78,10 @@ class BaseFilterModel(ui.AbstractListModel):
 
         source_model = common.source_model(self.tab_index)
 
-        data = common.get_data(
-            source_model.source_path(), source_model.task(), source_model.data_type()
-        )
+        p = source_model.source_path()
+        k = source_model.task()
+        t = source_model.data_type()
+        data = common.get_data(p, k, t)
 
         if not hasattr(data, self.data_source):
             log.error(f'No {self.data_source} found in data!')
@@ -91,7 +93,6 @@ class BaseFilterModel(ui.AbstractListModel):
             QtCore.Qt.DisplayRole: self.section_name_label,
             QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_row_height) * 0.66),
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.TextAlignmentRole: QtCore.Qt.AlignLeft | QtCore.Qt.AlignBottom,
         }
 
         self._data[len(self._data)] = {
@@ -106,10 +107,10 @@ class BaseFilterModel(ui.AbstractListModel):
         }
 
         self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: self.show_all_label,
-            QtCore.Qt.DecorationRole: ui.get_icon('archivedVisible', color=common.color(common.color_green)),
-            QtCore.Qt.SizeHintRole: self.row_size,
-            QtCore.Qt.TextAlignmentRole: QtCore.Qt.AlignCenter,
+            QtCore.Qt.DisplayRole: show_all_label,
+            QtCore.Qt.DecorationRole: ui.get_icon(
+                'archivedVisible', color=common.color(common.color_green)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_row_height) * 0.66),
         }
 
         self._data[len(self._data)] = {
@@ -162,7 +163,9 @@ class BaseFilterButton(QtWidgets.QComboBox):
         min_width = self.minimumSizeHint().width()
         self.view().setMinimumWidth(min_width * 3)
 
-        common.signals.updateTopBarButtons.connect(lambda: self.setHidden(not common.current_tab() == self.tab_index))
+        common.signals.internalDataReady.connect(self.update_visibility)
+        common.signals.updateTopBarButtons.connect(self.update_visibility)
+
         common.model(self.tab_index).filterTextChanged.connect(self.select_text)
         common.signals.internalDataReady.connect(self.select_text)
 
@@ -176,12 +179,36 @@ class BaseFilterButton(QtWidgets.QComboBox):
             text (str): The text to set as the filter text.
 
         """
-        if text == self.model().show_all_label:
+        if text == show_all_label:
             text = ''
         else:
             text = f'"{text.lower().strip()}"'
 
         common.model(self.tab_index).set_filter_text(text)
+
+    @QtCore.Slot()
+    def update_visibility(self, *args, **kwargs):
+        """Update the visibility of the widget.
+
+        """
+        if not common.current_tab() == self.tab_index:
+            self.setHidden(True)
+            return
+
+        source_model = common.source_model(self.tab_index)
+        p = source_model.source_path()
+        k = source_model.task()
+        t = source_model.data_type()
+        data = common.get_data(p, k, t)
+        if not data:
+            self.setHidden(True)
+            return
+
+        if not self.model()._data:
+            self.setHidden(True)
+            return
+
+        self.setHidden(False)
 
     @QtCore.Slot()
     def select_text(self, *args, **kwargs):
@@ -200,7 +227,7 @@ class BaseFilterButton(QtWidgets.QComboBox):
             text = self.itemText(i)
             if not text:
                 continue
-            if text == self.model().show_all_label:
+            if text == show_all_label:
                 continue
             if text == self.model().section_name_label:
                 continue
@@ -296,16 +323,15 @@ class SubdirFilterModel(BaseFilterModel):
             if idx == 1:
                 data[idx] = v
 
-                k = '- Hide Folders -'
                 data[idx + insert_idx] = {
-                    QtCore.Qt.DisplayRole: k,
-                    QtCore.Qt.SizeHintRole: self.row_size,
-                    QtCore.Qt.DecorationRole: ui.get_icon('archivedHidden', color=common.color(common.color_red)),
-                    QtCore.Qt.StatusTipRole: k,
-                    QtCore.Qt.AccessibleDescriptionRole: k,
-                    QtCore.Qt.WhatsThisRole: k,
-                    QtCore.Qt.ToolTipRole: k,
-                    QtCore.Qt.TextAlignmentRole: QtCore.Qt.AlignCenter,
+                    QtCore.Qt.DisplayRole: hide_all_label,
+                    QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_row_height) * 0.66),
+                    QtCore.Qt.DecorationRole: ui.get_icon(
+                        'archivedHidden', color=common.color(common.color_red)),
+                    QtCore.Qt.StatusTipRole: hide_all_label,
+                    QtCore.Qt.AccessibleDescriptionRole: hide_all_label,
+                    QtCore.Qt.WhatsThisRole: hide_all_label,
+                    QtCore.Qt.ToolTipRole: hide_all_label,
                 }
                 continue
 
@@ -334,17 +360,17 @@ class SubdirFilterButton(BaseFilterButton):
             text (str): The text to set as the filter text.
 
         """
-        if text == '- Hide Folders -':
+        if text == hide_all_label:
             filter_texts = []
             for i in range(self.count()):
                 text = self.itemText(i)
                 if not text:
                     continue
-                if text == self.model().show_all_label:
+                if text == show_all_label:
                     continue
                 if text == self.model().section_name_label:
                     continue
-                if text == '- Hide Folders -':
+                if text == hide_all_label:
                     continue
                 filter_texts.append(f'--"{text}"')
                 common.model(self.tab_index).set_filter_text(' '.join(filter_texts))

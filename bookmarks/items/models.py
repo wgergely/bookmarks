@@ -437,13 +437,14 @@ class ItemModel(QtCore.QAbstractTableModel):
     def reset_data(self, *args, force=False, emit_active=True):
         """Resets the model's internal data.
 
-        The underlying data is cached in the :mod:`datacache` module, so here
-        we'll make sure the data is available for the model to use. When the
-        optional `force` flag is set, we'll use `init_data` to load the item
-        data from disk.
+        Internal data is stored in the :mod:`bookmarks.common.data` but the model is responsible
+        for populating the data via the :meth:`init_data` method.
+        When the optional `force` flag is set, `init_data` to loads data from the file system,
+        otherwise, if the data is already cached, the cache will be used instead.
 
-        Otherwise, the method will check if our cached data is available and if
-        not, uses `init_data` to fetch it.
+        Args:
+            force (bool): Whether to force data loading from the file system.
+            emit_active (bool): Whether to emit the active index changed signal.
 
         """
         common.check_type(force, bool)
@@ -1041,11 +1042,20 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
             # Let's construct the string to be filtered. This will include
             # the path, display name and label text
+            pp = ref()[idx][common.ParentPathRole]
+            if len(pp) > 4:  # files
+                p = '/'.join(pp[4:])
+            elif len(pp) == 4:  # assets
+                p = '/'.join(pp[3:])
+            else:  # bookmarks
+                p = '/'.join(pp[1:])
+
             searchable = (
                 f'{ref()[idx][QtCore.Qt.DisplayRole].lower()}\n'
-                f'{ref()[idx][common.PathRole].lower()}\n'
+                f'{p.strip().lower()}\n'
                 f'{d.strip().lower()}\n{f.strip().lower()}'
             )
+
             if not filter_includes_row(filter_text, searchable):
                 return False
             if filter_excludes_row(filter_text, searchable):

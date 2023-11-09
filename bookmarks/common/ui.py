@@ -225,7 +225,8 @@ def init_stylesheet():
             size_indicator2=int(size(common.size_indicator) * 1.8),
             size_margin=int(size(common.size_margin)),
             size_margin2=int(size(common.size_margin) * 2),
-            size_margin3=int(size(common.size_margin) * 4),
+            size_margin3=int(size(common.size_margin) * 3),
+            size_margin4=int(size(common.size_margin) * 4),
             size_row_height=int(size(common.size_row_height)),
             size_row_height2=int(size(common.size_row_height) * 0.8),
             color_background=rgb(common.color_background),
@@ -606,8 +607,12 @@ def widget(idx=None):
     if idx is None:
         return common.main_widget.stacked_widget.currentWidget()
 
-    if idx == common.TaskTab:
-        return common.main_widget.tasks_widget
+    if idx == common.BookmarkItemSwitch:
+        return common.main_widget.bookmark_switch_widget
+    if idx == common.AssetItemSwitch:
+        return common.main_widget.asset_switch_widget
+    if idx == common.TaskItemSwitch:
+        return common.main_widget.task_switch_widget
     return common.main_widget.stacked_widget.widget(idx)
 
 

@@ -101,7 +101,7 @@ THREADS = {
         },
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
-        'tab': common.TaskTab,
+        'tab': common.TaskItemSwitch,
     },
     FileThumbnail: {
         'queue': collections.deque([], 99),

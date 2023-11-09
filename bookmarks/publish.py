@@ -325,6 +325,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def source_editor_clicked(self):
+        """Slot -> Called when the source item label is clicked."""
         v = self.source_editor.text()
         if not v:
             return
@@ -341,6 +342,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def destination_editor_clicked(self):
+        """Slot -> Called when the destination item label is clicked."""
         text = self.destination_editor.text()
         if not text:
             return

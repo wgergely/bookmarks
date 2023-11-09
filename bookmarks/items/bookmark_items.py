@@ -98,7 +98,7 @@ class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
         self.reveal_item_menu()
         self.copy_menu()
         self.separator()
-        self.import_export_menu()
+        self.import_export_properties_menu()
         self.separator()
         self.edit_selected_bookmark_menu()
         self.notes_menu()

@@ -86,23 +86,24 @@ class FileWatcher(QtCore.QFileSystemWatcher):
         Emits the modelNeedsRefresh signal for each data dictionary in the update queue.
 
         """
-        refs = []
+        processed_data_dicts = []
+
         for path in self.update_queue.copy():
+            print(path)
             for data_type in (common.SequenceItem, common.FileItem):
                 data_dict = common.get_data_from_value(path, data_type, role=common.PathRole)
 
                 if not data_dict:
                     continue
 
-                ref = weakref.ref(data_dict)
-                if not ref in refs:
-                    refs.append(data_dict)
-                else:
+                if data_dict in processed_data_dicts:
                     continue
 
-                ref().refresh_needed = True
+                data_dict.refresh_needed = True
                 common.widget(self.tab_idx).filter_indicator_widget.repaint()
-                self.modelNeedsRefresh.emit(ref)
+                self.modelNeedsRefresh.emit(weakref.ref(data_dict))
+
+                processed_data_dicts.append(data_dict)
 
         self.update_queue.clear()
         self.update_timer.stop()

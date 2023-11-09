@@ -102,6 +102,7 @@ preference_editor_widget = None
 job_editor = None
 bookmark_property_editor = None
 asset_property_editor = None
+clipboard_editor = None
 file_saver_widget = None
 publish_widget = None
 maya_export_widget = None
@@ -125,6 +126,7 @@ from .font import *
 from .monitor import *
 from .sequence import *
 from .active_mode import *
+from .clipboard import *
 from .settings import *
 from .setup import *
 from .signals import *

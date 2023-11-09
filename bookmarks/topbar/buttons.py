@@ -258,7 +258,10 @@ class ToggleFavouriteButton(BaseControlButton):
 
 
 class RefreshButton(BaseControlButton):
-    def __init__(self, parent=None):
+    def __init__(
+            self,
+            parent=None
+    ):
         s = shortcuts.string(
             shortcuts.MainWidgetShortcuts,
             shortcuts.Refresh

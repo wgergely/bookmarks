@@ -355,6 +355,9 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.RevealItem, actions.reveal_selected)
         connect(shortcuts.RevealAltItem, actions.reveal_url)
 
+        connect(shortcuts.CopyProperties, actions.copy_properties)
+        connect(shortcuts.PasteProperties, actions.paste_properties)
+
         if common.init_mode == common.StandaloneMode:
             connect(shortcuts.Quit, common.uninitialize)
             connect(shortcuts.Minimize, actions.toggle_minimized)

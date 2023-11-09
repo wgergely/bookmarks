@@ -708,6 +708,7 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
         self.add_menu()
         self.separator()
         self.bookmark_properties_menu()
+        self.copy_properties_menu()
         self.separator()
         self.reveal_menu()
         self.copy_json_menu()
@@ -760,6 +761,9 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
             'icon': ui.get_icon('refresh')
         }
 
+    @QtCore.Slot()
+    @common.error
+    @common.debug
     def bookmark_properties_menu(self):
         """Show the bookmark item property editor.
 
@@ -777,8 +781,46 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
     @QtCore.Slot()
     @common.error
     @common.debug
+    def copy_properties_menu(self):
+        """Show the bookmark item property editor.
+
+        """
+        server, job, root = self.parent().window().get_args()
+        if not all((server, job, root)):
+            return
+
+        from . import clipboard
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Copy bookmark item properties...',
+            'action': functools.partial(clipboard.show, server, job, root),
+            'icon': ui.get_icon('settings')
+        }
+
+    @QtCore.Slot()
+    @common.error
+    @common.debug
+    def paste_properties_menu(self):
+        """Show the bookmark item property editor.
+
+        """
+        server, job, root = self.parent().window().get_args()
+        if not all((server, job, root)):
+            return
+
+        from . import clipboard
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Copy bookmark item properties...',
+            'action': functools.partial(clipboard.show, server, job, root),
+            'icon': ui.get_icon('settings')
+        }
+
+    @QtCore.Slot()
+    @common.error
+    @common.debug
     def copy_json_menu(self):
-        """Copy bookmark item as JSON action.
+        """Copy bookmark item as JSON.
 
         """
         server, job, root = self.parent().window().get_args()

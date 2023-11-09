@@ -76,7 +76,7 @@ TABLES = {
     AssetTable: {
         'id': {
             'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
-            'type': str
+            'type': str,
         },
         'description': {
             'sql': 'TEXT',
@@ -89,14 +89,6 @@ TABLES = {
         'flags': {
             'sql': 'INT DEFAULT 0',
             'type': int
-        },
-        'thumbnail_stamp': {
-            'sql': 'REAL',
-            'type': float
-        },
-        'user': {
-            'sql': 'TEXT',
-            'type': str
         },
         'shotgun_id': {
             'sql': 'INT',

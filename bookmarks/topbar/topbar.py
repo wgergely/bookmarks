@@ -134,7 +134,7 @@ class ContextStatusBar(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
 
         self.label_widget = None
-        self.note_widget = None
+        self.refresh_widget = None
         self.task_folder_widget = None
 
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
@@ -160,10 +160,7 @@ class ContextStatusBar(QtWidgets.QWidget):
             size=common.size(common.size_font_medium) * 1.1,
             parent=self
         )
-        self.note_widget = ui.PaintedLabel(
-            '',
-            color=common.color(common.color_blue),
-            size=common.size(common.size_font_medium) * 0.9,
+        self.refresh_widget = buttons.RefreshButton(
             parent=self
         )
 
@@ -190,7 +187,7 @@ class ContextStatusBar(QtWidgets.QWidget):
         self.layout().addWidget(self.arrow_left_button)
         self.layout().addWidget(self.label_widget)
         self.layout().addWidget(self.task_folder_widget)
-        self.layout().addWidget(self.note_widget)
+        self.layout().addWidget(self.refresh_widget)
         self.layout().addWidget(self.arrow_right_button)
         self.layout().addStretch()
 
@@ -326,11 +323,11 @@ class ContextStatusBar(QtWidgets.QWidget):
 
         data = common.get_data(p, k, t)
         if data and data.refresh_needed:
-            self.note_widget.setHidden(False)
-            self.note_widget.setText('(refresh needed)')
+            self.refresh_widget.setHidden(False)
+            self.refresh_widget.setText('(refresh needed)')
         else:
-            self.note_widget.setHidden(True)
-            self.note_widget.setText('')
+            self.refresh_widget.setHidden(True)
+            self.refresh_widget.setText('')
 
 
 class TopBarWidget(QtWidgets.QWidget):
@@ -380,7 +377,6 @@ class TopBarWidget(QtWidgets.QWidget):
 
             if idx > common.FavouriteTab:
                 widget.layout().addWidget(self._buttons[idx], 0)
-                # widget.layout().addSpacing(o * 0.5)
             else:
                 widget.layout().addWidget(self._buttons[idx], 1)
 

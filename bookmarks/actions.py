@@ -1713,40 +1713,51 @@ def remove_thumbnail(index):
     source_index.model().updateIndex.emit(source_index)
 
 
-@common.error
 @common.debug
+@common.error
 @selection
-def copy_asset_properties(index):
-    """Copy asset properties to clipboard.
+def copy_properties(index):
+    pp = index.data(common.ParentPathRole)
+    if not pp:
+        return
 
-    Args:
-        index (QModelIndex): Index of the currently selected item.
-
-    """
-    server, job, root, asset = index.data(common.ParentPathRole)[0:4]
-    database.copy_properties(
-        server, job, root, asset, table=database.AssetTable
+    from . editor import clipboard
+    editor = clipboard.show(
+        *pp[0:3],
+        asset=pp[3] if len(pp) == 4 else None,
     )
 
+    return editor
 
-@common.error
+
 @common.debug
+@common.error
 @selection
-def paste_asset_properties(index):
-    """Paste asset properties from clipboard to the selected item.
+def paste_properties(index):
+    pp = index.data(common.ParentPathRole)
+    if len(pp) == 3:
+        table = database.BookmarkTable
+        clipboard = common.BookmarkPropertyClipboard
+    elif len(pp) == 4:
+        table = database.AssetTable
+        clipboard = common.AssetPropertyClipboard
+    else:
+        raise NotImplementedError('Not implemented.')
 
-    Args:
-        index (QModelIndex): Index of the currently selected item.
+    if not common.CLIPBOARD[clipboard]:
+        raise RuntimeError('Could not paste properties. Clipboard is empty.')
 
-    """
-    server, job, root, asset = index.data(common.ParentPathRole)[0:4]
-    database.paste_properties(
-        server, job, root, asset, table=database.AssetTable
-    )
+    source = '/'.join(pp)
+
+    # Write the values to the database
+    for k in common.CLIPBOARD[clipboard]:
+        v = common.CLIPBOARD[clipboard][k]
+        database.get(*pp[0:3]).set_value(source, k, v, table=table)
+        log.success(f'Pasted {k} = {v} to {source}')
 
 
-@common.error
 @common.debug
+@common.error
 def toggle_active_mode():
     """Toggle the active path mode.
 

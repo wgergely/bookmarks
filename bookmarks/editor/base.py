@@ -508,9 +508,14 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 row.setWhatsThis(v['description'])
 
         if 'help' in v and v['help']:
-            ui.add_description(
-                v['help'], label=None, parent=group_widget
-            )
+            if 'widget' in v and v['widget']:
+                ui.add_description(
+                    v['help'], label=None, parent=group_widget
+                )
+            else:
+                ui.add_description(
+                    v['help'], label=None, parent=row
+                )
 
         if 'button' in v and v['button']:
             button = ui.PaintedButton(

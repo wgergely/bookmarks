@@ -37,6 +37,9 @@ CopyAltItemPath = common.idx()
 RevealItem = common.idx()
 RevealAltItem = common.idx()
 
+CopyProperties = common.idx()
+PasteProperties = common.idx()
+
 Quit = common.idx()
 Minimize = common.idx()
 Maximize = common.idx()
@@ -207,6 +210,20 @@ MainWidgetShortcuts = {
         'default': 'Ctrl+Shift+O',
         'repeat': False,
         'description': 'Reveal primary URL...',
+        'shortcut': None,
+    },
+    CopyProperties: {
+        'value': 'Ctrl+Alt+C',
+        'default': 'Ctrl+Alt+C',
+        'repeat': False,
+        'description': 'Copy file path',
+        'shortcut': None,
+    },
+    PasteProperties: {
+        'value': 'Ctrl+Alt+V',
+        'default': 'Ctrl+Alt+V',
+        'repeat': False,
+        'description': 'Copy file path',
         'shortcut': None,
     },
     EditItem: {

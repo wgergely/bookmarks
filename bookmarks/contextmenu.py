@@ -1630,7 +1630,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.show_publish_widget,
         }
 
-    def import_export_menu(self):
+    def import_export_properties_menu(self):
         """Export property
 
         """
@@ -1638,6 +1638,48 @@ class BaseContextMenu(QtWidgets.QMenu):
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('settings')
+
+        self.separator(menu=self.menu[k])
+
+        pp = self.index.data(common.ParentPathRole)
+        if len(pp) == 3:
+            clipboard = common.BookmarkPropertyClipboard
+        elif len(pp) == 4:
+            clipboard = common.AssetPropertyClipboard
+        else:
+            clipboard = None
+
+        # Copy menu
+        if self.index.isValid() and clipboard:
+            self.menu[k][key()] = {
+                'text': 'Copy properties to clipboard...',
+                'action': actions.copy_properties,
+                'icon': ui.get_icon('settings'),
+                'shortcut': shortcuts.get(
+                    shortcuts.MainWidgetShortcuts,
+                    shortcuts.CopyProperties
+                ).key(),
+                'description': shortcuts.hint(
+                    shortcuts.MainWidgetShortcuts,
+                    shortcuts.CopyProperties
+                ),
+            }
+
+        # Paste menu
+        if self.index.isValid() and clipboard and common.CLIPBOARD[clipboard]:
+            self.menu[k][key()] = {
+                'text': 'Paste properties from clipboard',
+                'action': actions.paste_properties,
+                'icon': ui.get_icon('settings'),
+                'shortcut': shortcuts.get(
+                    shortcuts.MainWidgetShortcuts,
+                    shortcuts.PasteProperties
+                ).key(),
+                'description': shortcuts.hint(
+                    shortcuts.MainWidgetShortcuts,
+                    shortcuts.PasteProperties
+                ),
+            }
 
         self.separator(menu=self.menu[k])
         if self.index.isValid():

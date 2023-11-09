@@ -948,7 +948,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """
         icon = ui.get_icon('add', color=common.color(common.color_green))
         self.menu[key()] = {
-            'text': 'Manage Bookmark Items...',
+            'text': 'Edit Jobs...',
             'icon': icon,
             'action': actions.show_job_editor,
             'shortcut': shortcuts.get(

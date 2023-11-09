@@ -314,7 +314,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         """
         # Get database and config
-        if not all(common.active('asset', args=True)):
+        if not common.active('asset', args=True):
             raise RuntimeError('An asset must be active to export.')
 
         try:

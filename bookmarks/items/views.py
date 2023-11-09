@@ -533,7 +533,6 @@ class BaseItemView(QtWidgets.QTableView):
 
         self.setGraphicsEffect(QtWidgets.QGraphicsOpacityEffect(self))
         self.graphicsEffect().setOpacity(1.0)
-        self.setAutoFillBackground(True)
 
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setHidden(True)

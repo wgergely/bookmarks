@@ -224,8 +224,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self._create_ui()
         self._connect_signals()
 
-        self.init_data()
-
     def _create_ui(self):
         o = common.size(common.size_margin)
 

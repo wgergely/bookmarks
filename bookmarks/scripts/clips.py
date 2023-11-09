@@ -581,9 +581,12 @@ class EdlWidget(base.BasePropertyEditor):
 
                 rv_py_interp = f'{rv_bin_dir}/py-interp.exe'
                 if not QtCore.QFileInfo(rv_py_interp).exists():
-                    raise RuntimeError('Could not find py-interp.exe')
-                else:
-                    os.environ['OTIO_RV_PYTHON_BIN'] = QtCore.QFileInfo(rv_py_interp).absoluteFilePath()
+                    rv_py_interp = common.get_binary('py-interp')
+                    rv_bin_dir = QtCore.QFileInfo(rv_py_interp).dir().path()
+                    if not rv_py_interp:
+                        raise RuntimeError('Could not find py-interp.exe')
+
+                os.environ['OTIO_RV_PYTHON_BIN'] = QtCore.QFileInfo(rv_py_interp).absoluteFilePath()
 
                 rv_session_dir = f'{rv_bin_dir}/../src/python'
                 if not QtCore.QFileInfo(rv_session_dir).exists():

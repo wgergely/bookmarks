@@ -49,7 +49,6 @@ class MessageBox(QtWidgets.QDialog):
 
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        self.setAutoFillBackground(True)
 
         self.installEventFilter(self)
 
@@ -391,17 +390,16 @@ class PaintedLabel(QtWidgets.QLabel):
         self._color = color
         self._text = text
 
-        self.update_size()
+        self.update()
 
     def setText(self, v):
         self._text = v
-        self.update_size()
-
         super().setText(v)
+        self.update()
 
     def set_color(self, v):
         self._color = v
-        self.update_size()
+        self.update()
 
     def update_size(self):
         font, metrics = common.font_db.bold_font(self._size)
@@ -436,7 +434,7 @@ class PaintedLabel(QtWidgets.QLabel):
             painter,
             common.font_db.bold_font(self._size)[0],
             self.rect(),
-            self.text(),
+            self._text,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
             self._color
         )
@@ -453,6 +451,10 @@ class PaintedLabel(QtWidgets.QLabel):
 
         """
         self.update()
+
+    def update(self):
+        self.update_size()
+        super().update()
 
     def mouseReleaseEvent(self, event):
         """Event handler.

@@ -95,7 +95,7 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
     def add_menu(self):
         self.menu['add'] = {
             'icon': ui.get_icon('add', color=common.color(common.color_green)),
-            'text': 'Manage Bookmark Items...',
+            'text': 'Edit Jobs...',
             'action': actions.show_job_editor,
             'shortcut': shortcuts.string(
                 shortcuts.MainWidgetShortcuts,

@@ -344,7 +344,6 @@ class MayaButtonWidget(ui.ClickableIconButton):
             parent=parent
         )
         self.setObjectName('BookmarksMayaButton')
-        self.setAutoFillBackground(False)
         self.setAttribute(QtCore.Qt.WA_NoBackground, False)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)

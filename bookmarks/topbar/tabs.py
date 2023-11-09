@@ -71,8 +71,13 @@ class BaseTabButton(QtWidgets.QLabel):
     @QtCore.Slot()
     def adjust_size(self):
         """Slot responsible for setting the size of the widget to match the text."""
-        self.setMaximumWidth(self.get_width())
-        self.setMinimumWidth(common.size(common.size_margin) * 2)
+        o = common.size(common.size_margin) * 2
+        if self.tab_idx == common.FavouriteTab:
+            self.setMaximumWidth(o)
+            self.setMinimumWidth(o)
+        else:
+            self.setMaximumWidth(self.get_width())
+            self.setMinimumWidth(o)
         self.update()
 
     def showEvent(self, event):
@@ -113,17 +118,18 @@ class BaseTabButton(QtWidgets.QLabel):
             common.size(common.size_font_medium)
         )
 
-        # When the width of the button is very small, we'll switch to an icon
-        # representation instead of text:
-        if (
-                self.tab_idx == common.FileTab and
-                common.current_tab() == common.FileTab and
-                hover
-        ):
+        if (metrics.horizontalAdvance(self.text()) + (
+                common.size(common.size_margin) * 0.5)) < self.rect().width():
+            # Draw label
+            width = metrics.horizontalAdvance(self.text())
+            x = (self.width() / 2.0) - (width / 2.0)
+            y = self.rect().center().y() + (metrics.ascent() * 0.5)
+            delegate.draw_painter_path(painter, x, y, font, self.text())
+        else:
             # Draw icon
             pixmap = images.rsc_pixmap(
-                'branch_open',
-                common.color(common.color_selected_text),
+                self.icon,
+                color,
                 common.size(common.size_margin)
             )
             _rect = QtCore.QRect(
@@ -137,32 +143,6 @@ class BaseTabButton(QtWidgets.QLabel):
                 pixmap,
                 pixmap.rect()
             )
-        else:
-            if (metrics.horizontalAdvance(self.text()) + (
-                    common.size(common.size_margin) * 0.5)) < self.rect().width():
-                # Draw label
-                width = metrics.horizontalAdvance(self.text())
-                x = (self.width() / 2.0) - (width / 2.0)
-                y = self.rect().center().y() + (metrics.ascent() * 0.5)
-                delegate.draw_painter_path(painter, x, y, font, self.text())
-            else:
-                # Draw icon
-                pixmap = images.rsc_pixmap(
-                    self.icon,
-                    color,
-                    common.size(common.size_margin)
-                )
-                _rect = QtCore.QRect(
-                    0, 0, common.size(
-                        common.size_margin
-                    ), common.size(common.size_margin)
-                )
-                _rect.moveCenter(self.rect().center())
-                painter.drawPixmap(
-                    _rect,
-                    pixmap,
-                    pixmap.rect()
-                )
 
         # Draw indicator line below icon or text
         rect.setHeight(common.size(common.size_separator) * 2.0)
@@ -192,7 +172,7 @@ class BookmarksTabButton(BaseTabButton):
         super(BookmarksTabButton, self).__init__(
             'Bookmarks',
             common.BookmarkTab,
-            'Click to see the list of added bookmarks',
+            'Browse bookmark items',
             parent=parent
         )
 
@@ -210,7 +190,7 @@ class AssetsTabButton(BaseTabButton):
         super().__init__(
             'Assets',
             common.AssetTab,
-            'Click to see the list of available assets',
+            'Browse the active bookmark item\'s assets',
             parent=parent
         )
 
@@ -235,13 +215,9 @@ class FilesTabButton(BaseTabButton):
         super().__init__(
             'Files',
             common.FileTab,
-            'Click to see or change the current task folder',
+            'Browse the active asset\'s files',
             parent=parent
         )
-
-        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-
-        common.signals.taskViewToggled.connect(self.update)
 
     @QtCore.Slot()
     def emit_tab_changed(self):
@@ -249,58 +225,10 @@ class FilesTabButton(BaseTabButton):
         if not active:
             return
 
-        if common.current_tab() == common.FileTab:
-            actions.toggle_task_view()
-            return
-
         super().emit_tab_changed()
 
     def contextMenuEvent(self, event):
         self.clicked.emit()
-
-    def paintEvent(self, event):
-        """Indicating the visibility of the TaskItemView."""
-        if common.widget(common.TaskTab).isHidden():
-            super().paintEvent(event)
-            return
-
-        painter = QtGui.QPainter()
-        painter.begin(self)
-
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
-
-        rect = self.rect()
-        rect.setHeight(common.size(common.size_separator) * 2.0)
-
-        painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_green))
-        painter.drawRect(rect)
-
-        o = common.size(common.size_margin)
-        pixmap = images.rsc_pixmap('gradient2', None, o)
-        painter.drawPixmap(self.rect(), pixmap, pixmap.rect())
-
-        rect = QtCore.QRect(0, 0, o, o)
-        rect.moveCenter(self.rect().center())
-        pixmap = images.rsc_pixmap(
-            'folder', common.color(common.color_green), o
-        )
-        painter.drawPixmap(rect, pixmap, pixmap.rect())
-
-        painter.drawPixmap(rect, pixmap, pixmap.rect())
-        painter.end()
-
-    def text(self):
-        w = common.widget(common.FileTab)
-        model = w.model().sourceModel()
-        t = model.task()
-
-        if not t:
-            return super().text()
-        return t
-
-        return active_index.data(common.ParentPathRole)['task'].lower()
 
 
 class FavouritesTabButton(BaseTabButton):

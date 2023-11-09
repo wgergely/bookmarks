@@ -310,10 +310,6 @@ class ApplicationLauncherButton(BaseControlButton):
         super().__init__(
             'icon',
             f'Application Launcher  -  {s}',
-            color=(
-                common.color(common.color_green),
-                common.color(common.color_green),
-            ),
             parent=parent
         )
         self.clicked.connect(actions.pick_launcher_item)

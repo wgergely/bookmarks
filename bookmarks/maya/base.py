@@ -630,15 +630,29 @@ class MayaProperties(QtCore.QObject):
 
     # The list of database tables and column containing relevant properties
     db_keys = {
-        database.BookmarkTable: ('width', 'height', 'framerate', 'startframe', 'duration'),
-        database.AssetTable: ('cut_duration', 'cut_out', 'cut_in', 'edit_in', 'edit_out', 'asset_width', 'asset_height',
-                              'asset_framerate',),
+        database.BookmarkTable: (
+            'width',
+            'height',
+            'framerate',
+            'startframe',
+            'duration'
+        ),
+        database.AssetTable: (
+            'cut_duration',
+            'cut_in',
+            'cut_out',
+            'edit_in',
+            'edit_out',
+            'asset_width',
+            'asset_height',
+            'asset_framerate',
+        ),
     }
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        if not all(common.active('asset', args=True)):
+        if not common.active('asset', args=True):
             raise RuntimeError('An asset must be active!')
 
         self.data = {}

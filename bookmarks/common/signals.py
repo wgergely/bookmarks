@@ -91,7 +91,7 @@ class CoreSignals(QtCore.QObject):
     #: Signal emitted when the item tab changes
     tabChanged = QtCore.Signal(int)
     #: Signal emitted then the task view visibility changes
-    taskViewToggled = QtCore.Signal()
+    switchViewToggled = QtCore.Signal()
 
     #: Signal called when an item was archived
     itemArchived = QtCore.Signal(tuple, str)

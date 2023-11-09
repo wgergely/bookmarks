@@ -6,6 +6,7 @@ from PySide2 import QtWidgets, QtCore
 from . import buttons
 from . import filters
 from . import tabs
+from .. import actions
 from .. import common
 from .. import ui
 
@@ -27,10 +28,6 @@ BUTTONS = {
         'hidden': False,
     },
     common.idx(reset=True, start=common.FavouriteTab + 1): {
-        'widget': buttons.ApplicationLauncherButton,
-        'hidden': False,
-    },
-    common.idx(): {
         'widget': filters.JobsFilterButton,
         'hidden': True,
     },
@@ -59,6 +56,10 @@ BUTTONS = {
         'hidden': False,
     },
     common.idx(): {
+        'widget': buttons.ApplicationLauncherButton,
+        'hidden': False,
+    },
+    common.idx(): {
         'widget': buttons.ToggleSequenceButton,
         'hidden': False,
     },
@@ -77,6 +78,47 @@ BUTTONS = {
 }
 
 
+class TaskFolderPicker(ui.PaintedLabel):
+    def __init__(self, parent=None):
+        super().__init__(
+            'Select folder',
+            size=common.size(common.size_font_medium) * 1.1,
+            color=common.color(common.color_selected_text),
+            parent=parent
+        )
+
+        common.signals.updateTopBarButtons.connect(self.update)
+        common.signals.taskFolderChanged.connect(self.update)
+        common.signals.tabChanged.connect(self.update)
+        common.signals.switchViewToggled.connect(self.update)
+
+    @property
+    def _color(self):
+        if not common.active('task'):
+            return common.color(common.color_blue)
+        if common.widget(common.TaskItemSwitch).isVisible():
+            return common.color(common.color_blue)
+        if common.active('task'):
+            return common.color(common.color_green)
+        return common.color(common.color_text)
+
+    @_color.setter
+    def _color(self, v):
+        pass
+
+    @property
+    def _text(self):
+        if not common.active('task'):
+            return 'Select folder'
+        if common.widget(common.TaskItemSwitch).isVisible():
+            return 'Select:'
+        return common.active('task')
+
+    @_text.setter
+    def _text(self, v):
+        pass
+
+
 class ContextStatusBar(QtWidgets.QWidget):
     """The widget used to draw an informative status label below the main bar.
 
@@ -93,6 +135,7 @@ class ContextStatusBar(QtWidgets.QWidget):
 
         self.label_widget = None
         self.note_widget = None
+        self.task_folder_widget = None
 
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
@@ -109,7 +152,7 @@ class ContextStatusBar(QtWidgets.QWidget):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         self.layout().setContentsMargins(o, 0, o, 0)
-        self.layout().setSpacing(0)
+        self.layout().setSpacing(o)
 
         self.label_widget = ui.PaintedLabel(
             '',
@@ -140,12 +183,14 @@ class ContextStatusBar(QtWidgets.QWidget):
             parent=self
         )
 
+        self.task_folder_widget = TaskFolderPicker(parent=self)
+        self.task_folder_widget.setHidden(True)
+
         self.layout().addStretch()
         self.layout().addWidget(self.arrow_left_button)
-        self.layout().addSpacing(o)
         self.layout().addWidget(self.label_widget)
+        self.layout().addWidget(self.task_folder_widget)
         self.layout().addWidget(self.note_widget)
-        self.layout().addSpacing(o)
         self.layout().addWidget(self.arrow_right_button)
         self.layout().addStretch()
 
@@ -160,6 +205,7 @@ class ContextStatusBar(QtWidgets.QWidget):
         self.arrow_right_button.clicked.connect(self.arrow_right)
 
         self.label_widget.clicked.connect(self.show_quick_switch_menu)
+        self.task_folder_widget.clicked.connect(actions.toggle_task_switch_view)
 
     @QtCore.Slot()
     def arrow_left(self):
@@ -229,30 +275,13 @@ class ContextStatusBar(QtWidgets.QWidget):
         """
         idx = common.current_tab()
 
-        from . import quickswitch
-        if idx == common.AssetTab:
-            menu = quickswitch.SwitchBookmarkMenu(
-                QtCore.QModelIndex(),
-                parent=self
-            )
-        elif idx == common.FileTab:
-            menu = quickswitch.SwitchAssetMenu(
-                QtCore.QModelIndex(),
-                parent=self
-            )
-        else:
+        # No switch menu for bookmarks tab
+        if idx == common.BookmarkTab:
             return
-
-        # Move the menu to the left of the label and just below it
-        menu.move(
-            self.label_widget.mapToGlobal(
-                QtCore.QPoint(
-                    0,
-                    self.label_widget.height()
-                )
-            )
-        )
-        menu.exec_()
+        elif idx == common.AssetTab:
+            actions.toggle_bookmark_switch_view()
+        elif idx == common.FileTab:
+            actions.toggle_asset_switch_view()
 
     @QtCore.Slot()
     def update(self, *args, **kwargs):
@@ -272,12 +301,11 @@ class ContextStatusBar(QtWidgets.QWidget):
             if active_index and active_index.isValid():
                 display_name = active_index.data(QtCore.Qt.DisplayRole)
 
-        if idx == common.FileTab:
-            task = common.active('task')
-            task = task if task else '(no asset folder selected)'
-            display_name = f'{display_name}/{task}'
-
-        display_name = display_name.strip(' _-').replace('/', '  •  ')
+        display_name = (
+            display_name
+            .strip(' _-')
+            .replace('/', ' / ')
+        )
 
         if idx == common.FavouriteTab:
             display_name = 'Favourites'
@@ -288,6 +316,7 @@ class ContextStatusBar(QtWidgets.QWidget):
             self.arrow_right_button.setHidden(False)
 
         self.label_widget.setText(display_name)
+        self.task_folder_widget.setHidden(idx != common.FileTab)
 
         # Update note widget
         source_model = common.source_model(common.current_tab())

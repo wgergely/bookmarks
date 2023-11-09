@@ -72,7 +72,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         """Save scene action.
 
         """
-        if not all(common.active('asset', args=True)):
+        if not common.active('asset', args=True):
             return
 
         scene = QtCore.QFileInfo(cmds.file(query=True, expandName=True))

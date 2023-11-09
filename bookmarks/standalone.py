@@ -410,6 +410,10 @@ class BookmarksApp(QtWidgets.QApplication):
         self.setOrganizationDomain(common.organization_domain)
 
         self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+        self.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
+        self.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
+        self.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
+
 
         self._set_model_id()
         self._set_window_icon()

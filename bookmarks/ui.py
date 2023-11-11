@@ -389,6 +389,7 @@ class PaintedLabel(QtWidgets.QLabel):
         self._size = size
         self._color = color
         self._text = text
+        self._fixed_width = None
 
         self.update()
 
@@ -402,12 +403,19 @@ class PaintedLabel(QtWidgets.QLabel):
         self.update()
 
     def update_size(self):
+        if self._fixed_width:
+            super().setFixedWidth(self._fixed_width)
+            return
+
         font, metrics = common.font_db.bold_font(self._size)
         self.setFixedHeight(metrics.height())
-        self.setFixedWidth(
+        super().setFixedWidth(
             metrics.horizontalAdvance(self._text) +
             common.size(common.size_indicator) * 2
         )
+    def setFixedWidth(self, v):
+        self._fixed_width = v
+        super().setFixedWidth(v)
 
     def paintEvent(self, event):
         """Event handler.
@@ -1210,8 +1218,8 @@ def add_row(
     w.layout().setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
 
     w.setSizePolicy(
-        QtWidgets.QSizePolicy.Expanding,
-        QtWidgets.QSizePolicy.Expanding,
+        QtWidgets.QSizePolicy.MinimumExpanding,
+        QtWidgets.QSizePolicy.MinimumExpanding,
     )
     if height:
         w.setFixedHeight(height)
@@ -1227,7 +1235,7 @@ def add_row(
             parent=parent
         )
         l.setFixedWidth(common.size(common.size_margin) * 8.6667)
-        w.layout().addWidget(l, 1)
+        w.layout().addWidget(l, 0)
 
     if parent:
         parent.layout().addWidget(w, 1)

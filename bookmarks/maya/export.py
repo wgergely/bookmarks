@@ -37,8 +37,9 @@ def show():
 
     """
     close()
-    common.maya_export_widget = ExportWidget()
-    common.maya_export_widget.open()
+    common.maya_export_widget = ExportWidget(parent=mayabase.maya_main_window())
+    common.set_stylesheet(common.maya_export_widget)
+    common.maya_export_widget.show()
     return common.maya_export_widget
 
 
@@ -493,8 +494,8 @@ class ExportWidget(base.BasePropertyEditor):
     #: UI layout definition
     sections = {
         0: {
-            'name': 'Export',
-            'icon': '',
+            'name': 'Export Object Sets',
+            'icon': 'set',
             'color': common.color(common.color_dark_background),
             'groups': {
                 0: {

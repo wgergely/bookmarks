@@ -8,11 +8,13 @@ import time
 import uuid
 
 try:
+    from maya import OpenMayaUI
     import maya.cmds as cmds
 except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
 from PySide2 import QtWidgets, QtCore
+import shiboken2
 
 from .. import common
 from .. import database
@@ -186,6 +188,15 @@ RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<Rend
 SUFFIX_LABEL = 'Select a suffix for this import.\n\n\
 Suffixes are always unique and help differentiate imports when the same file \
 is imported multiple times.'
+
+
+def maya_main_window():
+    """
+    Return the Maya main window widget as a Python object
+
+    """
+    main_window_ptr = OpenMayaUI.MQtUtil.mainWindow()
+    return shiboken2.wrapInstance(int(main_window_ptr), QtWidgets.QWidget)
 
 
 def patch_workspace_file_rules():

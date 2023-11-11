@@ -29,6 +29,8 @@ import maya.api.OpenMaya as OpenMaya
 import maya.cmds as cmds
 from PySide2 import QtCore, QtGui, QtWidgets
 
+from .. import base as mayabase
+
 WINDOW_TITLE = 'Aka Shader Templates'
 NUMERIC_TYPES = ['double', 'float', 'long', 'short', 'byte', 'int']
 
@@ -914,7 +916,7 @@ def run():
     except:
 
         pass
-    instance = PresetsWidget()
+    instance = PresetsWidget(parent=mayabase.get_maya_window())
     instance.show()
 
 

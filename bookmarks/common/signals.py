@@ -147,7 +147,6 @@ class CoreSignals(QtCore.QObject):
 
         self.toggleFavouritesButton.connect(actions.toggle_favourite_items)
 
-        self.databaseValueUpdated.connect(actions.asset_identifier_changed)
         self.assetAdded.connect(actions.show_asset)
 
         self.taskFolderChanged.connect(actions.set_task_folder)

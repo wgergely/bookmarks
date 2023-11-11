@@ -403,7 +403,7 @@ def count_todos(asset_row_data):
     return len(v) if isinstance(v, dict) else 0
 
 
-def count_assets(path, ASSET_IDENTIFIER):
+def count_assets(path):
     """Get the number of asset items.
 
     """
@@ -417,13 +417,7 @@ def count_assets(path, ASSET_IDENTIFIER):
             continue
         if not entry.is_dir():
             continue
-        if not ASSET_IDENTIFIER:
-            n += 1
-            continue
         path = entry.path.replace('\\', '/')
-        identifier = '/'.join((path, ASSET_IDENTIFIER))
-        if not QtCore.QFileInfo(identifier).exists():
-            continue
         n += 1
     return n
 
@@ -717,7 +711,7 @@ class InfoWorker(BaseWorker):
             return
 
         description = get_bookmark_description(bookmark_row_data)
-        count = count_assets(source, bookmark_row_data['identifier'])
+        count = count_assets(source)
 
         if not self.is_valid(ref):
             return False

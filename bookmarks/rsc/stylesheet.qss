@@ -185,32 +185,27 @@ QComboBox QListView::item:hover {{
 
 
 QLineEdit,
-QTextEdit {{
+QTextEdit,
+QTextBrowser {{
     background-color: transparent;
     height: {size_row_height2}px;
     max-height: {size_row_height2}px;
     min-height: {size_row_height2}px;
     border: {size_separator}px solid transparent;
     border-radius: {size_indicator1}px;
-    margin: 0;
     padding-left: {size_indicator}px;
     padding-right: {size_indicator}px;
 }}
+QLineEdit:disabled,
 QTextEdit:disabled,
-QLineEdit:disabled {{
+QTextBrowser:disabled {{
     color: {color_disabled_text};
     background-color: transparent;
 }}
-
 QLineEdit:focus,
-QTextEdit:focus {{
+QTextEdit:focus,
+QTextBrowser:focus {{
     background-color: {color_opaque};
-}}
-
-QTextBrowser {{
-    height: -1px;
-    max-height: -1px;
-    min-height: -1px;
 }}
 
 QScrollBar {{
@@ -384,17 +379,15 @@ QLabel:disabled {{
 }}
 
 QMenu {{
-    font-size: {size_font_medium}px;
     background-color: {color_dark_background};
     menu-scrollable: 1;
-    border-radius: {menu_border_radius}px;
-    border: 2px solid {color_background};
     icon-size: {size_margin2}px;
+    margin: {size_indicator}px;
 }}
 QMenu::separator {{
-    height: {size_separator}px;
-    margin-top: {size_indicator}px;
-    margin-bottom: {size_indicator}px;
+    height: {size_separator2}px;
+    margin-top: {size_indicator2}px;
+    margin-bottom: {size_indicator2}px;
     background-color: {color_opaque};
     color: transparent;
     min-width: 1000px;
@@ -408,37 +401,40 @@ QMenu::item {{
 QMenu::icon {{
     padding: {size_margin}px;
 }}
-
+QMenu::item:hover,
 QMenu::item:selected {{
     color: {color_selected_text};
-  background-color: {color_light_background};
+}}
+QMenu::item:selected {{
+    background-color: {color_light_background};
 }}
 QMenu::item:disabled {{
     color: {color_disabled_text};
-  background-color: {color_opaque};
+    background-color: {color_opaque};
 }}
 QMenu::right-arrow {{
-  margin: 0;
+    margin: 0;
     padding-right: {size_margin}px;
-  image: url({branch_closed});
-  height: {size_margin}px;
-  width: {size_margin}px;
+    image: url({branch_closed});
+    height: {size_margin}px;
+    width: {size_margin}px;
 }}
-QMenu::keystroke {{
-  color: red;
-}}
+QMenu::keystroke,
 QMenu::shortcut {{
-  color: red;
+    color: {color_blue};
 }}
 
+
 QToolTip {{
-    opacity: 200;
-    font-family: "{font_secondary}";
-    font-size: {size_font_small}px;
-  background-color: {color_dark_background};
-    padding: {size_indicator1}px;
-    color: {color_secondary_text};
-    border: {size_separator}px solid {color_separator};
+    font-family: "{font_primary}";
+    font-size: {size_font_medium}px;
+    color: {color_text};
+    background: {color_dark_background};
+    background-color: {color_dark_background};
+    padding: {size_indicator3}px;
+    margin: 0px;
+    border-radius: {size_indicator1}px;
+    border: {size_separator2}px solid {color_blue};
 }}
 
 QProgressBar, QProgressDialog {{

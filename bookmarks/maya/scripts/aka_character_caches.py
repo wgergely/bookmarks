@@ -173,7 +173,13 @@ def get_cache_path(set_name, ext, makedir=True):
         _version += 1
 
     if makedir:
-        QtCore.QFileInfo(file_path).dir().mkpath('.')
+        _dir = QtCore.QFileInfo(file_path).dir()
+        if not _dir.exists():
+            if _dir.mkpath('.'):
+                print(f'Created directory: {_dir.path()}')
+            else:
+                raise RuntimeError(f'Could not create directory: {_dir.path()}')
+
     return file_path
 
 

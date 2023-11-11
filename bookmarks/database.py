@@ -223,10 +223,6 @@ TABLES = {
             'sql': 'INT',
             'type': int
         },
-        'identifier': {
-            'sql': 'TEXT',
-            'type': str
-        },
         'shotgun_domain': {
             'sql': 'TEXT',
             'type': str

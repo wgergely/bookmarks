@@ -3,8 +3,7 @@
 """
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import quickswitch
-from .. import actions
+from .. import shortcuts
 from .. import common
 from .. import images
 from ..items import delegate
@@ -153,7 +152,7 @@ class BaseTabButton(QtWidgets.QLabel):
             painter.setOpacity(0.9)
             color = common.color(
                 common.color_text
-            ) if hover else common.color(common.color_red)
+            ) if hover else common.color(common.color_selected_text)
         else:
             painter.setOpacity(0.3)
             color = common.color(
@@ -169,36 +168,34 @@ class BookmarksTabButton(BaseTabButton):
     icon = 'bookmark'
 
     def __init__(self, parent=None):
-        super(BookmarksTabButton, self).__init__(
+        s = shortcuts.string(
+            shortcuts.MainWidgetShortcuts,
+            shortcuts.ShowBookmarksTab
+        )
+        super().__init__(
             'Bookmarks',
             common.BookmarkTab,
-            'Browse bookmark items',
+            f'Bookmark items  -  {s}',
             parent=parent
         )
 
-    def contextMenuEvent(self, event):
-        menu = quickswitch.SwitchBookmarkMenu(QtCore.QModelIndex(), parent=self)
-        pos = self.mapToGlobal(event.pos())
-        menu.move(pos)
-        menu.exec_()
 
 
 class AssetsTabButton(BaseTabButton):
     icon = 'asset'
 
     def __init__(self, parent=None):
+        s = shortcuts.string(
+            shortcuts.MainWidgetShortcuts,
+            shortcuts.ShowAssetsTab
+        )
         super().__init__(
             'Assets',
             common.AssetTab,
-            'Browse the active bookmark item\'s assets',
+            f'Asset items  -  {s}',
             parent=parent
         )
 
-    def contextMenuEvent(self, event):
-        menu = quickswitch.SwitchAssetMenu(QtCore.QModelIndex(), parent=self)
-        pos = self.mapToGlobal(event.pos())
-        menu.move(pos)
-        menu.exec_()
 
     @QtCore.Slot()
     def emit_tab_changed(self):
@@ -212,10 +209,14 @@ class FilesTabButton(BaseTabButton):
     icon = 'file'
 
     def __init__(self, parent=None):
+        s = shortcuts.string(
+            shortcuts.MainWidgetShortcuts,
+            shortcuts.ShowFilesTab
+        )
         super().__init__(
             'Files',
             common.FileTab,
-            'Browse the active asset\'s files',
+            f'File items  -  {s}',
             parent=parent
         )
 
@@ -227,8 +228,6 @@ class FilesTabButton(BaseTabButton):
 
         super().emit_tab_changed()
 
-    def contextMenuEvent(self, event):
-        self.clicked.emit()
 
 
 class FavouritesTabButton(BaseTabButton):

@@ -671,22 +671,6 @@ def toggle_filter_editor():
         w.filter_editor.close()
 
 
-@QtCore.Slot(str)
-@QtCore.Slot(str)
-@QtCore.Slot(str)
-@QtCore.Slot(object)
-@must_be_initialized
-def asset_identifier_changed(table, source, key, value):
-    """Refresh the assets model if the identifier changes.
-
-    """
-    # All shotgun fields should be prefixed by 'shotgun_'
-    if not (table == database.BookmarkTable and key == 'identifier'):
-        return
-    model = common.source_model(common.AssetTab)
-    model.reset_data()
-
-
 def selection(func):
     """Decorator function to ensure `QModelIndexes` passed to worker threads
     are in a valid state.

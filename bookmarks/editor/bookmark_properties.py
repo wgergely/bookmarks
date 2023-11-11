@@ -135,30 +135,6 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                                        'e.g. \'150\'',
                     },
                 },
-                3: {
-                    'identifier': {
-                        'name': 'Asset Identifier',
-                        'key': 'identifier',
-                        'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'A file name, e.g. \'workspace.mel\'',
-                        'description': 'Only folders containing the file specified '
-                                       'above will be read as assets.\n\nUsing the '
-                                       'default Maya Workspace the identifier normally '
-                                       'is \'workspace.mel\', however any other '
-                                       'arbitrary file can be used as long it is '
-                                       'present in the root of an asset '
-                                       'folder.\n\nWhen left empty all folders in the '
-                                       'bookmark will be read.',
-                        'help': 'Only folders containing the file specified here will '
-                                'be read as assets.\nUsing the default Maya Workspace '
-                                'the identifier normally is \'workspace.mel\', '
-                                'however any other arbitrary file can be used as long '
-                                'it is present in the root of an asset folder.\n\nWhen '
-                                'left empty, all folders in the bookmark will be '
-                                'interpreted as assets.',
-                    }
-                },
                 4: {
                     0: {
                         'name': 'Bookmark Display Name',

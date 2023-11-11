@@ -215,7 +215,7 @@ class ToggleInlineIcons(BaseControlButton):
         )
         super(ToggleInlineIcons, self).__init__(
             'branch_closed',
-            f'Show/Hide List Buttons  -  {s}',
+            f'Toggle Buttons  -  {s}',
             parent=parent
         )
 

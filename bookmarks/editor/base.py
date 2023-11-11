@@ -172,7 +172,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self._frameless = frameless
 
         self.section_buttons = section_buttons
-        self._section_widgets = []
+        self.section_headers_widget = None
 
         self.server = server
         self.job = job
@@ -181,7 +181,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.thumbnail_editor = None
         self._hide_thumbnail_editor = hide_thumbnail_editor
-        self.section_headers_widget = None
 
         if not self.parent():
             common.set_stylesheet(self)
@@ -267,10 +266,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.section_headers_widget = QtWidgets.QWidget(parent=self)
         QtWidgets.QVBoxLayout(self.section_headers_widget)
-        self.section_headers_widget.layout().setContentsMargins(0, 0, 0, 0)
-        self.section_headers_widget.layout().setSpacing(
-            common.size(common.size_indicator) * 2
-        )
+        self.section_headers_widget.layout().setContentsMargins(o, o, o, o)
+        self.section_headers_widget.layout().setSpacing(o)
 
         parent = QtWidgets.QWidget(parent=self)
         QtWidgets.QVBoxLayout(parent)

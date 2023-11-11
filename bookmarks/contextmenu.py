@@ -1641,45 +1641,47 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.separator(menu=self.menu[k])
 
-        pp = self.index.data(common.ParentPathRole)
-        if len(pp) == 3:
-            clipboard = common.BookmarkPropertyClipboard
-        elif len(pp) == 4:
-            clipboard = common.AssetPropertyClipboard
-        else:
+        # Copy / paste menu
+        if self.index.isValid():
+            pp = self.index.data(common.ParentPathRole)
+
             clipboard = None
+            if len(pp) == 3:
+                clipboard = common.BookmarkPropertyClipboard
+            elif len(pp) == 4:
+                clipboard = common.AssetPropertyClipboard
 
-        # Copy menu
-        if self.index.isValid() and clipboard:
-            self.menu[k][key()] = {
-                'text': 'Copy properties to clipboard...',
-                'action': actions.copy_properties,
-                'icon': ui.get_icon('settings'),
-                'shortcut': shortcuts.get(
-                    shortcuts.MainWidgetShortcuts,
-                    shortcuts.CopyProperties
-                ).key(),
-                'description': shortcuts.hint(
-                    shortcuts.MainWidgetShortcuts,
-                    shortcuts.CopyProperties
-                ),
-            }
+            # Copy menu
+            if clipboard is not None:
+                self.menu[k][key()] = {
+                    'text': 'Copy Properties to Clipboard...',
+                    'action': actions.copy_properties,
+                    'icon': ui.get_icon('settings'),
+                    'shortcut': shortcuts.get(
+                        shortcuts.MainWidgetShortcuts,
+                        shortcuts.CopyProperties
+                    ).key(),
+                    'description': shortcuts.hint(
+                        shortcuts.MainWidgetShortcuts,
+                        shortcuts.CopyProperties
+                    ),
+                }
 
-        # Paste menu
-        if self.index.isValid() and clipboard and common.CLIPBOARD[clipboard]:
-            self.menu[k][key()] = {
-                'text': 'Paste properties from clipboard',
-                'action': actions.paste_properties,
-                'icon': ui.get_icon('settings'),
-                'shortcut': shortcuts.get(
-                    shortcuts.MainWidgetShortcuts,
-                    shortcuts.PasteProperties
-                ).key(),
-                'description': shortcuts.hint(
-                    shortcuts.MainWidgetShortcuts,
-                    shortcuts.PasteProperties
-                ),
-            }
+                # Paste menu
+                if common.CLIPBOARD[clipboard]:
+                    self.menu[k][key()] = {
+                        'text': 'Paste Properties from Clipboard',
+                        'action': actions.paste_properties,
+                        'icon': ui.get_icon('settings'),
+                        'shortcut': shortcuts.get(
+                            shortcuts.MainWidgetShortcuts,
+                            shortcuts.PasteProperties
+                        ).key(),
+                        'description': shortcuts.hint(
+                            shortcuts.MainWidgetShortcuts,
+                            shortcuts.PasteProperties
+                        ),
+                    }
 
         self.separator(menu=self.menu[k])
         if self.index.isValid():

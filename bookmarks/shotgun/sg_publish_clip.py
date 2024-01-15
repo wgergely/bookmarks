@@ -349,19 +349,22 @@ class PublishWidget(base.BasePropertyEditor):
                     )
 
                 # Publish steps for creating the Cut, CutInfo and Version entities
-                # Get the entity type
-                if 'task_entity' in data and data['task_entity']:
-                    entity = data['task_entity']
-                elif 'asset_entity' in data and data['asset_entity']:
-                    entity = data['asset_entity']
+                if 'asset_entity' in data and data['asset_entity']:
+                    asset_entity = data['asset_entity']
                 else:
                     raise RuntimeError('No asset or task entity found to associate with the publish.')
+
+                if 'task_entity' in data and data['task_entity']:
+                    task_entity = data['task_entity']
+                else:
+                    task_entity = None
 
                 version_data = {
                     'project': data['project_entity'],
                     'code': data['name'],
                     'description': data['description'],
-                    'entity': entity,
+                    'entity': asset_entity,
+                    'sg_task': task_entity,
                     'user': user_entity
                 }
                 version = sg.create('Version', version_data)
@@ -382,7 +385,8 @@ class PublishWidget(base.BasePropertyEditor):
 
                 cut_data = {
                     'project': data['project_entity'],
-                    'entity': entity,
+                    'entity': asset_entity,
+                    'sg_task': task_entity,
                     'description': data['description'],
                     'version': version
                 }
@@ -418,7 +422,7 @@ class PublishWidget(base.BasePropertyEditor):
             # Publish step for copying local files to their destinations
             try:
                 common.show_message(
-                    'Publishing Published File',
+                    'Creating a Published File',
                     body='Please wait while the file is being published.',
                     message_type=None,
                     buttons=[],
@@ -430,7 +434,8 @@ class PublishWidget(base.BasePropertyEditor):
                     'project': data['project_entity'],
                     'code': data['name'],
                     'description': data['description'],
-                    'entity': data['asset_entity'],
+                    'entity': asset_entity,
+                    'sg_task': task_entity,
                     'version': version,
                     'published_file_type': data['published_file_type_entity'],
                     'path': {

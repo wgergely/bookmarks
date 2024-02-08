@@ -142,9 +142,21 @@ get_filename_component(
     REALPATH BASE_DIR "${CMAKE_SOURCE_DIR}"
 )
 
-configure_file(${CMAKE_SOURCE_DIR}/build-pyside.bat.in ${PACKAGES_DIR}/build-pyside.bat)
-configure_file(${CMAKE_SOURCE_DIR}/build-package.bat.in ${PACKAGES_DIR}/build-package.bat)
-configure_file(${CMAKE_SOURCE_DIR}/build-imageutil.bat.in ${CMAKE_BINARY_DIR}/build-imageutil.bat)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/build-pyside.bat.in ${PACKAGES_DIR}/scripts/build-pyside.bat)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/build-imageutil.bat.in ${PACKAGES_DIR}/scripts/build-imageutil.bat)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/build-package.bat.in ${PACKAGES_DIR}/scripts/build-package.bat)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/python.bat.in ${PACKAGES_DIR}/scripts/python.bat)
+configure_file(${CMAKE_SOURCE_DIR}/scripts/.pythonstartup.in ${PACKAGES_DIR}/scripts/.pythonstartup)
+
+
+add_custom_command(
+	OUTPUT ${PACKAGES_DIR}/pyside-setup/build.done
+	COMMAND echo.
+	COMMAND echo "Building PySide..."
+	COMMAND ${PACKAGES_DIR}/scripts/build-pyside.bat
+	COMMAND echo "PySide build finished"
+	COMMAND echo.
+)
 
 # Build bookmarks launcher
 add_subdirectory(launcher)

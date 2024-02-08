@@ -69,7 +69,6 @@ set "Qt${QT_VERSION_MAJOR}Core_DIR=${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPL
 set "Qt${QT_VERSION_MAJOR}Gui_DIR=${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/share/cmake/Qt${QT_VERSION_MAJOR}Gui"
 set "Qt${QT_VERSION_MAJOR}Widgets_DIR=${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/share/cmake/Qt${QT_VERSION_MAJOR}Widgets"
 
-set "LLVM_INSTALL_DIR=${LLVM_INSTALL_DIR}"
 set PATH=^
 ${PYTHON_DIR};^
 ${PYTHON_DIR}\Scripts;^

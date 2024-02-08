@@ -44,11 +44,12 @@
         "pybind11",
         "tools",
         "webp"
-      ]
+      ],
+      "version>=": "2.4.17.0"
     },
     {
       "name": "openexr",
-      "version>=": "2.4.0"
+      "version>=": "2.3.0"
     },
     {
       "name": "python3",
@@ -62,11 +63,11 @@
   "overrides": [
     {
       "name": "qt5",
-      "version": "5.15.12#0"
+      "version": "5.15.3#1"
     },
     {
       "name": "openexr",
-      "version": "2.5.8#1"
+      "version": "2.3.0-5"
     },
     {
       "name": "python3",
@@ -75,7 +76,11 @@
     {
       "name": "opencolorio",
       "version": "2.1.1#2"
+    },
+    {
+      "name": "openimageio",
+      "version": "2.4.5.0#6"
     }
   ],
-  "builtin-baseline": "99369e3127f62088c59cbb97aca91ffb70b9f8c8"
+  "builtin-baseline": "f9bea5d58186dc14e7e33132e43b52222147f51e"
 }

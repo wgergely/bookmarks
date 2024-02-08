@@ -13,6 +13,61 @@ param (
     [string]$Prefix=""
 )
 
+function Get-BuildTools {
+    param(
+        [string]$ReferencePlatform
+    )
+
+    if (-not $vsBuildToolVersionMap.ContainsKey($ReferencePlatform)) {
+        Write-Error "[build-win.ps1] Error: Reference platform $ReferencePlatform is not recognised. Please consult https://vfxplatform.com for more information."
+        exit 1
+    }
+
+    $vsBuildToolVersionMap = @{
+        "CY2024" = @{ "Year" = "2022"; "Version" = "17" }
+        "CY2023" = @{ "Year" = "2022"; "Version" = "17" }
+        "CY2022" = @{ "Year" = "2019"; "Version" = "16" }
+    }
+
+
+    # Download Visual Studio Build Tools executable
+    $vsBuildToolsUrl = "https://aka.ms/vs/$($vsBuildToolVersionMap[$ReferencePlatform]["Version"])/release/vs_buildtools.exe"
+    $vsBuildToolsExePath = "vs_buildtools.exe"
+    Invoke-WebRequest -Uri $vsBuildToolsUrl -OutFile $vsBuildToolsExePath
+
+    # Define installation arguments
+    $installArgs = @(
+        "--quiet", 
+        "--wait", 
+        "--norestart", 
+        "--nocache",
+        "--installPath", "${env:ProgramFiles(x86)}\Microsoft Visual Studio\$($vsBuildToolVersionMap[$ReferencePlatform]["Year"])\BuildTools",
+        "--add", "Microsoft.VisualStudio.Workload.VCTools", "--includeRecommended",
+        "--remove", "Microsoft.VisualStudio.Component.Windows10SDK.10240",
+        "--remove", "Microsoft.VisualStudio.Component.Windows10SDK.10586",
+        "--remove", "Microsoft.VisualStudio.Component.Windows10SDK.14393",
+        "--remove", "Microsoft.VisualStudio.Component.Windows81SDK"
+    )
+
+    # Start the installation
+    $process = Start-Process -FilePath $vsBuildToolsExePath -ArgumentList $installArgs -Wait -PassThru
+
+    # Check for exit code 3010 (indicates a reboot is required) and exit accordingly
+    if ($process.ExitCode -eq 3010) {
+        Write-Host "Installation completed successfully. A reboot is required."
+        # Optionally, you can initiate a reboot here
+        # Restart-Computer
+    } elseif ($process.ExitCode -eq 0) {
+        Write-Host "Installation completed successfully."
+    } else {
+        Write-Host "Installation failed with exit code $($process.ExitCode)."
+    }
+
+    # Cleanup - Delete the downloaded installer
+    Remove-Item -Path $vsBuildToolsExePath -Force
+
+}
+
 
 function Get-BookmarksVersion {
     $PathToInitPy = Join-Path -Path $PSScriptRoot -ChildPath "../bookmarks/__init__.py"
@@ -45,7 +100,7 @@ function Get-BookmarksVersion {
 }
 
 
-function Find-VisualStudio {
+function Find-BuildTools {
     $vsVersionMap = @{
         "CY2024" = @{ "Min" = [version]"17.4"; "Max" = [version]"18.0" }
         "CY2023" = @{ "Min" = [version]"17.0"; "Max" = [version]"17.4" }
@@ -163,8 +218,9 @@ function Clone-VcpkgRepository {
 
 
 $MainFunction = {
-    [string] $vcVars64 = Find-VisualStudio
+    [string] $vcVars64 = Find-BuildTools
     if ($vcVars64 -eq "") {
+        Write-Error "[build-win.ps1] Error: Visual Studio build tools not found."
         exit 1
     }
     

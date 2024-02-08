@@ -1,0 +1,81 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "name": "bookmarks",
+    "version-string": "CY2024",
+    "dependencies": [
+      {
+        "name": "qt",
+        "version>=": "6.5.0",
+        "features": [
+          "imageformats"
+        ]
+      },
+      {
+        "name": "ffmpeg",
+        "features": [
+          "avcodec",
+          "avdevice",
+          "avfilter",
+          "avformat",
+          "avresample",
+          "bzip2",
+          "ffmpeg",
+          "fontconfig",
+          "freetype",
+          "lzma",
+          "opengl",
+          "swresample",
+          "swscale",
+          "x264",
+          "x265",
+          "zlib"
+        ]
+      },
+      {
+        "name": "openimageio",
+        "features": [
+          "ffmpeg",
+          "freetype",
+          "gif",
+          "libheif",
+          "libraw",
+          "opencolorio",
+          "openjpeg",
+          "pybind11",
+          "tools",
+          "webp"
+        ]
+      },
+      {
+        "name": "openexr",
+        "version>=": "3.2.0"
+      },
+      {
+        "name": "python3",
+        "version>=": "3.11.0"
+      },
+      {
+        "name": "opencolorio",
+        "version>=": "2.3.0"
+      }
+    ],
+    "overrides": [
+      {
+        "name": "qt",
+        "version": "6.5.3#10"
+      },
+      {
+        "name": "openexr",
+        "version": "3.2.0#10"
+      },
+      {
+        "name": "python3",
+        "version": "3.11.7#10"
+      },
+      {
+        "name": "opencolorio",
+        "version": "2.2.0#10"
+      }
+    ],
+    "builtin-baseline": "99369e3127f62088c59cbb97aca91ffb70b9f8c8"
+  }

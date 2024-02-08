@@ -1,9 +1,11 @@
 @echo off
-@REM Packaging script for Bookmark's Windows distribution
+@REM -----------------------------------------------------------
+@REM Packaging script for making Bookmark's Windows distribution
+@REM -----------------------------------------------------------
 
+@REM Clean existing distribution
 if EXIST "${PACKAGE_DIR}" rmdir "${PACKAGE_DIR}" /S /Q
 
-@REM 
 mkdir "${PACKAGE_DIR}"
 mkdir "${PACKAGE_DIR}/bin"
 mkdir "${PACKAGE_DIR}/core"
@@ -16,7 +18,7 @@ mkdir "${PACKAGE_DIR}/shared"
 robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/tools/python${PYTHON_VERSION_MAJOR}/DLLs" "${PACKAGE_DIR}/DLLs" *.dll *.pyd *.exe /R:0 /W:0
 robocopy "${PACKAGES_DIR}/python-embed" "${PACKAGE_DIR}" python${PYTHON_VERSION_MAJOR}.dll python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.zip vcruntime* /R:0 /W:0
 robocopy "${PACKAGES_DIR}/python" "${PACKAGE_DIR}" *.dll *.pyd *.exe /R:0 /W:0 /XF pythonw.exe _freeze_importlib.exe venv*
-robocopy "${CMAKE_SOURCE_DIR}" "${PACKAGE_DIR}" .pythonstartup python.bat /R:0 /W:0
+robocopy "${PACKAGES_DIR}/scripts" "${PACKAGE_DIR}" .pythonstartup python.bat /R:0 /W:0
 
 @REM vcpkg openimageio
 robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/tools/openimageio" "${PACKAGE_DIR}/bin" *.dll *.exe /R:0 /W:0
@@ -46,8 +48,8 @@ robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${SHIBOKEN_LOWER}/libshibok
 robocopy "${CMAKE_BINARY_DIR}/launcher/Release" "${PACKAGE_DIR}" *.exe /R:0 /W:0
 
 @REM imageutil
-robocopy "${CMAKE_BINARY_DIR}/imageutil/Release" "${PACKAGE_DIR}/bin" *.exe *.dll /R:0 /W:0
-robocopy "${CMAKE_BINARY_DIR}/imageutil/build/Release" "${PACKAGE_DIR}/shared" *.pyd /R:0 /W:0
+robocopy "${PACKAGES_DIR}/imageutil/Release" "${PACKAGE_DIR}/bin" *.exe *.dll /R:0 /W:0
+robocopy "${PACKAGES_DIR}/imageutil/build/Release" "${PACKAGE_DIR}/shared" *.pyd /R:0 /W:0
 
 @REM bookmarks
 robocopy "${CMAKE_SOURCE_DIR}/../bookmarks" "${PACKAGE_DIR}/shared/bookmarks" *.* /R:0 /W:0 /e

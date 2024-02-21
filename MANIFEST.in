@@ -1,2 +1,0 @@
-recursive-include bookmarks *.py *.png *.qss *.ttf *.ico *.md
-recursive-include bookmarks/rsc *.py *.png *.qss *.ttf *.ico *.md

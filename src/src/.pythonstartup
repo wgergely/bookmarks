@@ -1,0 +1,34 @@
+"""Python interactive console setup.
+
+"""
+import os, sys
+
+
+
+print(f"\nBookmarks v{os.environ['Bookmarks_VERSION']}\n")
+
+__directories__ = (
+    'bin',
+    'private',
+    'shared'
+)
+
+# Use add_dll_directory if the python version is 3.8 or higher
+fdir = os.path.dirname(os.path.abspath(__file__))
+for v in __directories__:
+    path = os.path.join(os.path.dirname(fdir), v)
+
+    try:
+        path = os.path.abspath(os.path.normpath(path))
+    except Exception as e:
+        sys.stdout.write(f'Error: {e}\n')
+        raise SystemExit(1)
+
+    if not os.path.exists(path):
+        sys.stdout.write(f'Directory {path} does not exist\n')
+        raise SystemExit(1)
+    
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
+        os.add_dll_directory(path)
+    else:
+        os.environ['PATH'] = os.pathsep.join([path, os.environ['PATH']])

@@ -1,0 +1,30 @@
+{
+    "CY2021": {
+        "vs_year": "2017",
+        "vs_min": "15.0",
+        "vs_max": "16.0",
+        "vs_version": "15",
+        "vs_url": "https://aka.ms/vs/15/release/vs_buildtools.exe"
+    },
+    "CY2022": {
+        "vs_year": "2019",
+        "vs_min": "16.9",
+        "vs_max": "17.0",
+        "vs_version": "16",
+        "vs_url": "https://aka.ms/vs/16/release/vs_buildtools.exe"
+    },
+    "CY2023": {
+        "vs_year": "2022",
+        "vs_min": "17.0",
+        "vs_max": "18.0",
+        "vs_version": "17",
+        "vs_url": "https://aka.ms/vs/17/release/vs_buildtools.exe"
+    },
+    "CY2024": {
+        "vs_year": "2022",
+        "vs_min": "17.4",
+        "vs_max": "18.0",
+        "vs_version": "17",
+        "vs_url": "https://aka.ms/vs/17/release/vs_buildtools.exe"
+    }
+}

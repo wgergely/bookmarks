@@ -1,0 +1,22 @@
+{
+    "pyside2": {
+        "name": "libclang-release_14.0.3-based-windows-vs2019_64.7z",
+        "version": "14.0.3",
+        "sources": [
+            "https://download.qt.io/development_releases/prebuilt/libclang",
+            "https://mirrors.ocf.berkeley.edu/qt/development_releases/prebuilt/libclang",
+            "https://ftp.fau.de/qtproject/development_releases/prebuilt/libclang"
+        ],
+        "md5": "2441e788a6d07e547b5dba6784e9a87b"
+    },
+    "pyside6": {
+        "name": "libclang-release_17.0.1-based-windows-vs2019_64.7z",
+        "version": "17.0.1",
+        "sources": [
+            "https://download.qt.io/development_releases/prebuilt/libclang",
+            "https://mirrors.ocf.berkeley.edu/qt/development_releases/prebuilt/libclang",
+            "https://ftp.fau.de/qtproject/development_releases/prebuilt/libclang"
+        ],
+        "md5": "e288819c1eb0fb0c05c967d6970c6f8d"
+    }
+}

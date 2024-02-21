@@ -1,3 +1,0 @@
-#define VERSION_MAJOR ${Bookmarks_VERSION_MAJOR}
-#define VERSION_MINOR ${Bookmarks_VERSION_MINOR}
-#define VERSION_PATCH ${Bookmarks_VERSION_PATCH}

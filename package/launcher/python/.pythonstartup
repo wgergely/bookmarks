@@ -1,6 +1,0 @@
-"""Python interactive console setup.
-"""
-import os, sys
-os.add_dll_directory(os.environ["PYTHONHOME"])
-os.add_dll_directory(os.path.join(os.environ["PYTHONHOME"], "bin"))
-os.add_dll_directory(os.path.join(os.environ["PYTHONHOME"], "core"))

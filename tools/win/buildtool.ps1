@@ -99,14 +99,14 @@ function Find-BuildTools {
     Write-Message -m "Looking for Visual Studio build tools using $vsWhere"
     
     if (-not (Test-Path $vsWhere)) {
-        Write-Message -t "error" "vswhere.exe was not found."
+        Write-Message -t "warning" "$vsWhere was not found."
         return ""
     }
 
     # Find all installed Visual Studio instances that have the required VC tools
     $vsInstances = & $vsWhere -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -format json | ConvertFrom-Json
     if ($vsInstances.Count -eq 0) {
-        Write-Message -t "error" "No Visual Studio instances found with the required VC tools."
+        Write-Message -t "warning" "No Visual Studio instances found with the required VC tools."
         return ""
     }
 
@@ -175,16 +175,19 @@ function Install-BuildTools {
 
     # Download the Build Tools bootstrapper
     $installer = Join-Path -Path $env:TEMP -ChildPath "vs_buildtools_$($referencePlatforms.$referencePlatform.vs_year).exe"
-    Write-Message -m "Downloading Visual Studio Build Tools installer to $installer"
-
-    Invoke-WebRequest -Uri $referencePlatforms.$referencePlatform.vs_url -OutFile $installer
-
-    # Make sure the uri can be downloaded and is a valid link:
-    if ($LASTEXITCODE -ne 0) {
-        Write-Message -t "error" "Failed to download the Visual Studio Build Tools installer."
-        exit 1
+    
+    if (Test-Path -Path $installer) {
+        Write-Message -m "Removing existing Visual Studio Build Tools installer at $installer"
+        Remove-Item -Path $installer -Force
+        if (Test-Path -Path $installer) {
+            Write-Message -t "error" "Failed to remove existing Visual Studio Build Tools installer at $installer."
+            exit 1
+        }
     }
-    # Make sure the installer was downloaded successfully
+    
+    Write-Message -m "Downloading $($referencePlatforms.$referencePlatform.vs_url) to $installer"
+    
+    Invoke-WebRequest -Uri $referencePlatforms.$referencePlatform.vs_url -OutFile $installer
     if (-not (Test-Path -Path $installer)) {
         Write-Message -t "error" "File not found at path: $installer. Failed to download the Visual Studio Build Tools installer."
         exit 1

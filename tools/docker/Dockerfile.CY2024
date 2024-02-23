@@ -1,11 +1,7 @@
-# escape=\
+# escape=`
 
-# Use the latest Windows Server Core image with .NET Framework
 FROM mcr.microsoft.com/dotnet/framework/runtime:4.8.1-windowsservercore-ltsc2022
 
-
-# Set default powershell policy for this script (ProgressPreference='SilentlyContinue' makes
-# downloads with Invoke-WebRequest not show the progress bar and is MUCH faster).
 SHELL ["powershell.exe", "-nologo", "-ExecutionPolicy", "Bypass", "-Command", "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; $VerbosePreference = 'SilentlyContinue';"]
 
 ARG CMAKE=https://github.com/Kitware/CMake/releases/download/v3.28.3/cmake-3.28.3-windows-x86_64.msi
@@ -14,83 +10,91 @@ ARG GIT=https://github.com/git-for-windows/git/releases/download/v2.42.0.windows
 ARG GIT_SHA256=BD9B41641A258FD16D99BEECEC66132160331D685DFB4C714CEA2BCC78D63BDB
 ARG MODULE_NAME=bookmarks
 ARG REPO=https://github.com/wgergely/${MODULE_NAME}
+ARG REFERENCE_PLATFORM=CY2024
 
-# Enable Long Paths for Win32 File/Folder APIs.
-RUN New-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem \
+RUN New-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem `
         -Name LongPathsEnabled -Value 1 -PropertyType DWORD -Force
 
-# Install Visual C++ Redistributable for Visual Studio 2015-2022.
-RUN New-Item -Path "C:/" -Name "TEMP" -ItemType "directory"; \
-    Invoke-WebRequest "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile C:/TEMP/vc_redist.x64.exe -UseBasicParsing | Out-Null; \
-    Start-Process -filepath C:/TEMP/vc_redist.x64.exe -ArgumentList '/install', '/passive', '/norestart' -Wait; \
+RUN New-Item -Path "C:/" -Name "TEMP" -ItemType "directory"; `
+    Invoke-WebRequest "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile C:/TEMP/vc_redist.x64.exe -UseBasicParsing | Out-Null; `
+    Start-Process -filepath C:/TEMP/vc_redist.x64.exe -ArgumentList '/install', '/passive', '/norestart' -Wait; `
     Remove-Item C:/TEMP/vc_redist.x64.exe
 
-RUN Write-Host -NoNewLine ('Downloading {0} ... ' -f ${env:CMAKE}); \
-    Invoke-WebRequest -Uri ${env:CMAKE} -OutFile "cmake.msi" | Out-Null; \
-    Write-Host '[ok]'; \
-    Write-Host -NoNewLine ('Verifying SHA256 ({0}) ... ' -f ${env:CMAKE_SHA256}); \
-    $Hash = Get-FileHash cmake.msi -Algorithm sha256; \
-    if ($Hash.Hash -eq ${env:CMAKE_SHA256}) { \
-      Write-Host '[ok]'; \
-    } else { \
-      Write-Host ('Hash does not match ({0})' -f $Hash.Hash); \
-      exit 1; \
-    } \
-    Write-Host -NoNewLine 'Installing cmake ... '; \
-    Start-Process msiexec.exe -Wait -ArgumentList '/I cmake.msi /quiet'; \
+RUN Write-Host -NoNewLine ('Downloading {0} ... ' -f ${env:CMAKE}); `
+    Invoke-WebRequest -Uri ${env:CMAKE} -OutFile "cmake.msi" | Out-Null; `
+    Write-Host '[ok]'; `
+    Write-Host -NoNewLine ('Verifying SHA256 ({0}) ... ' -f ${env:CMAKE_SHA256}); `
+    $Hash = Get-FileHash cmake.msi -Algorithm sha256; `
+    if ($Hash.Hash -eq ${env:CMAKE_SHA256}) { `
+      Write-Host '[ok]'; `
+    } else { `
+      Write-Host ('Hash does not match ({0})' -f $Hash.Hash); `
+      exit 1; `
+    } `
+    Write-Host -NoNewLine 'Installing cmake ... '; `
+    Start-Process msiexec.exe -Wait -ArgumentList '/I cmake.msi /quiet'; `
     Remove-Item cmake.msi -Force
 
-RUN Write-Host -NoNewLine ('Downloading {0} ... ' -f ${env:GIT}); \
-    Invoke-WebRequest -Uri ${env:GIT} -OutFile git.exe | Out-Null; \
-    Write-Host '[ok]'; \
-    Write-Host -NoNewLine ('Verifying SHA256 ({0}) ... ' -f ${env:GIT_SHA256}); \
-    $Hash = Get-FileHash git.exe -Algorithm sha256; \
-    if ($Hash.Hash -eq ${env:GIT_SHA256}) { \
-      Write-Host '[ok]'; \
-    } else { \
-      Write-Host ('Hash does not match ({0})' -f $Hash.Hash); \
-      exit 1; \
-    } \
-    Write-Host -NoNewLine 'Installing git ... '; \
-    $Process = \
-        Start-Process git.exe -Wait -PassThru -NoNewWindow -ArgumentList @( \
-          '/SP-', \
-          '/VERYSILENT', \
-          '/SUPPRESSMSGBOXES', \
-          '/NOCANCEL', \
-          '/NORESTART', \
-          '/CLOSEAPPLICATIONS', \
-          '/FORCECLOSEAPPLICATIONS', \
-          '/NOICONS', \
-          '/COMPONENTS="gitlfs"', \
-          '/EditorOption=VIM', \
-          '/PathOption=Cmd', \
-          '/SSHOption=OpenSSH', \
-          '/CURLOption=WinSSL', \
-          '/UseCredentialManager=Enabled', \
-          '/EnableSymlinks=Enabled', \
-          '/EnableFSMonitor=Enabled' \
-        ); \
-    if ($Process.ExitCode -eq 0) { \
-      Write-Host '[ok]'; \
-    } else { \
-      Write-Host ('Git install failed ({0})' -f $Process.ExitCode); \
-      exit 1; \
-    } \
-    Remove-Item -Force git.exe; \
-    Remove-Item -ErrorAction SilentlyContinue -Force -Recurse ${env:TEMP}\*
+RUN Write-Host -NoNewLine ('Downloading {0} ... ' -f ${env:GIT}); `
+    Invoke-WebRequest -Uri ${env:GIT} -OutFile git.exe | Out-Null; `
+    Write-Host '[ok]'; `
+    Write-Host -NoNewLine ('Verifying SHA256 ({0}) ... ' -f ${env:GIT_SHA256}); `
+    $Hash = Get-FileHash git.exe -Algorithm sha256; `
+    if ($Hash.Hash -eq ${env:GIT_SHA256}) { `
+      Write-Host '[ok]'; `
+    } else { `
+      Write-Host ('Hash does not match ({0})' -f $Hash.Hash); `
+      exit 1; `
+    } `
+    Write-Host -NoNewLine 'Installing git ... '; `
+    $Process = `
+        Start-Process git.exe -Wait -PassThru -NoNewWindow -ArgumentList @( `
+          '/SP-', `
+          '/VERYSILENT', `
+          '/SUPPRESSMSGBOXES', `
+          '/NOCANCEL', `
+          '/NORESTART', `
+          '/CLOSEAPPLICATIONS', `
+          '/FORCECLOSEAPPLICATIONS', `
+          '/NOICONS', `
+          '/COMPONENTS="gitlfs"', `
+          '/EditorOption=VIM', `
+          '/PathOption=Cmd', `
+          '/SSHOption=OpenSSH', `
+          '/CURLOption=WinSSL', `
+          '/UseCredentialManager=Enabled', `
+          '/EnableSymlinks=Enabled', `
+          '/EnableFSMonitor=Enabled' `
+        ); `
+    if ($Process.ExitCode -eq 0) { `
+      Write-Host '[ok]'; `
+    } else { `
+      Write-Host ('Git install failed ({0})' -f $Process.ExitCode); `
+      exit 1; `
+    } `
+    Remove-Item -Force git.exe;
 
-RUN Write-Host -NoNewLine 'Cloning repository ... '; \
-    git clone ${env:REPO} C:/${env:MODULE_NAME}; \
-    cd C:/${env:MODULE_NAME}; \
+RUN Write-Host -NoNewLine 'Cloning repository ... '; `
+    git clone ${env:REPO} C:/${env:MODULE_NAME}; `
+    cd C:/${env:MODULE_NAME}; `
+    git config --add safe.directory "C:/${env:MODULE_NAME}"; `
     git checkout 91-rework-the-package-submodule;
 
 ARG TOOLS_DIR=C:/${MODULE_NAME}/tools
 ARG BUILD_SCRIPT=${TOOLS_DIR}/win-build.ps1
 
-RUN Write-Host -NoNewLine ('Running {0} ... ' -f ${env:BUILD_SCRIPT}); \
-    if (-not (Test-Path "${env:BUILD_SCRIPT}")) { \
-        Write-Host ('File not found ({0})' -f ${env:BUILD_SCRIPT}); \
-        exit 1; \
-    } \
-    & ${env:BUILD_SCRIPT} -r "CY2024" -SkipVcpkg -SkipPySide -SkipDist -SkipApp; \
+RUN Write-Host ('[setup] Bootstrapping ... '); `
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipApp -SkipDist;
+RUN Write-Host ('[setup] Building dependencies ... '); `
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipPySide -SkipApp -SkipDist;
+RUN Write-Host ('[setup] Building PySide ... '); `
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipApp -SkipDist;
+RUN Write-Host ('[setup] Building App ... '); `
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipDist;
+RUN Write-Host ('[setup] Building distributable ... '); `
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipApp;
+
+# RUN Remove-Item -ErrorAction SilentlyContinue -Force -Recurse ${env:TEMP}\*
+
+WORKDIR C:/${MODULE_NAME}
+CMD ["powershell"]

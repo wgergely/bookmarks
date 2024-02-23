@@ -1,7 +1,7 @@
 {
   "documentation_url": "https://bookmarks-vfx.com",
   "github_url": "https://github.com/wgergely/bookmarks",
-  "env_key": "BOOKMARKS_ROOT",
+  "env_key": "Bookmarks_ROOT",
   "product": "bookmarks",
   "organization": "bookmarks",
   "organization_domain": "bookmarks-vfx.com",

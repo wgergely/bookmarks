@@ -87,7 +87,7 @@ Source: "${ICON_FILE}"; DestName: "icon.ico"; DestDir: "{app}"; Flags: ignorever
 
 [Registry]
 ; Used by the DCC plugins and the standalone executable to locate the install dir
-Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "BOOKMARKS_ROOT"; ValueData: "{app}";
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Bookmarks_ROOT"; ValueData: "{app}";
 
 ; Install path
 Root: HKCU; Subkey: "Software/{#MyAppName}/{#MyAppName}";  ValueData: "{app}/{#MyAppExeName}";  ValueType: string;  ValueName: "installpath"

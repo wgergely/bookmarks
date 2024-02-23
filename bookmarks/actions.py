@@ -1645,7 +1645,7 @@ def execute_detached(path, args=None):
 
         # But we do want to pass on the currently active items. This information can be used in an
         # unsupported DCC to manipulate context
-        env.insert('BOOKMARKS_ROOT', os.environ['BOOKMARKS_ROOT'])
+        env.insert('Bookmarks_ROOT', os.environ['Bookmarks_ROOT'])
         env.insert('BOOKMARKS_ACTIVE_SERVER', common.active('server'))
         env.insert('BOOKMARKS_ACTIVE_JOB', common.active('job'))
         env.insert('BOOKMARKS_ACTIVE_ROOT', common.active('root'))

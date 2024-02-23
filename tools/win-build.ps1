@@ -58,7 +58,7 @@ param (
 function Save-Environment {
     # Create a new global hashtable to store environment variables
     $global:SavedEnv = @{}
-    $global:BuildVerbosity = $Verbosity
+    $global:SavedCwd = Get-Location
 
     # Map the verbosity to msbuild's -verbosity flag
     switch ($Verbosity) {
@@ -86,7 +86,6 @@ function Save-Environment {
         }
     }
 
-
     # Capture and store all current environment variables
     Get-ChildItem -Path Env: | ForEach-Object {
         $global:SavedEnv[$_.Name] = $_.Value
@@ -95,22 +94,28 @@ function Save-Environment {
 
 
 function Restore-Environment {
+    if ($null -eq $global:SavedCwd) {
+        Write-Message -t "warning" -m "No current working directory was saved to restore."
+    } else {
+        Set-Location -Path $global:SavedCwd
+    }
+
     if ($null -eq $global:SavedEnv) {
         Write-Message -t "warning" -m "No environment was saved to restore."
         return
-    }
+    } else {
+        # Restore saved environment variables
+        foreach ($key in $global:SavedEnv.Keys) {
+            [System.Environment]::SetEnvironmentVariable($key, $global:SavedEnv[$key], [System.EnvironmentVariableTarget]::Process)
+        }
 
-    # Restore saved environment variables
-    foreach ($key in $global:SavedEnv.Keys) {
-        [System.Environment]::SetEnvironmentVariable($key, $global:SavedEnv[$key], [System.EnvironmentVariableTarget]::Process)
-    }
+        # Identify and remove any variables that were added after Save-Environment was called
+        $currentVars = Get-ChildItem -Path Env: | ForEach-Object { $_.Name }
+        $varsToRemove = $currentVars | Where-Object { $global:SavedEnv.ContainsKey($_) -eq $false }
 
-    # Identify and remove any variables that were added after Save-Environment was called
-    $currentVars = Get-ChildItem -Path Env: | ForEach-Object { $_.Name }
-    $varsToRemove = $currentVars | Where-Object { $global:SavedEnv.ContainsKey($_) -eq $false }
-
-    foreach ($var in $varsToRemove) {
-        [System.Environment]::SetEnvironmentVariable($var, $null, [System.EnvironmentVariableTarget]::Process)
+        foreach ($var in $varsToRemove) {
+            [System.Environment]::SetEnvironmentVariable($var, $null, [System.EnvironmentVariableTarget]::Process)
+        }
     }
 }
 

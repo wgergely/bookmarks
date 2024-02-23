@@ -3,10 +3,6 @@
 """
 import os, sys
 
-
-
-print(f"\nBookmarks v{os.environ['Bookmarks_VERSION']}\n")
-
 __directories__ = (
     'bin',
     'private',

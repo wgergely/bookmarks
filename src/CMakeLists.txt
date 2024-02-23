@@ -18,6 +18,12 @@ option(BUILD_PY "Build Python bindings" ON)
 option(BUILD_APP "Build app" ON)
 option(BUILD_IMAGEUTIL "Build imageutil" ON)
 
+# Copy the icon file to the build directory
+configure_file(
+    "${CMAKE_SOURCE_DIR}/../bookmarks/rsc/icon.ico"
+    "${CMAKE_CURRENT_BINARY_DIR}/icon.ico" COPYONLY
+)
+
 # ===================================
 # Vcpkg
 # ===================================
@@ -58,15 +64,14 @@ endif()
 if (BUILD_PY)
     message(STATUS "[BOOKMARKS] [*] Building Py")
 
-    add_executable(Py ${CMAKE_CURRENT_SOURCE_DIR}/src/py.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp)
-
-    target_include_directories(Py PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-    # Define install
-    install(TARGETS Py DESTINATION bin)
+    add_executable(Python ${CMAKE_CURRENT_SOURCE_DIR}/src/python.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
+    target_include_directories(Python PRIVATE Python::Python ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(Python Python::Python)
+    set_target_properties(Python PROPERTIES OUTPUT_NAME "python")
+    install(TARGETS Python DESTINATION bin)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/.pythonstartup" DESTINATION bin)
 else()
-    message(STATUS "[BOOKMARKS] [ ] Skipping Py")
+    message(STATUS "[BOOKMARKS] [ ] Skipping Python")
 endif()
 
 # ===================================
@@ -76,36 +81,28 @@ endif()
 if (BUILD_APP)
     message(STATUS "[BOOKMARKS] [*] Building App")
     
-    # No Console Window
-    add_executable(app ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc)
+    # App launcher
+    add_executable(App ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
+    target_include_directories(App PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    set_target_properties(App PROPERTIES OUTPUT_NAME "Bookmarks")
+    set_property(TARGET App PROPERTY VS_SPECTRE_MITIGATION "Bookmarks.manifest")
+    target_compile_definitions(App PRIVATE NO_CONSOLE=1)
+    install(TARGETS App DESTINATION bin)
 
-    target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include Python::Python)
+    # App launcher with console window
+    add_executable(App-Console ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
+    target_include_directories(App-Console PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    set_target_properties(App-Console PROPERTIES OUTPUT_NAME "Bookmarks-console")
+    set_property(TARGET App-Console PROPERTY VS_SPECTRE_MITIGATION "Bookmarks.manifest")
+    install(TARGETS App-Console DESTINATION bin)
 
-    target_compile_definitions(app PRIVATE NO_CONSOLE=1)
-
-    set_target_properties(app PROPERTIES OUTPUT_NAME "Bookmarks")
-    target_link_libraries(app Python::Python)
-    set_property(TARGET app PROPERTY VS_SPECTRE_MITIGATION "Bookmarks.manifest")
-
-    # Console Window
-    add_executable(app-console ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc)
-
-    target_include_directories(app-console PRIVATE Python::Python)
-    target_include_directories(app-console PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-    set_target_properties(app-console PROPERTIES OUTPUT_NAME "Bookmarks-console")
-    target_link_libraries(app-console Python::Python)
-    set_property(TARGET app-console PROPERTY VS_SPECTRE_MITIGATION "Bookmarks.manifest")
-
-    # Copy the icon file to the build directory
-    configure_file(
-        "${CMAKE_SOURCE_DIR}/../bookmarks/rsc/icon.ico"
-        "${CMAKE_CURRENT_BINARY_DIR}/icon.ico" COPYONLY
-    )
-
-    # Define install
-    install(TARGETS app DESTINATION bin)
-    install(TARGETS app-console DESTINATION bin)
+    # Python code launcher
+    add_executable(Py-Launcher ${CMAKE_CURRENT_SOURCE_DIR}/src/py-launcher.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
+    target_include_directories(Py-Launcher PRIVATE Python::Python ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(Py-Launcher Python::Python)
+    set_target_properties(Py-Launcher PROPERTIES OUTPUT_NAME "py-launcher")
+    target_compile_definitions(Py-Launcher PRIVATE NO_CONSOLE=1)
+    install(TARGETS Py-Launcher DESTINATION bin)
 else()
     message(STATUS "[BOOKMARKS] [ ] Skipping App")
 endif()

@@ -1,6 +1,6 @@
 """Bookmarks' Maya plugin.
 
-Make sure the BOOKMARKS_ROOT environment variable is set to point the root of the
+Make sure the Bookmarks_ROOT environment variable is set to point the root of the
 Bookmarks distribution package as it is required to find and load all the
 necessary dependencies.
 
@@ -44,16 +44,16 @@ def _add_path_to_path(v, p):
         os.environ['PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
 
 
-def init_environment(key='BOOKMARKS_ROOT', pyside=False):
+def init_environment(key='Bookmarks_ROOT', pyside=False):
     """Add the dependencies required to run Bookmarks to a python environment.
 
-    The Bookmarks installer should set the 'BOOKMARKS_ROOT' environment variable to
+    The Bookmarks installer should set the 'Bookmarks_ROOT' environment variable to
     the installation directory. This is required to load the python modules into the
     current environment.
 
     Args:
         key (str): The environment variable used to find the distribution directory.
-            Optional, defaults to 'BOOKMARKS_ROOT
+            Optional, defaults to 'Bookmarks_ROOT
         pyside (bool):
             Adds the PySide modules bundled with Bookmarks if True.
             Optional, defaults to False.

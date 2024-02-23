@@ -314,7 +314,7 @@ function Build-Dist {
         }
         
         # Python dlls
-        if ($line -match "^.*[\\/](python(?:[0-9]*|w)\.(?:dll|exe))$") {
+        if ($line -match "^.*[\\/](python(?:[0-9]*|w)\.(?:dll))$") {
             $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
         }
         
@@ -432,10 +432,10 @@ function Build-Dist {
             continue
         }
         
-        if ($source -match "^.*[\\/]bin[\\/]((?:Bookmarks.*|Py)\.exe)$") {
+        if ($source -match "^.*[\\/]bin[\\/]((?:Bookmarks.*)\.exe)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "$($matches[1])"
         }
-        if ($source -match "^.*[\\/]bin[\\/]((?!(?:Bookmarks.*|Py)\.exe).*)$") {
+        if ($source -match "^.*[\\/]bin[\\/]((?!(?:Bookmarks.*)\.exe).*)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
         }
         if ($source -match "^.*[\\/]lib[\\/]site-packages[\\/](.*\.pyd)$") {
@@ -453,10 +453,6 @@ function Build-Dist {
         if (-not (Test-Path -Path $destinationDir)) {
             Write-Message -m "Creating directory $destinationDir"
             New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
-        }
-
-        if (-not (Compare-Files -s $source -d $destination)) {
-            continue
         }
 
         Write-Message -m "Copying $source to $destination"

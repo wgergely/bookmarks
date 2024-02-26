@@ -97,7 +97,7 @@ if (BUILD_APP)
     install(TARGETS App-Console DESTINATION bin)
 
     # Python code launcher
-    add_executable(Py-Launcher ${CMAKE_CURRENT_SOURCE_DIR}/src/py-launcher.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
+    add_executable(Py-Launcher ${CMAKE_CURRENT_SOURCE_DIR}/src/py-launcher.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
     target_include_directories(Py-Launcher PRIVATE Python::Python ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(Py-Launcher Python::Python)
     set_target_properties(Py-Launcher PROPERTIES OUTPUT_NAME "py-launcher")
@@ -114,32 +114,28 @@ if (BUILD_IMAGEUTIL)
     find_package(pybind11 REQUIRED)
     find_package(OpenImageIO CONFIG REQUIRED)
     
-    # pyimageutil library
-    pybind11_add_module(pyimageutil MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/pyimageutil.cpp)
-    target_compile_definitions(pyimageutil PRIVATE -DBUILD_PYBIND11)
-
-    target_include_directories(pyimageutil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
-
-    target_link_libraries(pyimageutil PUBLIC OpenImageIO::OpenImageIO)
-    target_link_libraries(pyimageutil PRIVATE pybind11::pybind11)
+    # App-OpenImageIO library
+    pybind11_add_module(Py-ImageUtil MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/pyimageutil.cpp)
+    target_include_directories(Py-ImageUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
+    target_link_libraries(Py-ImageUtil PUBLIC OpenImageIO::OpenImageIO)
+    target_link_libraries(Py-ImageUtil PRIVATE pybind11::pybind11)
+    set_target_properties(Py-ImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
+    install(TARGETS Py-ImageUtil DESTINATION lib/site-packages)
 
     # imageutil library
-    add_library(libimageutil STATIC src/pyimageutil.cpp)
-
-    target_include_directories(libimageutil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
-    target_link_libraries(libimageutil PUBLIC OpenImageIO::OpenImageIO)
-
+    add_library(LibImageUtil STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/pyimageutil.cpp)
+    target_include_directories(LibImageUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
+    target_link_libraries(LibImageUtil PUBLIC OpenImageIO::OpenImageIO)
+    set_target_properties(LibImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
+    install(TARGETS LibImageUtil DESTINATION lib)
+    
     # imageutil executable
-    add_executable(imageutil src/imageutil.cpp)
-
-    target_include_directories(imageutil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
-    target_link_libraries(imageutil PRIVATE libimageutil)
-    add_dependencies(imageutil libimageutil)
-
-    # Define install
-    install(TARGETS pyimageutil DESTINATION lib/site-packages)
-    install(TARGETS libimageutil DESTINATION lib)
-    install(TARGETS imageutil DESTINATION bin)
+    add_executable(ImageUtil ${CMAKE_CURRENT_SOURCE_DIR}/src/imageutil.cpp)
+    add_dependencies(ImageUtil LibImageUtil)
+    target_include_directories(ImageUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
+    target_link_libraries(ImageUtil PRIVATE libimageutil)
+    set_target_properties(ImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
+    install(TARGETS ImageUtil DESTINATION bin)
 else()
     message(STATUS "[BOOKMARKS] [ ] Skipping imageutil")
 endif()

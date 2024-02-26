@@ -1,53 +1,41 @@
-# Bookmarks: Windows Package
+# Build Tools
 
-This folder contains the build scripts of Bookmarks' Windows distribution. Please note other platforms are not (yet) supported.
+This folder contains the build tools used to generate dependencies and environment for the Bookmarks application.
+We build against the [VFX Reference Platform](https://vfxplatform.com/) specifications and use [vcpkg](https://github.com/microsoft/vcpkg) to manage dependencies.
 
-The build process is designed to be used with Visual Studio 2019 and above, and requires the use of the Visual Studio x64 command console - preferably from an elevated command prompt. Prior to building, ensure that cmake, git, and Visual Studio are installed on the build system.
+> **_NOTE:_** Only Windows build scripts are provided.
 
+### Build Instructions
 
-## Build Process Summary
+Run `win-build.ps1` with the desired Reference Platform version (e.g. CY2024 or CY2023):
 
-The top-level `build.bat` script is responsible for building the application package including all binary dependencies.
-Build.bat uses CMake to build and acquire dependencies (Qt, FFMpeg and OpenImageIO and PySide).
-
-All final build artifacts are gathered and copied to the `./package/build/package`.
-
-
-## Usage
-
-From Visual Studio x64 command console navigate to the project directory andrun the `build.bat`.
-
+```powershell
+./win-build.ps1 -ReferencePlatform CY2024
 ```
 
-cd C:/bookmarks/package
-cmd /c build.bat
+### Prerequisites
 
+- CMake 3.18 or later
+- Git 2.28 or later
+- PowerShell 5.0 or later
+
+### Build Steps
+
+`win-build.ps1` runs the following build steps:
+- `[setup]`: Downloads and installs a reference platform compatible `Visual Studio Build Tools` version
+- `[vcpkg]`: Builds binary dependencies using vcpkg and predefined manifest files
+- `[pyside]`: Builds PySide from source
+- `[app]`: Builds application libraries and executables
+- `[dist]`: Creates the application distribution folder
+- `[installer]`: Creates the application installer
+
+Steps can be skipped or reset using `-Skip*` and `-Reset*` flags:
+
+```powershell
+./win-build.ps1 -r CY2024 -SkipVcpkg -SkipPySide -SkipApp -SkipDist -ResetInstaller
 ```
 
-## Build Files
+### Application Package
 
-### build.bat
-
-This is the top-level build script responsible for orchestrating the build process. It invokes cmake to configure Bookmarks.sln and calls the secondary build scripts in the following order:
-
-* ##### Bookmarks.sln
-    It sets up the project and specifies various options and dependencies. Make sure you have the required tools and dependencies installed before running CMake. The vcpkg library dependencies built by the CMake script include:
-    - OpenImageIO
-    - Qt
-    - FFMpeg
-* ##### build-imageutil.bat
-    This script builds the imageutil project (the library used by bookmarks to wrap OpenImageIO).
-* ##### build-pyside.bat
-    This script builds PySide from source. It performs the following tasks:
-    - Copies Python files and libraries from the vcpkg directory to the Python directory.
-    - Clones the PySide repository and checks out the required version.
-    - Installs necessary Python dependencies.
-    - Sets up the build environment.
-    - Configures CMake with appropriate options.
-    - Builds the PySide solution.
-* ##### Build-Dist.bat
-    Responsible for packaging the Bookmarks application for distribution. It performs the following tasks:
-    - Creates the necessary directories for the package.
-    - Copies the required files, including DLLs, plugins, and dependencies, to the package directory.
-    - Installs Python dependencies.
-    - Copies the Bookmarks source code to the package.
+The script will, by default, place all build artifacts to `C:/build/{ReferencePlatform}-{Version}/dist`.
+The `dist/python.exe` can be used as a python interpreter for the application in IDEs like PyCharm. 

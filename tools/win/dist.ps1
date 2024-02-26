@@ -3,6 +3,56 @@
 . "$PSScriptRoot/vcpkg.ps1"
 
 
+function Get-Constants {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $h = Join-Path -Path $PSScriptRoot -ChildPath "../../src/include/dist.h"
+    if (-not (Test-Path -Path $h)) {
+        Write-Message -t "error" "$h does not exist."
+        exit 1
+    }
+
+    $content = Get-Content -Path $h
+    if ($null -eq $content) {
+        Write-Message -t "error" "No content found in $h."
+        exit 1
+    }
+
+    $constants = @{
+        "bin_dir"              = ""
+        "core_modules_dir"     = ""
+        "internal_modules_dir" = ""
+        "shared_modules_dir"   = ""
+    }
+    foreach ($line in $content) {
+        if ($line -match "^.*BIN_DIR\s*=\s*[`"']([a-z]+)[`"'];$") {
+            $constants["bin_dir"] = $matches[1]
+        }
+        if ($line -match "^.*CORE_MODULES_DIR\s*=\s*[`"']([a-z]+)[`"'];$") {
+            $constants["core_modules_dir"] = $matches[1]
+        }
+        if ($line -match "^.*INTERNAL_MODULES_DIR\s*=\s*[`"']([a-z]+)[`"'];$") {
+            $constants["internal_modules_dir"] = $matches[1]
+        }
+        if ($line -match "^.*SHARED_MODULES_DIR\s*=\s*[`"']([a-z]+)[`"'];$") {
+            $constants["shared_modules_dir"] = $matches[1]
+        }
+    }
+
+    # Verify that all constants have been set
+    foreach ($key in $constants.Keys) {
+        if ($constants[$key] -eq "") {
+            Write-Message -t "error" "Failed to parse $h. $key is not set."
+            exit 1
+        }
+    }
+    return $constants
+}
+
+
 function Get-Dependencies {
     param(
         [string]$Path
@@ -43,11 +93,11 @@ function Get-Dependencies {
 
 function Compare-Files {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [Alias("s")]
         [string]$Source,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [Alias("d")]
         [string]$Destination
     )
@@ -68,23 +118,25 @@ function Compare-Files {
 
 function Build-Dist {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Version,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [bool]$Reset
     )
 
     Verify-ReferencePlatformArg -r $ReferencePlatform
     
+    $constants = Get-Constants -Path $Path
+    
     # Set up directory structure
-    $buildDir = Join-Path -Path $Path -ChildPath "dist"
+    $buildDir = Join-Path -Path $Path -ChildPath "dist/$($Version.ToString())"
     New-Directory -Path $buildDir
 
     if ($Reset) {
@@ -93,9 +145,12 @@ function Build-Dist {
         New-Directory -Path $buildDir
     }
 
-    New-Directory -Path (Join-Path -Path $buildDir -ChildPath "bin")
-    New-Directory -Path (Join-Path -Path $buildDir -ChildPath "private")
-    New-Directory -Path (Join-Path -Path $buildDir -ChildPath "shared")
+    # Create all the directories
+    # loop through the values of constants and create the directories
+    foreach ($key in $constants.Keys) {
+        $dir = Join-Path -Path $buildDir -ChildPath $constants[$key]
+        New-Directory -Path $dir
+    }
 
     $vcpkgInstallDir = Join-Path -Path $Path -ChildPath "vcpkg/vcpkg_installed"
     if (-not (Test-Path -Path $vcpkgInstallDir)) {
@@ -300,7 +355,7 @@ function Build-Dist {
 
         # PYDs
         if ($line -match "^.*[\\/]tools[\\/].*[\\/]DLLs[\\/](.*\.pyd)$") {
-            $destination = Join-Path -Path $buildDir -ChildPath "private/$($matches[1])"
+            $destination = Join-Path -Path $buildDir -ChildPath "internal/$($matches[1])"
         }
 
         # DLLs
@@ -342,7 +397,8 @@ function Build-Dist {
     # Check if the python zip already exists
     if ($pythonZipExists) {
         Write-Message -t "warning" "$pythonZip already exists. .Skipping"
-    } else {
+    }
+    else {
 
         if (-not (Test-Path -Path $tempPythonLibs)) {
             Write-Message -t "error" "$tempPythonLibs does not exist."
@@ -384,7 +440,7 @@ function Build-Dist {
         }
 
         if ($source -match "^.*[\\/]site-packages[\\/](.*\.(?:py|pyd|))$") {
-            $destination = Join-Path -Path $buildDir -ChildPath "private/$($matches[1])"
+            $destination = Join-Path -Path $buildDir -ChildPath "internal/$($matches[1])"
         }
         
         if ("" -eq $destination) {
@@ -468,7 +524,7 @@ function Build-Dist {
         exit 1
     }
 
-    $destination = Join-Path -Path $buildDir -ChildPath "shared"
+    $destination = Join-Path -Path $buildDir -ChildPath "core"
     $destinationDir = Join-Path -Path $destination -ChildPath "bookmarks"
 
     # We'll always override the main python package

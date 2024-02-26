@@ -1,50 +1,50 @@
 param (
-    [Parameter(Mandatory=$true, HelpMessage="Enter the Reference Platform name (e.g. CY2022).")]
+    [Parameter(Mandatory = $true, HelpMessage = "Enter the Reference Platform name (e.g. CY2022).")]
     [Alias("r")]
     [string]$ReferencePlatform,
     
-    [Parameter(HelpMessage="Optional build folder. If not provided, the default directory is C:\build\{ReferencePlatform}-{Version}.")]
+    [Parameter(HelpMessage = "Optional build folder. If not provided, the default directory is C:\build\{ReferencePlatform}-{Version}.")]
     [Alias("b")]
-    [string]$BuildDir="",
+    [string]$BuildDir = "",
 
     # Reset flags
-    [Parameter(HelpMessage="Reset the vcpkg directory prior to running the build.")]
+    [Parameter(HelpMessage = "Reset the vcpkg directory prior to running the build.")]
     [Alias("rv")]
-    [switch]$ResetVcpkg=$false,
+    [switch]$ResetVcpkg = $false,
 
-    [Parameter(HelpMessage="Reset the pyside directory prior to running the build.")]
+    [Parameter(HelpMessage = "Reset the pyside directory prior to running the build.")]
     [Alias("rp")]
-    [switch]$ResetPySide=$false,
+    [switch]$ResetPySide = $false,
 
-    [Parameter(HelpMessage="Reset the dist directory prior to running the build.")]
+    [Parameter(HelpMessage = "Reset the dist directory prior to running the build.")]
     [Alias("rd")]
-    [switch]$ResetDist=$false,
+    [switch]$ResetDist = $false,
 
-    [Parameter(HelpMessage="Reset app")]
+    [Parameter(HelpMessage = "Reset app")]
     [Alias("ra")]
-    [switch]$ResetApp=$false,
+    [switch]$ResetApp = $false,
 
     # Skip flags
-    [Parameter(HelpMessage="Skip the vcpkg build.")]
+    [Parameter(HelpMessage = "Skip the vcpkg build.")]
     [Alias("sv")]
-    [switch]$SkipVcpkg=$false,
+    [switch]$SkipVcpkg = $false,
 
-    [Parameter(HelpMessage="Skip the pyside build.")]
+    [Parameter(HelpMessage = "Skip the pyside build.")]
     [Alias("sp")]
-    [switch]$SkipPySide=$false,
+    [switch]$SkipPySide = $false,
 
-    [Parameter(HelpMessage="Skip the dist build.")]
+    [Parameter(HelpMessage = "Skip the dist build.")]
     [Alias("sd")]
-    [switch]$SkipDist=$false,
+    [switch]$SkipDist = $false,
 
-    [Parameter(HelpMessage="Skip the app libraries.")]
+    [Parameter(HelpMessage = "Skip the app libraries.")]
     [Alias("sa")]
-    [switch]$SkipApp=$false,
+    [switch]$SkipApp = $false,
 
-    [Parameter(HelpMessage="Verbosisty")]
+    [Parameter(HelpMessage = "Verbosisty")]
     [Alias("v")]
     [ValidateSet("silent", "normal", "verbose")]
-    [string]$Verbosity="normal"
+    [string]$Verbosity = "normal"
 )
 
 . "$PSScriptRoot/win/util.ps1"
@@ -96,14 +96,16 @@ function Save-Environment {
 function Restore-Environment {
     if ($null -eq $global:SavedCwd) {
         Write-Message -t "warning" -m "No current working directory was saved to restore."
-    } else {
+    }
+    else {
         Set-Location -Path $global:SavedCwd
     }
 
     if ($null -eq $global:SavedEnv) {
         Write-Message -t "warning" -m "No environment was saved to restore."
         return
-    } else {
+    }
+    else {
         # Restore saved environment variables
         foreach ($key in $global:SavedEnv.Keys) {
             [System.Environment]::SetEnvironmentVariable($key, $global:SavedEnv[$key], [System.EnvironmentVariableTarget]::Process)
@@ -149,8 +151,9 @@ function MainFunction {
 
     # Set default build directory if not provided
     if ($BuildDir -eq "") {
-        [string]$BuildDir = "C:\build\$ReferencePlatform-$packageVersion"
-    } else {
+        [string]$BuildDir = "C:\build\$ReferencePlatform"
+    }
+    else {
         [string]$BuildDir = $BuildDir.TrimEnd("\").TrimEnd("/") + "\" + "$ReferencePlatform-$packageVersion"
     }
     
@@ -167,7 +170,8 @@ function MainFunction {
         Copy-VcpkgManifest -ReferencePlatform $ReferencePlatform -Path $BuildDir
 
         Install-VcpkgPackages -Path $BuildDir
-    } else {
+    }
+    else {
         Write-Message -t "warning" -m "Skipping vcpkg build."
     }
 
@@ -191,7 +195,8 @@ function MainFunction {
         Get-PySide -Path $BuildDir -ReferencePlatform $ReferencePlatform -Reset $ResetPySide
         Set-Location -Path $BuildDir
         Build-PySide -Path $BuildDir -ReferencePlatform $ReferencePlatform -Reset $ResetPySide
-    } else {
+    }
+    else {
         Write-Message -t "warning" -m "Skipping PySide build."
     }
 
@@ -202,7 +207,8 @@ function MainFunction {
         Set-Location -Path $BuildDir
 
         Build-App -Path $BuildDir -ReferencePlatform $ReferencePlatform -Version $packageVersion -Reset $ResetApp
-    } else {
+    }
+    else {
         Write-Message -t "warning" -m "Skipping App build."
     }
 
@@ -212,7 +218,8 @@ function MainFunction {
 
         Set-Location -Path $BuildDir
         Build-Dist -Path $BuildDir -ReferencePlatform $ReferencePlatform -Version $packageVersion -Reset $ResetDist
-    } else {
+    }
+    else {
         Write-Message -t "warning" -m "Skipping Dist build."
     }
 
@@ -241,7 +248,8 @@ try {
     MainFunction
 
     Write-Message -m "Build finished."
-} finally {
+}
+finally {
     Set-Location -Path $BuildDir
     Write-Message -m "Restoring environment variables."
     Restore-Environment

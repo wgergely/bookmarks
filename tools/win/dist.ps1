@@ -338,7 +338,7 @@ function Build-Dist {
 
     # We don't want to ship the app with all the python libraries, so we'll zip them up into a python$VERSION_MAJOR.$VERSION_MINOR.zip
     $PY = Get-Version -Path $Path -ReferencePlatform $ReferencePlatform -Package "python*"
-    $pythonZip = Join-Path -Path $buildDir -ChildPath "bin/python$($PY.MAJOR_VERSION)$($PY.MINOR_VERSION).zip"
+    $pythonZip = Join-Path -Path $buildDir -ChildPath "bin/python.zip"
     $pythonZipExists = Test-Path -Path $pythonZip
 
     $tempPythonLibs = Join-Path -Path $buildDir -ChildPath "__temp__"
@@ -488,10 +488,10 @@ function Build-Dist {
             continue
         }
         
-        if ($source -match "^.*[\\/]bin[\\/]((?:Bookmarks.*)\.exe)$") {
+        if ($source -match "^.*[\\/]bin[\\/]((?:Bookmarks|Bookmarks-console)\.exe)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "$($matches[1])"
         }
-        if ($source -match "^.*[\\/]bin[\\/]((?!(?:Bookmarks.*)\.exe).*)$") {
+        if ($source -match "^.*[\\/]bin[\\/]((?:.*openimageio)\.exe)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
         }
         if ($source -match "^.*[\\/]lib[\\/]site-packages[\\/](.*\.pyd)$") {

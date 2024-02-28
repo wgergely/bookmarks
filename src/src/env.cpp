@@ -1,7 +1,6 @@
 #include "env.h"
 
-std::wstring ConvertToWideString(const std::string &input)
-{
+std::wstring ConvertToWideString(const std::string &input) {
   if (input.empty())
     return std::wstring();
   int size_needed =
@@ -12,21 +11,16 @@ std::wstring ConvertToWideString(const std::string &input)
   return wstrTo;
 }
 
-Dist::Paths InitializeEnvironment(bool use_grandparent)
-{
-  if (!_WIN32)
-  {
+Dist::Paths InitializeEnvironment(bool use_grandparent) {
+  if (!_WIN32) {
     std::wcerr << L"Error: Requires a Windows operating system\n";
     return {};
   }
 
   wchar_t exe_path[MAX_PATH];
-  if (GetModuleFileNameW(NULL, exe_path, MAX_PATH) == 0)
-  {
+  if (GetModuleFileNameW(NULL, exe_path, MAX_PATH) == 0) {
 #ifndef NO_CONSOLE
-    MessageBoxW(NULL,
-                L"Failed to get module file name.",
-                L"Error",
+    MessageBoxW(NULL, L"Failed to get module file name.", L"Error",
                 MB_ICONERROR | MB_OK);
 #endif
     std::wcerr << L"Error: Failed to get module file name (" << GetLastError()
@@ -35,8 +29,7 @@ Dist::Paths InitializeEnvironment(bool use_grandparent)
   }
 
   std::filesystem::path exe_full_path(exe_path);
-  if (use_grandparent)
-  {
+  if (use_grandparent) {
     exe_full_path = exe_full_path.parent_path();
   }
 
@@ -48,12 +41,9 @@ Dist::Paths InitializeEnvironment(bool use_grandparent)
   paths.internal = paths.root / Dist::INTERNAL_MODULES_DIR;
   paths.core = paths.root / Dist::CORE_MODULES_DIR;
 
-#if defined(PY_MAJOR_VERSION) && defined(PY_MINOR_VERSION)
-  paths.py_startup = paths.root / Dist::BIN_DIR / Dist::PY_STARTUP;
   paths.py_exe = paths.root / Dist::BIN_DIR / Dist::PY_EXE;
   paths.py_launcher_exe = paths.root / Dist::BIN_DIR / Dist::PY_LAUNCHER_EXE;
   paths.py_zip = paths.root / Dist::BIN_DIR / Dist::PY_ZIP;
-#endif
 
   // Add/Set DLL directories
   SetDllDirectoryW(paths.bin.wstring().c_str());
@@ -64,10 +54,8 @@ Dist::Paths InitializeEnvironment(bool use_grandparent)
 
   // Check if required directories exist
   for (const auto &dir :
-       {paths.core, paths.shared, paths.internal, paths.bin})
-  {
-    if (!std::filesystem::exists(dir) || !std::filesystem::is_directory(dir))
-    {
+       {paths.core, paths.shared, paths.internal, paths.bin}) {
+    if (!std::filesystem::exists(dir) || !std::filesystem::is_directory(dir)) {
 #ifndef NO_CONSOLE
       MessageBoxW(
           NULL,
@@ -80,12 +68,9 @@ Dist::Paths InitializeEnvironment(bool use_grandparent)
     }
   }
   // Check if required files exist
-  for (const auto &file :
-       {paths.py_startup, paths.py_exe, paths.py_launcher_exe})
-  {
+  for (const auto &file : {paths.py_exe, paths.py_launcher_exe, paths.py_zip}) {
     if (!std::filesystem::exists(file) ||
-        !std::filesystem::is_regular_file(file))
-    {
+        !std::filesystem::is_regular_file(file)) {
 #ifndef NO_CONSOLE
       MessageBoxW(
           NULL, (L"A required file was not found:\n" + file.wstring()).c_str(),
@@ -103,20 +88,16 @@ Dist::Paths InitializeEnvironment(bool use_grandparent)
                                           paths.internal.wstring() + L";" +
                                           paths.shared.wstring())
                                              .c_str());
-  SetEnvironmentVariableW(L"PYTHONSTARTUP", paths.py_startup.wstring().c_str());
 
   // Set PATH environment variable
   std::wstring _n_path =
-      (paths.root.wstring() + L";" +
-       paths.bin.wstring() + L";" +
-       paths.internal.wstring() + L";" +
-       paths.shared.wstring() + L";" +
+      (paths.root.wstring() + L";" + paths.bin.wstring() + L";" +
+       paths.internal.wstring() + L";" + paths.shared.wstring() + L";" +
        paths.core.wstring() + L";");
   wchar_t *_c_path = nullptr;
   size_t size;
   _wdupenv_s(&_c_path, &size, L"PATH");
-  if (_c_path)
-  {
+  if (_c_path) {
     _n_path += _c_path;
     free(_c_path);
   }
@@ -140,18 +121,15 @@ Dist::Paths InitializeEnvironment(bool use_grandparent)
   return paths;
 }
 
-int LaunchProcess(int argc, wchar_t *argv[], std::filesystem::path exe_path)
-{
-  if (exe_path.empty())
-  {
+int LaunchProcess(int argc, wchar_t *argv[], std::filesystem::path exe_path) {
+  if (exe_path.empty()) {
     MessageBoxW(NULL, L"Error: Empty executable path.", L"Error",
                 MB_ICONERROR | MB_OK);
     std::wcerr << L"Error: Empty executable path.\n";
     return 1;
   }
   if (!std::filesystem::exists(exe_path) ||
-      !std::filesystem::is_regular_file(exe_path))
-  {
+      !std::filesystem::is_regular_file(exe_path)) {
     MessageBoxW(NULL,
                 (L"Error: " + exe_path.wstring() + L" not found.").c_str(),
                 L"Error", MB_ICONERROR | MB_OK);
@@ -161,8 +139,7 @@ int LaunchProcess(int argc, wchar_t *argv[], std::filesystem::path exe_path)
 
   // Prepare the command line for CreateProcessW
   std::wstring cmd = exe_path.wstring();
-  for (int i = 1; i < argc; ++i)
-  {
+  for (int i = 1; i < argc; ++i) {
     cmd += L" ";
     cmd += argv[i];
   }
@@ -175,8 +152,7 @@ int LaunchProcess(int argc, wchar_t *argv[], std::filesystem::path exe_path)
   ZeroMemory(&pi, sizeof(pi));
 
   if (!CreateProcessW(NULL, &cmd[0], NULL, NULL, FALSE, 0, NULL, NULL, &si,
-                      &pi))
-  {
+                      &pi)) {
     MessageBoxW(
         NULL,
         (L"CreateProcess failed (" + std::to_wstring(GetLastError()) + L").")

@@ -10,12 +10,9 @@ namespace Dist
     const std::filesystem::path SHARED_MODULES_DIR = "shared";
 
     // File & Executable constants
-    const std::filesystem::path PY_STARTUP = ".pythonstartup";
     const std::filesystem::path PY_EXE = "python.exe";
-    const std::filesystem::path PY_LAUNCHER_EXE = "py-launcher.exe";
-#if defined(PY_MAJOR_VERSION) && defined(PY_MINOR_VERSION)
-    const std::filesystem::path PY_ZIP = L"python" + std::to_wstring(PY_MAJOR_VERSION) + std::to_wstring(PY_MINOR_VERSION) + L".zip";
-#endif
+    const std::filesystem::path PY_LAUNCHER_EXE = "launch.exe";
+    const std::filesystem::path PY_ZIP = L"python.zip";
 
     // Environment variables
     const std::wstring ROOT_ENV_VAR = L"Bookmarks_ROOT";
@@ -30,12 +27,9 @@ namespace Dist
         std::filesystem::path internal;
         std::filesystem::path shared;
 
-        std::filesystem::path py_startup;
         std::filesystem::path py_exe;
         std::filesystem::path py_launcher_exe;
-#if defined(PY_MAJOR_VERSION) && defined(PY_MINOR_VERSION)
         std::filesystem::path py_zip;
-#endif
     };
 }
 

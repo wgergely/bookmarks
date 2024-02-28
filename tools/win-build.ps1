@@ -8,21 +8,25 @@ param (
     [string]$BuildDir = "",
 
     # Reset flags
-    [Parameter(HelpMessage = "Reset the vcpkg directory prior to running the build.")]
+    [Parameter(HelpMessage = "Reset the vcpkg build step")]
     [Alias("rv")]
     [switch]$ResetVcpkg = $false,
 
-    [Parameter(HelpMessage = "Reset the pyside directory prior to running the build.")]
+    [Parameter(HelpMessage = "Reset the pyside build step")]
     [Alias("rp")]
     [switch]$ResetPySide = $false,
 
-    [Parameter(HelpMessage = "Reset the dist directory prior to running the build.")]
+    [Parameter(HelpMessage = "Reset the app build step")]
+    [Alias("ra")]
+    [switch]$ResetApp = $false,
+
+    [Parameter(HelpMessage = "Reset the dist build step")]
     [Alias("rd")]
     [switch]$ResetDist = $false,
 
-    [Parameter(HelpMessage = "Reset app")]
-    [Alias("ra")]
-    [switch]$ResetApp = $false,
+    [Parameter(HelpMessage = "Reset the installer build step")]
+    [Alias("ri")]
+    [switch]$ResetInstaller = $false,    
 
     # Skip flags
     [Parameter(HelpMessage = "Skip the vcpkg build.")]
@@ -33,13 +37,17 @@ param (
     [Alias("sp")]
     [switch]$SkipPySide = $false,
 
+    [Parameter(HelpMessage = "Skip the app libraries.")]
+    [Alias("sa")]
+    [switch]$SkipApp = $false,
+    
     [Parameter(HelpMessage = "Skip the dist build.")]
     [Alias("sd")]
     [switch]$SkipDist = $false,
 
-    [Parameter(HelpMessage = "Skip the app libraries.")]
-    [Alias("sa")]
-    [switch]$SkipApp = $false,
+    [Parameter(HelpMessage = "Skip installer.")]
+    [Alias("si")]
+    [switch]$SkipInstaller = $false,
 
     [Parameter(HelpMessage = "Verbosisty")]
     [Alias("v")]
@@ -51,8 +59,9 @@ param (
 . "$PSScriptRoot/win/buildtool.ps1"
 . "$PSScriptRoot/win/vcpkg.ps1"
 . "$PSScriptRoot/win/pyside.ps1"
-. "$PSScriptRoot/win/dist.ps1"
 . "$PSScriptRoot/win/app.ps1"
+. "$PSScriptRoot/win/dist.ps1"
+. "$PSScriptRoot/win/installer.ps1"
 
 
 function Save-Environment {
@@ -221,6 +230,17 @@ function MainFunction {
     }
     else {
         Write-Message -t "warning" -m "Skipping Dist build."
+    }
+
+    #installer
+    Write-Message -n -m "`n=======================`nInstaller`n======================="
+    if (-not $SkipInstaller) {
+
+        Set-Location -Path $BuildDir
+        Build-Installer -Path $BuildDir -ReferencePlatform $ReferencePlatform -Version $packageVersion -Reset $ResetInstaller
+    }
+    else {
+        Write-Message -t "warning" -m "Skipping Installer build."
     }
 
 }

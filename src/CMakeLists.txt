@@ -28,14 +28,14 @@ configure_file(
 # Vcpkg
 # ===================================
 set(VCPKG_DIR "" CACHE PATH "Vcpkg directory")
-if (NOT VCPKG_DIR OR NOT EXISTS ${VCPKG_DIR})
+if (NOT VCPKG_DIR OR NOT EXISTS "${VCPKG_DIR}")
     message(FATAL_ERROR "[BOOKMARKS] Error: VCPKG_DIR is not set. Please set VCPKG_DIR to the vcpkg directory.")
 else()
     message(STATUS "[BOOKMARKS] VCPKG_DIR: ${VCPKG_DIR}")
 endif()
 
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "Vcpkg toolchain file" FORCE)
-if (NOT EXISTS ${CMAKE_TOOLCHAIN_FILE})
+if (NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
     message(FATAL_ERROR "[BOOKMARKS] Error: CMAKE_TOOLCHAIN_FILE does not exist")
 else()
     message(STATUS "[BOOKMARKS] CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
@@ -53,9 +53,7 @@ set(VCPKG_MANIFEST_INSTALL "OFF" CACHE STRING "Vcpkg manifest install" FORCE)
 project(Bookmarks)
 
 
-if (BUILD_PY OR BUILD_APP OR BUILD_IMAGEUTIL)
-    find_package(Python COMPONENTS Interpreter Development REQUIRED)
-endif()
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
 
 # ===================================    
 # Py
@@ -64,12 +62,20 @@ endif()
 if (BUILD_PY)
     message(STATUS "[BOOKMARKS] [*] Building Py")
 
-    add_executable(Python ${CMAKE_CURRENT_SOURCE_DIR}/src/python.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
-    target_include_directories(Python PRIVATE Python::Python ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    # Python interpreter wihtout the core module
+    add_executable(Python "${CMAKE_CURRENT_SOURCE_DIR}/src/python.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc")
+    target_include_directories(Python PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include")
     target_link_libraries(Python Python::Python)
     set_target_properties(Python PROPERTIES OUTPUT_NAME "python")
     install(TARGETS Python DESTINATION bin)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/.pythonstartup" DESTINATION bin)
+
+    # Python interpreter with the core module
+    add_executable(Python-M "${CMAKE_CURRENT_SOURCE_DIR}/src/python.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc")
+    target_include_directories(Python-M PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include")
+    target_link_libraries(Python-M Python::Python)
+    set_target_properties(Python-M PROPERTIES OUTPUT_NAME "python-with-core")
+    target_compile_definitions(Python-M PRIVATE ADD_CORE_MODULE=1)
+    install(TARGETS Python-M DESTINATION bin)
 else()
     message(STATUS "[BOOKMARKS] [ ] Skipping Python")
 endif()
@@ -82,25 +88,25 @@ if (BUILD_APP)
     message(STATUS "[BOOKMARKS] [*] Building App")
     
     # App launcher
-    add_executable(App ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
-    target_include_directories(App PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    add_executable(App "${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc")
+    target_include_directories(App PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include")
     set_target_properties(App PROPERTIES OUTPUT_NAME "Bookmarks")
     set_property(TARGET App PROPERTY VS_SPECTRE_MITIGATION "Bookmarks.manifest")
     target_compile_definitions(App PRIVATE NO_CONSOLE=1)
     install(TARGETS App DESTINATION bin)
 
     # App launcher with console window
-    add_executable(App-Console ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
-    target_include_directories(App-Console PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    add_executable(App-Console "${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc")
+    target_include_directories(App-Console PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include")
     set_target_properties(App-Console PROPERTIES OUTPUT_NAME "Bookmarks-console")
     set_property(TARGET App-Console PROPERTY VS_SPECTRE_MITIGATION "Bookmarks.manifest")
     install(TARGETS App-Console DESTINATION bin)
 
     # Python code launcher
-    add_executable(Py-Launcher ${CMAKE_CURRENT_SOURCE_DIR}/src/py-launcher.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc)
-    target_include_directories(Py-Launcher PRIVATE Python::Python ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    add_executable(Py-Launcher "${CMAKE_CURRENT_SOURCE_DIR}/src/py-launcher.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/icon.rc")
+    target_include_directories(Py-Launcher PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include")
     target_link_libraries(Py-Launcher Python::Python)
-    set_target_properties(Py-Launcher PROPERTIES OUTPUT_NAME "py-launcher")
+    set_target_properties(Py-Launcher PROPERTIES OUTPUT_NAME "launch")
     target_compile_definitions(Py-Launcher PRIVATE NO_CONSOLE=1)
     install(TARGETS Py-Launcher DESTINATION bin)
 else()
@@ -113,29 +119,22 @@ if (BUILD_IMAGEUTIL)
 
     find_package(pybind11 REQUIRED)
     find_package(OpenImageIO CONFIG REQUIRED)
-    
-    # App-OpenImageIO library
-    pybind11_add_module(Py-ImageUtil MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/pyimageutil.cpp)
-    target_include_directories(Py-ImageUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
+
+    # imageutil executable
+    add_executable(ImageUtil "${CMAKE_CURRENT_SOURCE_DIR}/src/imageutil.cpp")
+    target_include_directories(ImageUtil PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include" OpenImageIO::OpenImageIO)
+    target_link_libraries(ImageUtil PUBLIC OpenImageIO::OpenImageIO)
+    set_target_properties(ImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
+    install(TARGETS ImageUtil DESTINATION bin)
+
+    # imageutil python module
+    pybind11_add_module(Py-ImageUtil MODULE "${CMAKE_CURRENT_SOURCE_DIR}/src/imageutil.cpp")
+    target_include_directories(Py-ImageUtil PRIVATE Python::Python "${CMAKE_CURRENT_SOURCE_DIR}/include" OpenImageIO::OpenImageIO)
     target_link_libraries(Py-ImageUtil PUBLIC OpenImageIO::OpenImageIO)
     target_link_libraries(Py-ImageUtil PRIVATE pybind11::pybind11)
     set_target_properties(Py-ImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
+    target_compile_definitions(Py-ImageUtil PRIVATE _PYBIND_MODULE=bookmarks_openimageio)
     install(TARGETS Py-ImageUtil DESTINATION lib/site-packages)
-
-    # imageutil library
-    add_library(LibImageUtil STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/pyimageutil.cpp)
-    target_include_directories(LibImageUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
-    target_link_libraries(LibImageUtil PUBLIC OpenImageIO::OpenImageIO)
-    set_target_properties(LibImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
-    install(TARGETS LibImageUtil DESTINATION lib)
-    
-    # imageutil executable
-    add_executable(ImageUtil ${CMAKE_CURRENT_SOURCE_DIR}/src/imageutil.cpp)
-    add_dependencies(ImageUtil LibImageUtil)
-    target_include_directories(ImageUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include OpenImageIO::OpenImageIO)
-    target_link_libraries(ImageUtil PRIVATE libimageutil)
-    set_target_properties(ImageUtil PROPERTIES OUTPUT_NAME "bookmarks_openimageio")
-    install(TARGETS ImageUtil DESTINATION bin)
 else()
     message(STATUS "[BOOKMARKS] [ ] Skipping imageutil")
 endif()

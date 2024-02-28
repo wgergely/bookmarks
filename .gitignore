@@ -25,9 +25,6 @@ ENV/
 !.vscode/extensions.json
 *.code-workspace
 
-# Ignore PyCharm files
-.idea/
-
 # Ignore Atom editor files
 .atom/
 

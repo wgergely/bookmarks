@@ -3,33 +3,23 @@
 
 #pragma once  // Prevents multiple inclusions
 
+#include <OpenImageIO/imagebufalgo.h>
+#include <OpenImageIO/imagecache.h>
+#include <OpenImageIO/imageio.h>
+
 #include <chrono>
+#include <cstdlib>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
-#include <locale>
 #include <map>
 #include <memory>
 #include <optional>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
-#include <string>
 #include <variant>
 #include <vector>
-
-// Workaround the codecvt deprecation
-#ifdef _WIN32
-#define NOMINMAX
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#else
-#include <codecvt>
-#endif  // _WIN32
-
-#include <OpenImageIO/imagebufalgo.h>
-#include <OpenImageIO/imagecache.h>
-#include <OpenImageIO/imageio.h>
 
 #ifdef _PYBIND_MODULE
 #include <pybind11/pybind11.h>

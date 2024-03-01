@@ -99,8 +99,8 @@ Dist::Paths InitializeEnvironment(bool use_grandparent) {
 #endif
 
 #ifndef NO_CONSOLE
-    std::wcout << L"Bookmarks_ROOT=" << paths.root.wstring() << std::endl;
-    std::wcout << L"Bookmarks_VERSION=" << version << std::endl;
+    std::wcout << L"# Bookmarks_ROOT=" << paths.root.wstring() << std::endl;
+    std::wcout << L"# Bookmarks_VERSION=" << version << std::endl;
 #endif
 
     return paths;

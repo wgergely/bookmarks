@@ -84,15 +84,15 @@ ARG TOOLS_DIR=C:/${MODULE_NAME}/tools
 ARG BUILD_SCRIPT=${TOOLS_DIR}/win-build.ps1
 
 RUN Write-Host ('[setup] Bootstrapping ... '); `
-    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipApp -SkipDist;
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipApp -SkipDist -SkipInstall;
 RUN Write-Host ('[setup] Building dependencies ... '); `
-    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipPySide -SkipApp -SkipDist;
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipPySide -SkipApp -SkipDist -SkipInstall;
 RUN Write-Host ('[setup] Building PySide ... '); `
-    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipApp -SkipDist;
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipApp -SkipDist -SkipInstall;
 RUN Write-Host ('[setup] Building App ... '); `
-    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipDist;
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipDist -SkipInstall;
 RUN Write-Host ('[setup] Building distributable ... '); `
-    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipApp;
+    & ${env:BUILD_SCRIPT} -ReferencePlatform "${env:REFERENCE_PLATFORM}" -SkipVcpkg -SkipPySide -SkipApp -SkipInstall;
 
 # RUN Remove-Item -ErrorAction SilentlyContinue -Force -Recurse ${env:TEMP}\*
 

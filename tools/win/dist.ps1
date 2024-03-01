@@ -464,7 +464,7 @@ function Build-Dist {
         Copy-Item -Path $source -Destination $destination
     }
 
-    # app
+    # App
     $appInstallDir = Join-Path -Path $Path -ChildPath "app/install"
     if (-not (Test-Path -Path $appInstallDir)) {
         Write-Message -t "error" "$appInstallDir does not exist."
@@ -491,6 +491,9 @@ function Build-Dist {
         if ($source -match "^.*[\\/]bin[\\/]((?:Bookmarks|Bookmarks-console)\.exe)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "$($matches[1])"
         }
+        if ($source -match "^.*[\\/]bin[\\/]((?:launch|python|python.*)\.exe)$") {
+            $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
+        }        
         if ($source -match "^.*[\\/]bin[\\/]((?:.*openimageio)\.exe)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
         }

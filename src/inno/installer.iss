@@ -1,8 +1,8 @@
-#define MyAppName "Bookmarks"
-#define MyAppVersion "${Bookmarks_VERSION_MAJOR}.${Bookmarks_VERSION_MINOR}.${Bookmarks_VERSION_PATCH}"
+#define MyAppName "${APP_NAME}"
+#define MyAppVersion "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
 #define MyAppPublisher "Gergely Wootsch"
-#define MyAppURL "https://bookmarks-vfx.com"
-#define MyAppExeName "Bookmarks.exe"
+#define MyAppURL "${APP_URL}"
+#define MyAppExeName "${APP_EXE_NAME}"
 
 [Setup]
 AppId={{C6A64D39-06F7-4229-92B1-5AFEADF201CB}
@@ -30,7 +30,7 @@ ChangesEnvironment=yes
 ChangesAssociations=yes
 
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}
-SetupIconFile=${ICON_FILE}
+SetupIconFile=${APP_ICON_FILE}
 
 Compression=lzma2/ultra64
 SolidCompression=no
@@ -44,7 +44,7 @@ VersionInfoCopyright={#MyAppPublisher}
 AppCopyright={#MyAppPublisher}
 
 UsePreviousGroup=false
-UninstallDisplayIcon=${ICON_FILE}
+UninstallDisplayIcon=${APP_ICON_FILE}
 UninstallDisplayName={#MyAppName}
 
 DisableWelcomePage=no
@@ -52,7 +52,7 @@ ShowLanguageDialog=no
 
 WizardStyle=modern
 WizardImageFile=${WIZARD_IMAGE}
-WizardSmallImageFile=${WIZARD_IMAGE_SMALL}
+WizardSmallImageFile=${WIZARD_SMALL_IMAGE}
 BackColor=clBlack
 BackColor2=clBlack
 BackSolid=false
@@ -78,12 +78,12 @@ Name: maya; Description: {#MyAppName}: Maya Plugin; Types: full; Check: DirExist
 Source: "${PACKAGE_DIR}/*"; DestDir: "{app}"; Components: standalone; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 ; Bookmarks python module
 Source: "${SOURCE_DIR}/*"; DestDir: "{app}/shared/bookmarks"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
-; Maya plugin
-Source: "${SOURCE_DIR}/maya/plugin.py"; DestName: "Bookmarks.py"; DestDir: {userdocs}/maya/plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 ; Templates
 Source: "${SOURCE_DIR}/rsc/templates/*.zip"; DestDir: "{localappdata}/{#MyAppName}/asset_templates"; Components: standalone; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 ; Icon
-Source: "${ICON_FILE}"; DestName: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source: "${APP_ICON_FILE}"; DestName: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+; Maya plugin
+Source: "${SOURCE_DIR}/maya/plugin.py"; DestName: "Bookmarks.py"; DestDir: {userdocs}/maya/plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 
 [Registry]
 ; Used by the DCC plugins and the standalone executable to locate the install dir

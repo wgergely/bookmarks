@@ -1,155 +1,11 @@
 #include "imageutil.h"
 
+#include "commandlineparser.h"
+#include "stringconverter.h"
+
 using namespace OIIO;
 
 std::mutex io_mutex;
-
-class StringConverter {
-   public:
-    static std::wstring to_wstring(const std::string &utf8Str) {
-#ifdef _WIN32
-        int count = MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, nullptr, 0);
-        std::wstring wideStr(count, 0);
-        MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, &wideStr[0], count);
-        return wideStr;
-#else
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-        return converter.from_bytes(utf8Str);
-#endif
-    }
-
-    static std::string to_string(const std::wstring &wideStr) {
-#ifdef _WIN32
-        int count = WideCharToMultiByte(CP_UTF8, 0, wideStr.c_str(), -1, nullptr, 0, nullptr, nullptr);
-        std::string utf8Str(count, 0);
-        WideCharToMultiByte(CP_UTF8, 0, wideStr.c_str(), -1, &utf8Str[0], count, nullptr, nullptr);
-        return utf8Str;
-#else
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-        return converter.to_bytes(wideStr);
-#endif
-    }
-};
-
-class CommandLineParser {
-   public:
-    struct ArgumentSpec {
-        std::vector<std::wstring> names;  // Include both short and long names here
-        std::wstring description;
-        std::optional<std::wstring> defaultValue;
-        bool requiresValue = false;
-        bool required = false;
-    };
-
-   private:
-    std::map<std::wstring, ArgumentSpec> specs;
-    std::map<std::wstring, std::wstring> parsedArgs;
-    std::map<std::wstring, std::wstring> aliasMap;  // Map aliases to primary names
-
-    void buildAliasMap() {
-        for (const auto &spec : specs) {
-            for (const auto &name : spec.second.names) {
-                aliasMap[name] = spec.first;
-            }
-        }
-    }
-
-    void initializeDefaults() {
-        for (const auto &spec : specs) {
-            if (spec.second.defaultValue.has_value()) {
-                parsedArgs[spec.first] = spec.second.defaultValue.value();
-            } else if (!spec.second.requiresValue) {
-                // If it doesn't require a value and no default is specified, initialize
-                // with an empty string
-                parsedArgs[spec.first] = L"";
-            }
-        }
-    }
-
-   public:
-    CommandLineParser(std::initializer_list<std::pair<const std::wstring, ArgumentSpec>> list) {
-        for (const auto &item : list) {
-            specs[item.first] = item.second;
-        }
-        buildAliasMap();
-        initializeDefaults();
-    }
-
-    void parse(int argc, wchar_t *argv[]) {
-        for (int i = 1; i < argc; ++i) {
-            std::wstring arg = argv[i];
-            std::wstring primaryName;
-
-            // Find the primary argument name for the given alias
-            auto aliasIt = aliasMap.find(arg);
-            if (aliasIt != aliasMap.end()) {
-                primaryName = aliasIt->second;
-            } else {
-                throw std::runtime_error("Unknown argument: " + std::string(arg.begin(), arg.end()));
-            }
-
-            const auto &spec = specs[primaryName];
-            if (spec.requiresValue) {
-                if ((i + 1) < argc && argv[i + 1][0] != L'-') {
-                    parsedArgs[primaryName] = argv[++i];
-                } else {
-                    throw std::runtime_error("Argument requires a value but none was provided.");
-                }
-            } else {
-                parsedArgs[primaryName] = spec.defaultValue.value_or(L"");
-            }
-        }
-
-        for (const auto &spec : specs) {
-            if (spec.second.required && parsedArgs.find(spec.first) == parsedArgs.end()) {
-                throw std::runtime_error("Missing required argument: " +
-                                         std::string(spec.first.begin(), spec.first.end()));
-            }
-        }
-    }
-
-    template <typename T>
-    T get(const std::wstring &name) const {
-        auto it = parsedArgs.find(name);
-        if (it != parsedArgs.end()) {
-            T value;
-            std::wistringstream wiss(it->second);
-            if (!(wiss >> value)) {
-                throw std::runtime_error("Invalid argument value for: " + std::string(name.begin(), name.end()));
-            }
-            return value;
-        }
-
-        throw std::runtime_error("Argument not found: " + std::string(name.begin(), name.end()));
-    }
-
-    bool has(const std::wstring &name) const { return parsedArgs.find(name) != parsedArgs.end(); }
-
-    void showHelp() const {
-        std::wcout << L"Usage instructions:\n";
-        for (const auto &specItem : specs) {
-            const auto &spec = specItem.second;
-            std::wstring names = join(spec.names, L", ");
-            std::wstring defaultValue = spec.defaultValue.has_value() ? spec.defaultValue.value() : L"";
-            std::wcout << L"  " << names << L"\t" << spec.description;
-            if (!defaultValue.empty()) {
-                std::wcout << L" (default: " << defaultValue << L")";
-            }
-            std::wcout << std::endl;
-        }
-    }
-
-    static std::wstring join(const std::vector<std::wstring> &vec, const std::wstring &delimiter) {
-        std::wstring result;
-        for (auto it = vec.begin(); it != vec.end(); ++it) {
-            if (it != vec.begin()) {
-                result += delimiter;
-            }
-            result += *it;
-        }
-        return result;
-    }
-};
 
 ImageCache *CreateCache() {
     static std::unique_ptr<ImageCache, void (*)(ImageCache *)> image_cache(
@@ -247,6 +103,12 @@ void WriteError(const std::wstring &message, const std::wstring &input, std::str
 
 int ConvertImage(const std::wstring &input, const std::wstring &output, int size, int threads, bool verbose) {
     int r;
+
+    // Check if the intput is a valid file that exists
+    if (!std::filesystem::exists(input) || !std::filesystem::is_regular_file(input)) {
+        WriteError(L"Input file does not exist", input, empty_string_);
+        return 1;
+    }
 
     // Attempt to create an ImageInput for the input file
     auto _in = ImageInput::create(input);
@@ -740,7 +602,7 @@ int wmain(int argc, wchar_t *argv[]) {
     try {
         parser.parse(argc, argv);
     } catch (const std::exception &e) {
-        WriteError(L"Could not parse arguments", L"", std::string(e.what()));
+        WriteError(L"Could not parse arguments", L"-", std::string(e.what()));
         parser.showHelp();
         return 1;
     }

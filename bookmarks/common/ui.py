@@ -6,7 +6,10 @@ dependent pixel value.
 
 """
 
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 
@@ -142,12 +145,14 @@ def move_widget_to_available_geo(w):
 
     """
     app = QtWidgets.QApplication.instance()
-    if w.window():
-        screen_idx = app.desktop().screenNumber(w.window())
-    else:
-        screen_idx = app.desktop().primaryScreen()
+    if not app:
+        return
 
-    screen = app.screens()[screen_idx]
+    if w.window():
+        screen = app.screenAt(w.window().pos())
+    else:
+        screen = app.primaryScreen()
+
     screen_rect = screen.availableGeometry()
 
     # Widget's rectangle in the global screen space
@@ -539,7 +544,7 @@ def save_window_state(widget, *args, **kwargs):
 
     v = common.settings.value('state/state')
     v = v if v else {}
-    v[dict_key] = int(widget.windowState())
+    v[dict_key] = widget.windowState()
     common.settings.setValue('state/state', v)
 
 

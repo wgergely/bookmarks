@@ -10,8 +10,12 @@ import json
 import os
 import time
 
-import pyimageutil
-from PySide2 import QtWidgets, QtCore, QtGui
+import bookmarks_openimageio
+
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions
 from . import common
@@ -551,8 +555,8 @@ class PublishWidget(base.BasePropertyEditor):
         self.thumbnail_editor.save_image(destination=temp)
 
         if QtCore.QFileInfo(temp).exists():
-            res = pyimageutil.convert_image(
-                temp, dest, max_size=int(common.thumbnail_size)
+            res = bookmarks_openimageio.convert_image(
+                temp, dest, size=int(common.thumbnail_size)
             )
             if not res:
                 print(f'Error: Could not convert {temp}')

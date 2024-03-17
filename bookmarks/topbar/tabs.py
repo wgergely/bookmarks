@@ -1,7 +1,10 @@
 """Defines the main item tab buttons found on the left hand side of the top bar.
 
 """
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import shortcuts
 from .. import common

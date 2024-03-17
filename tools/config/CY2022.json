@@ -1,104 +1,115 @@
 {
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "name": "bookmarks",
-  "version-string": "CY2022",
-  "dependencies": [
-    {
-      "name": "qt5",
-      "features": [
-        "imageformats"
-      ]
-    },
-    {
-      "name": "ffmpeg",
-      "features": [
-        "avcodec",
-        "avdevice",
-        "avfilter",
-        "avformat",
-        "avresample",
-        "bzip2",
-        "ffmpeg",
-        "fontconfig",
-        "freetype",
-        "lzma",
-        "opengl",
-        "swresample",
-        "swscale",
-        "x264",
-        "x265",
-        "zlib"
-      ]
-    },
-    {
-      "name": "openimageio",
-      "features": [
-        "ffmpeg",
-        "freetype",
-        "gif",
-        "libheif",
-        "libraw",
-        "opencolorio",
-        "openjpeg",
-        "pybind11",
-        "tools",
-        "webp"
-      ]
-    },
-    {
-      "name": "openexr"
-    },
-    {
-      "name": "python3"
-    },
-    {
-      "name": "opencolorio",
-      "version>=": "2.1.0"
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "name": "bookmarks",
+    "version-string": "CY2022",
+    "dependencies": [
+        {
+            "name": "qt5-base",
+            "features": []
+        },
+        {
+            "name": "ffmpeg",
+            "features": [
+                "avcodec",
+                "avdevice",
+                "avfilter",
+                "avformat",
+                "avresample",
+                "bzip2",
+                "ffmpeg",
+                "fontconfig",
+                "freetype",
+                "lzma",
+                "opengl",
+                "swresample",
+                "swscale",
+                "x264",
+                "x265",
+                "zlib"
+            ]
+        },
+        {
+            "name": "openimageio",
+            "features": [
+                "ffmpeg",
+                "freetype",
+                "gif",
+                "libheif",
+                "libraw",
+                "opencolorio",
+                "openjpeg",
+                "pybind11",
+                "tools",
+                "webp"
+            ]
+        },
+        {
+            "name": "openexr"
+        },
+        {
+            "name": "python3"
+        },
+        {
+            "name": "opencolorio"
+        }
+    ],
+    "overrides": [
+        {
+            "name": "boost",
+            "version": "1.76.0"
+        },
+        {
+            "name": "qt5-base",
+            "version": "5.15.7#2"
+        },
+        {
+            "name": "openexr",
+            "version": "3.1.5"
+        },
+        {
+            "name": "python3",
+            "version": "3.9.7#2"
+        },
+        {
+            "name": "opencolorio",
+            "version": "2.1.1#1"
+        },
+        {
+            "name": "openimageio",
+            "version": "2.5.8.0#1"
+        },
+        {
+            "name": "ffmpeg",
+            "version": "4.4.3"
+        }
+    ],
+    "builtin-baseline": "11a9d85e7be83eb2f06e2db8e095b4bd71d32e40",
+    "vcpkg-configuration": {
+        "registries": [
+            {
+                "kind": "git",
+                "repository": "https://github.com/Microsoft/vcpkg",
+                "baseline": "facf98fd0ede2df24b3955f90cd590464e3de3f8",
+                "packages": [
+                    "openimageio"
+                ]
+            },
+            {
+                "kind": "git",
+                "repository": "https://github.com/Microsoft/vcpkg",
+                "baseline": "761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e",
+                "packages": [
+                    "boost"
+                ]
+            },
+            {
+                "kind": "git",
+                "repository": "https://github.com/Microsoft/vcpkg",
+                "baseline": "2ed5383f7b88b23975f9cfd325f6451fd8716fb2",
+                "packages": [
+                    "python3"
+                ]
+            }
+        ]
     }
-  ],
-  "overrides": [
-    {
-      "name": "qt5",
-      "version": "5.15.3#1"
-    },
-    {
-      "name": "openexr",
-      "version": "2.3.0-5"
-    },
-    {
-      "name": "python3",
-      "version": "3.9.7#2"
-    },
-    {
-      "name": "opencolorio",
-      "version": "2.1.1#2"
-    },
-    {
-      "name": "openimageio",
-      "version": "2.4.5.0#6"
-    }
-  ],
-  "builtin-baseline": "f9bea5d58186dc14e7e33132e43b52222147f51e",
-  "vcpkg-configuration": {
-    "registries": [
-      {
-        "kind": "git",
-        "repository": "https://github.com/Microsoft/vcpkg",
-        "baseline": "761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e",
-        "packages": [ "boost"]
-      },
-      {
-        "kind": "git",
-        "repository": "https://github.com/Microsoft/vcpkg",
-        "baseline": "ddff8f2cd69fce08707ae1f163f69071f0c0a411",
-        "packages": [ "qt5"]
-      },
-      {
-        "kind": "git",
-        "repository": "https://github.com/Microsoft/vcpkg",
-        "baseline": "2ed5383f7b88b23975f9cfd325f6451fd8716fb2",
-        "packages": [ "python3"]
-      }
-    ]
-  }
 }

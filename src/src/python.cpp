@@ -18,23 +18,39 @@ int wmain(int argc, wchar_t *argv[]) {
 #endif
 
     PyStatus status;
+
+    // Initialize Python configuration in isolated mode
+    PyPreConfig preconfig;
     PyConfig config;
 
-// Initialize Python configuration in isolated mode
+    PyPreConfig_InitPythonConfig(&preconfig);
+
+    preconfig.utf8_mode = 1;
+    preconfig.configure_locale = 1;
+    preconfig.coerce_c_locale = 1;
+
+    status = Py_PreInitialize(&preconfig);
+    if (PyStatus_Exception(status)) {
+        Py_ExitStatusException(status);
+        return 1;
+    }
+
 #ifdef ADD_CORE_MODULE
     PyConfig_InitIsolatedConfig(&config);
 #else
     PyConfig_InitPythonConfig(&config);
 #endif  // ADD_CORE_MODULE
 
+#if (PY_VERSION_HEX >= 0x030b0000)
+    config.safe_path = 1;
+#endif  // Python 3.11+
+
     config.optimization_level = 0;
     config.interactive = 1;
     config.user_site_directory = 0;
-    config.safe_path = 1;
     config.use_environment = 0;
-
     config.install_signal_handlers = 1;
-    // config.quiet = 1;
+    config.module_search_paths_set = 1;
 
     // Home
     status = PyConfig_SetString(&config, &config.home, paths.bin.wstring().c_str());
@@ -43,8 +59,6 @@ int wmain(int argc, wchar_t *argv[]) {
         return 1;
     }
 
-    // Module search paths
-    config.module_search_paths_set = 1;
 #ifdef ADD_CORE_MODULE
     status = PyWideStringList_Append(&config.module_search_paths, paths.core.wstring().c_str());
     if (PyStatus_Exception(status)) {

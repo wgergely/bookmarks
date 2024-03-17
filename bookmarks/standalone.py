@@ -10,7 +10,10 @@ widget.
 import ctypes
 import os
 
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import __version__
 from . import actions
@@ -77,15 +80,14 @@ def _set_application_properties(app=None):
     """Enables OpenGL and high-dpi support.
 
     """
-    if app:
+    if app and int(QtCore.__version__.split('.')[0]) < 6:  # PYSIDE2 DEPPRECIATED
         app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
         return
 
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseOpenGLES, True)
-    QtWidgets.QApplication.setAttribute(
-        QtCore.Qt.AA_EnableHighDpiScaling, True
-    )
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+    if int(QtCore.__version__.split('.')[0]) < 6:  # PYSIDE2 DEPPRECIATED
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseOpenGLES, True)
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 
 class TrayMenu(contextmenu.BaseContextMenu):
@@ -413,7 +415,6 @@ class BookmarksApp(QtWidgets.QApplication):
         self.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
         self.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
         self.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
-
 
         self._set_model_id()
         self._set_window_icon()

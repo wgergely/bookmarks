@@ -88,7 +88,10 @@ import importlib
 import platform
 import sys
 
-from PySide2 import QtWidgets
+try:
+    from PySide6 import QtWidgets
+except ImportError:
+    from PySide2 import QtWidgets
 
 #: Package author
 __author__ = 'Gergely Wootsch'
@@ -106,10 +109,10 @@ __version__ = '0.9.2'
 __version_info__ = __version__.split('.')
 
 #: Project copyright
-__copyright__ = f'Copyright (c) 2023 {__author__}'
+__copyright__ = f'Copyright (c) 2022, 2023, 2024 {__author__}'
 
 # Specify python support
-if sys.version_info[0] < 3 and sys.version_info[1] < 7:
+if sys.version_info[0] < 3 and sys.version_info[1] < 9:
     raise RuntimeError('Bookmarks requires Python 3.9.0 or later.')
 
 
@@ -123,7 +126,12 @@ def info():
     py_ver = platform.python_version()
     py_c = platform.python_compiler()
     oiio_ver = importlib.import_module('OpenImageIO').__version__
-    qt_ver = importlib.import_module('PySide2.QtCore').__version__
+
+    try:
+        qt_ver = importlib.import_module('PySide6.QtCore').__version__
+    except ImportError:
+        qt_ver = importlib.import_module('PySide2.QtCore').__version__
+
     sg_ver = importlib.import_module('shotgun_api3').__version__
 
     return '\n'.join(
@@ -134,7 +142,7 @@ def info():
             '\nPackages\n'
             f'Python {py_ver} {py_c}',
             f'Bookmarks {__version__}',
-            f'PySide2 {qt_ver}',
+            f'PySide {qt_ver}',
             f'OpenImageIO {oiio_ver}',
             f'ShotGrid API {sg_ver}',
         )

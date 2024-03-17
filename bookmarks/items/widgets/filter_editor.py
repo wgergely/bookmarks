@@ -1,8 +1,11 @@
 """The widget used set the text search filter of
-:class:`~bookmarks.items.models.FilterProxyModel`.
+:class:`~bookmarks.items.model.FilterProxyModel`.
 
 """
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from ... import common
 from ... import ui

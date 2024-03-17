@@ -3,7 +3,10 @@
 """
 import functools
 
-from PySide2 import QtCore, QtGui, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 from . import images
@@ -86,7 +89,7 @@ class MessageBox(QtWidgets.QDialog):
             o = int(common.size(common.size_indicator))
 
             # Get the background color set by the stylesheet
-            color = self.palette().color(QtGui.QPalette.Background)
+            color = self.palette().color(QtGui.QPalette.Window)
             brush = QtGui.QBrush(color)
             painter.setBrush(brush)
             painter.drawRoundedRect(
@@ -524,7 +527,7 @@ class ClickableIconButton(QtWidgets.QLabel):
 
         self.setScaledContents(False)
 
-        self.setAttribute(QtCore.Qt.WA_NoBackground)
+        self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self.clicked.connect(self.action)
@@ -1224,7 +1227,7 @@ def add_row(
     if height:
         w.setFixedHeight(height)
 
-    w.setAttribute(QtCore.Qt.WA_NoBackground)
+    w.setAttribute(QtCore.Qt.WA_OpaquePaintEvent)
     w.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
     if label:
@@ -1625,7 +1628,7 @@ class AbstractListModel(QtCore.QAbstractListModel):
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
-        return self.createIndex(row, 0, parent=parent)
+        return self.createIndex(row, 0)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if not index.isValid():

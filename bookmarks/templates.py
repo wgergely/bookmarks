@@ -4,7 +4,7 @@ The template files usually contain a folder structure used to define the skeleto
 of a project file structure.
 
 
-The list of template files are read from/and saved to the folder returned by
+The list of template files is read from/and saved to the folder returned by
 :func:`get_template_folder`.
 
 The template mode can be any arbitrary string - we're defining them as
@@ -14,7 +14,10 @@ The template mode can be any arbitrary string - we're defining them as
 import functools
 import zipfile
 
-from PySide2 import QtCore, QtWidgets, QtGui
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions
 from . import common
@@ -459,7 +462,7 @@ class TemplatesPreviewWidget(ui.ListWidget):
             else:
                 icon = folder_icon
 
-            item = QtWidgets.QListWidgetItem(parent=self)
+            item = QtWidgets.QListWidgetItem()
             item.setData(
                 QtCore.Qt.FontRole, common.font_db.medium_font(
                     common.size(common.size_font_small)

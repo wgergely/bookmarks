@@ -8,7 +8,10 @@ the current active project and asset and uploads any custom thumbnails set.
 import re
 import time
 
-from PySide2 import QtCore, QtGui
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions as sg_actions
 from . import publish_widgets

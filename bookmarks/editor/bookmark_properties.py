@@ -1,7 +1,10 @@
 """The widget used to edit bookmark item properties.
 
 """
-from PySide2 import QtCore, QtGui
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import base
 from . import base_widgets

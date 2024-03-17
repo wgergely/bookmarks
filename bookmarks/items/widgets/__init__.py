@@ -1,3 +1,3 @@
-"""Item and filter editor widgets used by the item views and models.
+"""Item and filter editor widgets used by the item view and model.
 
 """

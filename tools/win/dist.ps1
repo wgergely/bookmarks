@@ -142,6 +142,10 @@ function Build-Dist {
     if ($Reset) {
         Write-Message -m "Resetting the dist directory..."
         Remove-Item -Path $buildDir -Recurse -Force
+        if ($LASTEXITCODE -ne 0) {
+            Write-Message -t "error" "Failed to remove $buildDir."
+            exit 1
+        }
         New-Directory -Path $buildDir
     }
 
@@ -157,11 +161,55 @@ function Build-Dist {
         Write-Message -t "error" "The vcpkg_installed folder does not exist."
         exit 1
     }
+    
+    # Get harfbuzz dependencies (this is a bit of a hack for Qt5 as it doesn't seem to install all the dependencies)
+    $fileContents = Get-VcpkgInfo -Path $Path -Package "harfbuzz"
 
-    $fileContents = Get-VcpkgInfo -Path $Path -Package "qt*base"
+    foreach ($line in $fileContents) {
+        [string]$destination = ""
+
+        # Skip lines that contain debug
+        if (($line -match ".*[\\/]debug[\\/].*") -or ($line -match ".*\.pdb")) {
+            continue
+        }
+
+        # Skip -subset.dll
+        if ($line -match ".*-subset\.dll") {
+            continue
+        }
+        
+        $source = Join-Path -Path $vcpkgInstallDir -ChildPath "$line"
+
+        # DLLs
+        if ($line -match "^.*[\\/]bin[\\/](.*\.dll)$") {
+            $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
+        }
+
+        # Skip if the destination is not set or the file already exist
+        if ("" -eq $destination) {
+            continue
+        }
+
+        Write-Message -m "Found $line"
+        
+        $destinationDir = Split-Path -Path $destination
+        if (-not (Test-Path -Path $destinationDir)) {
+            Write-Message -m "Creating directory $destinationDir"
+            New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+        }
+        
+        if (-not (Compare-Files -s $source -d $destination)) {
+            continue
+        }
+        
+        Write-Message -m "Copying $source to $destination"
+        Copy-Item -Path $source -Destination $destination
+    }
+
+    # Qt 
+    $fileContents = Get-VcpkgInfo -Path $Path -Package "qt[0-9\-]*base"
     $skipModules = @("DBus", "Network", "OpenGL", "Test", "Sql", "Xml", "PrintSupport")
 
-    # Qt    
     foreach ($line in $fileContents) {
         [string]$destination = ""
 
@@ -186,6 +234,9 @@ function Build-Dist {
 
         # DLLs
         if ($line -match "^.*[\\/]tools[\\/].*[\\/]bin[\\/](.*\.dll)$") {
+            $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
+        }
+        if ($line -match "^.*[\\/]bin[\\/](.*\.dll)$") {
             $destination = Join-Path -Path $buildDir -ChildPath "bin/$($matches[1])"
         }
 
@@ -535,7 +586,7 @@ function Build-Dist {
     if (Test-Path -Path $destinationDir) {
         Remove-Item -Path $destinationDir -Recurse -Force
     }
-    if ($LASTEXITCODE -ne 0) {
+    if (Test-Path -Path $destinationDir) {
         Write-Message -t "error" "Failed to remove $destinationDir."
         exit 1
     }

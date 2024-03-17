@@ -175,7 +175,7 @@ function MainFunction {
         Set-Location -Path $BuildDir
 
         New-Directory -Path (Join-Path -Path $BuildDir -ChildPath "vcpkg")
-        Get-Vcpkg -Path $BuildDir -Reset $ResetVcpkg
+        Get-Vcpkg -Path $BuildDir -ReferencePlatform $ReferencePlatform -Reset $ResetVcpkg
         Copy-VcpkgManifest -ReferencePlatform $ReferencePlatform -Path $BuildDir
 
         Install-VcpkgPackages -Path $BuildDir

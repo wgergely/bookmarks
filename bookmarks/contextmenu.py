@@ -12,7 +12,10 @@ import json
 import os
 import uuid
 
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions
 from . import common
@@ -97,7 +100,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     The internal menu structure is defined in :attr:`BaseContextMenu.menu`,
     a `collections.OrderedDict` instance. This data is populated by the *_menu methods
     and expanded into a UI layout by :meth:`BaseContextMenu.create_menu`. The menu is
-    principally designed to work with index-based views and as a result the default
+    principally designed to work with index-based view, and as a result, the default
     constructor takes a QModelIndex, stored in :attr:`BaseContextMenu.index`.
 
     The internal :attr:`BaseContextMenu.menu` dict object assumes the following form:
@@ -108,10 +111,10 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu = collections.OrderedDict({
             'uuid1': {
                 'text': 'My Menu Item',
-                'icon': get_icon('my_menu_icon'),   # QIcon
-                'shortcut: QtGui.QShortcut('Ctrl+M'), # QtGui.QShortcut
+                'icon': get_icon('my_menu_icon'),
+                'shortcut: QShortcut('Ctrl+M'),
                 'disabled': False,
-                'action': my_menu_function1,         # a method to execute
+                'action': my_menu_function1,
             },
             'uuid2': {
                 'text': 'My Menu Item2',
@@ -292,14 +295,8 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'text': 'New Window...',
                 'icon': logo_icon,
                 'action': actions.exec_instance,
-                'shortcut': shortcuts.get(
-                    shortcuts.MainWidgetShortcuts,
-                    shortcuts.OpenNewInstance
-                ).key(),
-                'description': shortcuts.hint(
-                    shortcuts.MainWidgetShortcuts,
-                    shortcuts.OpenNewInstance
-                ),
+                'shortcut': shortcuts.get(shortcuts.MainWidgetShortcuts, shortcuts.OpenNewInstance).key(),
+                'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.OpenNewInstance),
             }
 
             self.separator(self.menu[k])

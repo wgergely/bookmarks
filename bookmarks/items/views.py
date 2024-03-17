@@ -1,8 +1,8 @@
-"""Base views used to show :mod:`bookmark <bookmarks.items.bookmark_items>`,
+"""Base view used to show :mod:`bookmark <bookmarks.items.bookmark_items>`,
 :mod:`asset <bookmarks.items.asset_items>`, and :mod:`file <bookmarks.items.file_items>`
 items.
 
-The view uses :class:`~bookmarks.items.models.ItemModel` for getting the item data,
+The view uses :class:`~bookmarks.items.model.ItemModel` for getting the item data,
 :class:`~bookmarks.items.delegate.ItemDelegate` to paint the items.
 
 :class:`BaseItemView` is a customised QListView widget augmented by
@@ -15,7 +15,10 @@ import functools
 import re
 import weakref
 
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import delegate
 from . import models
@@ -505,7 +508,7 @@ class FilterOnOverlayWidget(ProgressWidget):
 
 
 class BaseItemView(QtWidgets.QTableView):
-    """The base view of all subsequent item views.
+    """The base view of all subsequent item view.
 
     """
     #: Emitted when the user shift+right-clicks on the view. Use this to show DCC

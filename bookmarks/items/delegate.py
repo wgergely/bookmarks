@@ -2,21 +2,22 @@
 
 Defines :class:`ItemDelegate`, the base delegate class, subclasses and helper functions.
 
-The list views have a number of custom features, such as clickable in-line icons,
-folder names, custom thumbnails that the delegate implements. Since we're using list
-views with a single column, the item layout is defined by a series of custom rectangles
-(see :meth:`ItemDelegate.get_rectangles`.). These are used by the paint methods use to
-drawn elements and the views to define interactive regions.
+The list view have a number of custom features, such as clickable in-line icons,
+folder names and custom thumbnails that the delegate implements.
+Since we're using list view with a single column, the item layout is defined by a series of custom rectangles
+(see :meth:`ItemDelegate.get_rectangles`.).
+These are used by the paint methods used to
+drawn elements and the view to define interactive regions.
 
-The downside of painting manually a complex layout is performance and no doubt the
-module could be more optimised. Still, most of the expensive functions are backed by
-caches.
 
 """
 import functools
 import re
 
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import database
@@ -615,7 +616,7 @@ def get_asset_subdir_bg(rectangles, metrics, text):
 
     o = common.size(common.size_indicator)
 
-    text_width = metrics.width(text)
+    text_width = metrics.horizontalAdvance(text)
     r = QtCore.QRect(rect)
     r.setWidth(text_width)
     center = r.center()
@@ -802,7 +803,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         # Set the database value
         # Note that we don't need to set the data directly as
         # the database will emit a value changed signal that will
-        # automatically update the views and model data caches
+        # automatically update the view and model data caches
         db = database.get(*source_path[0:3])
         db.set_value(k, 'description', common.sanitize_hashtags(v))
 
@@ -2465,7 +2466,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             text, _color = segment
 
             _text = text
-            width = metrics.width(text)
+            width = metrics.horizontalAdvance(text)
             _r = QtCore.QRect(rect)
             _r.setWidth(width)
             center = _r.center()
@@ -2499,7 +2500,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             # Skip painting separator characters but mark the center of the rectangle
             # for alter use
             if '|' in text:
-                overlay_rect_left_edge = _r.x() + (metrics.width(text) / 2.0)
+                overlay_rect_left_edge = _r.x() + (metrics.horizontalAdvance(text) / 2.0)
             else:
                 # Let's save the rectangle as a clickable rect
                 add_clickable_rectangle(index, option, _r, _text)

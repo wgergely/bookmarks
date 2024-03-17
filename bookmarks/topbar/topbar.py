@@ -1,7 +1,10 @@
 """Defines :class:`.TopBarWidget`, the main widget containing all control buttons.
 
 """
-from PySide2 import QtWidgets, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import buttons
 from . import filters
@@ -352,7 +355,7 @@ class TopBarWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
-        self.setAttribute(QtCore.Qt.WA_NoBackground, True)
+        self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent, True)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
 
         self.setSizePolicy(

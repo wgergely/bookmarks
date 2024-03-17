@@ -10,7 +10,10 @@ import sys
 import time
 import uuid
 
-from PySide2 import QtCore, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 
@@ -41,16 +44,16 @@ WindowsPath = 0
 MacOSPath = 1
 UnixPath = 2
 
-MarkedAsArchived = 0b1000000000
-MarkedAsFavourite = 0b10000000000
-MarkedAsActive = 0b100000000000
-MarkedAsDefault = 0b1000000000000
+MarkedAsArchived = QtCore.Qt.ItemFlag(0b1000000000)
+MarkedAsFavourite = QtCore.Qt.ItemFlag(0b10000000000)
+MarkedAsActive = QtCore.Qt.ItemFlag(0b100000000000)
+MarkedAsDefault = QtCore.Qt.ItemFlag(0b1000000000000)
 
 FileItem = 1100
 SequenceItem = 1200
 
 
-def idx_func():
+def create_new_counter():
     """
     Constructs and returns the index function.
     
@@ -58,10 +61,9 @@ def idx_func():
     _num = -1
     _start = -1
 
-    def _idx_func(reset=False, start=None):
+    def func(reset=False, start=None):
         """
-        The index function. Increments and returns a counter. Can reset the counter 
-        to the start value and set a new start value.
+        Returns a counter function
 
         Args:
             reset (bool, optional): If True, resets the counter to the start value.
@@ -81,11 +83,11 @@ def idx_func():
         _num += 1
         return _num
 
-    return _idx_func
+    return func
 
 
 #: The index function used to generate index values across the application.
-idx = idx_func()
+idx = create_new_counter()
 
 #: List item role used to store favourite, archived, etc. flags.
 FlagsRole = QtCore.Qt.ItemDataRole(idx(reset=True, start=QtCore.Qt.UserRole + 4096))
@@ -672,7 +674,7 @@ class DataDict(dict):
 
     @property
     def loaded(self):
-        """Special attribute used by the item models and associated thread workers.
+        """Special attribute used by the item model and associated thread workers.
 
         When set to `True`, the helper threads have finished populating data and the item
         is considered fully loaded.

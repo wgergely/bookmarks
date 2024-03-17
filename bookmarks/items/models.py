@@ -31,7 +31,10 @@ import re
 import uuid
 import weakref
 
-from PySide2 import QtWidgets, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import images
@@ -79,8 +82,6 @@ def initdata(func):
         try:
             self.beginResetModel()
             func(self, *args, **kwargs)
-        except:
-            raise
         finally:
             self._interrupt_requested = False
             self._load_in_progress = False

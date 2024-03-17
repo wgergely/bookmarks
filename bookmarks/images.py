@@ -23,8 +23,12 @@ import os
 import time
 
 import OpenImageIO
-import pyimageutil
-from PySide2 import QtWidgets, QtGui, QtCore
+import bookmarks_openimageio
+
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 from . import log
@@ -282,7 +286,7 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
 
     The ``server``, ``job``, ``root``, ``source`` arguments refer to a file we
     want to create a new thumbnail for. The ``image`` argument should be a path to
-    an image file that will be converted using `pyimageutil.make_thumbnail()` to a
+    an image file that will be converted using `bookmarks_openimageio.make_thumbnail()` to a
     thumbnail image and saved to our image cache and disk to represent ``source``.
 
     Args:
@@ -304,10 +308,10 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
             s = 'Failed to remove existing thumbnail file.'
             raise RuntimeError(s)
 
-    res = pyimageutil.convert_image(
+    res = bookmarks_openimageio.convert_image(
         image,
         thumbnail_path,
-        max_size=int(common.thumbnail_size)
+        size=int(common.thumbnail_size)
     )
     if not res:
         raise RuntimeError('Failed to make thumbnail.')

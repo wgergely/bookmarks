@@ -9,7 +9,10 @@ import json
 import os
 import re
 
-from PySide2 import QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import log
@@ -442,7 +445,11 @@ class UserSettings(QtCore.QSettings):
             The value stored in settings or `None` if not found.
 
         """
-        v = super().value(key, devault=default)
+        try:
+            v = super().value(key, defaultValue=default)
+        except: # PYSIDE2 DEPRECIATED
+            v = super().value(key, default=default)
+
         t = super().value(f'{key}_type')
         if v is None:
             return None

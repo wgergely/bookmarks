@@ -5,7 +5,10 @@ import functools
 import os
 import re
 
-from PySide2 import QtCore, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import database

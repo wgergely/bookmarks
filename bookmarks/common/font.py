@@ -12,7 +12,10 @@ QFont and QFontMetrics instances can be retrieved using:
 """
 import os
 
-from PySide2 import QtGui, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 
@@ -22,7 +25,7 @@ MetricsRole = 2
 font_terciaryRole = 3
 
 
-class FontDatabase(QtGui.QFontDatabase):
+class FontDatabase(QtCore.QObject):
     """Custom ``QFontDatabase`` used to load and provide the fonts needed by Bookmarks.
 
     """
@@ -42,19 +45,19 @@ class FontDatabase(QtGui.QFontDatabase):
         """Load the fonts used by Bookmarks to the font database.
 
         """
-        if common.medium_font in self.families():
+        if common.medium_font in QtGui.QFontDatabase.families():
             return
 
         source = common.rsc('fonts')
         for entry in os.scandir(source):
             if not entry.name.endswith('ttf'):
                 continue
-            idx = self.addApplicationFont(entry.path)
+            idx = QtGui.QFontDatabase.addApplicationFont(entry.path)
             if idx < 0:
                 raise RuntimeError(
                     'Failed to add required font to the application'
                 )
-            family = self.applicationFontFamilies(idx)
+            family = QtGui.QFontDatabase.applicationFontFamilies(idx)
             if not family:
                 raise RuntimeError(
                     'Failed to add required font to the application'
@@ -67,7 +70,7 @@ class FontDatabase(QtGui.QFontDatabase):
         if font_size in common.font_cache[font_primaryRole]:
             return common.font_cache[font_primaryRole][font_size]
 
-        font = self.font(common.bold_font, 'Bold', font_size)
+        font = QtGui.QFontDatabase.font(common.bold_font, 'Bold', font_size)
         if font.family() != common.bold_font:
             raise RuntimeError(
                 'Failed to add required font to the application'
@@ -85,7 +88,7 @@ class FontDatabase(QtGui.QFontDatabase):
         if font_size in common.font_cache[font_secondaryRole]:
             return common.font_cache[font_secondaryRole][font_size]
 
-        font = self.font(common.medium_font, 'Medium', font_size)
+        font = QtGui.QFontDatabase.font(common.medium_font, 'Medium', font_size)
         if font.family() != common.medium_font:
             raise RuntimeError(
                 'Failed to add required font to the application'
@@ -103,7 +106,7 @@ class FontDatabase(QtGui.QFontDatabase):
         if font_size in common.font_cache[font_terciaryRole]:
             return common.font_cache[font_terciaryRole][font_size]
 
-        font = self.font(common.medium_font, 'Medium', font_size)
+        font = QtGui.QFontDatabase.font(common.medium_font, 'Medium', font_size)
         if font.family() != common.medium_font:
             raise RuntimeError(
                 'Failed to add required font to the application'

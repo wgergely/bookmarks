@@ -2,7 +2,7 @@
 
 :class:`.MainWidget` consist of :class:`~bookmarks.topbar.topbar.TopBarWidget`,
 :class:`~bookmarks.statusbar.StatusBar`,
-and :class:`~bookmarks.items.views.ListsWidget`. The latter is the container
+and :class:`~bookmarks.items.view.ListsWidget`. The latter is the container
 for the three main list item widgets:
 :class:`~bookmarks.items.bookmark_items.BookmarkItemView`,
 :class:`~bookmarks.items.asset_items.AssetItemView` and
@@ -29,7 +29,10 @@ Important:
 """
 import functools
 
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions
 from . import common
@@ -114,13 +117,13 @@ class MainWidget(QtWidgets.QWidget):
         # Main stacked widget used to navigate items
         self.stacked_widget = views.ListsWidget(parent=self)
         
-        # Item views
+        # Item view
         self.bookmarks_widget = bookmark_items.BookmarkItemView(parent=self)
         self.assets_widget = asset_items.AssetItemView(parent=self)
         self.files_widget = file_items.FileItemView(parent=self)
         self.favourites_widget = favourite_items.FavouriteItemView(parent=self)
         
-        # Switch views
+        # Switch view
         self.bookmark_switch_widget = switch.BookmarkSwitchView(parent=self.bookmarks_widget)
         self.bookmark_switch_widget.setHidden(True)
 
@@ -147,7 +150,7 @@ class MainWidget(QtWidgets.QWidget):
     def _init_current_tab(self):
         """Sets our current tab based on the current user settings.
 
-        We can't use model indexes when this method is called as the list models
+        We can't use model indexes when this method is called as the list model
         themselves are still uninitialized resulting in
         `self.stacked_widget.setCurrentIndex()` returning an incorrect tab.
 
@@ -245,7 +248,7 @@ class MainWidget(QtWidgets.QWidget):
     def initialize(self):
         """The widget will be in ``uninitialized`` state after creation.
         This method must be called to create the UI layout and to load the item
-        models.
+        model.
 
         """
         if self.is_initialized:
@@ -265,7 +268,7 @@ class MainWidget(QtWidgets.QWidget):
             model.activeChanged.connect(self.update_window_title)
             model.modelReset.connect(self.update_window_title)
 
-        # Apply filter values to the filter models
+        # Apply filter values to the filter model
         b = self.bookmarks_widget.model()
         b.filterTextChanged.emit(b.filter_text())
         a = self.assets_widget.model()

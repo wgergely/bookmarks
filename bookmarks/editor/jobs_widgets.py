@@ -5,7 +5,10 @@ import functools
 import json
 import os
 
-from PySide2 import QtCore, QtGui, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import base
 from .. import actions

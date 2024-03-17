@@ -56,7 +56,10 @@ Model items store their path segments using the
 """
 import weakref
 
-from PySide2 import QtCore, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import delegate
 from . import models

@@ -1,12 +1,15 @@
 """Interface to interact with the item data cache.
 
-All data loaded by the item models are stored in :attr:`~bookmarks.common.item_data`.
-The module provides methods for the models to access, load and reset the cached data.
+All data loaded by the item model are stored in :attr:`~bookmarks.common.item_data`.
+The module provides methods for the model to access, load and reset the cached data.
 
 """
 import weakref
 
-from PySide2 import QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 

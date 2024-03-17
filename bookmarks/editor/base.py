@@ -20,7 +20,10 @@ import datetime
 import functools
 import re
 
-from PySide2 import QtCore, QtGui, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import base_widgets
 from .. import common
@@ -29,22 +32,22 @@ from .. import images
 from .. import log
 from .. import ui
 
-float_validator = QtGui.QRegExpValidator()
-float_validator.setRegExp(QtCore.QRegExp(r'[0-9]+[\.]?[0-9]*'))
-int_validator = QtGui.QRegExpValidator()
-int_validator.setRegExp(QtCore.QRegExp(r'[0-9]+'))
-text_validator = QtGui.QRegExpValidator()
-text_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9]+'))
-name_validator = QtGui.QRegExpValidator()
-name_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_]+'))
-job_name_validator = QtGui.QRegExpValidator()
-job_name_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_/]+'))
-domain_validator = QtGui.QRegExpValidator()
-domain_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9/:\.]+'))
-version_validator = QtGui.QRegExpValidator()
-version_validator.setRegExp(QtCore.QRegExp(r'[v]?[0-9]{1,4}'))
-token_validator = QtGui.QRegExpValidator()
-token_validator.setRegExp(QtCore.QRegExp(r'.*'))
+float_validator = QtGui.QRegularExpressionValidator()
+float_validator.setRegularExpression(QtCore.QRegularExpression(r'[0-9]+[\.]?[0-9]*'))
+int_validator = QtGui.QRegularExpressionValidator()
+int_validator.setRegularExpression(QtCore.QRegularExpression(r'[0-9]+'))
+text_validator = QtGui.QRegularExpressionValidator()
+text_validator.setRegularExpression(QtCore.QRegularExpression(r'[a-zA-Z0-9]+'))
+name_validator = QtGui.QRegularExpressionValidator()
+name_validator.setRegularExpression(QtCore.QRegularExpression(r'[a-zA-Z0-9\-\_]+'))
+job_name_validator = QtGui.QRegularExpressionValidator()
+job_name_validator.setRegularExpression(QtCore.QRegularExpression(r'[a-zA-Z0-9\-\_/]+'))
+domain_validator = QtGui.QRegularExpressionValidator()
+domain_validator.setRegularExpression(QtCore.QRegularExpression(r'[a-zA-Z0-9/:\.]+'))
+version_validator = QtGui.QRegularExpressionValidator()
+version_validator.setRegularExpression(QtCore.QRegularExpression(r'[v]?[0-9]{1,4}'))
+token_validator = QtGui.QRegularExpressionValidator()
+token_validator.setRegularExpression(QtCore.QRegularExpression(r'.*'))
 
 span = {
     'start': f'<span style="color:{common.rgb(common.color_green)}">',
@@ -229,7 +232,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         QtWidgets.QHBoxLayout(self)
 
         if self._frameless:
-            o = common.size(common.size_margin) * 2
+            o = common.size(common.size_margin) * 1
             self.layout().setContentsMargins(o, o, o, o)
         else:
             self.layout().setContentsMargins(0, 0, 0, 0)

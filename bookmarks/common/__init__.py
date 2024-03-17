@@ -15,7 +15,7 @@ This module allows for direct submodule access. For example:
     from bookmarks import common
     common.initialize(common.EmbeddedMode)
 
-The Bookmarks application operates in two modes: standalone and embedded in a PySide2 environment. The app's base layers
+The Bookmarks application operates in two modes: standalone and embedded in a PySide environment. The app's base layers
 are initialized using:
 
 .. code-block:: python

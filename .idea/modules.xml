@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/bookmarks.iml" filepath="$PROJECT_DIR$/.idea/bookmarks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../shotific/.idea/shotific.iml" filepath="$PROJECT_DIR$/../shotific/.idea/shotific.iml" />
     </modules>
   </component>
 </project>

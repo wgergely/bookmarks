@@ -15,8 +15,10 @@ To show the main editor call:
 
 
 """
-
-from PySide2 import QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import base
 from . import jobs_widgets
@@ -132,7 +134,7 @@ class JobsEditor(base.BasePropertyEditor):
             None,
             None,
             None,
-            buttons=('Close',),
+            buttons=('Done',),
             fallback_thumb='icon_bw',
             hide_thumbnail_editor=True,
             section_buttons=False,
@@ -158,7 +160,7 @@ class JobsEditor(base.BasePropertyEditor):
     @QtCore.Slot(str)
     @QtCore.Slot(str)
     def show_message(self, title, body):
-        """Shows a progress message as the models are loading.
+        """Shows a progress message as the model are loading.
 
         """
         if not title:

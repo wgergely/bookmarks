@@ -12,8 +12,12 @@ try:
 except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
-import shiboken2
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    import shiboken6
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    import shiboken2
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions
 from . import contextmenu
@@ -344,7 +348,7 @@ class MayaButtonWidget(ui.ClickableIconButton):
             parent=parent
         )
         self.setObjectName('BookmarksMayaButton')
-        self.setAttribute(QtCore.Qt.WA_NoBackground, False)
+        self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent, False)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
 

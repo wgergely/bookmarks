@@ -34,7 +34,10 @@ import functools
 import os
 import weakref
 
-from PySide2 import QtCore, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import delegate
 from . import models
@@ -304,7 +307,7 @@ class AssetItemModel(models.ItemModel):
         with open(f'{assets_cache_dir.path()}/{assets_cache_name}.cache', 'w') as f:
             f.write('\n'.join([v[common.PathRole] for v in data.values()]))
 
-        # Explicitly emit `activeChanged` to notify other dependent models
+        # Explicitly emit `activeChanged` to notify other dependent model
         self.activeChanged.emit(self.active_index())
 
     def source_path(self):

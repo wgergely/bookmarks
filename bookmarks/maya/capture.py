@@ -13,7 +13,10 @@ try:
 except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
-from PySide2 import QtGui, QtWidgets
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 version_info = (2, 4, 0)
 

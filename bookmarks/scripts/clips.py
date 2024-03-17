@@ -4,7 +4,10 @@ import functools
 import os
 
 import opentimelineio as otio
-from PySide2 import QtWidgets, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import actions
 from .. import common
@@ -615,7 +618,6 @@ class EdlWidget(base.BasePropertyEditor):
                 f'{OTIO_ADAPTERS[adapter]["name"]} (*.{extension});;',
             )
         else:
-            # Write a temporary rv file using PySide2 modules
             output_path = f'{common.temp_path()}/rv_push_temp.{extension}'
 
         if not output_path:

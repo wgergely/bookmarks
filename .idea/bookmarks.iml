@@ -8,6 +8,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Bookmarks CY2024" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="shotific" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

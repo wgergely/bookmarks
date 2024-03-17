@@ -3,7 +3,10 @@
 """
 import weakref
 
-from PySide2 import QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 

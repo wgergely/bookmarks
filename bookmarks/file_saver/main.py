@@ -21,7 +21,10 @@ Attributes:
 """
 import os
 
-from PySide2 import QtWidgets, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import widgets
 from .. import actions

@@ -5,16 +5,16 @@
 
 function Build-App {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Version,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [bool]$Reset
     )
 
@@ -57,6 +57,9 @@ function Build-App {
     if (-not (Test-Path -Path $sourceDir)) {
         Write-Message -t "error" -m "Source directory not found: $sourceDir"
     }
+
+    $referencePlatforms = Get-ReferencePlatforms
+    $toolsetVersion = $referencePlatforms.$ReferencePlatform.vs_toolset
 
     Write-Message -m "Configuring the build with Visual Studio $($ReferencePlatforms.$ReferencePlatform.vs_version) $($ReferencePlatforms.$ReferencePlatform.vs_year)"
     $arguments = @(

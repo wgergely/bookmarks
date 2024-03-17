@@ -8,12 +8,14 @@ import os
 import sys
 import time
 
-from PySide2 import QtWidgets, QtGui
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 
 dependencies = (
-    'PySide2',
     'OpenImageIO',
     'numpy',
     'psutil',
@@ -25,7 +27,7 @@ def initialize(mode):
     """Initializes the components required to run Bookmarks.
 
     It is important to call this function before running the app as it is responsible
-    for loading the resource variables and starting the helper threads item models use
+    for loading the resource variables and starting the helper threads item model use
     to load information.
 
     Note:

@@ -6,7 +6,10 @@ See the :mod:`bookmarks.tokens.tokens` for the interface details.
 import copy
 import functools
 
-from PySide2 import QtWidgets, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import tokens
 from .. import common

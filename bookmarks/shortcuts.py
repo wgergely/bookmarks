@@ -3,7 +3,10 @@
 TODO: Create editor widget to make these customizable.
 
 """
-from PySide2 import QtWidgets, QtGui, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 
@@ -365,7 +368,12 @@ def add_shortcuts(widget, shortcuts, context=QtCore.Qt.WidgetWithChildrenShortcu
     _verify_shortuts(shortcuts)
     for v in shortcuts.values():
         key_sequence = QtGui.QKeySequence(v['value'])
-        shortcut = QtWidgets.QShortcut(key_sequence, widget)
+
+        if int(QtCore.__version__.split('.')[0]) < 6: # PYSIDE2 DEPRECIATED
+            shortcut = QtWidgets.QShortcut(key_sequence, widget)
+        else:
+            shortcut = QtGui.QShortcut(key_sequence, widget)
+
         shortcut.setAutoRepeat(v['repeat'])
         shortcut.setWhatsThis(v['description'])
         shortcut.setContext(context)

@@ -2,15 +2,56 @@
 . "$PSScriptRoot/buildtool.ps1"
 . "$PSScriptRoot/vcpkg.ps1"
 
+function Convert-VersionToComparable {
+    param (
+        [string]$VersionString
+    )
+
+    # Initial check for a pattern resembling a semantic version. If not found, mark as invalid version.
+    if (-not $VersionString -match '\d+\.\d+(\.\d+)?') {
+        return New-Object PSObject -Property @{
+            OriginalString = $VersionString
+            Version        = [System.Version]::new(0, 0, 0, 0)
+        }
+    }
+
+    # Normalize the version string, stripping non-numeric prefixes and handling special cases
+    $normalizedVersion = $VersionString -replace '^[vV]', '' -replace '-lts-lgpl$', '' -replace '-lts$', '' -replace '^remotes/origin/', ''
+    $versionParts = $normalizedVersion -split '\.' | ForEach-Object {
+        try {
+            [int]$_
+        }
+        catch {
+            0 # Provide a default value of 0 for non-numeric parts
+        }
+    }
+
+    # Directly create the version object, safely handling missing parts
+    $major = if ($versionParts.Length -gt 0) { $versionParts[0] } else { 0 }
+    $minor = if ($versionParts.Length -gt 1) { $versionParts[1] } else { 0 }
+    $build = if ($versionParts.Length -gt 2) { $versionParts[2] } else { 0 }
+    $revision = if ($versionParts.Length -gt 3) { $versionParts[3] } else { 0 }
+
+    # Create and return the version object
+    $versionObject = New-Object PSObject -Property @{
+        OriginalString = $VersionString
+        Version        = [System.Version]::new($major, $minor, $build, $revision)
+    }
+
+    return $versionObject
+}
+
+
+
 function Get-PySide {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [bool]$Reset
     )  
     
@@ -45,57 +86,87 @@ function Get-PySide {
             exit 1
         }
         
-    } else {
+    }
+    else {
         Write-Message -m "The pyside directory already exists at $(Join-Path -Path $Path -ChildPath "pyside"). Skipping the clone."
     }
 
     # Get Qt version
+    Write-Message -m "Getting the Qt version..."
     $Qt = Get-Version -Path $Path -ReferencePlatform $ReferencePlatform -Package "qt[0-9]*-?base"
     if ($null -eq $Qt) {
         Write-Message -t "error" "Failed to get the Qt version."
         exit 1
     }
+    else {
+        Write-Message -m "The Qt version is $($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION)"
+    }
     
-    # Cd to the pyside directory
     Set-Location -Path (Join-Path -Path $Path -ChildPath "pyside")
     
     # List all the available branches
-    $branches = git --no-pager branch --all
+    $branches = git --no-pager branch --all | ForEach-Object { Convert-VersionToComparable $_ }
     if ($LASTEXITCODE -ne 0) {
         Write-Message -t "error" "Failed to list the branches."
         exit 1
     }
-
-    if ($null -eq $branches) {
+    if ($null -eq $branches -or $branches.Count -eq 0) {
         Write-Message -t "error" "No branches were found."
         exit 1
     }
-    
-    # Find the branch that matches the Qt version
-    $branch = $branches | Where-Object { $_ -match ".*/($($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION))" }
-    if ($null -eq $branch) {
-        Write-Message -m "Warning: The branch for the Qt version $($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION) does not exist. Attempting to find a branch by major and minor version..."
 
-        # If the branch does not exist, start matching by major and minor versions
-        $branch = $branches | Where-Object { $_ -match ".*/($($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).*)" } | Sort-Object -Descending | Select-Object -First 1
-        
-        if ($null -eq $branch) {
-            Write-Message -t "error" "No branch for the major version $($Qt.MAJOR_VERSION) and minor version $($Qt.MINOR_VERSION) was found. The available branches are:`n$($branches -join ', ')."
-            exit 1
-        } else {
-            Write-Message -m "No exact branch for the Qt version $($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION) was found. Using the latest patch version $($branch)."
-        }
+    $tags = git --no-pager tag --list | ForEach-Object { Convert-VersionToComparable $_ }
+    if ($LASTEXITCODE -ne 0) {
+        Write-Message -t "error" "Failed to list the tags."
+        exit 1
     }
-    if ($null -eq $matches[1]) {
-        Write-Message -t "error" "Failed to parse the branch name."
+    if ($null -eq $tags -or $tags.Count -eq 0) {
+        Write-Message -t "error" "No tags were found."
+        exit 1
+    }
+    
+    $QtVersion = Convert-VersionToComparable "$($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION)"
+    $versions = $branches + $tags
+    
+    # Filter the branches and tags by the Qt version
+    $versions = $versions | Where-Object { 
+        $_.Version.Major -eq $QtVersion.Version.Major -and 
+        $_.Version.Minor -eq $QtVersion.Version.Minor -and 
+        $_.Version.Build -eq $QtVersion.Version.Build 
+    } | Sort-Object -Property Version -Descending
+    if ($null -eq $versions -or $versions.Count -eq 0) {
+        Write-Message -t "error" "No suitable version was found for the Qt version $($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION)."
         exit 1
     }
 
-    Write-Message -m "Checking out the branch $($matches[1])"
-    git checkout $matches[1]
+    # Find the highest version from the branches and tags.
+    $highestVersion = $versions | Select-Object -First 1
+    if ($null -eq $highestVersion) {
+        Write-Message -t "error" "No suitable branch or tag was found for the Qt version $($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION)."
+        exit 1
+    }
 
+    # Verify that indeed the highest version still matches the Qt version
+    if ($highestVersion.Version.Major -ne $QtVersion.Version.Major -or
+        $highestVersion.Version.Minor -ne $QtVersion.Version.Minor -or
+        $highestVersion.Version.Build -ne $QtVersion.Version.Build) {
+        Write-Message -t "error" "The highest version $($highestVersion.OriginalString) does not match the Qt version $($Qt.MAJOR_VERSION).$($Qt.MINOR_VERSION).$($Qt.PATCH_VERSION)."
+        exit 1
+    }
+    git checkout $highestVersion.OriginalString
+
+    # Checkout the highest version
+    Write-Message -m "Checking out $($highestVersion.OriginalString)..."
     if ($LASTEXITCODE -ne 0) {
-        Write-Message -t "error" "Failed to checkout the branch $($matches[1])."
+        Write-Message -t "error" "Failed to checkout the branch or tag $($highestVersion.OriginalString)."
+        exit 1
+    }
+
+    # Init the submodules
+    Write-Message -m "Initializing the submodules..."
+    git submodule update --init --recursive
+    if ($LASTEXITCODE -ne 0) {
+        Write-Message -t "error" "Failed to initialize the submodules."
         exit 1
     }
 }
@@ -112,10 +183,10 @@ function Get-7z {
 
 function Get-LibClang {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform
     )
 
@@ -133,7 +204,8 @@ function Get-LibClang {
     # Determine the pyside major version (Qt5 uses PySide2 and Qt6 uses PySide6)
     if ($Qt.MAJOR_VERSION -eq "6") {
         $pysideMajorVersion = "6"
-    } else {
+    }
+    else {
         $pysideMajorVersion = "2"
     }
     
@@ -167,7 +239,8 @@ function Get-LibClang {
         if (-not (Test-Path $outFile)) {
             Write-Message -m "Downloading libclang from $url"
             Invoke-WebRequest -Uri $url -OutFile $outFile
-        } else {
+        }
+        else {
             Write-Message -m "The libclang file already exists at $outFile"
         }
 
@@ -179,11 +252,13 @@ function Get-LibClang {
             if ($LASTEXITCODE -ne 0) {
                 Write-Message -t "error" "Failed to extract libclang."
                 exit 1
-            } else {
+            }
+            else {
                 Write-Message -m "Successfully extracted libclang."
                 return
             }
-        } else {
+        }
+        else {
             return
         }
     }
@@ -195,13 +270,13 @@ function Get-LibClang {
 
 function New-PythonDistribution {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [bool]$Reset
     )
 
@@ -306,7 +381,7 @@ function New-PythonDistribution {
 
 function Bootstrap-PythonEnvironment {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path
     )
 
@@ -345,13 +420,13 @@ function Bootstrap-PythonEnvironment {
 
 function Build-PySide {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [bool]$Reset
     )
 
@@ -365,7 +440,8 @@ function Build-PySide {
     # Determine the pyside major version (Qt5 uses PySide2 and Qt6 uses PySide6)
     if ($Qt.MAJOR_VERSION -eq "6") {
         $pysideMajorVersion = "6"
-    } else {
+    }
+    else {
         $pysideMajorVersion = "2"
     }
 
@@ -407,6 +483,9 @@ function Build-PySide {
 
     Bootstrap-PythonEnvironment -Path $Path
 
+    $referencePlatforms = Get-ReferencePlatforms
+    $toolsetVersion = $referencePlatforms.$ReferencePlatform.vs_toolset
+
     # Define the arguments in an array
     Write-Message -m "Configuring the build with Visual Studio $($ReferencePlatforms.$ReferencePlatform.vs_version) $($ReferencePlatforms.$ReferencePlatform.vs_year)"
     $arguments = @(
@@ -419,7 +498,7 @@ function Build-PySide {
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_INSTALL_PREFIX=$Path/pyside/install",
         "-DBUILD_TESTS:BOOL=OFF",
-        "-DSKIP_MODULES=PrintSupport;Network;Test;DBus;Xml;XmlPatterns;Help;Multimedia;MultimediaWidgets;OpenGL;OpenGLFunctions;OpenGLWidgets;Positioning;Location;Qml;Quick;QuickControls2;QuickWidgets;RemoteObjects;Scxml;Script;ScriptTools;Sensors;SerialPort;TextToSpeech;Charts;Svg;DataVisualization",
+        "-DSKIP_MODULES=Tools,PrintSupport;Network;Test;DBus;Xml;XmlPatterns;Help;Multimedia;MultimediaWidgets;OpenGL;OpenGLFunctions;OpenGLWidgets;Positioning;Location;Qml;Quick;QuickControls2;QuickWidgets;RemoteObjects;Scxml;Script;ScriptTools;Sensors;SerialPort;TextToSpeech;Charts;Svg;DataVisualization",
         "-DVCPKG_TARGET_TRIPLET=x64-windows",
         "-DCMAKE_TOOLCHAIN_FILE=$Path/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "-DVCPKG_MANIFEST_MODE=ON",
@@ -507,8 +586,8 @@ function Build-PySide {
         Write-Message -t "error" "PySide encountered errors during the build. Continuing..."
     }
 
-    # Hacky bug fix -> in case pyi header generation fails create dummy files for each Qt module
-    $qtModules = @("Core", "Gui", "Widgets", "Sql", "Concurrent")
+    # Hacky bug fix -> if pyi header generation fails create dummy files for each Qt module
+    $qtModules = @("Core", "Gui", "Widgets", "Sql", "Concurrent", "PrintSupport")
     foreach ($module in $qtModules) {
         $pyiFile = Join-Path -Path $buildDir -ChildPath "sources/pyside$pysideMajorVersion/PySide$pysideMajorVersion/Qt$module/../Qt$module.pyi"
         if (-not (Test-Path -Path $pyiFile)) {

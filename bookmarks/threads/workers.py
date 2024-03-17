@@ -7,8 +7,11 @@ import os
 import uuid
 import weakref
 
-import pyimageutil
-from PySide2 import QtCore, QtWidgets
+import bookmarks_openimageio
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import database
@@ -32,7 +35,7 @@ def _widget(q):
 
 
 def _qlast_modified(n):
-    return QtCore.QDateTime.fromMSecsSinceEpoch(n * 1000)
+    return QtCore.QDateTime.fromMSecsSinceEpoch(int(n) * 1000)
 
 
 def _model(q):
@@ -109,7 +112,7 @@ def process(func):
             result = func(self, ref)
             common.check_type(result, bool)
 
-            # Let the models/views know the data has been processed ok and
+            # Let the model/view know the data has been processed ok and
             # request a row repaint
             if not ref() or self.interrupt or not result:
                 return
@@ -250,6 +253,8 @@ class BaseWorker(QtCore.QObject):
 
         for t in (t1, t2):
             ref = common.get_data_ref(p, k, t)
+            if not ref or not ref():
+                continue
             for idx in ref():
                 if not ref():
                     raise RuntimeError('Data changed during update.')
@@ -525,7 +530,7 @@ class InfoWorker(BaseWorker):
         """Populates the item with the missing file information.
 
         Args:
-            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.model.ItemModel.init_data` method.
 
         Returns:
             bool: `True` on success, `False` otherwise.
@@ -551,7 +556,7 @@ class InfoWorker(BaseWorker):
     def _process_data(self, ref):
         """Utility method for :meth:`process_data.
 
-        ref (weakref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
+        ref (weakref): A data item as created by the :meth:`bookmarks.items.model.ItemModel.init_data` method.
 
         """
         pp = ref()[common.ParentPathRole]
@@ -574,6 +579,8 @@ class InfoWorker(BaseWorker):
             k = st
 
         asset_row_data = db.get_row(k, database.AssetTable)
+        if asset_row_data['flags'] is not None:
+            asset_row_data['flags'] = QtCore.Qt.ItemFlag(asset_row_data['flags'])
         bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
 
         if len(pp) > 4:
@@ -628,11 +635,13 @@ class InfoWorker(BaseWorker):
         # Flags
         if asset_row_data:
             _flags = asset_row_data['flags']
+            if _flags is not None:
+                _flags = QtCore.Qt.ItemFlag(_flags)
         else:
-            _flags = 0
-        flags |= _flags if _flags else 0
+            _flags = QtCore.Qt.ItemFlag(0)
+        flags |= _flags if _flags else QtCore.Qt.ItemFlag(0)
         if len(pp) > 4:
-            flags |= _proxy_flags if _proxy_flags else 0
+            flags |= _proxy_flags if _proxy_flags else QtCore.Qt.ItemFlag(0)
         ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
 
         if ref() and ref()[common.ItemTabRole] == common.TaskItemSwitch:
@@ -822,7 +831,7 @@ class ThumbnailWorker(BaseWorker):
         for details.
 
         Args:
-            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.model.ItemModel.init_data` method.
 
         Returns:
             ref or None: `ref` if loaded successfully, else `None`.
@@ -876,7 +885,7 @@ class ThumbnailWorker(BaseWorker):
         try:
             # Skip large files
 
-            res = pyimageutil.convert_image(source, destination, max_size=int(common.thumbnail_size), )
+            res = bookmarks_openimageio.convert_image(source, destination, size=int(common.thumbnail_size), )
             if res:
                 images.ImageCache.get_image(destination, int(size), force=True)
                 images.make_color(destination)

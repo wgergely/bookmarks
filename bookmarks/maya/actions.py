@@ -13,7 +13,10 @@ except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
 import shiboken2
-from PySide2 import QtWidgets, QtCore
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import base
 from . import capture

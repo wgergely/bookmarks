@@ -6,7 +6,8 @@ function Get-ReferencePlatforms {
 
     if (Test-Path $config) {
         Write-Message -m "Found config: $config"
-    } else {
+    }
+    else {
         Write-Message -t "error" "$config not found at path: $config"
         exit 1
     }
@@ -14,7 +15,8 @@ function Get-ReferencePlatforms {
     # Verify data in the JSON file is valid
     try {
         $json = Get-Content -Path $config -Raw | ConvertFrom-Json
-    } catch {
+    }
+    catch {
         Write-Message -t "error" "Failed to parse $config. Ensure it is valid JSON."
         exit 1
     }
@@ -59,7 +61,8 @@ function Get-ReferencePlatforms {
             $_.vs_min = [version]$_.vs_min
             $_.vs_max = [version]$_.vs_max
         }
-    } catch {
+    }
+    catch {
         Write-Message -t "error" "type."
         exit 1
     }
@@ -70,7 +73,7 @@ function Get-ReferencePlatforms {
 
 function Verify-ReferencePlatformArg {
     param(
-        [Parameter(Mandatory=$true, HelpMessage="Reference Platform name (e.g. CY2022)")]
+        [Parameter(Mandatory = $true, HelpMessage = "Reference Platform name (e.g. CY2022)")]
         [Alias("r")]
         [string]$ReferencePlatform
     )
@@ -87,7 +90,7 @@ function Verify-ReferencePlatformArg {
 
 function Find-BuildTools {
     param(
-        [Parameter(Mandatory=$true, HelpMessage="Reference Platform name (e.g. CY2022)")]
+        [Parameter(Mandatory = $true, HelpMessage = "Reference Platform name (e.g. CY2022)")]
         [Alias("r")]
         [string]$ReferencePlatform
     )
@@ -125,7 +128,8 @@ function Find-BuildTools {
         [string] $foundVersions = $vsInstances.installationVersion -join ", "
         Write-Message -t "error" "Couldn't find a compatible Visual Studio version for reference platform $ReferencePlatform (was expecting >$minVersion and <$maxVersion but found $($foundVersions))."
         return ""
-    } else {
+    }
+    else {
         Write-Message -m "Reference Platform $ReferencePlatform`: Found Visual Studio $($compatibleVSInstance.installationVersion)"
     }
 
@@ -134,7 +138,8 @@ function Find-BuildTools {
     if (-not (Test-Path $vcVars64)) {
         Write-Message -t "error" "`vcvars64.bat` not found in detected Visual Studio path."
         return ""
-    } else {
+    }
+    else {
         Write-Message -m "Found $vcVars64"
     }
 
@@ -145,7 +150,7 @@ function Find-BuildTools {
 
 function Ensure-Tool {
     param(
-        [Parameter(Mandatory=$true, HelpMessage="Tool name (e.g. Git)")]
+        [Parameter(Mandatory = $true, HelpMessage = "Tool name (e.g. Git)")]
         [Alias("t")]
         [string]$Tool
     )
@@ -154,7 +159,8 @@ function Ensure-Tool {
         # Attempt to execute '$Tool --version' and capture its output
         $Version = & $Tool --version 2>&1
         Write-Message -m "Found $Tool - $Version"
-    } catch {
+    }
+    catch {
         # An error occurred, likely because the tool is not installed or not in PATH
         Write-Message -t "error" "$Tool not found. Ensure $Tool is available in the PATH."
         exit 1
@@ -165,7 +171,7 @@ function Ensure-Tool {
 
 function Install-BuildTools {
     param(
-        [Parameter(Mandatory=$true, HelpMessage="Reference Platform name (e.g. CY2022)")]
+        [Parameter(Mandatory = $true, HelpMessage = "Reference Platform name (e.g. CY2022)")]
         [Alias("r")]
         [string]$ReferencePlatform
     )
@@ -195,6 +201,7 @@ function Install-BuildTools {
 
     # Install Build Tools with specified workloads and components, excluding those with known issues
     $installPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\$($referencePlatforms.$referencePlatform.vs_year)\BuildTools"
+
     $arguments = @(
         "--quiet",
         "--wait",
@@ -215,9 +222,12 @@ function Install-BuildTools {
     # Check for reboot required (exit code 3010)
     if ($process.ExitCode -eq 3010) {
         Write-Message -m "Installation completed successfully, but a reboot is required."
-    } elseif ($process.ExitCode -ne 0) {
+    }
+    elseif ($process.ExitCode -ne 0) {
         Write-Message -m "Installation failed with exit code $($process.ExitCode)."
-    } else {
+        exit 1
+    }
+    else {
         Write-Message -m "Installation completed successfully with exit code $($process.ExitCode)."
     }
 
@@ -228,7 +238,7 @@ function Install-BuildTools {
 
 function Set-EnvironmentForBuild {
     param(
-        [Parameter(Mandatory=$true, HelpMessage="Path to vcvars64.bat")]
+        [Parameter(Mandatory = $true, HelpMessage = "Path to vcvars64.bat")]
         [Alias("f")]
         [string]$file
     )
@@ -260,13 +270,4 @@ function Set-EnvironmentForBuild {
     
     # Remove the temporary file after use
     Remove-Item -Path $tempFile
-}
-
-
-function Main {
-    [string] $vcVars64 = Find-BuildTools
-    if ($vcVars64 -eq "") {
-        Write-Message -t "error" "Visual Studio build tools not found."
-        exit 1
-    }
 }

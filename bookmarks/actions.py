@@ -11,7 +11,10 @@ import re
 import subprocess
 import zipfile
 
-from PySide2 import QtCore, QtWidgets, QtGui
+try:
+    from PySide6 import QtWidgets, QtGui, QtCore
+except ImportError:
+    from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 from . import database
@@ -153,7 +156,7 @@ def remove_bookmark(server, job, root):
         common.check_type(arg, str)
 
     # If the active bookmark is removed, make sure we're clearing the active
-    # bookmark. This will cause all models to reset so show the bookmark tab.
+    # bookmark. This will cause all model to reset so show the bookmark tab.
     if (common.active('server') == server and common.active('job') == job and common.active('root') == root):
         set_active('server', None)
         change_tab(common.BookmarkTab)
@@ -216,7 +219,7 @@ def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
     """Slot used to keep item filter flag values updated across all datasets.
 
     For instance, the favourite item model might set flag values that we want to
-    keep updated in other models too.
+    keep updated in other model too.
 
     Args:
         flag (int): A filter flag.

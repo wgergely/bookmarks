@@ -3,11 +3,14 @@
 
 function Get-Vcpkg {
     param (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [Alias("p")]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
+        [string]$ReferencePlatform,
+
+        [Parameter(Mandatory = $true)]
         [Alias("r")]
         [bool]$Reset
     )
@@ -31,7 +34,8 @@ function Get-Vcpkg {
                 exit 1
             }
         }
-    } else {
+    }
+    else {
         if (Test-Path -Path (Join-Path -Path $Path -ChildPath "vcpkg")) {
             # Check if vcpkg has been already bootstrapped (vcpkg.exe exists)
             if (-not (Test-Path -Path (Join-Path -Path $Path -ChildPath "vcpkg/vcpkg.exe"))) {
@@ -44,7 +48,8 @@ function Get-Vcpkg {
                     Write-Message -t "error" "Failed to delete the vcpkg directory."
                     exit 1
                 }
-            } else {
+            }
+            else {
                 Write-Message -m "vcpkg directory exists and is bootstrapped. Skipping cloning."
                 return
             }
@@ -61,6 +66,40 @@ function Get-Vcpkg {
 
     if (-not (Test-Path -Path (Join-Path -Path $Path -ChildPath "vcpkg"))) {
         Write-Message -t "error" "Failed to clone the vcpkg repository."
+        exit 1
+    }
+
+    # Open the VCPKG manifest json to find out the baseline commit
+    $manifestsDir = Join-Path -Path $PSScriptRoot -ChildPath "../config"
+    $manifestFile = Get-ChildItem -Path $manifestsDir -Filter "$ReferencePlatform.json" -Recurse
+
+    if ($null -eq $manifestFile) {
+        Write-Message -t "error" "The vcpkg manifest file for reference platform $ReferencePlatform does not exist."
+        exit 1
+    }
+
+    # Read the file contents
+    Write-Message -m "Reading vcpkg manifest file: $manifestFile"
+    $manifestContents = Get-Content -Path $manifestFile.FullName -Raw | ConvertFrom-Json
+    if ($null -eq $manifestContents) {
+        Write-Message -t "error" "The vcpkg manifest file is empty."
+        exit 1
+    }
+
+    # Check if the json object has a "builtin-baseline" property
+    $vcpkgBaselineCommit = $manifestContents."builtin-baseline"
+    
+    if ($null -eq $vcpkgBaselineCommit) {
+        Write-Message -t "error" "The vcpkg manifest file does not contain a builtin-baseline property."
+        exit 1
+    }
+
+    # Checkout the baseline commit
+    Write-Message -m "Checking out vcpkg baseline commit: $vcpkgBaselineCommit"
+    Set-Location -Path (Join-Path -Path $Path -ChildPath "vcpkg")
+    git checkout $vcpkgBaselineCommit
+    if ($LASTEXITCODE -ne 0) {
+        Write-Message -t "error" "Failed to checkout the vcpkg baseline commit."
         exit 1
     }
 
@@ -89,11 +128,11 @@ function Get-Vcpkg {
 
 function Copy-VcpkgManifest {
     param (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [Alias("r")]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [Alias("p")]
         [string]$Path
     )
@@ -126,8 +165,9 @@ function Copy-VcpkgManifest {
     # Check if the manifest file is a valid json
     $manifestContent = Get-Content -Path (Join-Path -Path $Path -ChildPath "vcpkg/vcpkg.json")
     try {
-       $manifestContent | ConvertFrom-Json
-    } catch {
+        $manifestContent | ConvertFrom-Json
+    }
+    catch {
         Write-Message -t "error" "The vcpkg manifest file is not a valid json."
         exit 1
     }
@@ -135,7 +175,7 @@ function Copy-VcpkgManifest {
 
 function Install-VcpkgPackages {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [Alias("p")]
         [string]$Path
     )
@@ -145,7 +185,40 @@ function Install-VcpkgPackages {
     # Change to the vcpkg directory
     Set-Location -Path (Join-Path -Path $Path -ChildPath "vcpkg")
 
-    # Install the packages
+    # Prior to the build, we'll have to modify the vcpkg.json file to include the correct VCPKG_PLATFORM_TOOLSET version
+
+    Verify-ReferencePlatformArg -r $ReferencePlatform
+    $referencePlatforms = Get-ReferencePlatforms
+
+    $toolsetVersion = $referencePlatforms.$ReferencePlatform.vs_toolset
+    if ($null -eq $toolsetVersion) {
+        Write-Message -t "error" "The toolset version is not defined in the reference platform."
+        exit 1
+    }
+
+    # the triplet is located in ./triplets/x64-windows.cmake
+    $tripletFile = Join-Path -Path $Path -ChildPath "vcpkg/triplets/x64-windows.cmake"
+    if (-not (Test-Path -Path $tripletFile)) {
+        Write-Message -t "error" "The x64-windows.cmake file does not exist."
+        exit 1
+    }
+    
+    $tripletFileContent = Get-Content -Path $tripletFile
+    
+    # Check if the file already contains the VCPKG_PLATFORM_TOOLSET line
+    if ($tripletFileContent -match "set\(VCPKG_PLATFORM_TOOLSET.*") {
+        Write-Message -m "The VCPKG_PLATFORM_TOOLSET line already exists in the triplet file."
+    }
+    else {
+        Write-Message -m "Adding VCPKG_PLATFORM_TOOLSET line to the triplet file."
+        $tripletFileContent = $tripletFileContent.Trim(" `t`n`r") + "`n" + "set(VCPKG_PLATFORM_TOOLSET $toolsetVersion)"
+        Set-Content -Path $tripletFile -Value $tripletFileContent
+        if ($LASTEXITCODE -ne 0) {
+            Write-Message -t "error" "Failed to modify the $tripletFile file."
+            exit 1
+        }    
+    }
+    
     ./vcpkg.exe install --triplet x64-windows
     if ($LASTEXITCODE -ne 0) {
         Write-Message -t "error" "Failed to install vcpkg packages."
@@ -155,10 +228,10 @@ function Install-VcpkgPackages {
 
 function Get-VcpkgInfo {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Package
     )
 
@@ -188,7 +261,8 @@ function Get-VcpkgInfo {
     try {
         Write-Message -m "Reading $Package list file ($listFile)"
         $fileContents = Get-Content -Path $listFilePath
-    } catch {
+    }
+    catch {
         Write-Message -t "error" "Failed to read the $Package list file."
         exit 1
     }
@@ -205,13 +279,13 @@ function Get-VcpkgInfo {
 
 function Get-Version {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Path,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$ReferencePlatform,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$Package
 
     )
@@ -233,13 +307,14 @@ function Get-Version {
     # Make sure we only found 1 file
 
     # Read the file contents
-    try{
+    try {
         $manifestContents = Get-Content -Path $manifestFile.FullName -Raw | ConvertFrom-Json
         if ($null -eq $manifestContents) {
             Write-Message -t "error" "The vcpkg manifest file is empty."
             exit 1
         }
-    } catch {
+    }
+    catch {
         Write-Message -t "error" "Failed to read the vcpkg manifest file."
         exit 1
     }
@@ -271,7 +346,8 @@ function Get-Version {
                     "MINOR_VERSION" = $MINOR_VERSION
                     "PATCH_VERSION" = $PATCH_VERSION
                 }
-            } catch {
+            }
+            catch {
                 Write-Message -t "error" "Failed to parse $Package version: $_"
                 exit 1
             }

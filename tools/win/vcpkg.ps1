@@ -103,6 +103,21 @@ function Get-Vcpkg {
         exit 1
     }
 
+    # Check if CY####.patch file exists in the config folder and apply it
+    $patchFile = Get-ChildItem -Path $manifestsDir -Filter "$ReferencePlatform.patch" -Recurse
+    if (-not ($null -eq $manifestFile)) {
+        Write-Message -m "Applying patch file: $($patchFile.Name)"
+
+        # Change current directory to the vcpkg directory
+        Set-Location -Path (Join-Path -Path $Path -ChildPath "vcpkg")
+        git apply $patchFile.FullName
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Message -t "error" "Failed to apply the patch file: $($patchFile.Name)"
+            exit 1
+        }
+    }
+    
     Write-Message -m "Bootstrapping vcpkg..."
     $vcpkgPath = Join-Path -Path $Path -ChildPath "vcpkg"
     $vcpkgExePath = Join-Path -Path $vcpkgPath -ChildPath "vcpkg.exe"
@@ -165,12 +180,34 @@ function Copy-VcpkgManifest {
     # Check if the manifest file is a valid json
     $manifestContent = Get-Content -Path (Join-Path -Path $Path -ChildPath "vcpkg/vcpkg.json")
     try {
-        $manifestContent | ConvertFrom-Json
+        $manifestJson = $manifestContent | ConvertFrom-Json
     }
     catch {
         Write-Message -t "error" "The vcpkg manifest file is not a valid json."
         exit 1
     }
+
+    # Remove the vcpkg-configuration key and values from the manifest
+    if ($manifestJson.PSObject.Properties.Name -contains 'vcpkg-configuration') {
+        $vcpkgConfiguration = $manifestJson.'vcpkg-configuration'
+        $manifestJson.PSObject.Properties.Remove('vcpkg-configuration')
+    }
+    else {
+        Write-Message -t "error" "The vcpkg-configuration key is missing in the vcpkg manifest file."
+        exit 1
+    }
+
+    # Save the modified manifest as vcpkg.json
+    $modifiedManifestContent = $manifestJson | ConvertTo-Json -Depth 100
+    $modifiedManifestPath = Join-Path -Path $Path -ChildPath "vcpkg/vcpkg.json"
+    $modifiedManifestContent | Set-Content -Path $modifiedManifestPath
+
+    # Save the vcpkg-configuration as vcpkg-configuration.json
+    $vcpkgConfigurationContent = $vcpkgConfiguration | ConvertTo-Json -Depth 100
+    $vcpkgConfigurationPath = Join-Path -Path $Path -ChildPath "vcpkg/vcpkg-configuration.json"
+    $vcpkgConfigurationContent | Set-Content -Path $vcpkgConfigurationPath
+
+    Write-Message -m "Separation of vcpkg manifest file completed successfully."
 }
 
 function Install-VcpkgPackages {

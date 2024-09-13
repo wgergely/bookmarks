@@ -30,5 +30,13 @@
         "vs_version": "17",
         "vs_toolset": "v143",
         "vs_url": "https://aka.ms/vs/17/release/vs_buildtools.exe"
+    },
+    "CY2024-qt5": {
+        "vs_year": "2022",
+        "vs_min": "17.4",
+        "vs_max": "18.0",
+        "vs_version": "17",
+        "vs_toolset": "v143",
+        "vs_url": "https://aka.ms/vs/17/release/vs_buildtools.exe"
     }
 }

@@ -1,7 +1,7 @@
 {
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
     "name": "bookmarks",
-    "version-string": "CY2023",
+    "version-string": "CY2024Qt5",
     "dependencies": [
       {
         "name": "qt5-base",
@@ -61,11 +61,11 @@
       },
       {
         "name": "openexr",
-        "version": "3.1.8#1"
+        "version": "3.2.4"
       },
       {
         "name": "python3",
-        "version": "3.10.7#7"
+        "version": "3.11.8#4"
       },
       {
         "name": "opencolorio",
@@ -73,24 +73,26 @@
       },
       {
         "name": "openimageio",
-        "version": "2.5.8.0"
+        "version": "2.5.14.0"
       },
       {
         "name": "ffmpeg",
-        "version": "6.1.1"
-      },
-      {
-        "name": "libffi",
-        "version": "3.4.4#2"
+        "version": "6.1.1#11"
       }
     ],
-    "builtin-baseline": "095ee06e7f60dceef7d713e3f8b1c2eb10d650d7",
+    "builtin-baseline": "29b2ea2d4b6197e66ef346e62ccbba35b55b7de5",
     "vcpkg-configuration": {
       "registries": [
         {
           "kind": "git",
+          "repository": "https://github.com/microsoft/vcpkg",
+          "baseline": "7ef729383ab801504035a4445b6dbca18c8865c8",
+          "packages": [ "boost-modular-build-helper" ]
+        },
+        {
+          "kind": "git",
           "repository": "https://github.com/Microsoft/vcpkg",
-          "baseline": "5ba2b95aea2a39aa89444949c7a047af38c401c1",
+          "baseline": "bc378ccf3fe9c3a38c6ec3a39ee8901954904f6f",
           "packages": [ "boost*", "boost-*"]
         },
         {
@@ -102,7 +104,7 @@
         {
           "kind": "git",
           "repository": "https://github.com/Microsoft/vcpkg",
-          "baseline": "f84c18b6a5fb31983853b0d481b9de0263d6fc6c",
+          "baseline": "163fe24a8d52a71905122d98d02d19039cffac10",
           "packages": [ "python3"]
         }
       ]

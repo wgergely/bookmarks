@@ -20,8 +20,8 @@ function Get-ReferencePlatforms {
     }
     # Ensure the JSON file contains expected keys in the format of CY[0-9]{4}
     $json.PSObject.Properties.Name | ForEach-Object {
-        if ($_ -notmatch '^CY[0-9]{4}$') {
-            Write-Message -t "error" "Invalid reference platform name '$_' in $config. Must be in the format of CY[0-9]{4}."
+        if ($_ -notmatch '^CY[0-9]{4}.*$') {
+            Write-Message -t "error" "Invalid reference platform name '$_' in $config. Must be in the format of CY[0-9]{4}.*."
             exit 1
         }
     }
@@ -46,6 +46,10 @@ function Get-ReferencePlatforms {
         }
         if (-Not $_.PSObject.Properties.Name.Contains("vs_url")) {
             Write-Message -t "error" "Missing 'vs_url' key in $config for reference platform $_."
+            exit 1
+        }
+        if (-Not $_.PSObject.Properties.Name.Contains("vs_toolset")) {
+            Write-Message -t "error" "Missing 'vs_toolset' key in $config for reference platform $_."
             exit 1
         }
     }

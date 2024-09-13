@@ -68,11 +68,11 @@
       },
       {
         "name": "openexr",
-        "version": "3.1.8#1"
+        "version": "3.2.4"
       },
       {
         "name": "python3",
-        "version": "3.11.5#5"
+        "version": "3.11.8#4"
       },
       {
         "name": "opencolorio",
@@ -80,20 +80,26 @@
       },
       {
         "name": "openimageio",
-        "version": "2.5.8.0"
+        "version": "2.5.14.0"
       },
       {
         "name": "ffmpeg",
-        "version": "6.1.1"
+        "version": "6.1.1#11"
       }
     ],
-    "builtin-baseline": "095ee06e7f60dceef7d713e3f8b1c2eb10d650d7",
+    "builtin-baseline": "29b2ea2d4b6197e66ef346e62ccbba35b55b7de5",
     "vcpkg-configuration": {
       "registries": [
         {
           "kind": "git",
+          "repository": "https://github.com/microsoft/vcpkg",
+          "baseline": "7ef729383ab801504035a4445b6dbca18c8865c8",
+          "packages": [ "boost-modular-build-helper" ]
+        },
+        {
+          "kind": "git",
           "repository": "https://github.com/Microsoft/vcpkg",
-          "baseline": "5d3798ac7388ca66c169773e46103b14077b76a4",
+          "baseline": "bc378ccf3fe9c3a38c6ec3a39ee8901954904f6f",
           "packages": [ "boost*", "boost-*"]
         },
         {

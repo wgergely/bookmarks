@@ -133,6 +133,58 @@ function Copy-VcpkgManifest {
     }
 }
 
+function Patch-VcpkgTriplet {
+    param (
+        [Parameter(Mandatory=$true)]
+        [Alias("r")]
+        [string]$ReferencePlatform,
+
+        [Parameter(Mandatory=$true)]
+        [Alias("p")]
+        [string]$Path
+    )
+
+    # We want to add set(VCPKG_PLATFORM_TOOLSET v{version}) to the ./triplets/x64-windows.cmake file
+    $tripletFile = Join-Path -Path $Path -ChildPath "vcpkg/triplets/x64-windows.cmake"
+
+    if (-not (Test-Path -Path $tripletFile)) {
+        Write-Message -t "error" "The x64-windows.cmake file does not exist."
+        exit 1
+    }
+
+    # Read the file contents
+    $tripletContent = Get-Content -Path $tripletFile
+    if ($null -eq $tripletContent) {
+        Write-Message -t "error" "The x64-windows.cmake file is empty."
+        exit 1
+    }
+
+    # Check if the file already contains the VCPKG_PLATFORM_TOOLSET
+    if ($tripletContent -match "set\(VCPKG_PLATFORM_TOOLSET v[0-9]+\.[0-9]+\)")
+    {
+        Write-Message -m "The x64-windows.cmake file already contains VCPKG_PLATFORM_TOOLSET."
+        return
+    }
+
+    # Find the version of the Visual Studio build tools
+    Verify-ReferencePlatformArg -r $ReferencePlatform
+    $ReferencePlatforms = Get-ReferencePlatforms
+
+    $toolset_version = $ReferencePlatforms.$ReferencePlatform.vs_toolset
+
+    # Add the VCPKG_PLATFORM_TOOLSET to the file
+    Write-Message -m "Adding VCPKG_PLATFORM_TOOLSET to x64-windows.cmake file."
+    $tripletContent += "`nset(VCPKG_PLATFORM_TOOLSET $toolset_version)"
+    Set-Content -Path $tripletFile -Value $tripletContent
+    if ($LASTEXITCODE -ne 0) {
+        Write-Message -t "error" "Failed to write to the x64-windows.cmake file."
+        exit 1
+    }
+
+    Write-Message -m "Successfully patched the x64-windows.cmake file."
+}
+
+
 function Install-VcpkgPackages {
     param(
         [Parameter(Mandatory=$true)]
@@ -175,13 +227,26 @@ function Get-VcpkgInfo {
         exit 1
     }
 
-    # Find the list file
-    $listFile = $infoFiles | Where-Object { $_ -match "$Package.*\.list" }
+    # Find the list file.
+    $listFile = $infoFiles | Where-Object { $_ -match "^$Package.*\.list" }
     if ($null -eq $listFile) {
         Write-Message -t "error" "Could not find the $Package list file."
         exit 1
     }
-    
+
+    # Ensure $listFile is an array
+    if ($listFile -is [string]) {
+        $listFile = @($listFile)
+    }
+
+    # Use only the first result if one or more items are found
+    if ($listFile.Count -gt 0) {
+        $listFile = $listFile[0]
+    } else {
+        Write-Message -t "error" "Could not find the $Package list file."
+        exit 1
+    }
+
     # Read the file contents
     $listFilePath = Join-Path -Path $vcpkgInstallDir -ChildPath "vcpkg/info/$listFile"
 

@@ -25,7 +25,7 @@ bool RemoveLockFile(const std::wstring &input) {
         std::wstring lockPath = input + L".lock";
         std::filesystem::remove(lockPath);
         if (std::filesystem::exists(lockPath)) {
-            std::wcerr << L"[Error] Could not remove lock file: " << lockPath << std::endl;
+            std::cerr << "[Error] Could not remove lock file: " << StringConverter::to_string(lockPath) << std::endl;
             return false;
         }
         return true;
@@ -77,64 +77,58 @@ bool CreateLockFile(const std::wstring &input) {
     }
 }
 
-void WriteProgress(const std::wstring &message, int verbose) {
+void WriteProgress(const std::string &message, int verbose) {
     std::lock_guard<std::mutex> lock(io_mutex);
     {
         if (!verbose) {
             return;
         }
-        std::wcout << L"[Progress] " << message << std::endl;
+        std::cout << "[Progress] " << message << std::endl;
     }
 }
 
-void WriteError(const std::wstring &message, const std::wstring &input, std::string &errstring) {
+void WriteError(const std::string &message, const std::string &input, std::string &errstring) {
     std::lock_guard<std::mutex> lock(io_mutex);
     {
-        std::wcout << L"[Error] " << message << std::endl;
-        std::wcout << L"    Path: " << input << std::endl;
+        std::cout << "[Error] " << message << std::endl;
+        std::cout << "    Path: " << input << std::endl;
         if (!errstring.empty()) {
-            std::wcout << L"    " << StringConverter::to_wstring(errstring) << std::endl;
+            std::cout << "    " << errstring << std::endl;
         }
         if (has_error()) {
-            std::wcout << L"   " << StringConverter::to_wstring(geterror()) << std::endl;
+            std::cout << "   " << geterror() << std::endl;
         }
     }
 }
 
+
 int ConvertImage(const std::wstring &input, const std::wstring &output, int size, int threads, bool verbose) {
+
     int r;
+    std::string input_ = StringConverter::to_string(input);
+    std::string output_ = StringConverter::to_string(output);
+
+    WriteProgress(">>> Converting image: " + input_, verbose);
 
     // Check if the intput is a valid file that exists
     if (!std::filesystem::exists(input) || !std::filesystem::is_regular_file(input)) {
-        WriteError(L"Input file does not exist", input, empty_string_);
-        return 1;
-    }
-
-    // Attempt to create an ImageInput for the input file
-    auto _in = ImageInput::create(input);
-    if (!_in) {
-        if (!_in->close()) {
-            WriteError(L"Could not close ImageInput", input, _in->has_error() ? _in->geterror() : empty_string_);
-        };
-        WriteError(L"Could not create ImageInput", input, _in->has_error() ? _in->geterror() : empty_string_);
-        return 1;
-    }
-
-    if (!_in->valid_file(input)) {
-        if (!_in->close()) {
-            WriteError(L"Could not close ImageInput", input, _in->has_error() ? _in->geterror() : empty_string_);
-        };
-        WriteError(L"Invalid file", input, _in->has_error() ? _in->geterror() : empty_string_);
+        WriteError("Input file does not exist", input_, empty_string_);
         return 1;
     }
 
     // Attempt to open the input file
     auto in = ImageInput::open(input);
-    if (!in || in->has_error()) {
-        if (!in->close()) {
-            WriteError(L"Could not close ImageInput", input, in->has_error() ? in->geterror() : empty_string_);
+    if (!in) {
+        if (has_error()) {
+            WriteError("Could not create ImageInput", input_, geterror());
         };
-        WriteError(L"Could not open ImageInput", input, in->has_error() ? in->geterror() : empty_string_);
+        return 1;
+    }
+    if (in->has_error()) {
+        if (!in->close()) {
+            WriteError("Could not close ImageInput", input_, in->has_error() ? in->geterror() : empty_string_);
+        };
+        WriteError("Could not open ImageInput", input_, in->has_error() ? in->geterror() : empty_string_);
         return 1;
     }
 
@@ -146,10 +140,8 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         size = std::max(spec.width, spec.height);
     }
 
-    if (verbose) {
-        std::wcout << L"Input specs:" << std::endl;
-        std::cout << spec.serialize(ImageSpec::SerialText, ImageSpec::SerialDetailed);
-    }
+    WriteProgress("Input specs: ", verbose);
+    WriteProgress(spec.serialize(ImageSpec::SerialText, ImageSpec::SerialDetailed), verbose);
 
     // Find the best matching miplevel
     int miplevel = 0;
@@ -158,7 +150,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
 
     ImageSpec largest_spec;
 
-    // Find the best matching mipmap level woith our output size
+    WriteProgress("Finding best matching mipmap level...", verbose);
     while (in->seek_subimage(0, miplevel)) {
         if (spec.width >= size && spec.height >= size) {
             // Check if this is the first match or a smaller match than the current
@@ -175,22 +167,18 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
 
     if (best_match_miplevel != -1) {
         // Found a suitable mipmap level larger than the target size
-        if (verbose) {
-            std::wcout << L"Using mipmap level " << best_match_miplevel << L" with size " << largest_spec.width << L"x"
-                       << largest_spec.height << std::endl;
-        }
+        WriteProgress("Mipmap level " + std::to_string(best_match_miplevel) + " with size " +
+                          std::to_string(largest_spec.width) + "x" + std::to_string(largest_spec.height),
+                      verbose);
     } else {
         // No suitable mipmap found; use the largest mipmap level
         best_match_miplevel = 0;
     }
 
-    std::string input_ = StringConverter::to_string(input);
-    std::string output_ = StringConverter::to_string(output);
-
     // Read ImageBuf
     ImageBuf buf_(input_, 0, best_match_miplevel);
     if (buf_.has_error()) {
-        WriteError(L"Error reading image", input, buf_.has_error() ? buf_.geterror() : empty_string_);
+        WriteError("Error reading image", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
         return 1;
     }
 
@@ -202,12 +190,10 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     }
 
     if (best_subimage != 0) {
-        if (verbose) {
-            std::wcout << L"Resetting subimage to " << best_subimage << std::endl;
-        }
+        WriteProgress("Resetting subimage to " + std::to_string(best_subimage), verbose);
         buf_.reset(input_, best_subimage, best_match_miplevel);
         if (buf_.has_error()) {
-            WriteError(L"Error resetting subimage", input, buf_.has_error() ? buf_.geterror() : empty_string_);
+            WriteError("Error resetting subimage", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
             return 1;
         }
     }
@@ -217,7 +203,9 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     std::vector<float> fill_values = {0.3f, 0.3f, 0.3f, 1.0f};  // Default fill values for RGBA
 
     for (int i = 0; i < spec.nchannels; i++) {
-        if (spec.channelnames[i] == "R" || spec.channelnames[i] == "Y") {
+        WriteProgress("Finding suitable channels: " + spec.channelnames[i], verbose);
+
+        if (spec.channelnames[i] == "R" || spec.channelnames[i] == "Y" || spec.channelnames[i] == "L" || spec.channelnames[i] == "RY") {
             channel_indices[0] = i;
         }
 
@@ -234,18 +222,17 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         }
     }
 
+    WriteProgress("Using channel indices: ", verbose);
     if (verbose) {
-        std::wcout << L"Using channel indices: ";
         for (const auto &index : channel_indices) {
-            std::wcout << index << L" ";
+            WriteProgress("    " + std::to_string(index), verbose);
         }
-        std::wcout << std::endl;
     }
 
-    WriteProgress(L"Shuffling channels...", verbose);
+    WriteProgress("Shuffling channels...", verbose);
     r = ImageBufAlgo::channels(buf_, buf_, channel_indices.size(), channel_indices, fill_values);
     if (!r || buf_.has_error()) {
-        WriteError(L"Could not shuffle channels", input, buf_.has_error() ? buf_.geterror() : empty_string_);
+        WriteError("Could not shuffle channels", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
         return 1;
     }
 
@@ -254,10 +241,10 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
 
     // Flatten if deep
     if (spec_.deep) {
-        WriteProgress(L"Flattening deep image...", verbose);
+        WriteProgress("Flattening deep image...", verbose);
         r = ImageBufAlgo::flatten(buf_, buf_);
         if (!r || buf_.has_error()) {
-            WriteError(L"Could not flatten deep image. Continuing...", input,
+            WriteError("Could not flatten deep image. Continuing...", input_,
                        buf_.has_error() ? buf_.geterror() : empty_string_);
         }
     }
@@ -291,10 +278,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         out_height++;
     }
 
-    if (verbose) {
-        std::wcout << L"Output size: " << out_width << L"x" << out_height << std::endl;
-    }
-
+    WriteProgress("Output size: " + std::to_string(out_width) + "x" + std::to_string(out_height), verbose);
     ROI out_roi = ROI(0, out_width,              // x begin/end
                       0, out_height,             // y begin/end
                       0, 1,                      // z begin/end
@@ -316,16 +300,14 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
 
     ImageBuf out_buf(out_spec);
 
-    if (verbose) {
-        std::wcout << L"Output image spec: " << std::endl;
-        std::cout << out_spec.serialize(ImageSpec::SerialText, ImageSpec::SerialDetailed);
-    }
+    WriteProgress("Output image spec: ", verbose);
+    WriteProgress(out_spec.serialize(ImageSpec::SerialText, ImageSpec::SerialDetailed), verbose);
 
     if (size != 0 && (out_width != spec_.width || out_height != spec_.height)) {
-        WriteProgress(L"Resizing image...", verbose);
+        WriteProgress("Resizing image...", verbose);
         r = ImageBufAlgo::fit(out_buf, buf_, "gaussian", 1.0f, "width", out_roi, threads);
         if (!r || out_buf.has_error()) {
-            WriteError(L"Could not resize image", input, out_buf.has_error() ? out_buf.geterror() : empty_string_);
+            WriteError("Could not resize image", input_, out_buf.has_error() ? out_buf.geterror() : empty_string_);
             return 1;
         }
     } else {
@@ -335,17 +317,17 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     // Color convert
     std::string spec_color_space = spec_.get_string_attribute("oiio:ColorSpace", "sRGB");
     if (spec_color_space != "sRGB") {
-        WriteProgress(L"Converting colors...", verbose);
+        WriteProgress("Converting colors...", verbose);
 
         r = ImageBufAlgo::colorconvert(out_buf, out_buf, spec_color_space, "sRGB", true, "", "", nullptr, out_roi,
                                        threads);
         if (!r || out_buf.has_error()) {
-            WriteError(L"Failed to convert color profile. Continuing...", input,
+            WriteError("Failed to convert color profile. Continuing...", input_,
                        out_buf.has_error() ? out_buf.geterror() : empty_string_);
         }
     }
 
-    WriteProgress(L"Writing " + output, verbose);
+    WriteProgress("Writing " + output_, verbose);
     out_buf.make_writeable(true);
     out_buf.set_write_format(TypeDesc::UINT8);
     r = out_buf.write(output_);
@@ -354,22 +336,22 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     if (!std::filesystem::exists(output) || std::filesystem::file_size(output) == 0) {
         // Remove the output file
 
-        WriteError(L"Malformed output file, removing...", input,
+        WriteError("Malformed output file, removing...", input_,
                    out_buf.has_error() ? out_buf.geterror() : empty_string_);
         r = std::filesystem::remove(output);
         if (!r) {
-            WriteError(L"Could not remove malformed output file", input, empty_string_);
+            WriteError("Could not remove malformed output file", input_, empty_string_);
             return 1;
         }
         return 1;
     }
 
     if (!r || out_buf.has_error()) {
-        WriteError(L"Could not write output", output, out_buf.has_error() ? out_buf.geterror() : empty_string_);
+        WriteError("Could not write output", output_, out_buf.has_error() ? out_buf.geterror() : empty_string_);
         return 1;
     }
 
-    WriteProgress(L"Finished converting " + input, verbose);
+    WriteProgress("Finished converting " + input_, verbose);
     return 0;
 };
 
@@ -399,11 +381,11 @@ std::optional<std::wregex> ConvertInputToRegex(const std::wstring &input, bool v
 
     if (std::regex_match(stem, match, re_printf)) {
         std::wstring n = std::to_wstring(match[1].length());
-        WriteProgress(L"Found padding: " + n, verbose);
+        WriteProgress("Found padding: " + StringConverter::to_string(n), verbose);
         stem = std::regex_replace(stem, std::wregex(L"%0(\\d{1})d"), L"(\\d{$1})");
     } else if (std::regex_match(stem, match, re_hash)) {
         std::wstring n = std::to_wstring(match[1].length());
-        WriteProgress(L"Found padding: " + n, verbose);
+        WriteProgress("Found padding: " + StringConverter::to_string(n), verbose);
         stem = std::regex_replace(stem, std::wregex(L"([#]{" + n + L"})"), L"(\\d{" + n + L"})");
     } else {
         return std::nullopt;
@@ -416,6 +398,9 @@ std::optional<std::wregex> ConvertInputToRegex(const std::wstring &input, bool v
 }
 
 int ConvertSequence(const std::wstring &input, const std::wstring &output, int size, int threads, bool verbose) {
+    std::string input__ = StringConverter::to_string(input);
+    std::string output__ = StringConverter::to_string(output);
+
     // Convert input to a path
     std::filesystem::path input_path(input);
     input_path = input_path.make_preferred();
@@ -430,17 +415,17 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
 
     std::wstring output_extension = output_path.extension().wstring();
     if (output_extension.empty()) {
-        WriteError(L"Output file extension is empty", output, empty_string_);
+        WriteError("Output file extension is empty", output__, empty_string_);
         return 1;
     }
 
     // Verify that the parent paths exists
     if (!std::filesystem::exists(intput_parent_dir) || !std::filesystem::is_directory(intput_parent_dir)) {
-        WriteError(L"Parent directory does not exist", output_parent_dir.wstring(), empty_string_);
+        WriteError("Parent directory does not exist", output_parent_dir.string(), empty_string_);
         return 1;
     }
     if (!std::filesystem::exists(output_parent_dir) || !std::filesystem::is_directory(output_parent_dir)) {
-        WriteError(L"Parent directory does not exist", output_parent_dir.wstring(), empty_string_);
+        WriteError("Parent directory does not exist", output_parent_dir.string(), empty_string_);
         return 1;
     }
 
@@ -451,12 +436,12 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
     auto file_name_re = ConvertInputToRegex(file_name, verbose);
 
     if (!file_name_re) {
-        WriteError(L"Does not seem like a file sequence. Try using ConvertImage instead.", input, empty_string_);
+        WriteError("Does not seem like a file sequence. Try using ConvertImage instead.", input__, empty_string_);
         return 1;
     }
 
     // Iterate through the parent directory and find all matching files
-    WriteProgress(L"Searching for matching files...", verbose);
+    WriteProgress("Searching for matching files...", verbose);
     std::vector<std::wstring> inputs;
     for (const auto &entry : std::filesystem::directory_iterator(intput_parent_dir)) {
         std::wstring entry_name = entry.path().filename();
@@ -472,10 +457,10 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
     }
 
     if (inputs.empty()) {
-        WriteError(L"Could not find file sequence items", input, empty_string_);
+        WriteError("Could not find file sequence items", input__, empty_string_);
         return 1;
     } else {
-        WriteProgress(L"    Found " + std::to_wstring(inputs.size()) + L" items", verbose);
+        WriteProgress("    Found " + std::to_string(inputs.size()) + " items", verbose);
     }
 
     std::wstring output_base_name = output_path.stem().wstring();
@@ -489,27 +474,26 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
                 output_parent_dir / (output_base_name + L"." + std::to_wstring(index) + output_extension);
 
             // Lock I/O operations if they're shared across threads
-            WriteProgress(L"Processing image " + std::to_wstring(index + 1) + L" of " + std::to_wstring(inputs.size()),
+            WriteProgress("Processing image " + std::to_string(index + 1) + " of " + std::to_string(inputs.size()),
                           verbose);
 
             try {
                 if (!CreateLockFile(i)) {
-                    WriteError(L"Another process is already working on this file. Exiting...", i, empty_string_);
+                    WriteError("Another process is already working on this file. Exiting...", StringConverter::to_string(i), empty_string_);
                     continue;  // Skip this file or handle error appropriately
                 }
 
                 int r = ConvertImage(i, _output, size, 1, false);  // two threads
 
-                WriteProgress(L"Output: " + _output, verbose);
+                WriteProgress("Output: " + StringConverter::to_string(_output), verbose);
 
                 RemoveLockFile(i);
 
                 if (r != 0) {
-                    WriteError(L"Error converting image", i, empty_string_);
-                    // Handle error, perhaps break or return if it's critical
+                    WriteError("Error converting image", StringConverter::to_string(i), empty_string_);
                 }
             } catch (const std::exception &e) {
-                WriteError(L"Error converting image", i, std::string(e.what()));
+                WriteError("Error converting image", StringConverter::to_string(i), std::string(e.what()));
 
                 RemoveLockFile(i);
             }
@@ -539,51 +523,23 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
         }
     }
 
-    // for (const auto &i : inputs) {
-    //     _output = output_parent_dir / (output_base_name + L"." + std::to_wstring(n) + output_extension);
-
-    //     WriteProgress(L"Processing image " + std::to_wstring(n + 1) + L" of " + std::to_wstring(inputs.size()),
-    //                   verbose);
-
-    //     try {
-    //         if (!CreateLockFile(i)) {
-    //             WriteError(L"Another process is already working on this file. Exiting...", input, empty_string_);
-    //             return 1;
-    //         };
-
-    //         r = ConvertImage(i, output_, size, threads, verbose);
-    //         RemoveLockFile(i);
-
-    //         if (r != 0) {
-    //             WriteError(L"Error converting image", i, empty_string_);
-    //             return r;
-    //         }
-    //     } catch (const std::exception &e) {
-    //         WriteError(L"Error making thumbnail", i, std::string(e.what()));
-    //         RemoveLockFile(i);
-    //         return 1;
-    //     }
-
-    //     WriteProgress(L"Output: " + _output, verbose);
-
-    //     n++;
-    // }
-
-    WriteProgress(L"Finished processing " + std::to_wstring(inputs.size()) + L" items.", verbose);
+    WriteProgress("Finished processing " + std::to_string(inputs.size()) + " items.", verbose);
 
     return 0;
 }
 
 int wmain(int argc, wchar_t *argv[]) {
     std::wstring input;
+    std::string input_;
     std::wstring output;
+    std::string output_;
     int size;
     int threads;
     bool verbose = false;
 
     std::locale::global(std::locale(""));
-    std::wcout.imbue(std::locale());
-    std::wcerr.imbue(std::locale());
+    std::cout.imbue(std::locale());
+    std::cerr.imbue(std::locale());
 
     // Parse command line arguments
     CommandLineParser parser({
@@ -602,7 +558,7 @@ int wmain(int argc, wchar_t *argv[]) {
     try {
         parser.parse(argc, argv);
     } catch (const std::exception &e) {
-        WriteError(L"Could not parse arguments", L"-", std::string(e.what()));
+        WriteError("Could not parse arguments", "-", std::string(e.what()));
         parser.showHelp();
         return 1;
     }
@@ -613,9 +569,11 @@ int wmain(int argc, wchar_t *argv[]) {
     }
     if (parser.has(L"input")) {
         input = parser.get<std::wstring>(L"input");
+        input_ = StringConverter::to_string(input);
     }
     if (parser.has(L"output")) {
         output = parser.get<std::wstring>(L"output");
+        output_ = StringConverter::to_string(output);
     }
     if (parser.has(L"size")) {
         size = parser.get<int>(L"size");
@@ -628,24 +586,22 @@ int wmain(int argc, wchar_t *argv[]) {
         verbose = parser.get<bool>(L"verbose");
     }
 
-    if (verbose) {
-        std::wcout << L"Input image: " << input << std::endl;
-        std::wcout << L"Output image: " << output << std::endl;
-        std::wcout << L"Output size: " << size << std::endl;
-        std::wcout << L"Number of threads: " << threads << std::endl;
-    }
+    WriteProgress("Input image: " + input_, verbose);
+    WriteProgress("Output image: " + output_, verbose);
+    WriteProgress("Output size: " + std::to_string(size), verbose);
+    WriteProgress("Number of threads: " + std::to_string(threads), verbose);
 
     auto image_cache = CreateCache();
 
     int r;
     try {
         if (!CreateLockFile(input)) {
-            WriteError(L"Another process is already working on this file. Exiting...", input, empty_string_);
+            WriteError("Another process is already working on this file. Exiting...", input_, empty_string_);
             return 1;
         };
         r = ConvertImage(input, output, size, threads, verbose);
     } catch (const std::exception &e) {
-        WriteError(L"Error making thumbnail", input, std::string(e.what()));
+        WriteError("Error making thumbnail", input_, std::string(e.what()));
         r = 1;
     }
     RemoveLockFile(input);

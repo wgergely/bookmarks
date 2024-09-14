@@ -5,7 +5,7 @@ import functools
 import os
 import subprocess
 
-import pyimageutil
+import bookmarks_openimageio
 from PySide2 import QtCore, QtWidgets
 
 from . import ffmpeg
@@ -436,7 +436,7 @@ class FFMpegWidget(base.BasePropertyEditor):
             )
             QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
-            if not pyimageutil.convert_images(source_images, ffmpeg_source_images, max_size=-1, release_gil=True):
+            if not bookmarks_openimageio.convert_images(source_images, ffmpeg_source_images, max_size=-1, release_gil=True):
                 raise RuntimeError('Failed to convert an image using OpenImageIO.')
 
         # Sanity check to make sure all the destination paths exist

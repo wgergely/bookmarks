@@ -10,7 +10,7 @@ import json
 import os
 import time
 
-import pyimageutil
+import bookmarks_openimageio
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from . import actions
@@ -551,7 +551,7 @@ class PublishWidget(base.BasePropertyEditor):
         self.thumbnail_editor.save_image(destination=temp)
 
         if QtCore.QFileInfo(temp).exists():
-            res = pyimageutil.convert_image(
+            res = bookmarks_openimageio.convert_image(
                 temp, dest, max_size=int(common.thumbnail_size)
             )
             if not res:

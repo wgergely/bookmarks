@@ -7,7 +7,7 @@ import os
 import uuid
 import weakref
 
-import pyimageutil
+import bookmarks_openimageio
 from PySide2 import QtCore, QtWidgets
 
 from .. import common
@@ -876,7 +876,7 @@ class ThumbnailWorker(BaseWorker):
         try:
             # Skip large files
 
-            res = pyimageutil.convert_image(source, destination, max_size=int(common.thumbnail_size), )
+            res = bookmarks_openimageio.convert_image(source, destination, max_size=int(common.thumbnail_size), )
             if res:
                 images.ImageCache.get_image(destination, int(size), force=True)
                 images.make_color(destination)

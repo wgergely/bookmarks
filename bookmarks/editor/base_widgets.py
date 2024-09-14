@@ -3,7 +3,7 @@
 """
 import uuid
 
-import pyimageutil
+import bookmarks_openimageio
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
@@ -45,7 +45,7 @@ def process_image(source):
         if not f.dir().mkpath('.'):
             raise RuntimeError('Could not create temp folder')
 
-    res = pyimageutil.convert_image(
+    res = bookmarks_openimageio.convert_image(
         source,
         destination,
         max_size=int(common.thumbnail_size)

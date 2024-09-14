@@ -30,6 +30,7 @@ ENV/
 
 # Ignore files from JetBrains IDEs (e.g., PyCharm)
 .idea/
+.idea/**
 
 # Ignore Sublime Text project files
 *.sublime-project

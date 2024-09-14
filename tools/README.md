@@ -1,16 +1,34 @@
 # Build Tools
 
-This folder contains the build tools used to generate dependencies and environment for the Bookmarks application.
-We build against the [VFX Reference Platform](https://vfxplatform.com/) specifications and use [vcpkg](https://github.com/microsoft/vcpkg) to manage dependencies.
+This folder contains the build tools used to build the Bookmarks app and its dependencies.
+The build system uses the [VFX Reference Platform](https://vfxplatform.com/) specifications
+and [vcpkg](https://github.com/microsoft/vcpkg) to manage binary dependencies.
+
+The build script is fully managed and in principle, should install appropriate build tools based on `config/.*.json` files.
 
 > **_NOTE:_** Only Windows build scripts are provided.
 
+> **_NOTE:_** The non-commercial PySide2 only supports Python 3.10 and below. Houdini 20.5 ships with Python 3.11 and PySide2, if required, that custom PySide2 is available from the app distribution.
+
+
 ### Build Instructions
 
-Run `win-build.ps1` with the desired Reference Platform version (e.g. CY2024 or CY2023):
+On Windows, call `win-build.ps1` with the desired Reference Platform version, for example, CY2024 or CY2023, and arguments:
 
 ```powershell
 ./win-build.ps1 -ReferencePlatform CY2024
+```
+
+```powershell
+./win-build.ps1 `
+    -BuildDir D:\build `
+    -ReferencePlatform CY2023 `
+    -[Skip|Reset]Vcpkg `
+    -[Skip|Reset]PySide `
+    -[Skip|Reset]App `
+    -[Skip|Reset]Dist `
+    -[Skip|Reset]Installer
+
 ```
 
 ### Prerequisites
@@ -25,9 +43,9 @@ Run `win-build.ps1` with the desired Reference Platform version (e.g. CY2024 or 
 - `[setup]`: Downloads and installs a reference platform compatible `Visual Studio Build Tools` version
 - `[vcpkg]`: Builds binary dependencies using vcpkg and predefined manifest files
 - `[pyside]`: Builds PySide from source
-- `[app]`: Builds application libraries and executables
-- `[dist]`: Creates the application distribution folder
-- `[installer]`: Creates the application installer
+- `[app]`: Builds app libraries and executables
+- `[dist]`: Creates the app distribution folder
+- `[installer]`: Creates the app installer
 
 Steps can be skipped or reset using `-Skip*` and `-Reset*` flags:
 
@@ -37,5 +55,12 @@ Steps can be skipped or reset using `-Skip*` and `-Reset*` flags:
 
 ### Application Package
 
-The script will, by default, place all build artifacts to `C:/build/{ReferencePlatform}-{Version}/dist`.
-The `dist/python.exe` can be used as a python interpreter for the application in IDEs like PyCharm. 
+The script, by default, places build artifacts to `C:/build/{ReferencePlatform}-{Version}/dist/{Version}`.
+The `dist/bin/python.exe` is the integrated Python interpreter and `dist/bin/python-with-core.exe` the interpreter
+with the core python module also loaded.
+
+### Notes
+
+
+
+

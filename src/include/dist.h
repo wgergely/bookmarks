@@ -16,7 +16,7 @@ namespace Dist
 
     // Environment variables
     const std::wstring ROOT_ENV_VAR = L"Bookmarks_ROOT";
-    const std::wstring PY_EXEC_SCRIPT = L"import bookmarks;bookmarks.exec()";
+    const std::wstring PY_EXEC_SCRIPT = L"import bookmarks;bookmarks.exec()_";
 
     struct Paths
     {

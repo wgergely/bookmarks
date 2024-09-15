@@ -12,6 +12,7 @@ and :class:`.ThreadedItemView` that implement threading related functionality.
 """
 import collections
 import functools
+import os
 import re
 import weakref
 
@@ -21,6 +22,7 @@ from . import delegate
 from . import models
 from .widgets import filter_editor
 from .. import actions
+from .. import log
 from .. import common
 from .. import contextmenu
 from .. import database
@@ -1417,7 +1419,7 @@ class BaseItemView(QtWidgets.QTableView):
     @common.debug
     @QtCore.Slot(str)
     def show_item(self, v, role=QtCore.Qt.DisplayRole, update=True, limit=10000):
-        """Show an item in the viewer.
+        """Show an item in the view.
 
         Args:
             v (any): A value to match.
@@ -1428,8 +1430,25 @@ class BaseItemView(QtWidgets.QTableView):
         """
         proxy = self.model()
         model = proxy.sourceModel()
-        if update and model.rowCount() < limit:
-            model.reset_data(force=True, emit_active=False)
+
+        p = model.source_path()
+
+        if p and len(p) == 3:
+            # Read from the cache if it exists
+            source = '/'.join(p)
+            assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+            if not assets_cache_dir.exists():
+                assets_cache_dir.mkpath('.')
+
+            assets_cache_name = common.get_hash(source)
+            cache = f'{assets_cache_dir.path()}/{assets_cache_name}.cache'
+
+            if assets_cache_dir.exists() and os.path.exists(cache):
+                log.debug('Removing asset cache:', cache)
+                os.remove(cache)
+
+            if update and model.rowCount() < limit:
+                model.reset_data(force=True, emit_active=False)
 
         # Delay the selection to let the model process events
         QtCore.QTimer.singleShot(

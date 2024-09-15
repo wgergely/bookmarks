@@ -89,6 +89,8 @@ SECTIONS = {
         'ffmpeg/preset',
         'ffmpeg/size',
         'ffmpeg/timecode_preset',
+        'ffmpeg/sourcecolorspace',
+        'ffmpeg/targetcolorspace',
         'ffmpeg/pushtorv',
     ),
     'akaconvert': (

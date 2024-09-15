@@ -551,11 +551,16 @@ class PublishWidget(base.BasePropertyEditor):
         self.thumbnail_editor.save_image(destination=temp)
 
         if QtCore.QFileInfo(temp).exists():
-            res = bookmarks_openimageio.convert_image(
-                temp, dest, max_size=int(common.thumbnail_size)
+            error = bookmarks_openimageio.convert_image(
+                temp,
+                dest,
+                source_color_space='',
+                target_color_space='sRGB',
+                size=int(common.thumbnail_size)
             )
-            if not res:
+            if error == 1:
                 print(f'Error: Could not convert {temp}')
+
             QtCore.QFile(temp).remove()
 
         payload['thumbnail'] = dest

@@ -280,10 +280,9 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
     """Creates a thumbnail from a given image file and saves it as the source
     file's thumbnail image.
 
-    The ``server``, ``job``, ``root``, ``source`` arguments refer to a file we
-    want to create a new thumbnail for. The ``image`` argument should be a path to
-    an image file that will be converted using `bookmarks_openimageio.make_thumbnail()` to a
-    thumbnail image and saved to our image cache and disk to represent ``source``.
+    The ``server``, ``job``, ``root``, ``source`` arguments refer to a file to create a new thumbnail for.
+    The ``image`` argument should be a path to an image file to be converted to a
+    thumbnail image and saved to the image cache and disk to represent ``source``.
 
     Args:
          server (str): `server` path segment.
@@ -304,14 +303,17 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
             s = 'Failed to remove existing thumbnail file.'
             raise RuntimeError(s)
 
-    res = bookmarks_openimageio.convert_image(
+    error = bookmarks_openimageio.convert_image(
         image,
         thumbnail_path,
-        max_size=int(common.thumbnail_size)
+        source_color_space='',
+        target_color_space='sRGB',
+        size=int(common.thumbnail_size)
     )
-    if not res:
+    if error == 1:
         raise RuntimeError('Failed to make thumbnail.')
 
+    ImageCache.flush(image)
     ImageCache.flush(thumbnail_path)
 
 
@@ -327,9 +329,10 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
         job (str): `job` path segment.
         root (str): `root` path segment.
         source (str): The full file path.
+        proxy (bool): Specify if the source is an image sequence.
 
     Returns:
-        str:                The resolved thumbnail path.
+        str: The resolved thumbnail path.
 
     """
     for arg in (server, job, root, source):

@@ -930,7 +930,7 @@ def refresh(idx=None):
         p = model.source_path()
         source = '/'.join(p) if p else ''
         assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
-        if assets_cache_dir.exists():
+        if not assets_cache_dir.exists():
             assets_cache_dir.mkpath('.')
         assets_cache_name = common.get_hash(source)
         cache = f'{assets_cache_dir.path()}/{assets_cache_name}.cache'

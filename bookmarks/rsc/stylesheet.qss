@@ -69,12 +69,14 @@ QCheckBox::indicator {{
     border-radius: {size_indicator1}px;
 }}
 QCheckBox::indicator:unchecked {{
-    /* image: url({close}); */
+    image: url({close});
     background-color: {color_separator};
+    border-radius: {size_indicator1}px;
 }}
 QCheckBox::indicator:checked  {{
-    /* image: url({check}); */
+    image: url({check});
     background-color: {color_green};
+    border-radius: {size_indicator1}px;
 }}
 QCheckBox:checked  {{
     color: {color_selected_text};

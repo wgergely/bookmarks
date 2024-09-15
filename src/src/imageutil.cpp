@@ -116,12 +116,21 @@ void WriteError(const std::string &message, const std::string &input, std::strin
     }
 }
 
-int ConvertImage(const std::wstring &input, const std::wstring &output, int size, int threads, bool verbose)
+int ConvertImage(
+    const std::wstring &input,
+    const std::wstring &output,
+    const std::wstring &source_color_space,
+    const std::wstring &target_color_space,
+    int size,
+    int threads,
+    bool verbose)
 {
 
     int r;
     std::string input_ = StringConverter::to_string(input);
+    ustring input_u = ustring(input_);
     std::string output_ = StringConverter::to_string(output);
+    ustring output_u = ustring(output_);
 
     WriteProgress(">>> Converting image: " + input_, verbose);
 
@@ -132,6 +141,8 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         return 1;
     }
 
+    auto image_cache = CreateCache();
+
     // Attempt to open the input file
     auto in = ImageInput::open(input);
     if (!in)
@@ -140,6 +151,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         {
             WriteError("Could not create ImageInput", input_, geterror());
         };
+        image_cache->invalidate(input_u, true);
         return 1;
     }
     if (in->has_error())
@@ -149,6 +161,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
             WriteError("Could not close ImageInput", input_, in->has_error() ? in->geterror() : empty_string_);
         };
         WriteError("Could not open ImageInput", input_, in->has_error() ? in->geterror() : empty_string_);
+        image_cache->invalidate(input_u, true);
         return 1;
     }
 
@@ -207,6 +220,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     if (buf_.has_error())
     {
         WriteError("Error reading image", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
+        image_cache->invalidate(input_u, true);
         return 1;
     }
 
@@ -224,7 +238,8 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         buf_.reset(input_, best_subimage, best_match_miplevel);
         if (buf_.has_error())
         {
-            WriteError("Error resetting subimage", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
+            WriteError("Error resetting subimage.", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
+            image_cache->invalidate(input_u, true);
             return 1;
         }
     }
@@ -235,35 +250,28 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
 
     for (int i = 0; i < spec.nchannels; i++)
     {
-        WriteProgress("Finding suitable channels: " + spec.channelnames[i], verbose);
-
         if (spec.channelnames[i] == "R" || spec.channelnames[i] == "Y" || spec.channelnames[i] == "L" || spec.channelnames[i] == "RY")
         {
+            WriteProgress("Found R channel: " + spec.channelnames[i], verbose);
             channel_indices[0] = i;
         }
 
         if (spec.channelnames[i] == "G")
         {
+            WriteProgress("Found G channel: " + spec.channelnames[i], verbose);
             channel_indices[1] = i;
         }
 
         if (spec.channelnames[i] == "B")
         {
+            WriteProgress("Found B channel: " + spec.channelnames[i], verbose);
             channel_indices[2] = i;
         }
 
         if (spec.channelnames[i] == "A")
         {
+            WriteProgress("Found A channel: " + spec.channelnames[i], verbose);
             channel_indices[3] = i;
-        }
-    }
-
-    WriteProgress("Using channel indices: ", verbose);
-    if (verbose)
-    {
-        for (const auto &index : channel_indices)
-        {
-            WriteProgress("    " + std::to_string(index), verbose);
         }
     }
 
@@ -272,6 +280,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     if (!r || buf_.has_error())
     {
         WriteError("Could not shuffle channels", input_, buf_.has_error() ? buf_.geterror() : empty_string_);
+        image_cache->invalidate(input_u, true);
         return 1;
     }
 
@@ -285,8 +294,10 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         r = ImageBufAlgo::flatten(buf_, buf_);
         if (!r || buf_.has_error())
         {
-            WriteError("Could not flatten deep image. Continuing...", input_,
+            WriteError("Could not flatten deep image.", input_,
                        buf_.has_error() ? buf_.geterror() : empty_string_);
+            image_cache->invalidate(input_u, true);
+            return 1;
         }
     }
 
@@ -317,7 +328,7 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         }
     }
 
-    // Make sure both the output width and height are even
+    // Make sure both the output width and height are even numbers
     if (out_width % 2 != 0)
     {
         out_width++;
@@ -327,7 +338,6 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         out_height++;
     }
 
-    WriteProgress("Output size: " + std::to_string(out_width) + "x" + std::to_string(out_height), verbose);
     ROI out_roi = ROI(0, out_width,             // x begin/end
                       0, out_height,            // y begin/end
                       0, 1,                     // z begin/end
@@ -335,6 +345,57 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
     );
 
     ImageSpec out_spec = ImageSpec(out_roi, TypeDesc::UINT8);
+    out_spec.attribute("oiio:ColorSpace", "sRGB");
+
+    ImageBuf out_buf(out_spec);
+
+    if (size != 0 && (out_width != spec_.width || out_height != spec_.height))
+    {
+        WriteProgress("Resizing image...(" + std::to_string(out_width) + "x" + std::to_string(out_height) + ")", verbose);
+        r = ImageBufAlgo::fit(out_buf, buf_, "gaussian", 1.0f, "width", out_roi, threads);
+        if (!r || out_buf.has_error())
+        {
+            WriteError("Could not resize image", input_, out_buf.has_error() ? out_buf.geterror() : empty_string_);
+            image_cache->invalidate(input_u, true);
+            return 1;
+        }
+    }
+    else
+    {
+        out_buf.copy(buf_);
+    }
+
+    // Color convert
+    std::string _source_color_space = StringConverter::to_string(source_color_space);
+    std::string _target_color_space = StringConverter::to_string(target_color_space);
+    if (target_color_space.empty() || target_color_space == L"")
+    {
+        _target_color_space = "sRGB";
+    }
+
+    std::string spec_color_space = spec_.get_string_attribute("oiio:ColorSpace", "sRGB");
+
+    if (source_color_space.empty() || source_color_space == L"")
+    {
+        _source_color_space = spec_color_space;
+    }
+
+    if (_source_color_space != _target_color_space)
+    {
+        WriteProgress("Converting color profile from '" + _source_color_space + "' to '" + _target_color_space + "'", verbose);
+        r = ImageBufAlgo::colorconvert(out_buf, out_buf, _source_color_space, _target_color_space, true, "", "", nullptr, out_roi, threads);
+        if (!r || out_buf.has_error())
+        {
+            WriteError("Failed to convert color profile. Continuing...", input_, out_buf.has_error() ? out_buf.geterror() : empty_string_);
+        }
+    }
+
+    out_buf.make_writeable(true);
+    out_buf.set_write_format(TypeDesc::UINT8);
+
+    // Prior to writing the output we want to add metadata to stamp the output with the input file name,
+    // source byte size, conversion date. We'll add the attributes under the 'bookmarks' namespace and
+    // remove all other extra attributes.
 
     // Input image byte size
     int _bsize;
@@ -347,47 +408,14 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         _bsize = 0;
     }
 
-    out_spec.attribute("SourceByteSize", std::to_string(_bsize));
-    out_spec.attribute("oiio:ColorSpace", "sRGB");
+    out_buf.specmod().extra_attribs.clear();
+    out_buf.specmod().attribute("oiio:ColorSpace", "sRGB");
+    out_buf.specmod().attribute("bookmarks:SourceSize", std::to_string(_bsize));
+    out_buf.specmod().attribute("bookmarks:SourcePath", input_);
+    out_buf.specmod().attribute("bookmarks:StampTime", std::to_string(std::time(nullptr)));
 
-    ImageBuf out_buf(out_spec);
-
-    WriteProgress("Output image spec: ", verbose);
-    WriteProgress(out_spec.serialize(ImageSpec::SerialText, ImageSpec::SerialDetailed), verbose);
-
-    if (size != 0 && (out_width != spec_.width || out_height != spec_.height))
-    {
-        WriteProgress("Resizing image...", verbose);
-        r = ImageBufAlgo::fit(out_buf, buf_, "gaussian", 1.0f, "width", out_roi, threads);
-        if (!r || out_buf.has_error())
-        {
-            WriteError("Could not resize image", input_, out_buf.has_error() ? out_buf.geterror() : empty_string_);
-            return 1;
-        }
-    }
-    else
-    {
-        out_buf.copy(buf_);
-    }
-
-    // Color convert
-    std::string spec_color_space = spec_.get_string_attribute("oiio:ColorSpace", "sRGB");
-    if (spec_color_space != "sRGB")
-    {
-        WriteProgress("Converting colors...", verbose);
-
-        r = ImageBufAlgo::colorconvert(out_buf, out_buf, spec_color_space, "sRGB", true, "", "", nullptr, out_roi,
-                                       threads);
-        if (!r || out_buf.has_error())
-        {
-            WriteError("Failed to convert color profile. Continuing...", input_,
-                       out_buf.has_error() ? out_buf.geterror() : empty_string_);
-        }
-    }
-
-    WriteProgress("Writing " + output_, verbose);
-    out_buf.make_writeable(true);
-    out_buf.set_write_format(TypeDesc::UINT8);
+    WriteProgress("Output specs: ", verbose);
+    WriteProgress(out_buf.specmod().serialize(ImageSpec::SerialText, ImageSpec::SerialDetailed), verbose);
     r = out_buf.write(output_);
 
     // Check that the output file exists and not the file size is not zero
@@ -401,18 +429,26 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
         if (!r)
         {
             WriteError("Could not remove malformed output file", input_, empty_string_);
+            image_cache->invalidate(input_u, true);
+            image_cache->invalidate(output_u, true);
             return 1;
         }
+        image_cache->invalidate(input_u, true);
+        image_cache->invalidate(output_u, true);
         return 1;
     }
 
     if (!r || out_buf.has_error())
     {
         WriteError("Could not write output", output_, out_buf.has_error() ? out_buf.geterror() : empty_string_);
+        image_cache->invalidate(input_u, true);
+        image_cache->invalidate(output_u, true);
         return 1;
     }
 
     WriteProgress("Finished converting " + input_, verbose);
+    image_cache->invalidate(input_u, true);
+    image_cache->invalidate(output_u, true);
     return 0;
 };
 
@@ -466,7 +502,14 @@ std::optional<std::wregex> ConvertInputToRegex(const std::wstring &input, bool v
             .wstring());
 }
 
-int ConvertSequence(const std::wstring &input, const std::wstring &output, int size, int threads, bool verbose)
+int ConvertSequence(
+    const std::wstring &input,
+    const std::wstring &output,
+    const std::wstring &source_color_space,
+    const std::wstring &target_color_space,
+    int size,
+    int threads,
+    bool verbose)
 {
     std::string input__ = StringConverter::to_string(input);
     std::string output__ = StringConverter::to_string(output);
@@ -501,9 +544,6 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
         WriteError("Parent directory does not exist", output_parent_dir.string(), empty_string_);
         return 1;
     }
-
-    // Create cache
-    auto image_cache = CreateCache();
 
     std::wstring file_name = input_path.filename();
     auto file_name_re = ConvertInputToRegex(file_name, verbose);
@@ -567,7 +607,14 @@ int ConvertSequence(const std::wstring &input, const std::wstring &output, int s
                     continue; // Skip this file or handle error appropriately
                 }
 
-                int r = ConvertImage(i, _output, size, 1, false); // two threads
+                int r = ConvertImage(
+                    i,
+                    _output,
+                    source_color_space,
+                    target_color_space,
+                    size,
+                    1,
+                    false);
 
                 WriteProgress("Output: " + StringConverter::to_string(_output), verbose);
 
@@ -625,6 +672,8 @@ int wmain(int argc, wchar_t *argv[])
     std::string input_;
     std::wstring output;
     std::string output_;
+    std::wstring source_color_space;
+    std::wstring target_color_space;
     int size;
     int threads;
     bool verbose = false;
@@ -637,12 +686,9 @@ int wmain(int argc, wchar_t *argv[])
     CommandLineParser parser({
         {L"input", {{L"--input", L"-i"}, L"Source input image path", std::nullopt, true, true}},
         {L"output", {{L"--output", L"-o"}, L"Output image path", std::nullopt, true, true}},
-        {L"size",
-         {{L"--size", L"-s"},
-          L"Output image size the longer edge should fit into. Use 0 to retain ",
-          std::make_optional(L"0"),
-          true,
-          false}},
+        {L"source_color_space", {{L"--source_color_space", L"-scs"}, L"Source color space", std::nullopt, true, true}},
+        {L"target_color_space", {{L"--target_color_space", L"-tcs"}, L"Target color space", std::nullopt, true, true}},
+        {L"size", {{L"--size", L"-s"}, L"Output image size the longer edge should fit into.", std::make_optional(L"0"), true, false}},
         {L"threads", {{L"--threads", L"-t"}, L"Number of threads to use", std::make_optional(L"0"), true, false}},
         {L"verbose", {{L"--verbose", L"-v"}, L"Show verbose information", std::make_optional(L"0"), true, false}},
     });
@@ -673,6 +719,14 @@ int wmain(int argc, wchar_t *argv[])
         output = parser.get<std::wstring>(L"output");
         output_ = StringConverter::to_string(output);
     }
+    if (parser.has(L"source_color_space"))
+    {
+        source_color_space = parser.get<std::wstring>(L"source_color_space");
+    }
+    if (parser.has(L"target_color_space"))
+    {
+        target_color_space = parser.get<std::wstring>(L"target_color_space");
+    }
     if (parser.has(L"size"))
     {
         size = parser.get<int>(L"size");
@@ -689,10 +743,10 @@ int wmain(int argc, wchar_t *argv[])
 
     WriteProgress("Input image: " + input_, verbose);
     WriteProgress("Output image: " + output_, verbose);
+    WriteProgress("Source color space: " + StringConverter::to_string(source_color_space), verbose);
+    WriteProgress("Target color space: " + StringConverter::to_string(target_color_space), verbose);
     WriteProgress("Output size: " + std::to_string(size), verbose);
     WriteProgress("Number of threads: " + std::to_string(threads), verbose);
-
-    auto image_cache = CreateCache();
 
     int r;
     try
@@ -702,7 +756,7 @@ int wmain(int argc, wchar_t *argv[])
             WriteError("Another process is already working on this file. Exiting...", input_, empty_string_);
             return 1;
         };
-        r = ConvertImage(input, output, size, threads, verbose);
+        r = ConvertImage(input, output, source_color_space, target_color_space, size, threads, verbose);
     }
     catch (const std::exception &e)
     {
@@ -713,15 +767,93 @@ int wmain(int argc, wchar_t *argv[])
     return r;
 }
 
+int IsUpToDate(const std::wstring &input, const std::wstring &output, bool verbose)
+{
+    std::string input_ = StringConverter::to_string(input);
+    std::string output_ = StringConverter::to_string(output);
+
+    // Input image byte size
+    int _bsize;
+    std::string _bsize_s;
+    try
+    {
+        _bsize = std::filesystem::file_size(input);
+        _bsize_s = std::to_string(_bsize);
+    }
+    catch (std::exception &e)
+    {
+        WriteProgress("Could not get input image size", verbose);
+        return -1;
+    }
+
+    // Get the image metadata using OpenImageIO and compare the byte size
+    auto in = ImageInput::open(output);
+    if (!in)
+    {
+        if (has_error())
+        {
+            WriteError("Could not create ImageInput", output_, geterror());
+        };
+        return -1;
+    }
+
+    const ImageSpec &spec = in->spec();
+    in->close();
+
+    std::string attr = spec.get_string_attribute("bookmarks:SourceSize", "");
+
+    if (attr == "")
+    {
+        WriteProgress("Could not get source size attribute", verbose);
+        return -1;
+    }
+
+    if (attr == _bsize_s)
+    {
+        WriteProgress("Output image is up to date", verbose);
+        return 1;
+    }
+    return 0;
+}
+
 #ifdef _PYBIND_MODULE
 PYBIND11_MODULE(_PYBIND_MODULE, m)
 {
-    m.doc() = "OpenImageIO image utility modules";
-    m.def("convert_image", &ConvertImage, py::arg("input"), py::arg("output"), py::arg("size") = 0,
-          py::arg("threads") = 0, py::arg("verbose") = false, py::return_value_policy::copy,
-          py::call_guard<py::gil_scoped_release>(), "Converts an input image to an output image with a given size.");
-    m.def("convert_sequence", &ConvertSequence, py::arg("input"), py::arg("output"), py::arg("size") = 0,
-          py::arg("threads") = 0, py::arg("verbose") = false, py::return_value_policy::copy,
-          py::call_guard<py::gil_scoped_release>(), "Converts input images to output images with a given size.");
+    m.doc() = "Bookmarks's OpenImageIO wrapper module";
+    m.def(
+        "convert_image",
+        &ConvertImage,
+        py::arg("input"),
+        py::arg("output"),
+        py::arg("source_color_space"),
+        py::arg("target_color_space"),
+        py::arg("size") = 0,
+        py::arg("threads") = 0,
+        py::arg("verbose") = false,
+        py::return_value_policy::copy,
+        py::call_guard<py::gil_scoped_release>(),
+        "Converts an input image to an output image with a given size.");
+    m.def(
+        "convert_sequence",
+        &ConvertSequence,
+        py::arg("input"),
+        py::arg("output"),
+        py::arg("source_color_space"),
+        py::arg("target_color_space"),
+        py::arg("size") = 0,
+        py::arg("threads") = 0,
+        py::arg("verbose") = false,
+        py::return_value_policy::copy,
+        py::call_guard<py::gil_scoped_release>(),
+        "Converts input images to output images with a given size.");
+    m.def(
+        "is_up_to_date",
+        &IsUpToDate,
+        py::arg("input"),
+        py::arg("output"),
+        py::arg("verbose") = false,
+        py::return_value_policy::copy,
+        py::call_guard<py::gil_scoped_release>(),
+        "Checks if the output image is up to date, or needs re-conversion.");
 }
 #endif // _PYBIND_MODULE

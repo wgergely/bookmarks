@@ -6,6 +6,7 @@
 #include <OpenImageIO/imagebufalgo.h>
 #include <OpenImageIO/imagecache.h>
 #include <OpenImageIO/imageio.h>
+#include <OpenImageIO/ustring.h>
 
 #include <chrono>
 #include <cstdlib>
@@ -31,9 +32,19 @@ std::wstring empty_string = L"";
 std::string empty_string_ = "";
 
 /**
+ * @brief Checks if the output image is up to date, or needs re-conversion.
+ * @param input The input image file path.
+ * @param output The output image file path.
+ * @return 1 if the output image is up to date, 0 otherwise.
+ */
+int IsUpToDate(const std::wstring &input, const std::wstring &output, bool verbose = false);
+
+/**
  * @brief Converts an input image to an output image with a given size.
  * @param input The input image file path.
  * @param output The output image file path.
+ * @param source_color_space The source color space of the input image. Pass "" to use the hint from the OIIO:ColorSpace attribute.
+ * @param target_color_space The target color space of the output image.
  * @param size The size of longest edge of the output image.
  * @param threads The number of threads to use for the conversion (The default
  * is 0 for auto).
@@ -41,8 +52,14 @@ std::string empty_string_ = "";
  * @return 0 if the conversion is successful, 1 otherwise.
  *
  */
-int ConvertImage(const std::wstring &input, const std::wstring &output, int size = 0, int threads = 0,
-                 bool verbose = false);
+int ConvertImage(
+    const std::wstring &input,
+    const std::wstring &output,
+    const std::wstring &source_color_space,
+    const std::wstring &target_color_space,
+    int size = 0,
+    int threads = 0,
+    bool verbose = false);
 
 /**
  * @brief Converts an input image sequence to an output image sequence with a
@@ -54,6 +71,8 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
  * the correct extension.
  * @param input The input image sequence file path including a sequence pattern
  * @param output The output image sequence file path without a sequence pattern
+ * @param source_color_space The source color space of the input image. Pass "" to use the hint from the OIIO:ColorSpace attribute.
+ * @param target_color_space The target color space of the output image.
  * @param size The size of longest edge of the output image.
  * @param threads The number of threads to use for the conversion (The default
  * is 0 for auto).
@@ -61,6 +80,12 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
  * @return 0 if the conversion is successful, 1 otherwise.
  *
  */
-int ConvertSequence(const std::wstring &input, const std::wstring &output, int size = 9, int threads = 0,
-                    bool verbose = false);
+int ConvertSequence(
+    const std::wstring &input,
+    const std::wstring &output,
+    const std::wstring &source_color_space,
+    const std::wstring &target_color_space,
+    int size = 0,
+    int threads = 0,
+    bool verbose = false);
 #endif // IMAGEUTIL_H

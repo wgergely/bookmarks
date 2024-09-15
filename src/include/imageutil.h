@@ -1,7 +1,7 @@
 #ifndef IMAGEUTIL_H
 #define IMAGEUTIL_H
 
-#pragma once  // Prevents multiple inclusions
+#pragma once // Prevents multiple inclusions
 
 #include <OpenImageIO/imagebufalgo.h>
 #include <OpenImageIO/imagecache.h>
@@ -21,12 +21,11 @@
 #include <variant>
 #include <vector>
 
-
 #ifdef _PYBIND_MODULE
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 namespace py = pybind11;
-#endif  // _PYBIND_MODULE
+#endif // _PYBIND_MODULE
 
 std::wstring empty_string = L"";
 std::string empty_string_ = "";
@@ -64,4 +63,4 @@ int ConvertImage(const std::wstring &input, const std::wstring &output, int size
  */
 int ConvertSequence(const std::wstring &input, const std::wstring &output, int size = 9, int threads = 0,
                     bool verbose = false);
-#endif  // IMAGEUTIL_H
+#endif // IMAGEUTIL_H

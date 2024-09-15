@@ -1648,11 +1648,14 @@ class AbstractListModel(QtCore.QAbstractListModel):
         )
 
     def _add_separator(self, label):
+        size = QtCore.QSize(self.row_size)
+        size.setHeight(size.height() * 0.5)
+
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: label,
             QtCore.Qt.DecorationRole: None,
             QtCore.Qt.ForegroundRole: common.color(common.color_disabled_text),
-            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.SizeHintRole: size,
             QtCore.Qt.UserRole: None,
             common.FlagsRole: QtCore.Qt.NoItemFlags
         }

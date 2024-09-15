@@ -8,6 +8,7 @@ import os
 import sys
 import time
 
+import OpenImageIO
 from PySide2 import QtWidgets, QtGui
 
 from .. import common

@@ -530,6 +530,7 @@ class ApplicationLauncherWidget(ui.GalleryWidget):
             ) == QtWidgets.QDialog.Rejected:
                 return
             actions.edit_bookmark()
+            return
 
         for k in sorted(v, key=lambda idx: v[idx]['name']):
             yield v[k]

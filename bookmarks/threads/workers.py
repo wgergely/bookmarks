@@ -32,7 +32,7 @@ def _widget(q):
 
 
 def _qlast_modified(n):
-    return QtCore.QDateTime.fromMSecsSinceEpoch(n * 1000)
+    return QtCore.QDateTime.fromMSecsSinceEpoch(int(n) * 1000)
 
 
 def _model(q):
@@ -842,48 +842,56 @@ class ThumbnailWorker(BaseWorker):
         if '_broken__' in source:
             return False
 
+        # Check the file extension
+        ext = QtCore.QFileInfo(source).suffix().lower()
+        if ext not in images.get_oiio_extensions():
+            return True
+
         # Resolve the thumbnail's path...
         destination = images.get_cached_thumbnail_path(_p[0], _p[1], _p[2], source, )
         # ...and use it to load the resource
         image = images.ImageCache.get_image(
-            destination, int(size), force=True  # force=True will refresh the cache
+            destination, int(size), force=True
         )
 
-        # If the image successfully loads we can wrap things up here
-        if image and not image.isNull():
-            images.make_color(destination)
-            return True
-
-        # Otherwise, we will try to generate a thumbnail using OpenImageIO
-
-        # If the items is a sequence, we'll use the first image of the
-        # sequence to make the thumbnail.
+        # If the items is a sequence, use the first image of to make the thumbnail
         if not self.is_valid(ref):
             return False
+
         if ref()[common.DataTypeRole] == common.SequenceItem:
             if not self.is_valid(ref):
                 return False
             source = ref()[common.EntryRole][0].path.replace('\\', '/')
 
+        # If the thumbnail successfully loads, there's a previously generated image.
+        # Let's check it against the source to make sure it's still valid.
+        if image and not image.isNull():
+            res = bookmarks_openimageio.is_up_to_date(source, destination)
+            print(res, source, destination)
+            if res == 1:
+                images.make_color(destination)
+                return True
+            else:
+                images.ImageCache.flush(destination)
+
+        # Skip if the file is too large
         if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
             return True
 
-        buf = images.ImageCache.get_buf(source)
-
-        if not buf:
-            return True
-
         try:
-            # Skip large files
+            error = bookmarks_openimageio.convert_image(
+                source,
+                destination,
+                source_color_space='',
+                target_color_space='sRGB',
+                size=int(common.thumbnail_size),
+            )
+            images.ImageCache.flush(source)
 
-            res = bookmarks_openimageio.convert_image(source, destination, max_size=int(common.thumbnail_size), )
-            if res:
+            if error != 1:
                 images.ImageCache.get_image(destination, int(size), force=True)
                 images.make_color(destination)
                 return True
-
-            # We should never get here ideally, but if we do we'll mark the item
-            # with a bespoke 'failed' thumbnail
 
             fpath = common.rsc(f'{common.GuiResource}/failed.{common.thumbnail_format}')
             hash = common.get_hash(destination)

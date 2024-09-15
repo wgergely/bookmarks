@@ -22,13 +22,13 @@ AssetTypes = ('Asset', 'Sequence', 'Shot')
 @common.error
 @common.debug
 def process_image(source):
-    """Converts, resizes and loads an image file as a QImage.
+    """Converts, resizes, and loads an image file as a QImage.
 
     Args:
         source (str): Path to an image file.
 
     Returns:
-        QImage: The resized QImage, or `None` if the image was not processed
+        QImage: The resized QImage, or `None` if the image wasn't processed
         successfully.
 
     """
@@ -45,15 +45,20 @@ def process_image(source):
         if not f.dir().mkpath('.'):
             raise RuntimeError('Could not create temp folder')
 
-    res = bookmarks_openimageio.convert_image(
+    error = bookmarks_openimageio.convert_image(
         source,
         destination,
-        max_size=int(common.thumbnail_size)
+        source_color_space='',
+        target_color_space='sRGB',
+        size=int(common.thumbnail_size)
     )
-    if not res:
+    if error == 1:
         raise RuntimeError('Failed to convert the thumbnail')
 
+    # Flush cache
+    images.ImageCache.flush(source)
     images.ImageCache.flush(destination)
+
     image = images.ImageCache.get_image(
         destination,
         int(common.thumbnail_size),

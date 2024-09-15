@@ -3,6 +3,7 @@
 """
 import functools
 import os
+import re
 import subprocess
 
 import bookmarks_openimageio
@@ -78,20 +79,12 @@ class TimecodeModel(ui.AbstractListModel):
             QtCore.Qt.UserRole: None,
         }
 
-        template = common.settings.value('ffmpeg/timecode_preset')
-        for v in data[tokens.FFMpegTCConfig].values():
-            if template == v['name']:
-                icon = ui.get_icon(
-                    'check', color=common.color(common.color_green), size=common.size(common.size_margin) * 2
-                )
-            else:
-                icon = ui.get_icon(
-                    'branch_closed', size=common.size(common.size_margin) * 2
-                )
+        self._add_separator('Timecode presets')
 
+        for v in data[tokens.FFMpegTCConfig].values():
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: v['name'],
-                QtCore.Qt.DecorationRole: icon,
+                QtCore.Qt.DecorationRole: None,
                 QtCore.Qt.SizeHintRole: self.row_size,
                 QtCore.Qt.StatusTipRole: v['description'],
                 QtCore.Qt.AccessibleDescriptionRole: v['description'],
@@ -99,6 +92,24 @@ class TimecodeModel(ui.AbstractListModel):
                 QtCore.Qt.ToolTipRole: v['description'],
                 QtCore.Qt.UserRole: v['value'],
             }
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DecorationRole:
+            flags = super().data(index, common.FlagsRole)
+            if flags == QtCore.Qt.NoItemFlags:
+                return None
+
+            template = common.settings.value('ffmpeg/timecode_preset')
+            name = super().data(index, QtCore.Qt.DisplayRole)
+            if template == name:
+                return ui.get_icon(
+                    'check', color=common.color(common.color_green), size=common.size(common.size_margin) * 2
+                )
+            return ui.get_icon(
+                'branch_closed', color=common.color(common.color_separator), size=common.size(common.size_margin) * 2
+            )
+
+        return super().data(index, role)
 
 
 class TimecodeComboBox(QtWidgets.QComboBox):
@@ -112,6 +123,239 @@ class TimecodeComboBox(QtWidgets.QComboBox):
         self.setModel(TimecodeModel())
 
 
+class SourceColorSpaceModel(ui.AbstractListModel):
+    """Template item picker model.
+
+    """
+
+    def init_data(self, *args, **kwargs):
+        self._data[len(self._data)] = {
+            QtCore.Qt.DisplayRole: 'Guess from source',
+            QtCore.Qt.DecorationRole: None,
+            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.StatusTipRole: 'Guess from source',
+            QtCore.Qt.AccessibleDescriptionRole: 'Guess from source',
+            QtCore.Qt.WhatsThisRole: 'Guess from source',
+            QtCore.Qt.ToolTipRole: 'Guess from source',
+            QtCore.Qt.UserRole: None,
+        }
+
+        self._add_separator('Built-in roles')
+
+        default_roles = [
+            'sRGB',
+            'linear',
+        ]
+
+        for role in default_roles:
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: role,
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: role,
+                QtCore.Qt.AccessibleDescriptionRole: role,
+                QtCore.Qt.WhatsThisRole: role,
+                QtCore.Qt.ToolTipRole: role,
+                QtCore.Qt.UserRole: role,
+            }
+
+        roles = []
+
+        oiiotool_bin = common.get_binary('oiiotool')
+        if oiiotool_bin and QtCore.QFileInfo(oiiotool_bin).exists():
+            result = subprocess.run(
+                [os.path.normpath(oiiotool_bin), '--colorconfiginfo'],
+                capture_output=True,
+                text=True
+            )
+
+            for line in result.stdout.split('\n'):
+                if re.match(r'\s+-\s', line):
+                    match = re.match(r'\s+-\s+(.+)', line)
+                    if not match:
+                        continue
+
+                    s = (match.group(1)
+                         .split('->')[0]
+                         .replace('(*)', '')
+                         .replace('(linear)', '')
+                         .strip().strip('"').strip())
+                    roles.append(s)
+
+        self._add_separator('OpenColorIO roles')
+
+        for v in roles:
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: v,
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: v,
+                QtCore.Qt.AccessibleDescriptionRole: v,
+                QtCore.Qt.WhatsThisRole: v,
+                QtCore.Qt.ToolTipRole: v,
+                QtCore.Qt.UserRole: v,
+            }
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DecorationRole:
+            flags = super().data(index, common.FlagsRole)
+            if flags == QtCore.Qt.NoItemFlags:
+                return None
+
+            template = common.settings.value('ffmpeg/sourcecolorspace')
+            name = super().data(index, QtCore.Qt.DisplayRole)
+            if template == name:
+                return ui.get_icon(
+                    'check',
+                    color=common.color(common.color_green),
+                    size=common.size(common.size_margin) * 2
+                )
+            return ui.get_icon(
+                'branch_closed',
+                color=common.color(common.color_separator),
+                size=common.size(common.size_margin) * 2
+            )
+
+        return super().data(index, role)
+
+
+class SourceColorSpaceComboBox(QtWidgets.QComboBox):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
+        self.setModel(SourceColorSpaceModel())
+
+
+class TargetColorSpaceModel(ui.AbstractListModel):
+
+    def init_data(self, *args, **kwargs):
+        self._add_separator('Built-in roles')
+
+        default_roles = [
+            'sRGB',
+            'linear',
+        ]
+
+        for role in default_roles:
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: role,
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: role,
+                QtCore.Qt.AccessibleDescriptionRole: role,
+                QtCore.Qt.WhatsThisRole: role,
+                QtCore.Qt.ToolTipRole: role,
+                QtCore.Qt.UserRole: role,
+            }
+
+        roles = []
+
+        oiiotool_bin = common.get_binary('oiiotool')
+
+        if oiiotool_bin and QtCore.QFileInfo(oiiotool_bin).exists():
+            result = subprocess.run(
+                [os.path.normpath(oiiotool_bin), '--colorconfiginfo'],
+                capture_output=True,
+                text=True
+            )
+
+            for line in result.stdout.split('\n'):
+                if re.match(r'\s+-\s', line):
+                    match = re.match(r'\s+-\s+(.+)', line)
+                    if not match:
+                        continue
+
+                    s = (match.group(1)
+                         .split('->')[0]
+                         .replace('(*)', '')
+                         .replace('(linear)', '')
+                         .strip().strip('"').strip())
+                    roles.append(s)
+
+        self._add_separator('OpenColorIO roles')
+
+        for v in roles:
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: v,
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: v,
+                QtCore.Qt.AccessibleDescriptionRole: v,
+                QtCore.Qt.WhatsThisRole: v,
+                QtCore.Qt.ToolTipRole: v,
+                QtCore.Qt.UserRole: v,
+            }
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DecorationRole:
+            flags = super().data(index, common.FlagsRole)
+            if flags == QtCore.Qt.NoItemFlags:
+                return None
+
+            template = common.settings.value('ffmpeg/targetcolorspace')
+            name = super().data(index, QtCore.Qt.DisplayRole)
+            if template == name:
+                return ui.get_icon(
+                    'check',
+                    color=common.color(common.color_green),
+                    size=common.size(common.size_margin) * 2
+                )
+            return ui.get_icon(
+                'branch_closed',
+                color=common.color(common.color_separator),
+                size=common.size(common.size_margin) * 2
+            )
+
+        return super().data(index, role)
+
+
+class TargetColorSpaceComboBox(QtWidgets.QComboBox):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
+        self.setModel(TargetColorSpaceModel())
+
+
+class PresetModel(ui.AbstractListModel):
+
+    def init_data(self, *args, **kwargs):
+        for v in ffmpeg.PRESETS.values():
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: v['name'],
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: v['description'],
+                QtCore.Qt.AccessibleDescriptionRole: v['description'],
+                QtCore.Qt.WhatsThisRole: v['description'],
+                QtCore.Qt.ToolTipRole: v['description'],
+                QtCore.Qt.UserRole: v['preset'],
+            }
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DecorationRole:
+            flags = super().data(index, common.FlagsRole)
+            if flags == QtCore.Qt.NoItemFlags:
+                return None
+
+            template = common.settings.value('ffmpeg/preset')
+            name = super().data(index, QtCore.Qt.DisplayRole)
+            if template == name:
+                return ui.get_icon(
+                    'check',
+                    color=common.color(common.color_green),
+                    size=common.size(common.size_margin) * 2
+                )
+            return ui.get_icon(
+                'branch_closed',
+                color=common.color(common.color_separator),
+                size=common.size(common.size_margin) * 2
+            )
+
+        return super().data(index, role)
+
+
 class PresetComboBox(QtWidgets.QComboBox):
     """FFMpeg preset picker.
 
@@ -120,32 +364,12 @@ class PresetComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.init_data()
-
-    def init_data(self):
-        """Initializes data.
-
-        """
-        self.blockSignals(True)
-        for v in ffmpeg.PRESETS.values():
-            self.addItem(v['name'], userData=v['preset'])
-        self.blockSignals(False)
+        self.setModel(PresetModel())
 
 
-class SizeComboBox(QtWidgets.QComboBox):
-    """FFMpeg output size picker.
+class SizeComboBoxModel(ui.AbstractListModel):
 
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setView(QtWidgets.QListView())
-        self.init_data()
-
-    def init_data(self):
-        """Initializes data.
-
-        """
+    def init_data(self, *args, **kwargs):
         db = database.get(*common.active('root', args=True))
         bookmark_width = db.value(db.source(), 'width', database.BookmarkTable)
         bookmark_height = db.value(db.source(), 'height', database.BookmarkTable)
@@ -156,14 +380,73 @@ class SizeComboBox(QtWidgets.QComboBox):
         height = asset_height or bookmark_height or None
 
         if all((width, height)):
-            self.addItem(f'Project | {int(height)}p', userData=(width, height))
-            self.addItem(f'Project | {int(height * 0.5)}p', userData=(int(width * 0.5), int(height * 0.5)))
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: f'Project | {int(height)}p',
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: f'Project | {int(height)}p',
+                QtCore.Qt.AccessibleDescriptionRole: f'Project | {int(height)}p',
+                QtCore.Qt.WhatsThisRole: f'Project | {int(height)}p',
+                QtCore.Qt.ToolTipRole: f'Project | {int(height)}p',
+                QtCore.Qt.UserRole: (width, height),
+            }
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: f'Project | {int(height * 0.5)}p',
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: f'Project | {int(height * 0.5)}p',
+                QtCore.Qt.AccessibleDescriptionRole: f'Project | {int(height * 0.5)}p',
+                QtCore.Qt.WhatsThisRole: f'Project | {int(height * 0.5)}p',
+                QtCore.Qt.ToolTipRole: f'Project | {int(height * 0.5)}p',
+                QtCore.Qt.UserRole: (int(width * 0.5), int(height * 0.5)),
+            }
 
-        self.blockSignals(True)
+        self._add_separator('Size presets')
+
         for v in ffmpeg.SIZE_PRESETS.values():
-            self.addItem(v['name'], userData=v['value'])
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: v['name'],
+                QtCore.Qt.DecorationRole: None,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: v['name'],
+                QtCore.Qt.AccessibleDescriptionRole: v['name'],
+                QtCore.Qt.WhatsThisRole: v['name'],
+                QtCore.Qt.ToolTipRole: v['name'],
+                QtCore.Qt.UserRole: v['value'],
+            }
 
-        self.blockSignals(False)
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DecorationRole:
+            flags = super().data(index, common.FlagsRole)
+            if flags == QtCore.Qt.NoItemFlags:
+                return None
+
+            template = common.settings.value('ffmpeg/size')
+            name = super().data(index, QtCore.Qt.DisplayRole)
+            if template == name:
+                return ui.get_icon(
+                    'check',
+                    color=common.color(common.color_green),
+                    size=common.size(common.size_margin) * 2
+                )
+            return ui.get_icon(
+                'branch_closed',
+                color=common.color(common.color_separator),
+                size=common.size(common.size_margin) * 2
+            )
+
+        return super().data(index, role)
+
+
+class SizeComboBox(QtWidgets.QComboBox):
+    """FFMpeg output size picker.
+
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
+        self.setModel(SizeComboBoxModel())
 
 
 class FFMpegWidget(base.BasePropertyEditor):
@@ -203,6 +486,22 @@ class FFMpegWidget(base.BasePropertyEditor):
                         'description': 'Select the timecode preset to use.',
                     },
                     4: {
+                        'name': 'Source color space',
+                        'key': 'ffmpeg_sourcecolorspace',
+                        'validator': None,
+                        'widget': SourceColorSpaceComboBox,
+                        'placeholder': None,
+                        'description': 'Select the source color space.',
+                    },
+                    5: {
+                        'name': 'Target color space',
+                        'key': 'ffmpeg_targetcolorspace',
+                        'validator': None,
+                        'widget': TargetColorSpaceComboBox,
+                        'placeholder': None,
+                        'description': 'Select the target color space.',
+                    },
+                    6: {
                         'name': 'Push to RV',
                         'key': 'ffmpeg_pushtorv',
                         'validator': None,
@@ -266,7 +565,7 @@ class FFMpegWidget(base.BasePropertyEditor):
                 f'{index.data(QtCore.Qt.DisplayRole)} is too short.'
             )
 
-        # Check output video file
+        # Check the output video file
         seq = index.data(common.SequenceRole)
         preset = self.ffmpeg_preset_editor.currentData()
         ext = next(
@@ -294,19 +593,33 @@ class FFMpegWidget(base.BasePropertyEditor):
                 raise RuntimeError(f'Could not remove {destination}')
 
         common.show_message(
-            'Preparing images...', body='Please wait while the frames are being converted. This might take a '
-                                        'while...', message_type=None, disable_animation=True, buttons=[], )
+            'Preparing images...',
+            body='Please wait while the frames are being converted. This might take a while...',
+            message_type=None,
+            disable_animation=True,
+            buttons=[],
+        )
 
-        source_image_paths = self.preprocess_sequence()
+        source_color_space = self.ffmpeg_sourcecolorspace_editor.currentData()
+        target_color_space = self.ffmpeg_targetcolorspace_editor.currentData()
+        source_image_paths = self.preprocess_sequence(
+            source_color_space=source_color_space,
+            target_color_space=target_color_space,
+            preconversion_format='jpg'
+        )
         if not common.message_widget or common.message_widget.isHidden():
             return
 
         timecode_preset = self.ffmpeg_timecode_preset_editor.currentData()
 
         mov = ffmpeg.convert(
-            source_image_paths[
-                0], self.ffmpeg_preset_editor.currentData(), size=self.ffmpeg_size_editor.currentData(),
-            timecode=bool(timecode_preset), timecode_preset=timecode_preset, output_path=destination, parent=self
+            source_image_paths[0],
+            self.ffmpeg_preset_editor.currentData(),
+            size=self.ffmpeg_size_editor.currentData(),
+            timecode=bool(timecode_preset),
+            timecode_preset=timecode_preset,
+            output_path=destination,
+            parent=self
         )
 
         for f in source_image_paths:
@@ -334,19 +647,26 @@ class FFMpegWidget(base.BasePropertyEditor):
         log.success(f'Movie saved to {destination}')
         return True
 
-    def preprocess_sequence(self, preconversion_format='jpg'):
-        """Preprocesses the source image sequence.
-
-        FFMpeg can't handle missing frames, so we'll check and fill in the gaps and convert the source images
-        to jpeg images using OpenImageIO if they're not already supported by FFMpeg.
+    def preprocess_sequence(self, source_color_space='', target_color_space='sRGB', preconversion_format='jpg'):
+        """Preprocesses the source image sequence for ffmpeg.
 
         Args:
+            source_color_space (str): The source color space. Defaults to an empty string.
+            target_color_space (str): The target color space. Defaults to 'sRGB'.
             preconversion_format (str): The format to convert the source images to.
 
         Returns:
             tuple: A tuple of jpeg file paths to be used as input for ffmpeg.
 
         """
+        ffmpeg_bin = common.get_binary('ffmpeg')
+
+        if not ffmpeg_bin:
+            raise RuntimeError('FFMpeg binary not found.')
+
+        if not QtCore.QFileInfo(ffmpeg_bin).exists():
+            raise RuntimeError(f'FFMpeg binary {ffmpeg_bin} does not exist.')
+
         index = self._index
         seq = index.data(common.SequenceRole)
 
@@ -361,13 +681,13 @@ class FFMpegWidget(base.BasePropertyEditor):
         has_missing_frames = len(all_frames) != len(frames)
 
         # Set up the temp directory
-        _dir = QtCore.QDir(f'{common.temp_path()}/ffmpeg')
-        if not _dir.exists():
-            if not _dir.mkpath('.'):
+        temp_dir = QtCore.QDir(f'{common.temp_path()}/ffmpeg')
+        if not temp_dir.exists():
+            if not temp_dir.mkpath('.'):
                 raise RuntimeError('Could not create ffmpeg temp dir')
 
         # Remove any previously created temp image frames
-        for entry in os.scandir(_dir.path()):
+        for entry in os.scandir(temp_dir.path()):
             if entry.is_dir():
                 continue
             if not entry.name.startswith('ffmpeg_'):
@@ -378,47 +698,34 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         ext = QtCore.QFileInfo(index.data(common.PathRole)).suffix().strip('.').lower()
 
-        # Get the supported ffmpeg image extensions from the current binary
-        # Run the command and capture the output
-        ffmpeg_bin = common.get_binary('ffmpeg')
-
-        if not ffmpeg_bin:
-            raise RuntimeError('FFMpeg binary not found.')
-
-        if not QtCore.QFileInfo(ffmpeg_bin).exists():
-            raise RuntimeError(f'FFMpeg binary {ffmpeg_bin} does not exist.')
-
+        # Get the supported image extensions from ffmpeg
         result = subprocess.run([os.path.normpath(ffmpeg_bin), '-decoders'], capture_output=True, text=True)
         extensions = ffmpeg.get_supported_formats(result.stdout)
-
         if not extensions:
-            raise RuntimeError('FFMpeg doesn\'t seem to support any image formats.')
+            raise RuntimeError('Could not get supported ffmpeg image extensions.')
 
         needs_conversion = ext not in extensions
 
         source_images = []
         ffmpeg_source_images = []
 
-        # If the source images are already supported by ffmpeg and there are no missing frames, we'll just use the
-        # source images as input for ffmpeg.
+        # If the source images are already supported by ffmpeg and there are no missing frames, use the
+        # source images as input for ffmpeg
         if not has_missing_frames and not needs_conversion:
             return [f'{seq.group(1)}{f}{seq.group(3)}.{seq.group(4)}' for f in frames]
 
-        # We'll build a full sequence filling in any missing frames with the closest available frame. This allows us
-        # to correctly create videos of sequences with missing images.
+        # Otherwise, build a full sequence filling in any missing frames with the closest available frame
         source_frame = all_frames[0]
-        for frame in all_frames:
+        for idx, frame in enumerate(all_frames):
             if frame in frames:
                 source_frame = next(frames_it)
 
             source_path = f'{seq.group(1)}{source_frame}{seq.group(3)}.{seq.group(4)}'
             source_images.append(source_path)
 
-            destination_path = f'{_dir.path()}/ffmpeg_{frame}.{preconversion_format if needs_conversion else ext}'
+            destination_path = f'{temp_dir.path()}/ffmpeg.{idx}.{preconversion_format if needs_conversion else ext}'
             ffmpeg_source_images.append(destination_path)
 
-        # We'll copy the source files to the temp directory instead of converting them to create a full sequence
-        # of images. This allows us to correctly create videos of sequences with missing images.
         if not needs_conversion and has_missing_frames:
             for idx, items in enumerate(zip(source_images, ffmpeg_source_images)):
                 source_path, destination_path = items
@@ -436,10 +743,17 @@ class FFMpegWidget(base.BasePropertyEditor):
             )
             QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
-            if not bookmarks_openimageio.convert_images(source_images, ffmpeg_source_images, max_size=-1, release_gil=True):
+            error = bookmarks_openimageio.convert_sequence(
+                f'{seq.group(1)}%0{len(frames[0])}d{seq.group(3)}.{seq.group(4)}',
+                f'{temp_dir.path()}/ffmpeg.{preconversion_format}',
+                source_color_space,
+                target_color_space,
+                size=0
+            )
+            if error == 1:
                 raise RuntimeError('Failed to convert an image using OpenImageIO.')
 
-        # Sanity check to make sure all the destination paths exist
+        # Check to make sure all the destination paths exist
         for f in ffmpeg_source_images:
             if not QtCore.QFileInfo(f).exists():
                 raise RuntimeError(f'{f} does not exist')

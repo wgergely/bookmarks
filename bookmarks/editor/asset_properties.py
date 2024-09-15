@@ -458,7 +458,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         """Saves changes.
 
         """
-        # When the asset is not set, we'll create one based on the name set
+        # When the asset isn't set, create one based on the name set
         if not self.asset:
             self.create_asset()
 

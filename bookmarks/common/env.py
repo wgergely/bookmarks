@@ -21,21 +21,22 @@ def get_binary(binary_name):
     """Binary path getter.
 
     The paths are resolved from the following sources and order:
-        - active bookmark item's application launcher items
+        - active bookmark item's app launcher items
+        - distribution folder's bin directory
         - user settings
         - environment variables in a ``{PREFIX}_{BINARY_NAME}`` format,
-        e.g. ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
-        should point to an appropriate executable, e.g.
+        for example ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
+        should point to an appropriate executable, for example
         ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
 
-        If the environment variable is absent, we'll look at the PATH environment to
+        If the environment variable is absent, look at the PATH environment to
         see if the binary is available there.
 
     Args:
-        binary_name (str): Name of a binary, lower-case, without spaces. E.g. `aftereffects`, `oiiotool`, `ffmpeg`, etc.
+        binary_name (str): Name of a binary, lower-case, without spaces. For example, `aftereffects`, `oiiotool`.
 
     Returns:
-        str: Path to an executable binary, or `None` if the binary is not found in any of the sources.
+        str: Path to an executable binary, or `None` if the binary isn't found in any of the sources.
 
     """
     # Sanitize the binary name
@@ -54,31 +55,45 @@ def get_binary(binary_name):
             # Sanitize names, so they're all lower-case and without spaces
             names = [re.sub(r'\s+', '', v['name']).lower().strip() for v in applications.values()]
             if binary_name in names:
-                # We have a match, return the path
                 v = applications[names.index(binary_name)]['path']
                 if v and QtCore.QFileInfo(v).exists():
                     return v
 
     # Check the user settings for possible values
     v = get_user_setting(binary_name)
-    if v:
+    if v and QtCore.QFileInfo(v).exists():
         return v
+
+
+    # Check the distribution folder for possible values
+    root = os.environ.get('Bookmarks_ROOT', None)
+
+    if root and QtCore.QFileInfo(root).exists():
+        bin_dir = QtCore.QFileInfo(f'{root}/bin')
+        if bin_dir.exists():
+            for entry in os.scandir(bin_dir.filePath()):
+                try:
+                    if not entry.is_file():
+                        continue
+                except:
+                    continue
+
+                match = re.match(
+                    rf'^{binary_name}$|{binary_name}\..+',
+                    entry.name,
+                    flags=re.IGNORECASE
+                )
+                if match:
+                    return QtCore.QFileInfo(entry.path).filePath()
 
     # Check the environment variables for possible values
     key = f'{common.product}_{binary_name}'.upper()
-    if key in os.environ:
-        v = os.environ[key]
-        try:
-            if v and os.path.isfile(v):
-                return QtCore.QFileInfo(v).filePath()
-        except:
-            pass
+    v = os.environ.get(key, None)
+    if v and QtCore.QFileInfo(v).exists():
+        return QtCore.QFileInfo(v).filePath()
 
-    v = _parse_dist_env(binary_name)
-    if v:
-        return v
+    # Check the PATH environment for possible values
     v = _parse_path_env(binary_name)
-
     return v
 
 
@@ -104,45 +119,6 @@ def get_user_setting(binary_name):
     file_info = QtCore.QFileInfo(v)
     if isinstance(v, str) and v and file_info.exists():
         return file_info.filePath()
-    return None
-
-
-def _parse_dist_env(binary_name):
-    from . import env_key
-    if env_key not in os.environ:
-        return
-
-    v = os.environ[env_key]
-    if not QtCore.QFileInfo(v).exists():
-        return
-
-    def _scan_dir(v):
-        if not os.path.isdir(v):
-            print(f'{v} is not a directory')
-            return None
-        for entry in os.scandir(v):
-            try:
-                if not entry.is_file():
-                    continue
-            except:
-                continue
-
-            match = re.match(
-                rf'^{binary_name}$|{binary_name}\..+',
-                entry.name,
-                flags=re.IGNORECASE
-            )
-            if match:
-                return QtCore.QFileInfo(entry.path).filePath()
-
-        return None
-
-    _v = _scan_dir(v)
-    if _v:
-        return _v
-    _v = _scan_dir(f'{v}/bin')
-    if _v:
-        return _v
     return None
 
 

@@ -3,6 +3,7 @@
 
 # Ignore macOS system files
 .DS_Store
+Thumbs.db
 
 # Ignore Python build artifacts
 __pycache__/

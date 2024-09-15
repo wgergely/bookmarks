@@ -867,7 +867,6 @@ class ThumbnailWorker(BaseWorker):
         # Let's check it against the source to make sure it's still valid.
         if image and not image.isNull():
             res = bookmarks_openimageio.is_up_to_date(source, destination)
-            print(res, source, destination)
             if res == 1:
                 images.make_color(destination)
                 return True

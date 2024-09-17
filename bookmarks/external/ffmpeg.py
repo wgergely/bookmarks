@@ -15,6 +15,7 @@ from PySide2 import QtCore, QtWidgets
 from .. import common
 from .. import database
 from .. import images
+from .. import actions
 
 
 class SafeDict(dict):
@@ -417,7 +418,7 @@ def convert(
         OUTPUT=output_path,
         WIDTH=width,
         HEIGHT=height,
-        TIMECODE=tc
+        TIMECODE=tc + 'aaa'
     )
 
     lines = []
@@ -458,6 +459,14 @@ def convert(
                 f.write('\n\n')
                 f.write('\n'.join(lines))
 
-            raise RuntimeError('\n'.join(lines[-5:]))
+            actions.reveal(f'{output_path}.log')
+
+            e = "\n".join(proc.stdout.readlines())
+            common.show_message(
+                'FFMpeg Error',
+                body=e,
+                message_type='error'
+            )
+            raise RuntimeError(e)
 
     return output_path

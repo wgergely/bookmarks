@@ -89,7 +89,6 @@ class FileWatcher(QtCore.QFileSystemWatcher):
         processed_data_dicts = []
 
         for path in self.update_queue.copy():
-            print(path)
             for data_type in (common.SequenceItem, common.FileItem):
                 data_dict = common.get_data_from_value(path, data_type, role=common.PathRole)
 

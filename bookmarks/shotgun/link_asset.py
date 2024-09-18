@@ -34,20 +34,20 @@ def show(server, job, root, asset, entity_type):
 
 
 value_map = {
-    'shotgun_id': {
+    'sg_id': {
         'column': 'id',
         'overwrite': True,
-        'type': database.TABLES[database.AssetTable]['shotgun_id']['type'],
+        'type': database.TABLES[database.AssetTable]['sg_id']['type'],
     },
-    'shotgun_name': {
+    'sg_name': {
         'column': 'code',
         'overwrite': True,
-        'type': database.TABLES[database.AssetTable]['shotgun_name']['type'],
+        'type': database.TABLES[database.AssetTable]['sg_name']['type'],
     },
-    'shotgun_type': {
+    'sg_type': {
         'column': 'type',
         'overwrite': True,
-        'type': database.TABLES[database.AssetTable]['shotgun_type']['type'],
+        'type': database.TABLES[database.AssetTable]['sg_type']['type'],
     },
     'description': {
         'column': 'description',

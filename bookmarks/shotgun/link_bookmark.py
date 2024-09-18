@@ -34,20 +34,20 @@ def show(server, job, root):
 
 
 value_map = {
-    'shotgun_id': {
+    'sg_id': {
         'column': 'id',
         'overwrite': True,
-        'type': database.TABLES[database.BookmarkTable]['shotgun_id']['type'],
+        'type': database.TABLES[database.BookmarkTable]['sg_id']['type'],
     },
-    'shotgun_name': {
+    'sg_name': {
         'column': 'name',
         'overwrite': True,
-        'type': database.TABLES[database.BookmarkTable]['shotgun_name']['type'],
+        'type': database.TABLES[database.BookmarkTable]['sg_name']['type'],
     },
-    'shotgun_type': {
+    'sg_type': {
         'column': 'type',
         'overwrite': True,
-        'type': database.TABLES[database.BookmarkTable]['shotgun_type']['type'],
+        'type': database.TABLES[database.BookmarkTable]['sg_type']['type'],
     },
 }
 

@@ -295,12 +295,12 @@ class SGProperties(QtCore.QObject):
         t = database.BookmarkTable
         s = db.source()
 
-        self.domain = db.value(s, 'shotgun_domain', t)
-        self.key = db.value(s, 'shotgun_api_key', t)
-        self.script = db.value(s, 'shotgun_scriptname', t)
+        self.domain = db.value(s, 'sg_domain', t)
+        self.key = db.value(s, 'sg_api_key', t)
+        self.script = db.value(s, 'sg_scriptname', t)
 
-        self.bookmark_id = db.value(s, 'shotgun_id', t)
-        self.bookmark_name = db.value(s, 'shotgun_name', t)
+        self.bookmark_id = db.value(s, 'sg_id', t)
+        self.bookmark_name = db.value(s, 'sg_name', t)
 
         self.episode_id = db.value(s, 'sg_episode_id', t)
         self.episode_name = db.value(s, 'sg_episode_name', t)
@@ -311,9 +311,9 @@ class SGProperties(QtCore.QObject):
         t = database.AssetTable
         s = db.source(self.asset)
 
-        self.asset_type = db.value(s, 'shotgun_type', t)
-        self.asset_id = db.value(s, 'shotgun_id', t)
-        self.asset_name = db.value(s, 'shotgun_name', t)
+        self.asset_type = db.value(s, 'sg_type', t)
+        self.asset_id = db.value(s, 'sg_id', t)
+        self.asset_name = db.value(s, 'sg_name', t)
         self.asset_task_id = db.value(s, 'sg_task_id', t)
         self.asset_task_name = db.value(s, 'sg_task_name', t)
 
@@ -509,7 +509,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         common.signals.sgEntityDataReady.connect(self.entityDataReceived)
 
         self.entityDataRequested.connect(self.start_waiting_for_data)
-        self.entityDataRequested.connect(threads.queue_shotgun_query)
+        self.entityDataRequested.connect(threads.queue_sg_query)
 
         self.entityDataReceived.connect(self.set_entity_data)
         self.entityDataReceived.connect(self.end_waiting_for_data)

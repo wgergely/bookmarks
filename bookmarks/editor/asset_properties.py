@@ -127,7 +127,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                     },
                     1: {
                         'name': 'ShotGrid Type',
-                        'key': 'shotgun_type',
+                        'key': 'sg_type',
                         'validator': base.int_validator,
                         'widget': base_widgets.SGAssetTypesWidget,
                         'placeholder': None,
@@ -135,7 +135,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                     },
                     2: {
                         'name': 'ShotGrid Id',
-                        'key': 'shotgun_id',
+                        'key': 'sg_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
                         'placeholder': 'ShotGrid entity id, e.g. \'123\'',
@@ -144,7 +144,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                     },
                     3: {
                         'name': 'ShotGrid Name',
-                        'key': 'shotgun_name',
+                        'key': 'sg_name',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'ShotGrid entity name, e.g. \'MyAsset\'',
@@ -418,7 +418,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
-            self.shotgun_type_editor.parent().parent().parent().setDisabled(True)
+            self.sg_type_editor.parent().parent().parent().setDisabled(True)
 
     def _set_completer(self):
         """Add the current list of assets to the name editor's completer.
@@ -467,7 +467,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         self.thumbnailUpdated.emit(self.db_source())
         return True
 
-    def shotgun_properties(self):
+    def sg_properties(self):
         """Returns the currently stored ShotGrid properties.
 
         Returns:
@@ -482,11 +482,11 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         )
         sg_properties.init()
 
-        sg_properties.asset_type = self.shotgun_type_editor.currentText()
-        _id = self.shotgun_id_editor.text()
+        sg_properties.asset_type = self.sg_type_editor.currentText()
+        _id = self.sg_id_editor.text()
         _id = int(_id) if _id else None
         sg_properties.asset_id = _id
-        sg_properties.asset_name = self.shotgun_name_editor.text()
+        sg_properties.asset_name = self.sg_name_editor.text()
 
         return sg_properties
 
@@ -521,7 +521,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         """Slot connected to the link button.
 
         """
-        if not self.shotgun_type_editor.currentText():
+        if not self.sg_type_editor.currentText():
             common.show_message('Select an entity type before continuing', message_type='error')
             return
 
@@ -530,5 +530,5 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             self.job,
             self.root,
             self.name(),
-            self.shotgun_type_editor.currentText()
+            self.sg_type_editor.currentText()
         )

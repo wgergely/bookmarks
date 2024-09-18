@@ -573,7 +573,7 @@ class DataDict(dict):
         self._loaded = False
         self._refresh_needed = False
         self._data_type = None
-        self._shotgun_names = []
+        self._sg_names = []
         self._sg_task_names = []
         self._file_types = []
         self._subdirectories = []
@@ -618,13 +618,13 @@ class DataDict(dict):
         self._data_type = v
 
     @property
-    def shotgun_names(self):
+    def sg_names(self):
         """Returns a list of Shotgun task names associated with the data dictionary."""
-        return self._shotgun_names
+        return self._sg_names
 
-    @shotgun_names.setter
-    def shotgun_names(self, v):
-        self._shotgun_names = v
+    @sg_names.setter
+    def sg_names(self, v):
+        self._sg_names = v
 
     @property
     def sg_task_names(self):

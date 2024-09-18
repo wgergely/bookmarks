@@ -86,7 +86,7 @@ def upload_thumbnail(sg_properties, thumbnail_path):
 
 @common.debug
 @common.error
-def test_shotgun_connection(sg_properties):
+def test_sg_connection(sg_properties):
     if not sg_properties.verify(connection=True):
         if not sg_properties.domain:
             raise ValueError('ShotGrid Domain not set.')

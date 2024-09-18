@@ -263,9 +263,9 @@ class LinkMultiple(QtWidgets.QDialog):
             s = data[idx][common.ParentPathRole][3]
             t = database.AssetTable
             entity = {
-                'id': db.value(s, 'shotgun_id', t),
-                'code': db.value(s, 'shotgun_name', t),
-                'type': db.value(s, 'shotgun_type', t),
+                'id': db.value(s, 'sg_id', t),
+                'code': db.value(s, 'sg_name', t),
+                'type': db.value(s, 'sg_type', t),
                 'cut_out': db.value(s, 'cut_out', t),
                 'cut_in': db.value(s, 'cut_in', t),
                 'cut_duration': db.value(s, 'cut_duration', t),

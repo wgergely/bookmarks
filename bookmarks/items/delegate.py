@@ -2119,7 +2119,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         painter.drawRect(option.rect)
 
     @save_painter
-    def paint_shotgun_status(self, *args):
+    def paint_sg_status(self, *args):
         """Paints the item's ShotGrid configuration status.
 
         """
@@ -2745,7 +2745,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
             self.paint_thumbnail_drop_indicator(*args)
             self.paint_description_editor_background(*args)
             self.paint_selection_indicator(*args)
-            self.paint_shotgun_status(*args)
+            self.paint_sg_status(*args)
             self.paint_db_status(*args)
             self.paint_drag_source(*args)
             self.paint_deleted(*args)
@@ -2790,7 +2790,7 @@ class AssetItemViewDelegate(ItemDelegate):
             self.paint_thumbnail(*args)
             self.paint_thumbnail_drop_indicator(*args)
             self.paint_selection_indicator(*args)
-            self.paint_shotgun_status(*args)
+            self.paint_sg_status(*args)
             self.paint_db_status(*args)
             self.paint_dcc_icon(*args)
             self.paint_drag_source(*args)

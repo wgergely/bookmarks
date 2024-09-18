@@ -316,7 +316,7 @@ class SyncWidget(base.BasePropertyEditor):
                 0: {
                     0: {
                         'name': 'Domain',
-                        'key': 'shotgun_domain',
+                        'key': 'sg_domain',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'Domain, e.g. https://mystudio.shotgunstudio.com',
@@ -328,7 +328,7 @@ class SyncWidget(base.BasePropertyEditor):
                 1: {
                     0: {
                         'name': 'Script Name',
-                        'key': 'shotgun_scriptname',
+                        'key': 'sg_scriptname',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'my-sg-script',
@@ -336,7 +336,7 @@ class SyncWidget(base.BasePropertyEditor):
                     },
                     1: {
                         'name': 'API Key',
-                        'key': 'shotgun_api_key',
+                        'key': 'sg_api_key',
                         'validator': None,
                         'protect': True,
                         'widget': ui.LineEdit,
@@ -722,9 +722,9 @@ class SyncWidget(base.BasePropertyEditor):
                 items_data[task_path] = {}
                 items_data[task_path]['thumbnail'] = thumbnail_path
                 items_data[task_path]['name'] = entity['code']
-                items_data[task_path]['shotgun_id'] = int(entity['id'])
-                items_data[task_path]['shotgun_name'] = entity['code']
-                items_data[task_path]['shotgun_type'] = entity['type']
+                items_data[task_path]['sg_id'] = int(entity['id'])
+                items_data[task_path]['sg_name'] = entity['code']
+                items_data[task_path]['sg_type'] = entity['type']
 
                 if asset_data_item and 'cut_in' in asset_data_item:
                     items_data[task_path]['cut_in'] = int(asset_data_item['cut_in'])

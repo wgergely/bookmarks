@@ -165,7 +165,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                 0: {
                     0: {
                         'name': 'Domain',
-                        'key': 'shotgun_domain',
+                        'key': 'sg_domain',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'Domain, e.g. https://mystudio.shotgunstudio.com',
@@ -177,7 +177,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                     },
                     1: {
                         'name': 'Script Name',
-                        'key': 'shotgun_scriptname',
+                        'key': 'sg_scriptname',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'my-sg-script',
@@ -185,7 +185,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                     },
                     2: {
                         'name': 'API Key',
-                        'key': 'shotgun_api_key',
+                        'key': 'sg_api_key',
                         'validator': None,
                         'protect': True,
                         'widget': ui.LineEdit,
@@ -221,7 +221,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                 1: {
                     0: {
                         'name': 'ShotGrid Entity Type',
-                        'key': 'shotgun_type',
+                        'key': 'sg_type',
                         'validator': base.int_validator,
                         'widget': base_widgets.SGProjectTypesWidget,
                         'placeholder': None,
@@ -229,7 +229,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                     },
                     1: {
                         'name': 'ShotGrid Project Id',
-                        'key': 'shotgun_id',
+                        'key': 'sg_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
                         'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
@@ -238,7 +238,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                     },
                     2: {
                         'name': 'ShotGrid Project Name',
-                        'key': 'shotgun_name',
+                        'key': 'sg_name',
                         'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'ShotGrid project name, e.g. \'MyProject\'',
@@ -419,7 +419,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         self.thumbnailUpdated.emit(self.db_source())
         return True
 
-    def shotgun_properties(self):
+    def sg_properties(self):
         """Returns the properties needed to connect to shotgun.
 
         """
@@ -427,15 +427,15 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
             self.server, self.job, self.root
         )
 
-        sg_properties.domain = self.shotgun_domain_editor.text()
-        sg_properties.script = self.shotgun_scriptname_editor.text()
-        sg_properties.key = self.shotgun_api_key_editor.text()
+        sg_properties.domain = self.sg_domain_editor.text()
+        sg_properties.script = self.sg_scriptname_editor.text()
+        sg_properties.key = self.sg_api_key_editor.text()
 
-        _id = self.shotgun_id_editor.text()
+        _id = self.sg_id_editor.text()
         _id = int(_id) if _id else None
-        sg_properties.bookmark_type = self.shotgun_type_editor.currentText()
+        sg_properties.bookmark_type = self.sg_type_editor.currentText()
         sg_properties.bookmark_id = _id
-        sg_properties.bookmark_name = self.shotgun_name_editor.text()
+        sg_properties.bookmark_name = self.sg_name_editor.text()
 
         return sg_properties
 
@@ -471,20 +471,20 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         sg_actions.link_bookmark_entity(self.server, self.job, self.root)
 
     @QtCore.Slot()
-    def shotgun_domain_button_clicked(self):
+    def sg_domain_button_clicked(self):
         """Opens the shotgun base domain in the browser.
 
         """
-        v = self.shotgun_domain_editor.text()
+        v = self.sg_domain_editor.text()
         if v:
             QtGui.QDesktopServices.openUrl(v)
 
     @QtCore.Slot()
-    def shotgun_domain_button2_clicked(self):
+    def sg_domain_button2_clicked(self):
         """Check the validity of the ShotGrid token.
 
         """
-        sg_actions.test_shotgun_connection(self.shotgun_properties())
+        sg_actions.test_sg_connection(self.sg_properties())
 
     @QtCore.Slot()
     def applications_button_clicked(self):

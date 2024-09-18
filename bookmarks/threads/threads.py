@@ -164,7 +164,7 @@ def queue_database_transaction(*args):
     get_thread(QueuedDatabaseTransaction).startTimer.emit()
 
 
-def queue_shotgun_query(*args):
+def queue_sg_query(*args):
     if args not in queue(QueuedSGQuery):
         queue(QueuedSGQuery).append(args)
     get_thread(QueuedSGQuery).startTimer.emit()

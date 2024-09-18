@@ -90,15 +90,15 @@ TABLES = {
             'sql': 'INT DEFAULT 0',
             'type': int
         },
-        'shotgun_id': {
+        'sg_id': {
             'sql': 'INT',
             'type': int
         },
-        'shotgun_name': {
+        'sg_name': {
             'sql': 'TEXT',
             'type': str
         },
-        'shotgun_type': {
+        'sg_type': {
             'sql': 'TEXT',
             'type': str
         },
@@ -223,27 +223,27 @@ TABLES = {
             'sql': 'INT',
             'type': int
         },
-        'shotgun_domain': {
+        'sg_domain': {
             'sql': 'TEXT',
             'type': str
         },
-        'shotgun_scriptname': {
+        'sg_scriptname': {
             'sql': 'TEXT',
             'type': str
         },
-        'shotgun_api_key': {
+        'sg_api_key': {
             'sql': 'TEXT',
             'type': str
         },
-        'shotgun_id': {
+        'sg_id': {
             'sql': 'INT',
             'type': int
         },
-        'shotgun_name': {
+        'sg_name': {
             'sql': 'TEXT',
             'type': str
         },
-        'shotgun_type': {
+        'sg_type': {
             'sql': 'TEXT',
             'type': str
         },
@@ -279,6 +279,10 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
+        'asset_link_presets': {
+            'sql': 'TEXT',
+            'type': dict
+        }
     }
 }
 

@@ -485,20 +485,20 @@ def get_ranges(arr, padding):
     return ','.join(['-'.join(sorted({blocks[k][0], blocks[k][-1]})) for k in blocks])
 
 
-def update_shotgun_configured(pp, b, a, ref):
+def update_sg_configured(pp, b, a, ref):
     """Slot called when a shotgun integration value was updated.
 
     """
     if not all((pp, b, a, ref())):
         return
-    b_conf = (b['shotgun_domain'], b['shotgun_scriptname'], b['shotgun_api_key'])
-    b_item_conf = (b['shotgun_id'], b['shotgun_name'], b['shotgun_type'])
+    b_conf = (b['sg_domain'], b['sg_scriptname'], b['sg_api_key'])
+    b_item_conf = (b['sg_id'], b['sg_name'], b['sg_type'])
     if len(pp) == 3:
         if all(b_conf + b_item_conf):
             ref()[common.SGLinkedRole] = True
             return True
     if len(pp) == 4:
-        a_item_conf = (a['shotgun_id'], a['shotgun_name'], a['shotgun_type'])
+        a_item_conf = (a['sg_id'], a['sg_name'], a['sg_type'])
         if all(b_conf + b_item_conf + a_item_conf):
             ref()[common.SGLinkedRole] = True
             return True
@@ -614,13 +614,13 @@ class InfoWorker(BaseWorker):
                         _ref().sg_task_names.append(asset_row_data['sg_task_name'])
 
             if _ref():
-                if asset_row_data['shotgun_name'] and asset_row_data['shotgun_name'] not in _ref().shotgun_names:
+                if asset_row_data['sg_name'] and asset_row_data['sg_name'] not in _ref().sg_names:
                     if _ref():
-                        _ref().shotgun_names.append(asset_row_data['shotgun_name'])
+                        _ref().sg_names.append(asset_row_data['sg_name'])
 
         # ShotGrid status
         if len(pp) <= 4:
-            update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
+            update_sg_configured(pp, bookmark_row_data, asset_row_data, ref)
         # Note count
         if asset_row_data:
             ref()[common.NoteCountRole] = count_todos(asset_row_data)

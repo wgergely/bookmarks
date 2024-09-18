@@ -265,7 +265,7 @@ class EntityFilterModel(BaseFilterModel):
 
     def __init__(self, parent=None):
         super().__init__(
-            'Assets', 'shotgun_names', common.AssetTab, 'sg', parent=parent
+            'Assets', 'sg_names', common.AssetTab, 'sg', parent=parent
         )
 
 

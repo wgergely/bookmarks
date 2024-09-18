@@ -75,7 +75,9 @@ class MessageBox(QtWidgets.QDialog):
         if obj == self and event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
-            painter.setPen(QtCore.Qt.NoPen)
+            pen = QtGui.QPen(common.color(common.color_blue))
+            pen.setWidthF(common.size(common.size_separator) * 2)
+            painter.setPen(pen)
 
             rect = self.rect().adjusted(
                 common.size(common.size_margin * 1.5),

@@ -153,12 +153,14 @@ class LinksView(QtWidgets.QTreeView):
         """
         Initialize the LinksView.
 
-        Args:
-            path (str): Path to a folder containing a .links file.
-            parent: The parent widget.
         """
         super().__init__(parent=parent)
         self.setWindowTitle('Asset Links')
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setHeaderHidden(True)
+
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self._expanded_nodes = []
 
@@ -202,9 +204,6 @@ class LinksView(QtWidgets.QTreeView):
         """
         Emit the linksFileChanged signal.
 
-        Args:
-            current: The current index.
-            previous: The previous index.
         """
         if isinstance(current, QtCore.QItemSelection):
             index = next(iter(current.indexes()), QtCore.QModelIndex())
@@ -535,8 +534,13 @@ class NumberBar(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
 
+        if not self.parent().toPlainText():
+            alpha = 0
+        else:
+            alpha = 20
+
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(QtGui.QColor(0, 0, 0, 20))
+        painter.setBrush(QtGui.QColor(0, 0, 0, alpha))
         painter.drawRoundedRect(
             event.rect(),
             common.size(common.size_indicator),
@@ -651,7 +655,7 @@ class LinksTextEditor(QtWidgets.QWidget):
 
     def _create_ui(self):
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Maximum,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
 
@@ -679,7 +683,7 @@ class LinksTextEditor(QtWidgets.QWidget):
         pass
 
     @QtCore.Slot(str)
-    def load_links(self, path):
+    def link_changed(self, path):
         if self._text_editor is None:
             return
 
@@ -690,7 +694,10 @@ class LinksTextEditor(QtWidgets.QWidget):
         self._current_path = None
 
         if not path:
+            self.setDisabled(True)
             return
+
+        self.setDisabled(False)
 
         api = lib.LinksAPI(path)
         if not os.path.exists(api.links_file):
@@ -716,6 +723,9 @@ class LinksEditor(QtWidgets.QSplitter):
         self._connect_signals()
 
     def _create_ui(self):
+        o = common.size(common.size_indicator) * 2
+        self.setContentsMargins(o, o, o, o)
+
         self.setWindowTitle('Asset Links Editor')
 
         self._links_view = LinksView(parent=self)
@@ -725,7 +735,7 @@ class LinksEditor(QtWidgets.QSplitter):
         self.addWidget(self._links_editor)
 
     def _connect_signals(self):
-        self._links_view.linksFileChanged.connect(self._links_editor.load_links)
+        self._links_view.linksFileChanged.connect(self._links_editor.link_changed)
 
     def add_path(self, path):
         self._links_view.add_path(path)

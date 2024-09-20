@@ -1,8 +1,9 @@
 import functools
 import os
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtGui
 
+from . import lib
 from .model import AssetLinksModel
 from .. import actions
 from .. import common
@@ -41,7 +42,7 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             return
 
         self.menu[contextmenu.key()] = {
-            'text': 'Add Folder as Link',
+            'text': 'Pick Folder',
             'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'action': self.parent().add_link,
             'help': 'Add a new relative link to this asset.',
@@ -159,9 +160,6 @@ class LinksView(QtWidgets.QTreeView):
         super().__init__(parent=parent)
         self.setWindowTitle('Asset Links')
 
-        if not parent:
-            common.set_stylesheet(self)
-
         self._expanded_nodes = []
 
         self._init_shortcuts()
@@ -188,7 +186,9 @@ class LinksView(QtWidgets.QTreeView):
 
     def _connect_signals(self):
         self.selectionModel().selectionChanged.connect(self.emit_links_file_changed)
-        self.selectionModel().currentChanged.connect(self.emit_links_file_changed)
+        self.model().modelAboutToBeReset.connect(
+            lambda: self.emit_links_file_changed(QtCore.QModelIndex(), QtCore.QModelIndex())
+        )
 
         self.model().modelAboutToBeReset.connect(self.save_expanded_nodes)
         self.model().layoutAboutToBeChanged.connect(self.save_expanded_nodes)
@@ -222,7 +222,7 @@ class LinksView(QtWidgets.QTreeView):
             return
 
         if node.is_leaf():
-            path = node.api().to_absolute(node.path())
+            path = node.parent().path()
         else:
             path = node.path()
 
@@ -238,6 +238,12 @@ class LinksView(QtWidgets.QTreeView):
         pos = self.mapToGlobal(pos)
         menu.move(pos)
         menu.exec_()
+
+    def sizeHint(self):
+        return QtCore.QSize(
+            common.size(common.size_width),
+            common.size(common.size_height)
+        )
 
     def get_node_from_selection(self):
         """
@@ -451,7 +457,7 @@ class LinksView(QtWidgets.QTreeView):
             return
 
         if node.is_leaf():
-            node.api().copy_to_clipboard(links=[node.path(),])
+            node.api().copy_to_clipboard(links=[node.path(), ])
             return
         node.api().copy_to_clipboard()
 
@@ -506,3 +512,220 @@ class LinksView(QtWidgets.QTreeView):
         Edit the links file.
         """
         raise NotImplementedError('Edit links is not implemented yet.')
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def save_preset(self):
+        """
+        Save the current view as a preset.
+        """
+        raise NotImplementedError('Save preset is not implemented yet.')
+
+
+class NumberBar(QtWidgets.QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.parent().blockCountChanged.connect(self.update_width)
+        self.parent().updateRequest.connect(self.update_contents)
+
+    def paintEvent(self, event):
+        painter = QtGui.QPainter()
+        painter.begin(self)
+
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(QtGui.QColor(0, 0, 0, 20))
+        painter.drawRoundedRect(
+            event.rect(),
+            common.size(common.size_indicator),
+            common.size(common.size_indicator)
+        )
+
+        block = self.parent().firstVisibleBlock()
+
+        font = self.parent().font()
+        metrics = self.parent().fontMetrics()
+
+        # Iterate over all visible text blocks in the document.
+        while block.isValid():
+            block_number = block.blockNumber()
+            block_top = self.parent().blockBoundingGeometry(block).translated(self.parent().contentOffset()).top()
+
+            # Check if the position of the block is outside the visible area.
+            if not block.isVisible() or block_top >= event.rect().bottom():
+                break
+
+            # We want the line number for the selected line to be bold.
+            if block_number == self.parent().textCursor().blockNumber():
+                painter.setPen(common.color(common.color_blue))
+            else:
+                painter.setPen(common.color(common.color_light_background))
+            painter.setFont(font)
+
+            # Draw the line number right justified at the position of the line.
+            paint_rect = QtCore.QRect(
+                0,
+                block_top,
+                self.width() - (common.size(common.size_indicator) * 2),
+                metrics.height()
+            )
+
+            if self.parent().toPlainText():
+                painter.drawText(
+                    paint_rect,
+                    QtCore.Qt.AlignRight,
+                    f'{block_number + 1}'
+                )
+
+            block = block.next()
+
+        painter.end()
+
+        super().paintEvent(event)
+
+    def get_width(self):
+        metrics = self.parent().fontMetrics()
+
+        count = self.parent().blockCount()
+        width = metrics.width(f'{count}') + common.size(common.size_margin)
+        return width
+
+    def update_width(self):
+        width = self.get_width()
+        if self.width() != width:
+            self.setFixedWidth(width)
+            self.parent().setViewportMargins(width, 0, 0, 0)
+
+    def update_contents(self, rect, scroll):
+        font = self.parent().font()
+
+        if scroll:
+            self.scroll(0, scroll)
+        else:
+            self.update(0, rect.y(), self.width(), rect.height())
+
+        if rect.contains(self.parent().viewport().rect()):
+            font_size = self.parent().currentCharFormat().font().pointSize()
+            font.setPointSize(font_size)
+            font.setStyle(QtGui.QFont.StyleNormal)
+            self.update_width()
+
+
+class PlainTextEdit(QtWidgets.QPlainTextEdit):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self._number_bar = NumberBar(parent=self)
+
+        self.setPlaceholderText('Select an item to view its contents.')
+        self.setWordWrapMode(QtGui.QTextOption.NoWrap)
+
+    def resizeEvent(self, event):
+        cr = self.contentsRect()
+        rec = QtCore.QRect(
+            cr.left(),
+            cr.top(),
+            self._number_bar.get_width(),
+            cr.height()
+        )
+        self._number_bar.setGeometry(rec)
+
+        super().resizeEvent(event)
+
+
+class LinksTextEditor(QtWidgets.QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self._text_editor = None
+        self._apply_button = None
+
+        self._current_path = None
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding
+        )
+
+        layout = QtWidgets.QVBoxLayout()
+        self.setLayout(layout)
+
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(0)
+
+        self._text_editor = PlainTextEdit(parent=self)
+        self._text_editor.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding
+        )
+
+        self.layout().addWidget(self._text_editor)
+
+        row = ui.add_row(None, parent=self)
+        self._apply_button = ui.PaintedButton(
+            'Save', parent=self
+        )
+        row.layout().addWidget(self._apply_button, 1)
+
+    def _connect_signals(self):
+        pass
+
+    @QtCore.Slot(str)
+    def load_links(self, path):
+        if self._text_editor is None:
+            return
+
+        if path == self._current_path:
+            return
+
+        self._text_editor.clear()
+        self._current_path = None
+
+        if not path:
+            return
+
+        api = lib.LinksAPI(path)
+        if not os.path.exists(api.links_file):
+            return
+
+        links = api.get(force=True)
+        self._text_editor.setPlainText('\n'.join(links))
+        self._current_path = path
+
+
+class LinksEditor(QtWidgets.QSplitter):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        if not parent:
+            common.set_stylesheet(self)
+
+        self._links_view = None
+        self._links_editor = None
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        self.setWindowTitle('Asset Links Editor')
+
+        self._links_view = LinksView(parent=self)
+        self.addWidget(self._links_view)
+
+        self._links_editor = LinksTextEditor(parent=self)
+        self.addWidget(self._links_editor)
+
+    def _connect_signals(self):
+        self._links_view.linksFileChanged.connect(self._links_editor.load_links)
+
+    def add_path(self, path):
+        self._links_view.add_path(path)

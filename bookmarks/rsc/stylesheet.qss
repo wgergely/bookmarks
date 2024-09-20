@@ -188,26 +188,25 @@ QComboBox QListView::item:hover {{
 
 QLineEdit,
 QTextEdit,
+QPlainTextEdit,
 QTextBrowser {{
-    background-color: transparent;
-    height: {size_row_height2}px;
-    max-height: {size_row_height2}px;
-    min-height: {size_row_height2}px;
+    background-color: {color_dark_background};
     border: {size_separator}px solid transparent;
     border-radius: {size_indicator1}px;
-    padding-left: {size_indicator}px;
-    padding-right: {size_indicator}px;
+    padding: {size_indicator}px;
 }}
 QLineEdit:disabled,
 QTextEdit:disabled,
+QPlainTextEdit:disabled,
 QTextBrowser:disabled {{
     color: {color_disabled_text};
     background-color: transparent;
 }}
-QLineEdit:focus,
-QTextEdit:focus,
-QTextBrowser:focus {{
-    background-color: {color_opaque};
+
+QLineEdit {{
+    height: {size_row_height2}px;
+    max-height: {size_row_height2}px;
+    min-height: {size_row_height2}px;
 }}
 
 QScrollBar {{

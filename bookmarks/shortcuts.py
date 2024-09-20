@@ -61,6 +61,16 @@ ToggleItemFavourite = common.idx()
 PushToRV = common.idx()
 PushToRVFullScreen = common.idx()
 
+# Link editor shortcuts
+AddLink = common.idx()
+RemoveLink = common.idx()
+CopyLinks = common.idx()
+PasteLinks = common.idx()
+RevealLink = common.idx()
+EditLinks = common.idx()
+ReloadLinks = common.idx()
+
+
 JobEditorShortcuts = {
     AddItem: {
         'value': QtGui.QKeySequence.New,
@@ -76,6 +86,58 @@ JobEditorShortcuts = {
         'description': 'Add item',
         'shortcut': None,
     }
+}
+
+LinksViewShortcuts = {
+    AddLink: {
+        'value': QtGui.QKeySequence.New,
+        'default': QtGui.QKeySequence.New,
+        'repeat': False,
+        'description': 'Add a new link',
+        'shortcut': None,
+    },
+    RemoveLink: {
+        'value': QtGui.QKeySequence.Delete,
+        'default': QtGui.QKeySequence.Delete,
+        'repeat': False,
+        'description': 'Add remove link',
+        'shortcut': None,
+    },
+    CopyLinks: {
+        'value': 'Ctrl+C',
+        'default': 'Ctrl+C',
+        'repeat': False,
+        'description': 'Copy links',
+        'shortcut': None,
+    },
+    PasteLinks: {
+        'value': 'Ctrl+V',
+        'default': 'Ctrl+V',
+        'repeat': False,
+        'description': 'Paste links',
+        'shortcut': None,
+    },
+    RevealLink: {
+        'value': 'Ctrl+O',
+        'default': 'Ctrl+O',
+        'repeat': False,
+        'description': 'Reveal link in the file explorer...',
+        'shortcut': None,
+    },
+    EditLinks: {
+        'value': 'Ctrl+E',
+        'default': 'Ctrl+E',
+        'repeat': False,
+        'description': 'Edit link properties...',
+        'shortcut': None,
+    },
+    ReloadLinks: {
+        'value': 'Ctrl+R',
+        'default': 'Ctrl+R',
+        'repeat': False,
+        'description': 'Reload links',
+        'shortcut': None,
+    },
 }
 
 MainWidgetShortcuts = {

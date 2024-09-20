@@ -245,6 +245,7 @@ QTreeWidget::item,
 QTreeView::item,
 QListWidget::item,
 QListView::item {{
+    padding-left: {size_indicator}px;
     outline: 0;
     color: {color_text};
     background: {color_background};
@@ -280,7 +281,7 @@ QTreeWidget::item:disabled,
 QTreeView::item:disabled,
 QListWidget::item:disabled,
 QListView::item:disabled {{
-  color: {color_disabled_text};
+    color: {color_disabled_text};
     background: transparent;
 }}
 QTableWidget::indicator,
@@ -302,6 +303,53 @@ QListView::indicator:checked {{
     background: {color_green};
 }}
 
+QTreeWidget::branch
+QTreeView::branch,
+QTreeWidget::branch:open,
+QTreeView::branch:open,
+QTreeWidget::branch:closed,
+QTreeView::branch:closed,
+QTreeWidget::branch:has-sibling,
+QTreeView::branch:has-sibling
+QTreeWidget::branch:has-children,
+QTreeView::branch:has-children {{
+    border: none;
+    border-image: none;
+    background: {color_background};
+    color: {color_text};
+    border-bottom: {size_separator}px solid {color_opaque};
+}}
+QTreeWidget::branch:hover
+QTreeView::branch:hover,
+QTreeWidget::branch:hover:open,
+QTreeView::branch:hover:open,
+QTreeWidget::branch:hover:closed,
+QTreeView::branch:hover:closed,
+QTreeWidget::branch:hover:has-sibling,
+QTreeView::branch:hover:has-sibling
+QTreeWidget::branch:hover:has-children,
+QTreeView::branch:hover:has-children {{
+    background: {color_light_background};
+}}
+
+QTreeWidget::branch:closed:has-children,
+QTreeView::branch:closed:has-children {{
+    size: {size_margin}px;
+    image: url("{branch_closed}");
+}}
+
+QTreeWidget::branch:closed:!has-children,
+QTreeView::branch:closed:!has-children {{
+    image: none;
+}}
+
+QTreeWidget::branch:open:has-children:!has-siblings,
+QTreeWidget::branch:open:has-children:has-siblings,
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings {{
+    image: url("{branch_open}");
+}}
+
 TableWidget {{
     background: transparent;
     background-color: transparent;
@@ -311,9 +359,9 @@ TableWidget::item:selected,
 TableWidget::item:hover,
 TableWidget::item:disabled,
 TableWidget::item {{
-        padding: {size_indicator}px;
-        background-color: transparent;
-        background: transparent;
+    padding: {size_indicator}px;
+    background-color: transparent;
+    background: transparent;
 }}
 
 QHeaderView {{
@@ -336,41 +384,6 @@ QHeaderView::up-arrow {{
   image: none;
 }}
 
-
-QTreeWidget::branch
-QTreeView::branch,
-QTreeWidget::branch:open,
-QTreeView::branch:open,
-QTreeWidget::branch:closed,
-QTreeView::branch:closed,
-QTreeWidget::branch:has-sibling,
-QTreeView::branch:has-sibling
-QTreeWidget::branch:has-children,
-QTreeView::branch:has-children {{
-    border: none;
-    border-image: none;
-    background: transparent;
-}}
-
-QTreeWidget::branch:closed:has-children,
-QTreeView::branch:closed:has-children {{
-    size: {size_margin}px;
-    image: url("{branch_closed}");
-}}
-
-QTreeWidget::branch:closed:!has-children,
-QTreeView::branch:closed:!has-children {{
-    image: none;
-}}
-
-QTreeWidget::branch:open:has-children:!has-siblings,
-QTreeWidget::branch:open:has-children:has-siblings,
-QTreeView::branch:open:has-children:!has-siblings,
-QTreeView::branch:open:has-children:has-siblings {{
-    image: url("{branch_open}");
-}}
-
-
 QLabel {{
     font-size: {size_font_medium}px;
     background-color: transparent;
@@ -384,7 +397,9 @@ QMenu {{
     background-color: {color_dark_background};
     menu-scrollable: 1;
     icon-size: {size_margin2}px;
-    margin: {size_indicator}px;
+    margin: {size_separator}px;
+    border: {size_separator2}px solid {color_blue};
+    border-radius: {size_indicator1}px;
 }}
 QMenu::separator {{
     height: {size_separator2}px;

@@ -1,6 +1,6 @@
 """User actions module.
 
-These actions are usually triggered by the user via keyboard shortcuts or by
+The user usually triggers these actions via keyboard shortcuts or by
 interactions with the UI.
 
 """

@@ -46,7 +46,7 @@ The database contains two tables that hold item data: :attr:`common.BookmarkTabl
 AssetTable is intended to hold general descriptions and notes for all items, while the BookmarkTable contains
 properties specifically related to the bookmark item.
 
-Note: Bookmark items should ideally store their descriptions in the AssetTable as it is a general property. However,
+Note: Bookmark items should ideally store their descriptions in the AssetTable as it's a general property. However,
 currently, they use the 'description' column in the BookmarkTable, which is redundant. This behavior is a known issue
 and may be corrected in future versions of the software.
 

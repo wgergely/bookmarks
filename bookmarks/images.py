@@ -443,9 +443,7 @@ def oiio_get_qimage(source, buf=None, force=True, lock_mutex=True):
     image.setDevicePixelRatio(common.pixel_ratio)
 
     # As soon as the numpy array is garbage collected, the data for QImage becomes
-    # unusable and Qt5 crashes. This could possibly be a bug, I would expect,
-    # the data to be copied automatically, but by making a copy
-    # the numpy array can safely be GC'd
+    # unusable and Qt5 crashes
     return image.copy()
 
 
@@ -455,6 +453,7 @@ def make_color(source, hash=None, lock_mutex=True):
     Args:
         source (str): Path to an image file.
         hash (str, optional): Has value to use instead of source image's hash.
+        lock_mutex (bool): Lock the cache's QMutex for thread safety.
 
     Returns:
         QtGui.QImage: The average color of the source image.

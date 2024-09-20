@@ -182,6 +182,9 @@ def set_stylesheet(w):
             str: The stylesheet applied to the widget.
 
     """
+    if common.init_mode is None:
+        raise RuntimeError('Not yet initialized!')
+
     if not common.stylesheet:
         init_stylesheet()
 
@@ -325,16 +328,16 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
 
     if QtCore.Qt.AlignLeft & align:
         x = rect.left()
-    if QtCore.Qt.AlignRight & align:
+    elif QtCore.Qt.AlignRight & align:
         x = rect.right() - width
-    if QtCore.Qt.AlignHCenter & align:
+    elif QtCore.Qt.AlignHCenter & align:
         x = rect.left() + (rect.width() * 0.5) - (width * 0.5)
     else:
         x = rect.left()
 
     y = rect.center().y() + (metrics.ascent() * 0.5) - (metrics.descent() * 0.5)
 
-    # Making sure text fits the rectangle
+    # Ensure text fits the rectangle
     painter.setBrush(color)
     painter.setPen(QtCore.Qt.NoPen)
 
@@ -380,6 +383,9 @@ def show_message(
         int: The result of the message box.
 
     """
+    if common.init_mode is None:
+        raise RuntimeError('Bookmarks must be initialized first.')
+
     close_message()
 
     app = QtWidgets.QApplication.instance()
@@ -595,7 +601,7 @@ def widget(idx=None):
     otherwise, returns the specified widget.
 
     Args:
-        idx (int, optional): A tab index number, e.g. ``common.FileTab``.
+        idx (int, optional): A tab index number, for example ``common.FileTab``.
 
     Returns:
         BaseItemView: A list widget.
@@ -625,12 +631,15 @@ def model(idx=None):
     otherwise, returns the specified widget's model.
 
     Args:
-        idx (int, optional): A tab index number, e.g. ``common.FileTab``.
+        idx (int, optional): A tab index number, for example ``common.FileTab``.
 
     Returns:
         FilterProxyModel: A list widget's proxy model.
 
     """
+    if common.init_mode is None or not common.main_widget:
+        raise RuntimeError('Not yet initialized!')
+
     common.check_type(idx, (int, None))
     return widget(idx=idx).model()
 
@@ -676,6 +685,9 @@ def selected_index(idx=None):
         QtCore.QModelIndex: The selected index.
 
     """
+    if common.init_mode is None or not common.main_widget:
+        raise RuntimeError('Not yet initialized!')
+
     common.check_type(idx, (int, None))
     return get_selected_index(widget(idx=idx))
 
@@ -689,4 +701,5 @@ def current_tab():
     """
     if common.init_mode is None or not common.main_widget:
         raise RuntimeError('Not yet initialized!')
+
     return common.main_widget.stacked_widget.currentIndex()

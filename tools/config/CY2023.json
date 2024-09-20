@@ -88,6 +88,14 @@
         "registries": [
             {
                 "kind": "git",
+                "repository": "https://github.com/microsoft/vcpkg",
+                "baseline": "7ef729383ab801504035a4445b6dbca18c8865c8",
+                "packages": [
+                    "boost-modular-build-helper"
+                ]
+            },
+            {
+                "kind": "git",
                 "repository": "https://github.com/Microsoft/vcpkg",
                 "baseline": "5ba2b95aea2a39aa89444949c7a047af38c401c1",
                 "packages": [
@@ -109,7 +117,8 @@
                 "repository": "https://github.com/Microsoft/vcpkg",
                 "baseline": "f84c18b6a5fb31983853b0d481b9de0263d6fc6c",
                 "packages": [
-                    "python3"
+                    "python3",
+                    "libffi"
                 ]
             }
         ]

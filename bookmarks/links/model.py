@@ -1,6 +1,10 @@
+import os
+
 from PySide2 import QtCore
 
-from .lib import Links
+from .lib import LinksAPI
+from .. import common
+from .. import ui
 
 
 class Node:
@@ -8,17 +12,38 @@ class Node:
     A class representing a node in the tree model.
     """
 
-    def __init__(self, data, parent=None):
+    def __init__(self, path, parent=None):
         """
         Initialize the Node.
 
         Args:
-            data: The data to store in this node.
+            path: The data to store in this node.
             parent (Node): The parent node.
         """
-        self._data = data
+        self._api = None
+        self._path = path
         self._parent = parent
+        self._exists = None
         self._children = []
+
+    def exists(self, force=False):
+        """
+        Check if the path exists.
+
+        Returns:
+            bool: True if the path exists.
+        """
+        if self._exists is None:
+            if self.is_leaf():
+                path = self.api().to_absolute(self._path)
+            else:
+                path = self._path
+
+        if not force and self._exists is not None:
+            return self._exists
+
+        self._exists = os.path.exists(path)
+        return self._exists
 
     def append_child(self, child):
         """
@@ -61,14 +86,14 @@ class Node:
         """
         return len(self._children)
 
-    def data(self):
+    def path(self):
         """
         Get the data stored in this node.
 
         Returns:
             The data.
         """
-        return self._data
+        return self._path
 
     def parent(self):
         """
@@ -78,6 +103,15 @@ class Node:
             Node: The parent node.
         """
         return self._parent
+
+    def is_leaf(self):
+        """
+        Check if this node is a leaf node.
+
+        Returns:
+            bool: True if this node is a leaf node.
+        """
+        return len(self._children) == 0 and self._parent and self._parent._path != 'Root'
 
     def row(self):
         """
@@ -90,75 +124,134 @@ class Node:
             return self._parent._children.index(self)
         return 0  # Root node
 
+    def api(self):
+        """
+        Get the links api instance.
+
+        Returns:
+            LinksAPI: The links api instance.
+        """
+        if self.is_leaf():
+            if self._parent._api is None:
+                api = LinksAPI(self._parent._path)
+                self._parent._api = api
+            return self._parent._api
+        if self._api is None:
+            self._api = LinksAPI(self._path)
+        return self._api
+
 
 class AssetLinksModel(QtCore.QAbstractItemModel):
     """
     A model representing the asset links as a tree.
     """
+    row_size = QtCore.QSize(1, common.size(common.size_row_height))
 
-    def __init__(self, path, parent=None):
+    def __init__(self, parent=None):
         """
         Initialize the model.
 
         Args:
             path (str): Path to a folder containing a .links file.
             parent: The parent object.
+
         """
         super().__init__(parent)
-        self._links = Links(path)
-        self._root_node = Node('Root')
-        self.init_data()
+        self._root_node = None
 
-    def init_data(self):
+    def add_path(self, path):
         """
-        Set up the tree structure based on the links.
+        Add a folder path to the model.
+
+        Args:
+            path (str): The path to a folder containing a .links file.
+
         """
-        # Clear existing data
-        self._root_node = Node('Root')
+        if not os.path.exists(path):
+            raise ValueError(f'Path does not exist: {path}')
 
-        # Create a node for the links file
-        links_node = Node(self._links.links_file, self._root_node)
-        self._root_node.append_child(links_node)
+        if self.root_node() and self.root_node().children():
+            for parent_node in self.root_node().children():
+                if parent_node.path() == path:
+                    raise ValueError(f'Path already added to the model: {path}')
 
-        # Get the relative links from the links instance
-        links = self._links.get()
+        self.beginResetModel()
+
+        if self.root_node() is None:
+            self._root_node = Node('Root')
+
+        parent_node = Node(path, parent=self.root_node())
+        self.root_node().append_child(parent_node)
+
+        # Get the relative links from the links api instance
+        links = parent_node.api().get(force=True)
 
         # For each link, create a child node under links_node
         for link in links:
-            child_node = Node(link, links_node)
-            links_node.append_child(child_node)
+            child_node = Node(link, parent=parent_node)
+            parent_node.append_child(child_node)
+
+        self.endResetModel()
+
+    def remove_path(self, path):
+        """
+        Remove a folder path from the model.
+
+        Args:
+            path (str): The path to a folder containing a .links file.
+
+        """
+        if self.root_node() is None:
+            return
+
+        for parent_node in self.root_node().children():
+            if parent_node.path() != path:
+                continue
+
+            self.beginResetModel()
+            self.root_node().children().remove(parent_node)
+            self.endResetModel()
+            break
+
+    def reload_paths(self):
+        """
+        Reload all currently added paths in the model.
+
+        """
+        if self.root_node() is None:
+            return
+
+        current_paths = [parent_node.path() for parent_node in self.root_node().children()]
+
+        self.beginResetModel()
+        self.root_node().children().clear()
+        for path in current_paths:
+            self.add_path(path)
+        self.endResetModel()
+
+    def root_node(self):
+        """
+        Get the root node.
+
+        Returns:
+            Node: The root node.
+
+        """
+        return self._root_node
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        """
-        Return the number of rows under the given parent.
-
-        Args:
-            parent (QtCore.QModelIndex): The parent index.
-
-        Returns:
-            int: The number of rows.
-        """
-        if parent.column() > 0:
+        if self.root_node() is None:
             return 0
-
         if not parent.isValid():
-            parent_node = self._root_node
-        else:
-            parent_node = parent.internalPointer()
-
-        return parent_node.child_count()
+            parent_node = self.root_node()
+            return parent_node.child_count()
+        node = parent.internalPointer()
+        if node is None:
+            return 0
+        return node.child_count()
 
     def columnCount(self, parent=QtCore.QModelIndex()):
-        """
-        Return the number of columns for the children of the given parent.
-
-        Args:
-            parent (QtCore.QModelIndex): The parent index.
-
-        Returns:
-            int: The number of columns.
-        """
-        return 1  # Only one column needed for link names
+        return 1
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """
@@ -175,17 +268,35 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             return None
 
         node = index.internalPointer()
+        if not node:
+            return None
 
         if role == QtCore.Qt.DisplayRole:
-            if node.parent() == self._root_node:
-                return node.data().replace('.links', '').strip('/')
+            if node.is_leaf():
+                return node.path()
+            return node.path().replace('.links', '').replace('\\', '/').strip('/')
+        elif role == QtCore.Qt.ToolTipRole or role == QtCore.Qt.StatusTipRole or role == QtCore.Qt.WhatsThisRole:
+            return node.path()
+        elif role == QtCore.Qt.DecorationRole:
+            if not node.exists():
+                return ui.get_icon('alert', color=common.color(common.color_red))
+
+            if node.is_leaf():
+                return ui.get_icon('link', color=common.color(common.color_blue))
+
+            if node.child_count() > 0:
+                icon = ui.get_icon('folder', color=common.color(common.color_selected_text))
             else:
-                return node.data()
+                icon = ui.get_icon('folder')
 
+            return icon
 
-
-        if role == QtCore.Qt.UserRole:
-            return node.data()
+        elif role == QtCore.Qt.SizeHintRole:
+            if node.is_leaf():
+                return QtCore.QSize(1, common.size(common.size_row_height) * 0.66)
+            return self.row_size
+        elif role == QtCore.Qt.UserRole:
+            return node.path()
 
         return None
 
@@ -225,7 +336,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
         if not parent.isValid():
-            parent_node = self._root_node
+            parent_node = self.root_node()
         else:
             parent_node = parent.internalPointer()
 
@@ -248,10 +359,10 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return QtCore.QModelIndex()
 
-        child_node = index.internalPointer()
-        parent_node = child_node.parent()
+        node = index.internalPointer()
+        parent_node = node.parent()
 
-        if parent_node == self._root_node or parent_node is None:
+        if parent_node == self.root_node() or parent_node is None:
             return QtCore.QModelIndex()
 
         grandparent_node = parent_node.parent()
@@ -261,57 +372,127 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         else:
             return QtCore.QModelIndex()
 
-    def links(self):
+    def clear_links(self, path):
         """
-        Get the links object.
+        Clear all links for the specified path.
+
+        Args:
+            path (str): The path to the folder containing the .links file.
+        """
+        if self.root_node() is None:
+            return
+
+        for parent_node in self.root_node().children():
+            if parent_node.path() != path:
+                continue
+
+            parent_node.api().clear()
+
+            self.beginResetModel()
+            parent_node.children().clear()
+            self.endResetModel()
+
+            break
+
+    def prune_links(self, path):
+        """
+        Prune links for the specified path.
+
+        Args:
+            path (str): The path to the folder containing the .links file.
+
+        """
+        if self.root_node() is None:
+            return
+
+        for parent_node in self.root_node().children():
+            if parent_node.path() != path:
+                continue
+
+            removed_links = parent_node.api().prune()
+
+            self.beginResetModel()
+            parent_node.children().clear()
+            for link in parent_node.api().get(force=True):
+                child_node = Node(link, parent=parent_node)
+                parent_node.append_child(child_node)
+            self.endResetModel()
+
+            return removed_links
+
+    def remove_link(self, parent_path, path):
+        """
+        Remove a link from the model.
+
+        Args:
+            parent_path (str): The path to the parent folder containing the .links file.
+            path (str): The link to remove.
+
+        """
+        if self.root_node() is None:
+            return
+
+        for parent_node in self.root_node().children():
+            if parent_node.path() != parent_path:
+                continue
+
+            for child_node in parent_node.children():
+                if child_node.path() == path:
+                    parent_node.api().remove(path)
+
+                    self.beginResetModel()
+                    parent_node.children().remove(child_node)
+                    self.endResetModel()
+                    break
+
+    def add_link(self, parent_path, path):
+        """
+        Add a link to the model.
+
+        Args:
+            parent_path (str): The path to the parent folder containing the .links file.
+            path (str): The link to add.
+
+        """
+        if self.root_node() is None:
+            return
+
+        for parent_node in self.root_node().children():
+            if parent_node.path() != parent_path:
+                continue
+
+            child_node = Node(path, parent=parent_node)
+            child_node.api().add(path)
+
+            self.beginResetModel()
+            parent_node.append_child(child_node)
+            parent_node.children().sort(key=lambda x: x.path())
+            self.endResetModel()
+            break
+
+    def paste_links(self, path):
+        """
+        Paste links from the clipboard.
+
+        Args:
+            path (str): The path to the folder containing the .links file.
 
         Returns:
-            Links: The links object.
-        """
-        return self._links
+            list: A list of links that were skipped.
 
-    def add_link(self, link):
         """
-        Add a link to the model and update the view.
+        skipped = []
+        for parent_node in self.root_node().children():
+            if parent_node.path() != path:
+                continue
 
-        Args:
-            link (str): The link to add.
-        """
-        # Use the links/lib.py API to add the link
-        self.beginResetModel()
-        self._links.add(link)
-        self.init_data()
-        self.endResetModel()
+            skipped = parent_node.api().paste_from_clipboard()
 
-    def remove_link(self, link):
-        """
-        Remove a link from the model and update the view.
+            self.beginResetModel()
+            parent_node.children().clear()
+            for link in parent_node.api().get(force=True):
+                child_node = Node(link, parent=parent_node)
+                parent_node.append_child(child_node)
+            self.endResetModel()
 
-        Args:
-            link (str): The link to remove.
-        """
-        # Use the links/lib.py API to remove the link
-        self.beginResetModel()
-        self._links.remove(link)
-        self.init_data()
-        self.endResetModel()
-
-    def clear_links(self):
-        """
-        Clear all links from the model and update the view.
-        """
-        self.beginResetModel()
-        self._links.clear()
-        self.init_data()
-        self.endResetModel()
-
-    def prune_links(self):
-        """
-        Prune invalid links from the model and update the view.
-        """
-        self.beginResetModel()
-        v = self._links.prune()
-        self.init_data()
-        self.endResetModel()
-
-        return v
+        return skipped

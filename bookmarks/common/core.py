@@ -507,9 +507,9 @@ def byte_to_pretty_string(num, suffix='B'):
     """
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
         if abs(num) < 1024.0:
-            return u"%3.1f%s%s" % (num, unit, suffix)
+            return '%3.1f%s%s' % (num, unit, suffix)
         num /= 1024.0
-    return u"%.1f%s%s" % (num, 'Yi', suffix)
+    return '%.1f%s%s' % (num, 'Yi', suffix)
 
 
 def get_py_obj_size(obj):

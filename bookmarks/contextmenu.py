@@ -36,10 +36,10 @@ def resize_event_override(cls, event):
     """
     path = QtGui.QPainterPath()
 
-    # the rectangle must be translated and adjusted by 1 pixel in order to correctly
+    # the rectangle must be translated and adjusted by 1 pixel to correctly
     # map the rounded shape
     rect = QtCore.QRectF(cls.rect()).adjusted(0.5, 0.5, -1.5, -1.5)
-    o = int(common.size(common.size_margin) * 0.5)
+    o = int(common.size(common.size_indicator) * 1.5)
     path.addRoundedRect(rect, o, o)
 
     # QRegion is bitmap based, so the returned QPolygonF (which uses float values must

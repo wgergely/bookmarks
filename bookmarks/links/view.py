@@ -1,3 +1,4 @@
+import collections
 import functools
 import os
 
@@ -22,6 +23,8 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
         """
         self.add_parent_menu()
         self.separator()
+        self.add_presets_menu()
+        self.separator()
         self.add_reveal_menu()
         self.add_child_menu()
         self.separator()
@@ -42,41 +45,110 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             return
 
         self.menu[contextmenu.key()] = {
-            'text': 'Pick Folder',
-            'icon': ui.get_icon('add', color=common.color(common.color_green)),
+            'text': 'Add Folder',
+            'icon': ui.get_icon('add_link', color=common.color(common.color_green)),
             'action': self.parent().add_link,
-            'help': 'Add a new relative link to this asset.',
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.AddLink
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.AddLink
+            )
         }
 
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'text': 'Copy Links',
-            'icon': ui.get_icon('copy'),
+            'text': 'Copy',
+            'icon': ui.get_icon('link'),
             'action': self.parent().copy_links,
-            'help': 'Copy all links to the clipboard.',
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.CopyLinks
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.CopyLinks
+            )
         }
         self.menu[contextmenu.key()] = {
-            'text': 'Paste Links',
-            'icon': ui.get_icon('add'),
+            'text': 'Paste',
+            'icon': ui.get_icon('add_link'),
             'action': self.parent().paste_links,
-            'help': 'Paste links from the clipboard.',
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.PasteLinks
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.PasteLinks
+            )
         }
 
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'text': 'Clear Links',
-            'icon': ui.get_icon('close', color=common.color(common.color_red)),
+            'text': 'Clear all',
+            'icon': ui.get_icon('remove_link', color=common.color(common.color_red)),
             'action': self.parent().clear_links,
-            'help': 'Clear all links.',
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.RemoveLink
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.RemoveLink
+            )
         }
         self.menu[contextmenu.key()] = {
-            'text': 'Prune Links',
-            'icon': ui.get_icon('archive'),
+            'text': 'Remove missing',
             'action': self.parent().prune_links,
-            'help': 'Prune invalid links.',
+            'description': 'Remove links that don\'t point to existing folders.',
         }
+
+    def add_presets_menu(self):
+        """Add presets menu.
+
+        """
+        args = common.active('root', args=True)
+        if not args:
+            return
+
+        if not self.index.isValid():
+            return
+
+        node = self.index.internalPointer()
+        if node.is_leaf():
+            return
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Save Preset...',
+            'icon': ui.get_icon('add_preset', color=common.color(common.color_green)),
+            'action': self.parent().save_preset,
+            'help': 'Save the current set of links as a preset.',
+        }
+
+        k = 'Apply Preset'
+        if k not in self.menu:
+            self.menu[k] = collections.OrderedDict()
+            self.menu[f'{k}:icon'] = ui.get_icon('preset')
+
+        presets = lib.LinksAPI.presets()
+        if not presets:
+            self.menu[k][contextmenu.key()] = {
+                'text': 'No presets found!',
+                'disabled': True
+            }
+        else:
+            for _k in presets:
+                self.menu[k][contextmenu.key()] = {
+                    'text': _k,
+                    'icon': ui.get_icon('preset', color=common.color(common.color_blue)),
+                    'action': functools.partial(self.parent().apply_preset, _k),
+                    'help': f'Add the preset path: {_k}.',
+                }
 
     def add_child_menu(self):
         if not self.index.isValid():
@@ -93,10 +165,17 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
         parent_node = node.parent()
 
         self.menu[contextmenu.key()] = {
-            'text': 'Remove Link',
-            'icon': ui.get_icon('archive', color=common.color(common.color_red)),
+            'text': 'Remove',
+            'icon': ui.get_icon('remove_link', color=common.color(common.color_red)),
             'action': self.parent().remove_link,
-            'help': 'Remove this link.',
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.RemoveLink
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.RemoveLink
+            )
         }
 
     def add_reveal_menu(self):
@@ -115,7 +194,14 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
                 'text': 'Reveal in Explorer',
                 'icon': ui.get_icon('folder'),
                 'action': self.parent().reveal,
-                'help': 'Reveal the link in the file explorer.',
+                'shortcut': shortcuts.get(
+                    shortcuts.LinksViewShortcuts,
+                    shortcuts.RevealLink
+                ).key(),
+                'description': shortcuts.hint(
+                    shortcuts.LinksViewShortcuts,
+                    shortcuts.RevealLink
+                ),
             }
 
     def add_view_menu(self):
@@ -126,7 +212,14 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             'text': 'Refresh',
             'icon': ui.get_icon('refresh'),
             'action': self.parent().reload_paths,
-            'help': 'Refresh the view.',
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.ReloadLinks
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.ReloadLinks
+            ),
         }
         self.menu[contextmenu.key()] = {
             'text': 'Expand All',
@@ -140,6 +233,76 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             'action': (self.parent().collapseAll, self.parent().save_expanded_nodes),
             'help': 'Collapse all items.',
         }
+
+
+class PresetNameDialog(QtWidgets.QDialog):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.ok_button = None
+        self.editor = None
+
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.Window)
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        QtWidgets.QVBoxLayout(self)
+        o = common.size(common.size_indicator) * 2
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(o)
+
+        self.setWindowTitle('Enter Preset Name')
+
+        self.editor = ui.LineEdit(parent=self)
+        self.editor.setPlaceholderText('Enter a preset name, e.g. \'Preset1\'')
+        self.setFocusProxy(self.editor)
+        self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.ok_button = ui.PaintedButton('Ok', parent=self)
+        self.cancel_button = ui.PaintedButton('Cancel', parent=self)
+
+        self.layout().addWidget(self.editor, 1)
+
+        row = ui.add_row(None, parent=self)
+        row.layout().addWidget(self.ok_button, 1)
+        row.layout().addWidget(self.cancel_button, 0)
+        self.layout().addWidget(row, 0)
+
+    def _connect_signals(self):
+        self.ok_button.clicked.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
+        self.editor.returnPressed.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
+
+        self.cancel_button.clicked.connect(lambda: self.done(QtWidgets.QDialog.Rejected))
+
+    def done(self, r):
+        if r == QtWidgets.QDialog.Rejected:
+            return super().done(r)
+
+        if not self.editor.text():
+            common.show_message(
+                'Invalid Name',
+                body='Must provide a name for the preset.',
+                message_type='error'
+            )
+            return
+
+        super().done(r)
+
+    def exec_(self):
+        r = super().exec_()
+        if r == QtWidgets.QDialog.Accepted:
+            return self.editor.text()
+        return None
+
+    def sizeHint(self):
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width) * 0.5,
+            common.size(common.size_row_height)
+        )
 
 
 class LinksView(QtWidgets.QTreeView):
@@ -163,6 +326,7 @@ class LinksView(QtWidgets.QTreeView):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self._expanded_nodes = []
+        self._selected_node = None
 
         self._init_shortcuts()
         self._init_model()
@@ -181,7 +345,7 @@ class LinksView(QtWidgets.QTreeView):
         connect(shortcuts.CopyLinks, self.copy_links)
         connect(shortcuts.PasteLinks, self.paste_links)
         connect(shortcuts.RevealLink, self.reveal)
-        connect(shortcuts.EditLinks, self.edit_links)
+        connect(shortcuts.ReloadLinks, self.reload_paths)
 
     def _init_model(self):
         self.setModel(AssetLinksModel(parent=self))
@@ -198,6 +362,13 @@ class LinksView(QtWidgets.QTreeView):
         self.model().layoutChanged.connect(self.restore_expanded_nodes)
         self.expanded.connect(self.save_expanded_nodes)
         self.collapsed.connect(self.save_expanded_nodes)
+
+        self.selectionModel().selectionChanged.connect(self.save_selected_node)
+        self.model().modelAboutToBeReset.connect(self.save_selected_node)
+        self.model().layoutAboutToBeChanged.connect(self.save_selected_node)
+
+        self.model().modelReset.connect(self.restore_selected_node)
+        self.model().layoutChanged.connect(self.restore_selected_node)
 
     @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex)
     def emit_links_file_changed(self, current, previous, *args, **kwargs):
@@ -307,6 +478,60 @@ class LinksView(QtWidgets.QTreeView):
             if node.path() in self._expanded_nodes:
                 self.expand(index)
 
+    @QtCore.Slot()
+    def save_selected_node(self, *args, **kwargs):
+        """
+        Save the selected node.
+
+        """
+        node = self.get_node_from_selection()
+        if not node:
+            return
+
+        if node.is_leaf():
+            path = node.api().to_absolute(node.path())
+        else:
+            path = node.path()
+
+        self._selected_node = path
+
+    @QtCore.Slot()
+    def restore_selected_node(self):
+        """
+        Restore the selected node.
+
+        """
+
+        def _it_children(parent_index):
+            for i in range(self.model().rowCount(parent=parent_index)):
+                index = self.model().index(i, 0, parent_index)
+                if not index.isValid():
+                    continue
+
+                if index.model().hasChildren(parent=index):
+                    for child_index in _it_children(index):
+                        yield child_index
+
+                yield index
+
+        if not self._selected_node:
+            return
+
+        for index in _it_children(self.rootIndex()):
+            node = index.internalPointer()
+            if not node:
+                continue
+
+            if node.is_leaf():
+                path = node.api().to_absolute(node.path())
+            else:
+                path = node.path()
+
+            if path == self._selected_node:
+                self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
+                self.scrollTo(index)
+                break
+
     @common.error
     @common.debug
     def add_path(self, path):
@@ -317,6 +542,22 @@ class LinksView(QtWidgets.QTreeView):
             path (str): The path to add.
         """
         self.model().add_path(path)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def reload_path(self, path):
+        """
+        Reload the give path.
+
+        Args:
+            path (str): The path to reload.
+        """
+        model = self.model()
+        if not model:
+            return
+
+        self.model().reload_path(path)
 
     @common.error
     @common.debug
@@ -385,7 +626,8 @@ class LinksView(QtWidgets.QTreeView):
             return
 
         if not node.is_leaf():
-            raise ValueError('Cannot remove a link from a non-leaf node.')
+            self.clear_links()
+            return
 
         if common.show_message(
                 'Remove Link',
@@ -480,8 +722,8 @@ class LinksView(QtWidgets.QTreeView):
 
         if skipped:
             common.show_message(
-                'Not all links were pasted.',
-                body=f'Skipped {len(skipped)} item{"s" if len(skipped) > 1 else ""}:\n{", ".join(skipped)}',
+                'Not all links were pasted!',
+                body=f'Skipped {len(skipped)} item{"s" if len(skipped) > 1 else ""}:\n"{", ".join(skipped)}"',
                 message_type='info'
             )
 
@@ -506,20 +748,70 @@ class LinksView(QtWidgets.QTreeView):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def edit_links(self):
-        """
-        Edit the links file.
-        """
-        raise NotImplementedError('Edit links is not implemented yet.')
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
     def save_preset(self):
         """
         Save the current view as a preset.
         """
-        raise NotImplementedError('Save preset is not implemented yet.')
+        node = self.get_node_from_selection()
+        if not node:
+            return
+
+        if not node.api().get(force=True):
+            raise ValueError('No links to save as a preset.')
+
+        # Create a popup name editor
+        name = PresetNameDialog(parent=self).exec_()
+        if not name:
+            return
+
+        if not name:
+            raise ValueError('Must provide a name for the preset.')
+
+        presets = node.api().presets()
+
+        if name in presets:
+            if common.show_message(
+                    'Overwrite Preset',
+                    body=f'Preset "{name}" already exists. Overwrite?',
+                    buttons=[common.YesButton, common.NoButton], modal=True
+            ) == QtWidgets.QDialog.Rejected:
+                return
+
+        node.api().save_preset(name, node.path())
+
+    @common.error
+    @common.debug
+    @QtCore.Slot(str)
+    def apply_preset(self, preset, apply_to_all=False):
+        """
+        Apply a preset path to the view.
+
+        Args:
+            preset (str): The preset path to apply.
+            apply_to_all (bool): Whether to apply the preset to all items.
+
+        """
+        node = self.get_node_from_selection()
+        if not node:
+            return
+
+        if common.show_message(
+                'Apply Preset?',
+                body=f'Are you sure you want to apply "{preset}"?\n'
+                     f'This action is not undoable and will override the current links.',
+                buttons=[common.YesButton, common.NoButton], modal=True
+        ) == QtWidgets.QDialog.Rejected:
+            return
+
+        if node.is_leaf():
+            node = node.parent()
+
+        if apply_to_all:
+            path = None
+        else:
+            path = node.path()
+
+        self.model().apply_preset(preset, path=path)
 
 
 class NumberBar(QtWidgets.QWidget):
@@ -624,7 +916,7 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
 
         self._number_bar = NumberBar(parent=self)
 
-        self.setPlaceholderText('Select an item to view its contents.')
+        self.setPlaceholderText('Select an item to view its relative links')
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
 
     def resizeEvent(self, event):
@@ -641,6 +933,7 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
 
 
 class LinksTextEditor(QtWidgets.QWidget):
+    linksFileChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -663,7 +956,7 @@ class LinksTextEditor(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
+        self.layout().setSpacing(common.size(common.size_indicator) * 1)
 
         self._text_editor = PlainTextEdit(parent=self)
         self._text_editor.setSizePolicy(
@@ -673,17 +966,23 @@ class LinksTextEditor(QtWidgets.QWidget):
 
         self.layout().addWidget(self._text_editor)
 
-        row = ui.add_row(None, parent=self)
         self._apply_button = ui.PaintedButton(
             'Save', parent=self
         )
-        row.layout().addWidget(self._apply_button, 1)
+        self.layout().addWidget(self._apply_button)
 
     def _connect_signals(self):
-        pass
+        self._apply_button.clicked.connect(self.emit_link_file_changed)
 
     @QtCore.Slot(str)
     def link_changed(self, path):
+        """
+        Slot called when the links file changed in the view.
+
+        Args:
+            path (str): The path to the links file.
+
+        """
         if self._text_editor is None:
             return
 
@@ -707,6 +1006,29 @@ class LinksTextEditor(QtWidgets.QWidget):
         self._text_editor.setPlainText('\n'.join(links))
         self._current_path = path
 
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def emit_link_file_changed(self):
+        if not self._current_path:
+            return
+
+        v = self._text_editor.toPlainText()
+        links = sorted(
+            {f.replace('\\', '/').strip(' .-_') for f in v.split('\n') if f.rstrip()},
+            key=str.lower
+        )
+
+        api = lib.LinksAPI(self._current_path)
+        api.clear()
+
+        for link in links:
+            api.add(link, force=True)
+
+        self.linksFileChanged.emit(self._current_path)
+
+class FolderTemplatesComboBox(QtWidgets.QComboBox):
+    pass
 
 class LinksEditor(QtWidgets.QSplitter):
 
@@ -716,8 +1038,12 @@ class LinksEditor(QtWidgets.QSplitter):
         if not parent:
             common.set_stylesheet(self)
 
-        self._links_view = None
-        self._links_editor = None
+        self.setWindowTitle('Asset Links Editor')
+
+        self._links_view_widget = None
+        self._links_editor_widget = None
+        self._create_folders_widget = None
+        self._folder_template_widget = None
 
         self._create_ui()
         self._connect_signals()
@@ -726,16 +1052,38 @@ class LinksEditor(QtWidgets.QSplitter):
         o = common.size(common.size_indicator) * 2
         self.setContentsMargins(o, o, o, o)
 
-        self.setWindowTitle('Asset Links Editor')
+        widget = QtWidgets.QWidget(parent=self)
+        QtWidgets.QVBoxLayout(widget)
 
-        self._links_view = LinksView(parent=self)
-        self.addWidget(self._links_view)
+        widget.layout().setContentsMargins(0, 0, 0, 0)
+        widget.layout().setSpacing(0)
 
-        self._links_editor = LinksTextEditor(parent=self)
-        self.addWidget(self._links_editor)
+        self.addWidget(widget)
+
+        self._links_view_widget = LinksView(parent=self)
+        widget.layout().addWidget(self._links_view_widget)
+
+        bottom_row = QtWidgets.QWidget(parent=self)
+        QtWidgets.QHBoxLayout(bottom_row)
+
+        widget.layout().addWidget(bottom_row)
+
+        bottom_row.layout().setContentsMargins(0, 0, 0, 0)
+        bottom_row.layout().setSpacing(common.size(common.size_indicator) * 1)
+
+        self._create_folders_widget = ui.PaintedButton('Create Folders', parent=self)
+        self._folder_template_widget = FolderTemplatesComboBox(parent=self)
+
+        bottom_row.layout().addWidget(self._create_folders_widget, 1)
+        bottom_row.layout().addWidget(self._folder_template_widget, 0.5)
+        bottom_row.layout().addStretch(1.5)
+
+        self._links_editor_widget = LinksTextEditor(parent=self)
+        self.addWidget(self._links_editor_widget)
 
     def _connect_signals(self):
-        self._links_view.linksFileChanged.connect(self._links_editor.link_changed)
+        self._links_view_widget.linksFileChanged.connect(self._links_editor_widget.link_changed)
+        self._links_editor_widget.linksFileChanged.connect(self._links_view_widget.reload_path)
 
     def add_path(self, path):
-        self._links_view.add_path(path)
+        self._links_view_widget.add_path(path)

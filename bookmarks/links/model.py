@@ -213,6 +213,28 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             self.endResetModel()
             break
 
+    def reload_path(self, path):
+        """
+        Reload a path in the model.
+
+        Args:
+            path (str): The path to a folder containing a .links file.
+
+        """
+        if self.root_node() is None:
+            return
+
+        for parent_node in self.root_node().children():
+            if parent_node.path() != path:
+                continue
+
+            self.beginResetModel()
+            parent_node.children().clear()
+            for link in parent_node.api().get(force=True):
+                child_node = Node(link, parent=parent_node)
+                parent_node.append_child(child_node)
+            self.endResetModel()
+
     def reload_paths(self):
         """
         Reload all currently added paths in the model.
@@ -273,10 +295,23 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
 
         if role == QtCore.Qt.DisplayRole:
             if node.is_leaf():
-                return node.path()
-            return node.path().replace('.links', '').replace('\\', '/').strip('/')
+                name = node.path()
+            else:
+                root = common.active('root', path=True)
+                name = node.path().replace('.links', '').replace('\\', '/').strip('/')
+                if root and root.lower() in name:
+                    name = name[len(root):].strip('/')
+
+            if not node.exists():
+                name = f'[Not yet created] {name}'
+
+            return name
+
         elif role == QtCore.Qt.ToolTipRole or role == QtCore.Qt.StatusTipRole or role == QtCore.Qt.WhatsThisRole:
+            if node.is_leaf():
+                return node.api().to_absolute(node.path())
             return node.path()
+
         elif role == QtCore.Qt.DecorationRole:
             if not node.exists():
                 return ui.get_icon('alert', color=common.color(common.color_red))
@@ -285,7 +320,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
                 return ui.get_icon('link', color=common.color(common.color_blue))
 
             if node.child_count() > 0:
-                icon = ui.get_icon('folder', color=common.color(common.color_selected_text))
+                icon = ui.get_icon('link', color=common.color(common.color_selected_text))
             else:
                 icon = ui.get_icon('folder')
 
@@ -295,6 +330,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             if node.is_leaf():
                 return QtCore.QSize(1, common.size(common.size_row_height) * 0.66)
             return self.row_size
+
         elif role == QtCore.Qt.UserRole:
             return node.path()
 
@@ -366,7 +402,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
         grandparent_node = parent_node.parent()
-        if grandparent_node:
+        if grandparent_node and parent_node in grandparent_node.children():
             row = grandparent_node.children().index(parent_node)
             return self.createIndex(row, 0, parent_node)
         else:
@@ -496,3 +532,26 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             self.endResetModel()
 
         return skipped
+
+    def apply_preset(self, preset, path=None):
+        """
+        Apply a preset to the model.
+
+        Args:
+            path (str, optional): The path to the folder containing the .links file.
+                If None, all paths are affected.
+            preset (str): The preset to apply.
+
+        """
+        for parent_node in self.root_node().children():
+            if path is not None and parent_node.path() != path:
+                continue
+
+            parent_node.api().apply_preset(preset)
+
+            self.beginResetModel()
+            parent_node.children().clear()
+            for link in parent_node.api().get(force=True):
+                child_node = Node(link, parent=parent_node)
+                parent_node.append_child(child_node)
+            self.endResetModel()

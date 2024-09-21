@@ -135,6 +135,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setTearOffEnabled(False)
         self.setSeparatorsCollapsible(True)
+        self.setToolTipsVisible(True)
 
         self.setup()
         self.create_menu(self.menu)

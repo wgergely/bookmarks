@@ -393,6 +393,8 @@ QLabel:disabled {{
 }}
 
 QMenu {{
+    font-family: "{font_secondary}";
+    color: {color_text};
     background-color: {color_dark_background};
     menu-scrollable: 1;
     icon-size: {size_margin2}px;
@@ -435,22 +437,18 @@ QMenu::right-arrow {{
     height: {size_margin}px;
     width: {size_margin}px;
 }}
-QMenu::keystroke,
-QMenu::shortcut {{
-    color: {color_blue};
-}}
 
 
 QToolTip {{
-    font-family: "{font_primary}";
+    font-family: "{font_secondary}";
     font-size: {size_font_medium}px;
-    color: {color_text};
+    color: {color_secondary_text};
     background: {color_dark_background};
     background-color: {color_dark_background};
-    padding: {size_indicator3}px;
+    padding: {size_indicator1}px;
+    margin: {size_indicator1}px;
     margin: 0px;
-    border-radius: {size_indicator1}px;
-    border: {size_separator2}px solid {color_blue};
+    border: {size_separator}px solid {color_dark_background};
 }}
 
 QProgressBar, QProgressDialog {{

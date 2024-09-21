@@ -45,6 +45,16 @@ class LinksAPI:
         self._cache = None
 
     @classmethod
+    def update_cached_data(cls):
+        """
+        Update all current instances' cached data from disk.
+
+        """
+        for k in cls._instances.keys():
+            cls._instances[k].get(force=True)
+            cls._instances[k].exists(force=True)
+
+    @classmethod
     def clear_cache(cls):
         """
         Clear the cache of instances.
@@ -67,6 +77,38 @@ class LinksAPI:
         """
         return os.path.normpath(link).replace('\\', '/')
 
+    @classmethod
+    def verify_link(cls, link):
+        """Check the characters of the given link against forbidden characters.
+
+        """
+        if not link:
+            raise ValueError('Link cannot be empty')
+        if not isinstance(link, str):
+            raise ValueError('Link must be a string')
+
+        link = cls._normalize_link(link)
+
+        invalid_chars = {' ', '.', '-', '_'}
+        if link[-1] in invalid_chars:
+            raise ValueError(f'"{link}" cannot end with these characters: {", ".join(invalid_chars)}')
+        if link[0] in invalid_chars:
+            raise ValueError(f'"{link}" cannot start with these characters: {", ".join(invalid_chars)}')
+
+        forbidden_chars = {':', '*', '?', '"', '<', '>', '|'}
+        if any(char in link for char in forbidden_chars):
+            raise ValueError(f'"{link}" contains forbidden characters: {", ".join(forbidden_chars)}')
+
+        reserved_names = {'CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5',
+                          'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4',
+                          'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'}
+
+        for folder_name in link.split('/'):
+            if folder_name.upper() in reserved_names:
+                raise ValueError(f'"{folder_name}" contains a reserved name ({" ,".join(reserved_names)})')
+
+        return True
+
     def _read_links_from_file(self):
         """
         Internal method to read links from the .links file.
@@ -80,7 +122,7 @@ class LinksAPI:
             with open(self.links_file, 'r') as f:
                 lines = f.readlines()
             links = [self._normalize_link(line.strip()) for line in lines if line.strip()]
-            return sorted(set(links))
+            return sorted(set(links), key=str.lower)
         except IOError as e:
             raise RuntimeError(f'Failed to read from {self.links_file}: {e}')
 
@@ -93,7 +135,7 @@ class LinksAPI:
         """
         try:
             with open(self.links_file, 'w') as f:
-                for link in sorted(set(links)):
+                for link in sorted(set(links), key=str.lower):
                     f.write(f'{link}\n')
         except IOError as e:
             raise RuntimeError(f'Failed to write to {self.links_file}: {e}')
@@ -149,7 +191,7 @@ class LinksAPI:
             self._cache = links
 
         if absolute:
-            return sorted([self.to_absolute(link) for link in links])
+            return sorted([self.to_absolute(link) for link in links], key=str.lower)
         return links
 
     def add(self, link, force=False):
@@ -167,6 +209,8 @@ class LinksAPI:
             link = self.to_relative(link)
 
         link = self._normalize_link(link)
+        self.verify_link(link)
+
         full_link_path = self.to_absolute(link)
         if not force and not os.path.exists(full_link_path):
             raise RuntimeError(f'Link "{full_link_path}" does not exist')
@@ -177,7 +221,7 @@ class LinksAPI:
             raise RuntimeError(f'Link "{link}" already exists')
 
         links.append(link)
-        self._cache = sorted(set(links))
+        self._cache = sorted(set(links), key=str.lower)
         self._write_links_to_file(self._cache)
 
     def remove(self, link):
@@ -197,7 +241,7 @@ class LinksAPI:
         links = self.get(force=True)
         if link in links:
             links.remove(link)
-            self._cache = sorted(set(links))
+            self._cache = sorted(set(links), key=str.lower)
             self._write_links_to_file(self._cache)
             return True
         else:
@@ -228,7 +272,7 @@ class LinksAPI:
             if os.path.exists(full_link_path):
                 valid_links.append(link)
 
-        valid_links = sorted(set(valid_links))
+        valid_links = sorted(set(valid_links), key=str.lower)
         self._write_links_to_file(valid_links)
         self._cache = valid_links
         return sorted(set(links) - set(valid_links))
@@ -248,9 +292,11 @@ class LinksAPI:
 
         db = database.get(*args)
         v = db.value(db.source(), 'asset_link_presets', database.BookmarkTable)
+
         if not v:
             return {}
-        return v
+
+        return {k: v[k] for k in sorted(v.keys(), key=str.lower)}
 
     @staticmethod
     def clear_presets():
@@ -300,6 +346,26 @@ class LinksAPI:
         v = db.value(db.source(), 'asset_link_presets', database.BookmarkTable)
         if name not in v:
             raise RuntimeError(f'Failed to save preset "{name}"')
+
+    def apply_preset(self, preset):
+        """
+        Apply a preset to the current links.
+
+        Args:
+            preset (str): The name of the preset to apply.
+
+        """
+        if not preset or not isinstance(preset, str):
+            raise RuntimeError('Preset name cannot be empty')
+
+        presets = self.presets()
+        if preset not in presets:
+            raise RuntimeError(f'Preset "{preset}" does not exist')
+
+        links = presets[preset]
+        self.clear()
+        for link in links:
+            self.add(link, force=True)
 
     @staticmethod
     def remove_preset(name):

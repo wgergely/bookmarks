@@ -1,7 +1,7 @@
 """The view and model used to display task folder items.
 
 Folders found in an asset's root are referred to as `task folders`. Bookmarks
-generally expects them to be associated with a task or data-type e.g. ``render``,
+generally expects them to be associated with a task or data-type for example ``render``,
 ``comp``, ``textures``, etc.
 
 Some default task-folders are defined by :mod:`bookmarks.tokens.tokens`.

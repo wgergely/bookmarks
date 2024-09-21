@@ -72,7 +72,7 @@ class JobsEditor(base.BasePropertyEditor):
                         'placeholder': None,
                         'description': 'Edit the list of servers Bookmarks should read jobs from.',
                         # 'help': f'Edit the list of servers Bookmarks should read jobs from. The server should be '
-                        #         f'a directory where jobs are kept, e.g. '
+                        #         f'a directory where jobs are kept, for example '
                         #         '<span style="color:{c};">Z:/</span> or'
                         #         '<span style="color:{c};">//server/jobs</span>.'.format(c=common.rgb(
                         #         common.color_green)

@@ -75,7 +75,7 @@ def add_server(v):
     """Adds a server item to the list of user specified servers.
 
     Args:
-        v (str): A path to a server, e.g. `Q:/jobs`.
+        v (str): A path to a server, for example `Q:/jobs`.
 
     """
     common.check_type(v, str)
@@ -95,7 +95,7 @@ def remove_server(v):
     """Remove a server item from the list of user specified servers.
 
     Args:
-        v (str): A path to a server, e.g. `Q:/jobs`.
+        v (str): A path to a server, for example `Q:/jobs`.
 
     """
     for bookmark in common.default_bookmarks.values():
@@ -432,8 +432,8 @@ def set_active(k, v):
     """Sets the given path as the active path segment for the given key.
 
     Args:
-        k (str): An active key, e.g. `'server'`.
-        v (str or None): A path segment, e.g. '//myserver/jobs'.
+        k (str): An active key, for example `'server'`.
+        v (str or None): A path segment, for example '//myserver/jobs'.
 
     """
     common.check_type(k, str)
@@ -480,7 +480,7 @@ def set_task_folder(v):
     """Sets the active task folder.
 
     Args:
-        v (str): A `task` path segment, e.g. 'scenes'.
+        v (str): A `task` path segment, for example 'scenes'.
 
     """
     set_active('task', v)
@@ -784,7 +784,7 @@ def show_add_file(extension=None, file=None, create_file=True, increment=False):
     path file.
 
     Args:
-        extension (str): An format, e.g. 'psd'.
+        extension (str): An format, for example 'psd'.
         file (str): Path to an existing file. Optional.
         create_file (bool): Creates an empty file if True.
         increment (bool): Increment the version number element of ``file``.

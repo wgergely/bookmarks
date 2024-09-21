@@ -262,7 +262,7 @@ DEFAULT_TOKEN_CONFIG = {
         common.idx(): {
             'name': ReferenceFolder,
             'value': ReferenceFolder,
-            'description': 'References, e.g., images, videos or sound files',
+            'description': 'References, for example, images, videos or sound files',
             'filter': ImageFormat | DocFormat | AudioFormat | MovieFormat,
         },
         common.idx(): {
@@ -431,7 +431,7 @@ def get_subfolder(token, name):
     configuration.
 
     Args:
-        token (str): Asset folder token, e.g. `tokens.CacheFolder`.
+        token (str): Asset folder token, for example `tokens.CacheFolder`.
         name (str): Sub-folder token.
 
     Returns:
@@ -454,7 +454,7 @@ def get_subfolders(token):
     """Find all asset sub-folder values based on the bookmark item's token configuration.
 
     Args:
-        token (str): Asset folder token, e.g. `tokens.CacheFolder`.
+        token (str): Asset folder token, for example `tokens.CacheFolder`.
 
     Returns:
         list: A list of current asset sub-folder values.
@@ -475,7 +475,7 @@ def get_description(token):
     """Get a description of a token.
 
     Args:
-        token (str): A token, e.g. `tokens.SceneFormat`.
+        token (str): A token, for example `tokens.SceneFormat`.
 
     Returns:
         str: Description of the item.
@@ -611,7 +611,7 @@ class TokenConfig(QtCore.QObject):
         """Utility method used to get the description of a token.
 
         Args:
-            token (str): A file-format or a folder name, e.g. 'anim'.
+            token (str): A file-format or a folder name, for example 'anim'.
             force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
@@ -680,7 +680,7 @@ class TokenConfig(QtCore.QObject):
             del kwargs[k]
 
         # To avoid KeyErrors when invalid tokens are passed we will replace
-        # these with a custom marker, e.g. {invalid_token}
+        # these with a custom marker, for example {invalid_token}
         # via https://stackoverflow.com/questions/17215400/format-string-unused
         # -named-arguments
         return string.Formatter().vformat(
@@ -848,7 +848,7 @@ class TokenConfig(QtCore.QObject):
 
         Args:
             token (str): An asset folder name (not value!),
-                e.g.`config.ExportFolder`.
+                for example`config.ExportFolder`.
             folder (str): A sub folder name, e.g. `abc`.
             force (bool, optional): Force reload data from the database.
 

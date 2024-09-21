@@ -30,21 +30,21 @@ from . import ui
 DEFAULT_ITEM = {
     common.idx(reset=True, start=0): {
         'key': 'name',
-        'placeholder': 'Name, e.g. "Maya"',
+        'placeholder': 'Name, for example "Maya"',
         'widget': ui.LineEdit,
-        'description': 'Enter the item\'s name, e.g. Maya',
+        'description': 'Enter the item\'s name, for example Maya',
         'button': None,
     },
     common.idx(): {
         'key': 'path',
-        'placeholder': 'Path, e.g. "C:/maya/maya.exe"',
+        'placeholder': 'Path, for example "C:/maya/maya.exe"',
         'widget': ui.LineEdit,
         'description': 'Path to the executable.',
         'button': 'Pick',
     },
     common.idx(): {
         'key': 'thumbnail',
-        'placeholder': 'Path to an image, e.g. "C:/images/maya.png"',
+        'placeholder': 'Path to an image, for example "C:/images/maya.png"',
         'widget': ui.LineEdit,
         'description': 'Path to an image file used to represent this item',
         'button': 'Pick',

@@ -29,7 +29,7 @@ ENV/
 # Ignore Atom editor files
 .atom/
 
-# Ignore files from JetBrains IDEs (e.g., PyCharm)
+# Ignore files from JetBrains IDEs (for example, PyCharm)
 .idea/
 .idea/**
 
@@ -115,7 +115,7 @@ coverage.xml
 profile_default/
 ipython_config.py
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+# PEP 582; used by for example github.com/David-OConnor/pyflow
 __pypackages__/
 
 # Pyenv

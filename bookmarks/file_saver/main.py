@@ -94,7 +94,7 @@ def increment_version(v, dir, name, func, increment):
     destination folder.
 
     Args:
-        v (str): Initial version string, e.g., 'v001'. If None, it defaults to 'v001'.
+        v (str): Initial version string, for example, 'v001'. If None, it defaults to 'v001'.
         dir (str): Path to the directory where versions should be checked.
         name (str): The name of the file or directory whose version should be incremented.
         func (function): Python built-in function min or max. Determines whether to increment
@@ -102,7 +102,7 @@ def increment_version(v, dir, name, func, increment):
         increment (int): The amount by which the version number should be incremented.
 
     Returns:
-        str: The incremented version string, e.g., 'v002'. If the version cannot be incremented
+        str: The incremented version string, for example, 'v002'. If the version cannot be incremented
              (due to a problem with the provided values), the function will return 'v001'.
 
     Raises:
@@ -211,8 +211,8 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'file_saver/extension',
                         'validator': None,
                         'widget': widgets.FormatComboBox,
-                        'placeholder': 'File extension, e.g. \'exr\'',
-                        'description': 'A file extension, without the leading dot. e.g.'
+                        'placeholder': 'File extension, for example \'exr\'',
+                        'description': 'A file extension, without the leading dot. for example'
                                        ' \'ma\'',
                     },
                 },
@@ -222,7 +222,7 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'description',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'A short description, e.g. \'Compositing files\'',
+                        'placeholder': 'A short description, for example \'Compositing files\'',
                         'description': 'A short description of the file\'s '
                                        'contents.\nIndicate significant changes and '
                                        'notes here.',
@@ -232,8 +232,8 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'file_saver/element',
                         'validator': base.text_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'The element being saved, e.g. \'CastleInterior\'',
-                        'description': 'The name of the element being saved. e.g., '
+                        'placeholder': 'The element being saved, for example \'CastleInterior\'',
+                        'description': 'The name of the element being saved. for example, '
                                        '\'ForegroundTower\', or \'BackgroundElements\'',
                     },
                     2: {
@@ -241,9 +241,9 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'version',
                         'validator': base.version_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'A version number, e.g. \'v001\'',
+                        'placeholder': 'A version number, for example \'v001\'',
                         'description': 'A version number with, or without, '
-                                       'a preceding \'v\'. e.g. \'v001\'.',
+                                       'a preceding \'v\'. for example \'v001\'.',
                         'button': '+',
                         'button2': '-',
                     },
@@ -252,8 +252,8 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'file_saver/user',
                         'validator': base.text_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Your name, e.g. \'JohnDoe\'',
-                        'description': 'The name of the current user, e.g. \'JohnDoe\','
+                        'placeholder': 'Your name, for example \'JohnDoe\'',
+                        'description': 'The name of the current user, for example \'JohnDoe\','
                                        ' or \'JD\'',
                     },
                 },

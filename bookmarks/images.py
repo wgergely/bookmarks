@@ -179,7 +179,7 @@ def get_thumbnail(
     if pixmap and not pixmap.isNull():
         return (pixmap, color)
 
-    # If the item refers to a folder, e.g. an asset or a bookmark item,  we'll
+    # If the item refers to a folder, for example an asset or a bookmark item,  we'll
     # check for a 'thumbnail.{ext}' file in the folder's root and if this fails,
     # we will check the job folder. If both fails will we proceed to load a
     # placeholder thumbnail.
@@ -880,7 +880,7 @@ class ImageCache(QtCore.QObject):
 
         Args:
             hash (str): The requested entry's hash value calculated by :func:`common.get_hash`
-            cache_type (int): The resource type, e.g. `BufferType`.
+            cache_type (int): The resource type, for example `BufferType`.
             size (int): The requested image size.
             lock_mutex (bool): Lock the cache's QMutex for thread safety.
 
@@ -909,7 +909,7 @@ class ImageCache(QtCore.QObject):
         Args:
             hash (str): The requested entry's hash value calculated by :func:`common.get_hash`
             value: The value to associate with `hash` and `size`.
-            cache_type: cache_type (int): The resource type, e.g. `BufferType`.
+            cache_type: cache_type (int): The resource type, for example `BufferType`.
             size (int): The requested image size.
             lock_mutex (bool): Lock the cache's QMutex for thread safety.
 

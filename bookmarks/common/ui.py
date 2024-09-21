@@ -651,7 +651,7 @@ def source_model(idx=None):
     otherwise, returns the specified widget's source model.
 
     Args:
-        idx (int, optional): A tab index number, e.g. ``common.FileTab``.
+        idx (int, optional): A tab index number, for example ``common.FileTab``.
 
     Returns:
         ItemModel: A list widget's source model.

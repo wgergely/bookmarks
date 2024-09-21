@@ -269,7 +269,7 @@ class PrefixEditor(QtWidgets.QDialog):
         self.setWindowTitle('Edit Prefix')
 
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setPlaceholderText('Enter a prefix, e.g. \'MYB\'')
+        self.editor.setPlaceholderText('Enter a prefix, for example \'MYB\'')
         self.editor.setValidator(base.text_validator)
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)

@@ -620,7 +620,7 @@ class PresetsWidget(QtWidgets.QDialog):
         self.import_layout = QtWidgets.QVBoxLayout()
 
         self.name_edit = QtWidgets.QLineEdit()
-        self.name_edit.setPlaceholderText('Name, e.g. "body"')
+        self.name_edit.setPlaceholderText('Name, for example "body"')
 
         self.import_button = QtWidgets.QPushButton('Import/Update Shader')
 

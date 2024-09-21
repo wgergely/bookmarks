@@ -1,5 +1,5 @@
 param (
-    [Parameter(Mandatory = $true, HelpMessage = "Enter the Reference Platform name (e.g. CY2022).")]
+    [Parameter(Mandatory = $true, HelpMessage = "Enter the Reference Platform name (for example CY2022).")]
     [Alias("r")]
     [string]$ReferencePlatform,
 

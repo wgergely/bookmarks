@@ -20,7 +20,7 @@ For example, the following data would sync with an asset named ``010_0010`` with
     }
 
 The task mapping file is a JSON file that contains a dictionary of task mapping data. Each entity is made up of a list
-of tasks path templates relative to the asset root directory, e.g.:
+of tasks path templates relative to the asset root directory, for example:
 
 .. code-block:: python
 
@@ -319,9 +319,9 @@ class SyncWidget(base.BasePropertyEditor):
                         'key': 'sg_domain',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Domain, e.g. https://mystudio.shotgunstudio.com',
+                        'placeholder': 'Domain, for example https://mystudio.shotgunstudio.com',
                         'description': 'The domain, including http:// or https://, '
-                                       'used by shotgun. e.g. '
+                                       'used by shotgun. for example '
                                        '\'https://mystudio.shotgunstudio.com\'',
                     },
                 },
@@ -342,7 +342,7 @@ class SyncWidget(base.BasePropertyEditor):
                         'widget': ui.LineEdit,
                         'placeholder': 'abcdefghijklmno3bqr*1',
                         'description': 'A ShotGrid Script API Key, '
-                                       'e.g. \'abcdefghijklmno3bqr*1\'.\n\nA valid '
+                                       'for example \'abcdefghijklmno3bqr*1\'.\n\nA valid '
                                        'script has to be set up for your organisation '
                                        'for Bookmarks to be able to connect to '
                                        'ShotGrid. Consult the ShotGrid documentation for '

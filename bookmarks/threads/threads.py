@@ -203,7 +203,7 @@ def get_thread(k):
     """Get a cached thread controller instance.
 
     Args:
-        k (str): Name of the thread controller to return, e.g.
+        k (str): Name of the thread controller to return, for example
             ``threads.QueuedSGQuery``.
 
     If the controller does not yet exist we will create and cache it.

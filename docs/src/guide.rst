@@ -113,7 +113,7 @@ There are two ways to add bookmark items, by hand, or by editing the ``default_b
 
         .. grid-item-card:: 2.3. Select or pick new root folders
 
-            Select a job. If you used the default job template to create one, it comes with pre-defined root-folders (e.g. the ``data/asset``, ``data/shot`` folders). If you used a custom template, you might need to pick a new root folder by clicking the green add icon on the right-hand side.
+            Select a job. If you used the default job template to create one, it comes with pre-defined root-folders (for example the ``data/asset``, ``data/shot`` folders). If you used a custom template, you might need to pick a new root folder by clicking the green add icon on the right-hand side.
 
             .. hint::
 

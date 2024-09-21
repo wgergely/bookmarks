@@ -1,7 +1,7 @@
 """The module contains the classes and methods needed to provide linkage
 with ShotGrid.
 
-In the simplest of cases (e.g. when a bookmark item is active and have already been
+In the simplest of cases (for example when a bookmark item is active and have already been
 linked with ShotGrid) we can initiate a connection using a :class:`SGProperties`
 instance:
 

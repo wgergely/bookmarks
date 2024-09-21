@@ -239,34 +239,49 @@ class PresetNameDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.setWindowTitle('Enter Preset Name')
+
+        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+
         self.ok_button = None
         self.editor = None
-
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.Window)
+        self.presets_combobox = None
 
         self._create_ui()
         self._connect_signals()
+        self._init_data()
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_indicator) * 2
+        o = common.size(common.size_indicator) * 6
         self.layout().setContentsMargins(o, o, o, o)
-        self.layout().setSpacing(o)
-
-        self.setWindowTitle('Enter Preset Name')
+        self.layout().setSpacing(o * 0.5)
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText('Enter a preset name, e.g. \'Preset1\'')
+        self.editor.setMinimumWidth(common.size(common.size_width) * 0.5)
+
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+        row = ui.add_row(None, height=None, parent=self)
+        row.layout().addWidget(self.editor, 1)
+
+        self.presets_combobox = QtWidgets.QComboBox(parent=self)
+        self.presets_combobox.setView(QtWidgets.QListView())
+        self.presets_combobox.setDisabled(True)
+
+        row.layout().addWidget(self.presets_combobox, 0)
+
         self.ok_button = ui.PaintedButton('Ok', parent=self)
         self.cancel_button = ui.PaintedButton('Cancel', parent=self)
 
-        self.layout().addWidget(self.editor, 1)
-
-        row = ui.add_row(None, parent=self)
+        row = ui.add_row(None, height=None, parent=self)
         row.layout().addWidget(self.ok_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
+
         self.layout().addWidget(row, 0)
 
     def _connect_signals(self):
@@ -274,6 +289,79 @@ class PresetNameDialog(QtWidgets.QDialog):
         self.editor.returnPressed.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
 
         self.cancel_button.clicked.connect(lambda: self.done(QtWidgets.QDialog.Rejected))
+
+        self.presets_combobox.currentIndexChanged.connect(self._on_preset_selected)
+
+    def _init_data(self):
+        node = self.parent().get_node_from_selection()
+        if not node:
+            raise ValueError('No node selected.')
+
+        presets = node.api().presets()
+        if not presets:
+            return
+
+        self.presets_combobox.blockSignals(True)
+
+        self.presets_combobox.clear()
+        self.presets_combobox.addItem('Select a preset...')
+        self.presets_combobox.model().item(0).setFlags(QtCore.Qt.NoItemFlags)
+
+        self.presets_combobox.setDisabled(False)
+        self.presets_combobox.addItems(presets.keys())
+        for i in range(1, self.presets_combobox.count()):
+            self.presets_combobox.setItemIcon(
+                i,
+                ui.get_icon('preset', color=common.color(common.color_blue))
+            )
+
+        self.presets_combobox.addItem('Save as new...')
+        self.presets_combobox.setItemIcon(
+            self.presets_combobox.count() - 1,
+            ui.get_icon('add_preset', color=common.color(common.color_green))
+        )
+
+        self.presets_combobox.setCurrentIndex(0)
+        self.presets_combobox.blockSignals(False)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot(int)
+    def _on_preset_selected(self, index):
+        v = self.presets_combobox.currentText()
+        if v == 'Select a preset...':
+            return
+        if v == 'Save as new...':
+            self.editor.clear()
+            self.editor.setFocus(QtCore.Qt.OtherFocusReason)
+            return
+
+        self.editor.setText(v)
+
+        self.presets_combobox.blockSignals(True)
+        self.presets_combobox.setCurrentIndex(0)
+        self.presets_combobox.blockSignals(False)
+
+    def paintEvent(self, event):
+
+        painter = QtGui.QPainter()
+        painter.begin(self)
+
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+
+        pen = QtGui.QPen(common.color(common.color_blue))
+        pen.setWidthF(common.size(common.size_separator) * 2)
+        painter.setPen(pen)
+
+        painter.setBrush(common.color(common.color_background))
+
+        o = common.size(common.size_indicator) * 2
+        _o = common.size(common.size_indicator)
+        painter.drawRoundedRect(
+            self.rect().adjusted(_o, _o, -_o, -_o),
+            o,
+            o
+        )
 
     def done(self, r):
         if r == QtWidgets.QDialog.Rejected:
@@ -1027,8 +1115,10 @@ class LinksTextEditor(QtWidgets.QWidget):
 
         self.linksFileChanged.emit(self._current_path)
 
+
 class FolderTemplatesComboBox(QtWidgets.QComboBox):
     pass
+
 
 class LinksEditor(QtWidgets.QSplitter):
 
@@ -1071,7 +1161,7 @@ class LinksEditor(QtWidgets.QSplitter):
         bottom_row.layout().setContentsMargins(0, 0, 0, 0)
         bottom_row.layout().setSpacing(common.size(common.size_indicator) * 1)
 
-        self._create_folders_widget = ui.PaintedButton('Create Folders', parent=self)
+        self._create_folders_widget = ui.PaintedButton('Create Link Folders', parent=self)
         self._folder_template_widget = FolderTemplatesComboBox(parent=self)
 
         bottom_row.layout().addWidget(self._create_folders_widget, 1)

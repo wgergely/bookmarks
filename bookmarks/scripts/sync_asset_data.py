@@ -319,9 +319,9 @@ class SyncWidget(base.BasePropertyEditor):
                         'key': 'sg_domain',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Domain, for example https://mystudio.shotgunstudio.com',
+                        'placeholder': 'Domain, for example, https://mystudio.shotgunstudio.com',
                         'description': 'The domain, including http:// or https://, '
-                                       'used by shotgun. for example '
+                                       'used by shotgun. for example, '
                                        '\'https://mystudio.shotgunstudio.com\'',
                     },
                 },
@@ -342,7 +342,7 @@ class SyncWidget(base.BasePropertyEditor):
                         'widget': ui.LineEdit,
                         'placeholder': 'abcdefghijklmno3bqr*1',
                         'description': 'A ShotGrid Script API Key, '
-                                       'for example \'abcdefghijklmno3bqr*1\'.\n\nA valid '
+                                       'for example, \'abcdefghijklmno3bqr*1\'.\n\nA valid '
                                        'script has to be set up for your organisation '
                                        'for Bookmarks to be able to connect to '
                                        'ShotGrid. Consult the ShotGrid documentation for '

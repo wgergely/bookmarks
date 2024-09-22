@@ -273,8 +273,8 @@ class ImageViewer(QtWidgets.QWidget):
             return
 
         _max = max(br.width(), br.height())
-        if _max > common.thumbnail_size:
-            scale_ratio = 1 / (_max / common.thumbnail_size)
+        if _max > common.size_thumbnail:
+            scale_ratio = 1 / (_max / common.size_thumbnail)
             self.viewer.scale(scale_ratio, scale_ratio)
             self.viewer.repaint()
 

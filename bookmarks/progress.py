@@ -343,7 +343,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
             data[source_index.row()][common.PathRole],
             'progress',
             progress_data,
-            table=database.AssetTable
+            database.AssetTable
         )
 
     def updateEditorGeometry(self, editor, option, index):

@@ -115,7 +115,7 @@ coverage.xml
 profile_default/
 ipython_config.py
 
-# PEP 582; used by for example github.com/David-OConnor/pyflow
+# PEP 582; used by for example, github.com/David-OConnor/pyflow
 __pypackages__/
 
 # Pyenv

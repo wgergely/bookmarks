@@ -257,7 +257,7 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
             # If 'overwrite' is `True`, no matter what, we'll overwrite the
             # current database value
             if v['overwrite']:
-                db.set_value(s, k, _v, table=t)
+                db.set_value(s, k, _v, t)
                 continue
 
             # Nothing to do if there's overwrite is False, and the entity does

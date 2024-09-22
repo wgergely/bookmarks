@@ -69,9 +69,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'prefix',
                         'validator': base.name_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Custom prefix, for example \'MYB\'',
+                        'placeholder': 'Custom prefix, for example, \'MYB\'',
                         'description': 'A short name of the bookmark (or job) used '
-                                       'when saving files.\n\nfor example '
+                                       'when saving files.\n\nfor example, '
                                        '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
                                        'the prefix specified here.',
                         'button': 'Suggest'
@@ -83,9 +83,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'description',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'A short description, for example \'Character assets\'',
+                        'placeholder': 'A short description, for example, \'Character assets\'',
                         'description': 'A description of this bookmark, '
-                                       'for example \'Character assets\'.',
+                                       'for example, \'Character assets\'.',
                     },
                 },
                 2: {
@@ -94,8 +94,8 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'framerate',
                         'validator': base.float_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Frame-rate, for example \'23.976\'',
-                        'description': 'The frame-rate of the bookmark, for example '
+                        'placeholder': 'Frame-rate, for example, \'23.976\'',
+                        'description': 'The frame-rate of the bookmark, for example, '
                                        '\'25.0\'.'
                     },
                     1: {
@@ -104,7 +104,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
                         'placeholder': 'Width in pixels',
-                        'description': 'The output width in pixels, for example \'1920\''
+                        'description': 'The output width in pixels, for example, \'1920\''
                     },
                     2: {
                         'name': 'Height',
@@ -112,17 +112,17 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
                         'placeholder': 'Height in pixels',
-                        'description': 'The output height in pixels, for example \'1080\''
+                        'description': 'The output height in pixels, for example, \'1080\''
                     },
                     3: {
                         'name': 'Default Start Frame',
                         'key': 'startframe',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Start frame, for example \'1001\'',
+                        'placeholder': 'Start frame, for example, \'1001\'',
                         'description': 'A default start frame for all subsequent '
                                        'assets.\n\nThis can be useful when the project '
-                                       'has a custom start frame, for example \'1001\' instead '
+                                       'has a custom start frame, for example, \'1001\' instead '
                                        'of \'1\' or \'0\'.',
                     },
                     4: {
@@ -130,9 +130,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'duration',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Duration, for example \'150\'',
+                        'placeholder': 'Duration, for example, \'150\'',
                         'description': 'The default duration of an asset in frames, '
-                                       'for example \'150\'',
+                                       'for example, \'150\'',
                     },
                 },
                 4: {
@@ -168,9 +168,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'sg_domain',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Domain, for example https://mystudio.shotgunstudio.com',
+                        'placeholder': 'Domain, for example, https://mystudio.shotgunstudio.com',
                         'description': 'The domain, including http:// or https://, '
-                                       'used by shotgun. for example '
+                                       'used by shotgun. for example, '
                                        '\'https://mystudio.shotgunstudio.com\'',
                         'button': 'Visit',
                         'button2': 'Verify'
@@ -191,7 +191,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'widget': ui.LineEdit,
                         'placeholder': 'abcdefghijklmno3bqr*1',
                         'description': 'A ShotGrid Script API Key, '
-                                       'for example \'abcdefghijklmno3bqr*1\'.\n\nA valid '
+                                       'for example, \'abcdefghijklmno3bqr*1\'.\n\nA valid '
                                        'script has to be set up for your organisation '
                                        'for Bookmarks to be able to connect to '
                                        'ShotGrid. Consult the ShotGrid documentation for '
@@ -232,16 +232,16 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'sg_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid Project ID, for example \'123\'',
+                        'placeholder': 'ShotGrid Project ID, for example, \'123\'',
                         'description': 'The ShotGrid entity id number this item is associated '
-                                       'with. for example \'123\'.',
+                                       'with. for example, \'123\'.',
                     },
                     2: {
                         'name': 'ShotGrid Project Name',
                         'key': 'sg_name',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid project name, for example \'MyProject\'',
+                        'placeholder': 'ShotGrid project name, for example, \'MyProject\'',
                         'description': 'The ShotGrid project name',
                     },
                 },
@@ -251,7 +251,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'key': 'sg_episode_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid episode id, for example \'123\'',
+                        'placeholder': 'ShotGrid episode id, for example, \'123\'',
                         'description': 'The ShotGrid episode entity number this item is associated '
                                        'with. e.g. \'123\'.',
                     },

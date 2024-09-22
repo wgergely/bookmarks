@@ -57,7 +57,7 @@ def initialize():
     )
 
 
-def uninitialize():
+def shutdown():
     """Removes the embedded Bookmarks elements from Maya.
 
     """
@@ -69,4 +69,4 @@ def uninitialize():
     actions.remove_workspace_controls()
     actions.remove_hud()
 
-    common.uninitialize()
+    common.shutdown()

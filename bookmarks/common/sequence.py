@@ -89,7 +89,7 @@ def is_collapsed(s):
     Returns:
         SRE_Match:
             * group(1) - All the characters **before** the sequence marker.
-            * group(2) - The sequence marker, for example ``{01-50}``.
+            * group(2) - The sequence marker, for example, ``{01-50}``.
             * group(3) - All characters **after** the sequence marker.
 
     """
@@ -144,7 +144,7 @@ def get_sequence(s):
 
 
 def proxy_path(v):
-    """Substitutes range notations (for example ``{001-099}``) with :attr:`SEQPROXY`.
+    """Substitutes range notations (for example, ``{001-099}``) with :attr:`SEQPROXY`.
 
     Any non-collapsed items will use their actual file path. Collapsed sequence items
     however, need to be represented in a manner independent of their actual start,

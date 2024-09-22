@@ -77,7 +77,7 @@ Index
 
         Are you trying to get Bookmarks up and running? Check out
         :func:`~bookmarks.common.setup.initialize` and
-        :func:`~bookmarks.common.setup.uninitialize` functions.
+        :func:`~bookmarks.common.setup.shutdown` functions.
 
 
     .. grid-item-card::

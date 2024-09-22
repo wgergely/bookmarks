@@ -1,41 +1,37 @@
 """The module contains the elements used when initialized in :attr:`~bookmarks.common.core.StandaloneMode`.
 
-It defines :class:`.BookmarksApp`, Bookmark's custom QApplication, and
-:class:`.BookmarksAppWindow`, a modified :class:`.main.MainWidget`.
-
-Note, in :attr:`~bookmarks.common.core.EmbeddedMode`, Bookmarks uses :class:`.main.MainWidget` as the main
-widget.
+It defines :class:`.BookmarksAppWindow`, the app's main window based on :class:`.main.MainWidget` (in
+:attr:`~bookmarks.common.core.EmbeddedMode`, Bookmarks uses :class:`.main.MainWidget` as the main widget).
 
 """
 import ctypes
 import os
+import uuid
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import __version__
 from . import actions
 from . import common
 from . import contextmenu
 from . import main
 from . import ui
 
-MODEL_ID = f'{common.product}App'
-
 
 def init():
-    """Initializes the main application window.
+    """Initializes the main app window.
 
     """
-    if common.init_mode == common.EmbeddedMode:
-        raise RuntimeError("Cannot be initialized in `EmbeddedMode`.")
+    if common.init_mode != common.StandaloneMode:
+        raise RuntimeError('Must be initialized in StandaloneMode!')
 
     if isinstance(common.main_widget, BookmarksAppWindow):
-        raise RuntimeError("MainWidget already exists.")
+        raise RuntimeError('MainWidget already exists!')
+
     common.main_widget = BookmarksAppWindow()
 
 
 def init_tray():
-    """Initializes the main application tray widget.
+    """Initializes the app's tray widget.
 
     """
     if not common.tray_widget:
@@ -73,7 +69,7 @@ def show():
         common.main_widget.showNormal()
 
 
-def _set_application_properties(app=None):
+def set_application_properties(app=None):
     """Enables OpenGL and high-dpi support.
 
     """
@@ -116,7 +112,7 @@ class TrayMenu(contextmenu.BaseContextMenu):
     def tray_menu(self):
         """Actions associated with the visibility of the widget."""
         self.menu['Quit'] = {
-            'action': common.uninitialize,
+            'action': common.shutdown,
         }
         return
 
@@ -237,7 +233,7 @@ class HeaderWidget(QtWidgets.QWidget):
         menu = menu_bar.addMenu(common.product)
 
         action = menu.addAction('Quit')
-        action.triggered.connect(common.uninitialize)
+        action.triggered.connect(common.shutdown)
 
         self.layout().addStretch()
         self.layout().addWidget(MinimizeButton(parent=self))
@@ -388,68 +384,44 @@ class BookmarksAppWindow(main.MainWidget):
         super().showEvent(event)
 
 
-class BookmarksApp(QtWidgets.QApplication):
-    """A customized QApplication used by Bookmarks to run in standalone mode.
+def set_window_icon(app):
+    """Set the app icon."""
+    path = common.rsc(
+        f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}'
+    )
 
-    The app will start with OpenGL and high dpi support and initializes
-    the submodules.
+    pixmap = QtGui.QPixmap(path)
+    if pixmap.isNull():
+        return None
 
-    See :func:`bookmarks.exec`.
+    icon = QtGui.QIcon(pixmap)
+    app.setWindowIcon(icon)
+
+
+def set_model_id():
+    """Set windows model id to add custom window icons on windows.
+    https://github.com/cztomczak/cefpython/issues/395
 
     """
-
-    def __init__(self, args):
-        _set_application_properties()
-
-        super().__init__([__file__, ])
-        _set_application_properties(app=self)
-        self.setApplicationVersion(__version__)
-
-        self.setApplicationName(common.product.title())
-        self.setOrganizationName(common.organization)
-        self.setOrganizationDomain(common.organization_domain)
-
-        self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-        self.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
-        self.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
-        self.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
-
-
-        self._set_model_id()
-        self._set_window_icon()
-        self.installEventFilter(self)
-
-    def _set_window_icon(self):
-        """Set the application icon."""
-        path = common.rsc(
-            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}'
+    if QtCore.QSysInfo().productType() in ('windows', 'winrt'):
+        hresult = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+            f'{common.product}-{uuid.uuid4()}'.encode('utf-8')
         )
-        pixmap = QtGui.QPixmap(path)
-        icon = QtGui.QIcon(pixmap)
-        self.setWindowIcon(icon)
+        # An identifier that's globally unique for all apps running on Windows
+        assert hresult == 0, "SetCurrentProcessExplicitAppUserModelID failed"
 
-    def _set_model_id(self):
-        """Setting this is needed to add custom window icons on windows.
-        https://github.com/cztomczak/cefpython/issues/395
 
-        """
-        if QtCore.QSysInfo().productType() in ('windows', 'winrt'):
-            hresult = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                MODEL_ID
-            )
-            # An identifier that is globally unique for all apps running on Windows
-            assert hresult == 0, "SetCurrentProcessExplicitAppUserModelID failed"
+def global_event_filter(widget, event):
+    """Event filter handler.
 
-    def eventFilter(self, widget, event):
-        """Event filter handler.
-
-        """
-        if event.type() == QtCore.QEvent.Enter:
-            if hasattr(widget, 'statusTip') and widget.statusTip():
-                common.signals.showStatusTipMessage.emit(widget.statusTip())
-        if event.type() == QtCore.QEvent.Leave:
-            if not common.signals:
-                return False
-            common.signals.clearStatusBarMessage.emit()
-
+    """
+    if not common.signals:
         return False
+
+    if event.type() == QtCore.QEvent.Enter:
+        if hasattr(widget, 'statusTip') and widget.statusTip():
+            common.signals.showStatusTipMessage.emit(widget.statusTip())
+    if event.type() == QtCore.QEvent.Leave:
+        common.signals.clearStatusBarMessage.emit()
+
+    return False

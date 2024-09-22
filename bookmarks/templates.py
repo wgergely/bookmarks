@@ -36,7 +36,7 @@ def get_template_folder(mode):
     the given `mode`.
 
     Args:
-        mode (str): A template mode, for example `JobTemplateMode`.
+        mode (str): A template mode, for example, `JobTemplateMode`.
 
     Returns:
         str: Path to the folder where the template zip files are stored.
@@ -240,7 +240,7 @@ class TemplateListWidget(ui.ListWidget):
         """The TemplateWidget's current mode.
 
         Returns:
-            str: A template mode, for example `AssetTable` or `JobTemplateMode`.
+            str: A template mode, for example, `AssetTable` or `JobTemplateMode`.
 
         """
         return self._mode

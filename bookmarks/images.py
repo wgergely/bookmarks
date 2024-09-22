@@ -111,7 +111,7 @@ def init_pixel_ratio():
 
 
 def get_thumbnail(
-        server, job, root, source, size=common.thumbnail_size,
+        server, job, root, source, size=common.size_thumbnail,
         fallback_thumb='placeholder',
         get_path=False
 ):
@@ -179,7 +179,7 @@ def get_thumbnail(
     if pixmap and not pixmap.isNull():
         return (pixmap, color)
 
-    # If the item refers to a folder, for example an asset or a bookmark item,  we'll
+    # If the item refers to a folder, for example, an asset or a bookmark item,  we'll
     # check for a 'thumbnail.{ext}' file in the folder's root and if this fails,
     # we will check the job folder. If both fails will we proceed to load a
     # placeholder thumbnail.
@@ -308,7 +308,7 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
         thumbnail_path,
         source_color_space='',
         target_color_space='sRGB',
-        size=int(common.thumbnail_size)
+        size=int(common.size_thumbnail)
     )
     if error == 1:
         raise RuntimeError('Failed to make thumbnail.')
@@ -522,7 +522,7 @@ def rsc_pixmap(
         name, color, size, opacity=1.0, resource=common.GuiResource,
         get_path=False, oiio=False
 ):
-    """Loads an image resource and returns it as a resized (and recolored) QPixmap.
+    """Loads an image resource and returns it as a resized and recolored QPixmap.
 
     Args:
         name (str): Name of the resource without the extension.
@@ -534,7 +534,7 @@ def rsc_pixmap(
 
     Returns:
         A QPixmap of the requested resource, or a str path if ``get_path`` is True.
-        None if the resource could not be found.
+        None if the resource couldn't be found.
 
     """
     common.check_type(name, str)
@@ -880,7 +880,7 @@ class ImageCache(QtCore.QObject):
 
         Args:
             hash (str): The requested entry's hash value calculated by :func:`common.get_hash`
-            cache_type (int): The resource type, for example `BufferType`.
+            cache_type (int): The resource type, for example, `BufferType`.
             size (int): The requested image size.
             lock_mutex (bool): Lock the cache's QMutex for thread safety.
 
@@ -909,7 +909,7 @@ class ImageCache(QtCore.QObject):
         Args:
             hash (str): The requested entry's hash value calculated by :func:`common.get_hash`
             value: The value to associate with `hash` and `size`.
-            cache_type: cache_type (int): The resource type, for example `BufferType`.
+            cache_type: cache_type (int): The resource type, for example, `BufferType`.
             size (int): The requested image size.
             lock_mutex (bool): Lock the cache's QMutex for thread safety.
 

@@ -75,7 +75,7 @@ def add_server(v):
     """Adds a server item to the list of user specified servers.
 
     Args:
-        v (str): A path to a server, for example `Q:/jobs`.
+        v (str): A path to a server, for example, `Q:/jobs`.
 
     """
     common.check_type(v, str)
@@ -95,7 +95,7 @@ def remove_server(v):
     """Remove a server item from the list of user specified servers.
 
     Args:
-        v (str): A path to a server, for example `Q:/jobs`.
+        v (str): A path to a server, for example, `Q:/jobs`.
 
     """
     for bookmark in common.default_bookmarks.values():
@@ -403,7 +403,7 @@ def import_favourites(*args, source=None):
                 table = database.BookmarkTable
             else:
                 table = database.AssetTable
-            db.set_value(source, k, database.b64decode(v), table=table)
+            db.set_value(source, k, database.b64decode(v), table)
 
     common.settings.set_favourites(data)
     common.signals.favouritesChanged.emit()
@@ -432,8 +432,8 @@ def set_active(k, v):
     """Sets the given path as the active path segment for the given key.
 
     Args:
-        k (str): An active key, for example `'server'`.
-        v (str or None): A path segment, for example '//myserver/jobs'.
+        k (str): An active key, for example, `'server'`.
+        v (str or None): A path segment, for example, '//myserver/jobs'.
 
     """
     common.check_type(k, str)
@@ -480,7 +480,7 @@ def set_task_folder(v):
     """Sets the active task folder.
 
     Args:
-        v (str): A `task` path segment, for example 'scenes'.
+        v (str): A `task` path segment, for example, 'scenes'.
 
     """
     set_active('task', v)
@@ -700,8 +700,8 @@ def increase_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size.height() + common.size(common.thumbnail_size / 15)
-    if v >= common.thumbnail_size:
+    v = model.row_size.height() + common.size(common.size_thumbnail / 15)
+    if v >= common.size_thumbnail:
         return
 
     widget.set_row_size(v)
@@ -718,7 +718,7 @@ def decrease_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size.height() - common.size(common.thumbnail_size / 15)
+    v = model.row_size.height() - common.size(common.size_thumbnail / 15)
     if v <= model.default_row_size().height():
         v = model.default_row_size().height()
 
@@ -784,7 +784,7 @@ def show_add_file(extension=None, file=None, create_file=True, increment=False):
     path file.
 
     Args:
-        extension (str): An format, for example 'psd'.
+        extension (str): An format, for example, 'psd'.
         file (str): Path to an existing file. Optional.
         create_file (bool): Creates an empty file if True.
         increment (bool): Increment the version number element of ``file``.
@@ -960,7 +960,7 @@ def toggle_flag(flag, v):
 @common.error
 @common.debug
 def toggle_full_screen():
-    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` full-screen view.
+    """Toggle full-screen view.
 
     """
     if common.main_widget.isFullScreen():
@@ -972,7 +972,7 @@ def toggle_full_screen():
 @common.error
 @common.debug
 def toggle_maximized():
-    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` maximized view.
+    """Toggle maximized view.
 
     """
     if common.main_widget.isMaximized():
@@ -984,7 +984,7 @@ def toggle_maximized():
 @common.error
 @common.debug
 def toggle_minimized():
-    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` minimized view.
+    """Toggle minimized view.
 
     """
     if common.main_widget.isMinimized():
@@ -999,7 +999,7 @@ def toggle_stays_always_on_top():
     """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` stacking value.
 
     """
-    if common.init_mode == common.EmbeddedMode:
+    if common.init_mode != common.StandaloneMode:
         return
 
     w = common.main_widget
@@ -1736,7 +1736,7 @@ def paste_properties(index):
     # Write the values to the database
     for k in common.CLIPBOARD[clipboard]:
         v = common.CLIPBOARD[clipboard][k]
-        database.get(*pp[0:3]).set_value(source, k, v, table=table)
+        database.get(*pp[0:3]).set_value(source, k, v, table)
         log.success(f'Pasted {k} = {v} to {source}')
 
 

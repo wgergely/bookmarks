@@ -763,7 +763,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     self.db_source(),
                     k,
                     v,
-                    table=self._db_table
+                    self._db_table
                 )
 
     @QtCore.Slot(str)

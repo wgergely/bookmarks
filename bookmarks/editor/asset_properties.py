@@ -75,16 +75,16 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'key': None,
                         'validator': base.job_name_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Enter name, for example \'SH0010\'',
-                        'description': 'The asset\'s name, for example \'SH0010\'',
+                        'placeholder': 'Enter name, for example, \'SH0010\'',
+                        'description': 'The asset\'s name, for example, \'SH0010\'',
                     },
                     1: {
                         'name': 'Description',
                         'key': 'description',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'A description, for example \'My first shot\'',
-                        'description': 'A short description of the asset, for example \'My '
+                        'placeholder': 'A description, for example, \'My first shot\'',
+                        'description': 'A short description of the asset, for example, \'My '
                                        'first shot.\'.',
                     },
                 },
@@ -103,7 +103,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                                 'contain a folder structure and a set of files. The template can contain a `.link` '
                                 'file '
                                 'which will be used to read nested assets inside the template. This can be useful if an'
-                                'asset is made up of multiple tasks, for example a shot asset may contain a `lighting` and '
+                                'asset is made up of multiple tasks, for example, a shot asset may contain a `lighting` and '
                                 '`anim`'
                                 'tasks.',
                     },
@@ -138,16 +138,16 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'key': 'sg_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid entity id, for example \'123\'',
+                        'placeholder': 'ShotGrid entity id, for example, \'123\'',
                         'description': 'The ShotGrid entity id this item is associated '
-                                       'with. for example \'123\'.',
+                                       'with. for example, \'123\'.',
                     },
                     3: {
                         'name': 'ShotGrid Name',
                         'key': 'sg_name',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid entity name, for example \'MyAsset\'',
+                        'placeholder': 'ShotGrid entity name, for example, \'MyAsset\'',
                         'description': 'The ShotGrid entity name. The name usually corresponds to the "code" field'
                                        'in ShotGrid.',
                     },
@@ -158,18 +158,18 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'key': 'sg_task_id',
                         'validator': base.int_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid task id, for example \'123\'',
+                        'placeholder': 'ShotGrid task id, for example, \'123\'',
                         'description': 'If the asset is associated with a ShotGrid task, the task entity id can be '
-                                       'entered here. for example \'123\'.',
+                                       'entered here. for example, \'123\'.',
                     },
                     1: {
                         'name': 'Task Name',
                         'key': 'sg_task_name',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'ShotGrid task name, for example \'rigging\'',
+                        'placeholder': 'ShotGrid task name, for example, \'rigging\'',
                         'description': 'If the asset is associated with a ShotGrid task, the task name can be entered '
-                                       'here. for example \'rigging\'.',
+                                       'here. for example, \'rigging\'.',
                     },
                 },
             }

@@ -148,7 +148,7 @@ class MainWidget(QtWidgets.QWidget):
         """Sets our current tab based on the current user settings.
 
         We can't use model indexes when this method is called as the list models
-        themselves are still uninitialized resulting in
+        themselves are still shutdownd resulting in
         `self.stacked_widget.setCurrentIndex()` returning an incorrect tab.
 
         """
@@ -243,7 +243,7 @@ class MainWidget(QtWidgets.QWidget):
     @common.error
     @common.debug
     def initialize(self):
-        """The widget will be in ``uninitialized`` state after creation.
+        """The widget will be in ``shutdownd`` state after creation.
         This method must be called to create the UI layout and to load the item
         models.
 
@@ -359,7 +359,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.PasteProperties, actions.paste_properties)
 
         if common.init_mode == common.StandaloneMode:
-            connect(shortcuts.Quit, common.uninitialize)
+            connect(shortcuts.Quit, common.shutdown)
             connect(shortcuts.Minimize, actions.toggle_minimized)
             connect(shortcuts.Maximize, actions.toggle_maximized)
             connect(shortcuts.FullScreen, actions.toggle_full_screen)

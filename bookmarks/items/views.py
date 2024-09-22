@@ -895,7 +895,7 @@ class BaseItemView(QtWidgets.QTableView):
 
         Args:
             index (QModelIndex): Model index.
-            flag (int): A filter flag, for example ``MarkedAsArchived``.
+            flag (int): A filter flag, for example, ``MarkedAsArchived``.
             state (bool): Pass an explicit state value. Defaults to None.
             commit_now (bool): When `True`, commits database values immediately.
 

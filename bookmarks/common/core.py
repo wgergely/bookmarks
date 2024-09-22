@@ -14,13 +14,15 @@ from PySide2 import QtCore, QtWidgets
 
 from .. import common
 
-#: The config file name
+#: The config filename
 CONFIG = 'config.json'
 
-#: Startup mode when `Bookmarks` is running as a standalone Qt application
-StandaloneMode = 'standalone'
+#: Startup mode when bookmarks is called as a library
+CoreMode = 'CoreMode'
 #: Startup mode used when `Bookmarks` runs embedded in a host DCC.
-EmbeddedMode = 'embedded'
+EmbeddedMode = 'EmbeddedMode'
+#: Startup mode when `Bookmarks` is running as a standalone Qt app
+StandaloneMode = 'StandaloneMode'
 
 BookmarkTab = 0
 AssetTab = 1

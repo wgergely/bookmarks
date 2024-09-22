@@ -260,7 +260,7 @@ class PresetNameDialog(QtWidgets.QDialog):
         self.layout().setSpacing(o * 0.5)
 
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setPlaceholderText('Enter a preset name, for example \'Preset1\'')
+        self.editor.setPlaceholderText('Enter a preset name, for example, \'Preset1\'')
         self.editor.setMinimumWidth(common.size(common.size_width) * 0.5)
 
         self.setFocusProxy(self.editor)

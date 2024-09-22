@@ -25,7 +25,7 @@ def get_binary(binary_name):
         - distribution folder's bin directory
         - user settings
         - environment variables in a ``{PREFIX}_{BINARY_NAME}`` format,
-        for example ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
+        for example, ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
         should point to an appropriate executable, for example
         ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
 

@@ -272,10 +272,10 @@ class BaseContextMenu(QtWidgets.QMenu):
         menu['separator' + key()] = None
 
     def window_menu(self):
-        """General application window specific actions.
+        """General app window specific actions.
 
         """
-        if common.init_mode == common.EmbeddedMode:
+        if common.init_mode != common.StandaloneMode:
             return
 
         w = self.parent().window()
@@ -830,11 +830,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Application shutdown options.
 
         """
-        if common.init_mode == common.EmbeddedMode:
+        if common.init_mode != common.StandaloneMode:
             return
+
         self.menu[key()] = {
             'text': f'Quit {common.product.title()}',
-            'action': common.uninitialize,
+            'action': common.shutdown,
             'icon': ui.get_icon('close'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,

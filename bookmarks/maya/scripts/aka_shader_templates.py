@@ -97,7 +97,7 @@ def get_plug_tree(obj):
         attr_plug = OpenMaya.MPlug(obj, node_fn.attribute(j))
         a = f'{node_fn.name()}.{attr_plug.partialName()}'
 
-        # Skip uninitialized attributes
+        # Skip shutdownd attributes
         if '-1' in a:
             continue
 
@@ -620,7 +620,7 @@ class PresetsWidget(QtWidgets.QDialog):
         self.import_layout = QtWidgets.QVBoxLayout()
 
         self.name_edit = QtWidgets.QLineEdit()
-        self.name_edit.setPlaceholderText('Name, for example "body"')
+        self.name_edit.setPlaceholderText('Name, for example, "body"')
 
         self.import_button = QtWidgets.QPushButton('Import/Update Shader')
 

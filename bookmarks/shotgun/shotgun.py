@@ -1,7 +1,7 @@
 """The module contains the classes and methods needed to provide linkage
 with ShotGrid.
 
-In the simplest of cases (for example when a bookmark item is active and have already been
+In the simplest of cases (for example, when a bookmark item is active and have already been
 linked with ShotGrid) we can initiate a connection using a :class:`SGProperties`
 instance:
 
@@ -214,7 +214,7 @@ class SGProperties(QtCore.QObject):
     These properties define the linkage between ShotGrid entities and local assets
     and are required to make ShotGrid connections.
 
-    The instance is uninitialized by default, use self.init() to load the values
+    The instance is shutdownd by default, use self.init() to load the values
     from the bookmark database.
 
     Args:

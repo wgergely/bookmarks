@@ -66,7 +66,7 @@ def capture(
         off_screen (bool, optional): Whether or not to playblast off screen
         viewer (bool, optional): Display results in native player
         show_ornaments (bool, optional): Whether or not model view ornaments
-            (for example axis icon, grid and HUD) should be displayed.
+            (for example, axis icon, grid and HUD) should be displayed.
         sound (str, optional):  Specify the sound node to be used during
             playblast. When None (default) no sound will be used.
         isolate (list): List of nodes to isolate upon capturing
@@ -414,7 +414,7 @@ def parse_active_panel():
     panel = cmds.getPanel(withFocus=True)
 
     # This happens when last focus was on panel
-    # that got deleted (for example `capture()` then `parse_active_view()`)
+    # that got deleted (for example, `capture()` then `parse_active_view()`)
     if not panel or "modelPanel" not in panel:
         raise RuntimeError("No active model panel found")
 

@@ -111,7 +111,7 @@ def initializePlugin(name):
     cmds.evalDeferred(maya.initialize)
 
 
-def uninitializePlugin(name):
+def shutdownPlugin(name):
     """Un-initializes the plugin.
 
     """
@@ -126,4 +126,4 @@ def uninitializePlugin(name):
 
     OpenMaya.MGlobal.displayInfo(f'Unloading {product.title()}...')
     from bookmarks import maya
-    cmds.evalDeferred(maya.uninitialize)
+    cmds.evalDeferred(maya.shutdown)

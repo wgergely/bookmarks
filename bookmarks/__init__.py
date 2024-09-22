@@ -106,10 +106,10 @@ __version__ = '0.9.2'
 __version_info__ = __version__.split('.')
 
 #: Project copyright
-__copyright__ = f'Copyright (c) 2023 {__author__}'
+__copyright__ = f'Copyright (c) 2024 {__author__}'
 
 # Specify python support
-if sys.version_info[0] < 3 and sys.version_info[1] < 7:
+if sys.version_info[0] < 3 and sys.version_info[1] < 9:
     raise RuntimeError('Bookmarks requires Python 3.9.0 or later.')
 
 
@@ -142,17 +142,13 @@ def info():
 
 
 def exec_(print_info=True):
-    """Opens the Bookmark app.
-
-    The method creates :class:`bookmarks.standalone.BookmarksApp`,
-    and initializes all required submodules and data.
+    """Initializes all required submodules and data and launches shows the app's main window.
 
     """
     if print_info:
         print(info())
 
     from . import common
-    common.verify_dependencies()
     common.initialize(common.StandaloneMode)
 
     from . import standalone

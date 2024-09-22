@@ -1067,4 +1067,4 @@ class CardsWidget(QtWidgets.QDialog):
             source = common.proxy_path(self.index)
 
         db = database.get(*self.index.data(common.ParentPathRole)[0:3])
-        db.set_value(source, 'notes', self.get_cards_data())
+        db.set_value(source, 'notes', self.get_cards_data(), database.AssetTable)

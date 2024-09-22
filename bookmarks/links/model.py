@@ -243,9 +243,13 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         if self.root_node() is None:
             return
 
+        self.beginResetModel()
+
+        # Refresh cached api data
+        LinksAPI.update_cached_data()
+
         current_paths = [parent_node.path() for parent_node in self.root_node().children()]
 
-        self.beginResetModel()
         self.root_node().children().clear()
         for path in current_paths:
             self.add_path(path)

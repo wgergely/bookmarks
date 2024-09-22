@@ -26,7 +26,7 @@ separate server, job, root arguments. See :func:`~bookmarks.common.settings.acti
 see how active path components can be queried.
 
 Hint:
-    The term "active" refers to items the user has activated, for example double-clicked. When
+    The term "active" refers to items the user has activated, for example, double-clicked. When
     an item is activated all path components that make up that item will
     become active.
 

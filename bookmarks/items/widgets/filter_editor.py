@@ -92,7 +92,7 @@ class TextFilterEditor(QtWidgets.QWidget):
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.editor.setPlaceholderText('Enter filter, for example "maya" or --"SH010"')
+        self.editor.setPlaceholderText('Enter filter, for example, "maya" or --"SH010"')
         row.layout().addWidget(self.editor, 1)
 
         self.ok_button = ui.PaintedButton('Save', parent=self)

@@ -161,7 +161,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         activeChanged (QtCore.Signal): Signals :meth:`.ItemModel.active_index`
             change.
         dataTypeChanged (QtCore.Signal -> int): Emitted when the exposed data type
-            changes, for example from ``FileItem`` to ``SequenceItem``.
+            changes, for example, from ``FileItem`` to ``SequenceItem``.
         updateIndex (QtCore.Signal -> QtCore.QModelIndex): Emitted when an index
             repaint is requested.
         queues (tuple): A list of threads associated with the model.
@@ -549,8 +549,8 @@ class ItemModel(QtCore.QAbstractTableModel):
         h = self.default_row_size().height()
         val = h if val is None else val
         val = h if val < h else val
-        val = int(common.thumbnail_size) if val >= int(
-            common.thumbnail_size
+        val = int(common.size_thumbnail) if val >= int(
+            common.size_thumbnail
         ) else val
         self.row_size.setHeight(int(val))
         self.rowHeightChanged.emit(self.row_size.height())
@@ -573,7 +573,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         self.set_filter_setting('filters/sort_by', val)
 
     def sort_order(self):
-        """The currently set order of the items for example 'descending'."""
+        """The currently set order of the items for example, 'descending'."""
         return self._sort_order
 
     @common.status_bar_message('Sorting items...')
@@ -914,7 +914,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
     def init_filter_values(self, *args, **kwargs):
         """Load the saved widget filters from `user_settings`.
 
-        This determines if for example archived items are visible in the view.
+        This determines if for example, archived items are visible in the view.
 
         """
         model = self.sourceModel()

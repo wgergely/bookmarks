@@ -35,10 +35,10 @@ from datetime import datetime
 
 try:
     import OpenImageIO
+
     oiio_extensions = OpenImageIO.get_string_attribute('extension_list')
 except ImportError:
     oiio_extensions = ''
-
 
 from PySide2 import QtCore
 
@@ -50,6 +50,7 @@ FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'
 PublishConfig = 'PublishConfig'
 AssetFolderConfig = 'AssetFolderConfig'
+TasksConfig = 'TasksConfig'
 FFMpegTCConfig = 'FFMpegTCConfig'
 
 SceneFormat = 0b1
@@ -75,12 +76,13 @@ AllFormat = (
 #: Invalid token marker string
 invalid_token = '{invalid_token}'
 
-SceneFolder = 'scene'
-CacheFolder = 'cache'
+#: Principal default asset folders
+SceneFolder = 'scenes'
+CacheFolder = 'caches'
 CaptureFolder = 'captures'
-RenderFolder = 'render'
+RenderFolder = 'renders'
 DataFolder = 'data'
-ReferenceFolder = 'reference'
+ReferenceFolder = 'references'
 PublishFolder = 'publish'
 TextureFolder = 'textures'
 MiscFolder = 'other'
@@ -267,13 +269,13 @@ DEFAULT_TOKEN_CONFIG = {
         },
         common.idx(): {
             'name': RenderFolder,
-            'value': 'images',
+            'value': RenderFolder,
             'description': 'Render layer outputs',
             'filter': ImageFormat | AudioFormat | MovieFormat,
         },
         common.idx(): {
             'name': SceneFolder,
-            'value': 'scenes',
+            'value': SceneFolder,
             'description': 'Project and scene files',
             'filter': SceneFormat,
             'subfolders': {
@@ -326,28 +328,102 @@ DEFAULT_TOKEN_CONFIG = {
         },
         common.idx(): {
             'name': PublishFolder,
-            'value': 'publish',
+            'value': PublishFolder,
             'description': 'Asset publish files',
             'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat
         },
         common.idx(): {
             'name': CaptureFolder,
-            'value': 'captures',
+            'value': CaptureFolder,
             'description': 'Viewport captures and preview files',
             'filter': ImageFormat | MovieFormat | AudioFormat
         },
         common.idx(): {
             'name': TextureFolder,
-            'value': 'sourceimages',
+            'value': TextureFolder,
             'description': '2D and 3D texture files',
             'filter': ImageFormat | MovieFormat | AudioFormat,
         },
         common.idx(): {
             'name': MiscFolder,
-            'value': 'other',
+            'value': MiscFolder,
             'description': 'Miscellaneous asset files',
             'filter': AllFormat,
         }
+    },
+    TasksConfig: {
+        common.idx(reset=True, start=0): {
+            'name': 'Design',
+            'value': 'design',
+            'description': 'Design task',
+            'icon': 'task_design',
+        },
+        common.idx(reset=True, start=0): {
+            'name': 'Modeling',
+            'value': 'model',
+            'description': 'Modeling task',
+            'icon': 'task_modeling',
+        },
+        common.idx(): {
+            'name': 'Rigging',
+            'value': 'rig',
+            'description': 'Rigging task',
+            'icon': 'task_rigging',
+        },
+        common.idx(): {
+            'name': 'Animation',
+            'value': 'anim',
+            'description': 'Animation task',
+            'icon': 'task_animation',
+        },
+        common.idx(): {
+            'name': 'Layout',
+            'value': 'layout',
+            'description': 'Layout task',
+            'icon': 'task_layout',
+        },
+        common.idx(): {
+            'name': 'FX',
+            'value': 'fx',
+            'description': 'FX task',
+            'icon': 'task_fx',
+        },
+        common.idx(): {
+            'name': 'Lighting',
+            'value': 'lighting',
+            'description': 'Lighting task',
+            'icon': 'task_lighting',
+        },
+        common.idx(): {
+            'name': 'Rendering',
+            'value': 'render',
+            'description': 'Rendering task',
+            'icon': 'task_rendering',
+        },
+        common.idx(): {
+            'name': 'Compositing',
+            'value': 'comp',
+            'description': 'Compositing task',
+            'icon': 'task_compositing',
+        },
+        common.idx(): {
+            'name': 'Tracking',
+            'value': 'tracking',
+            'description': 'Tracking task',
+            'icon': 'task_tracking',
+        },
+        common.idx(): {
+            'name': 'Audio',
+            'value': 'audio',
+            'description': 'Audio task',
+            'icon': 'task_audio',
+        },
+        common.idx(): {
+            'name': 'Texture',
+            'value': 'texture',
+            'description': 'Texture task',
+            'icon': 'task_texture',
+        },
     },
     FFMpegTCConfig: {
         common.idx(reset=True, start=0): {
@@ -431,7 +507,7 @@ def get_subfolder(token, name):
     configuration.
 
     Args:
-        token (str): Asset folder token, for example `tokens.CacheFolder`.
+        token (str): Asset folder token, for example, `tokens.CacheFolder`.
         name (str): Sub-folder token.
 
     Returns:
@@ -454,7 +530,7 @@ def get_subfolders(token):
     """Find all asset sub-folder values based on the bookmark item's token configuration.
 
     Args:
-        token (str): Asset folder token, for example `tokens.CacheFolder`.
+        token (str): Asset folder token, for example, `tokens.CacheFolder`.
 
     Returns:
         list: A list of current asset sub-folder values.
@@ -475,7 +551,7 @@ def get_description(token):
     """Get a description of a token.
 
     Args:
-        token (str): A token, for example `tokens.SceneFormat`.
+        token (str): A token, for example, `tokens.SceneFormat`.
 
     Returns:
         str: Description of the item.
@@ -497,7 +573,7 @@ class TokenConfig(QtCore.QObject):
     bookmark item's database.
 
     As token config data might be used in performance sensitive sections,
-    the instance is uninitialized until :meth:`data` is called. This will load
+    the instance is shutdownd until :meth:`data` is called. This will load
     values from the database and cache it internally. This cached data won't be
     updated from the database until :meth:`.data(force=True)` is called.
 
@@ -570,7 +646,7 @@ class TokenConfig(QtCore.QObject):
             db.source(),
             'tokens',
             data,
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         # Re-fetching data from the database
@@ -611,7 +687,7 @@ class TokenConfig(QtCore.QObject):
         """Utility method used to get the description of a token.
 
         Args:
-            token (str): A file-format or a folder name, for example 'anim'.
+            token (str): A file-format or a folder name, for example, 'anim'.
             force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
@@ -680,7 +756,7 @@ class TokenConfig(QtCore.QObject):
             del kwargs[k]
 
         # To avoid KeyErrors when invalid tokens are passed we will replace
-        # these with a custom marker, for example {invalid_token}
+        # these with a custom marker, for example, {invalid_token}
         # via https://stackoverflow.com/questions/17215400/format-string-unused
         # -named-arguments
         return string.Formatter().vformat(

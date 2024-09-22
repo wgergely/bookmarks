@@ -883,7 +883,7 @@ class ThumbnailWorker(BaseWorker):
                 destination,
                 source_color_space='',
                 target_color_space='sRGB',
-                size=int(common.thumbnail_size),
+                size=int(common.size_thumbnail),
             )
             images.ImageCache.flush(source)
 

@@ -50,7 +50,7 @@ def process_image(source):
         destination,
         source_color_space='',
         target_color_space='sRGB',
-        size=int(common.thumbnail_size)
+        size=int(common.size_thumbnail)
     )
     if error == 1:
         raise RuntimeError('Failed to convert the thumbnail')
@@ -61,7 +61,7 @@ def process_image(source):
 
     image = images.ImageCache.get_image(
         destination,
-        int(common.thumbnail_size),
+        int(common.size_thumbnail),
         force=True
     )
     if not image or image.isNull():

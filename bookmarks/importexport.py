@@ -313,9 +313,9 @@ def import_item_properties(index, source=None, prompt=True):
     source = index.data(common.PathRole)
     with db.connection():
         for k, v in bookmark_table_data.items():
-            db.set_value(source, k, v, table=database.BookmarkTable)
+            db.set_value(source, k, v, database.BookmarkTable)
         for k, v in asset_table_data.items():
-            db.set_value(source, k, v, table=database.AssetTable)
+            db.set_value(source, k, v, database.AssetTable)
 
     common.show_message(
         'Properties imported successfully.',
@@ -394,7 +394,7 @@ def import_json_asset_properties(indexes, prompt=True, path=None):
                 for k, v in data[item].items():
                     if k not in database.TABLES[database.AssetTable]:
                         continue
-                    db.set_value(path, k, v, table=database.AssetTable)
+                    db.set_value(path, k, v, database.AssetTable)
 
             if 'thumbnail' in data[item] and data[item]['thumbnail'] and os.path.isfile(data[item]['thumbnail']):
                 images.create_thumbnail_from_image(

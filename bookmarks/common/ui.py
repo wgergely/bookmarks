@@ -601,7 +601,7 @@ def widget(idx=None):
     otherwise, returns the specified widget.
 
     Args:
-        idx (int, optional): A tab index number, for example ``common.FileTab``.
+        idx (int, optional): A tab index number, for example, ``common.FileTab``.
 
     Returns:
         BaseItemView: A list widget.
@@ -631,7 +631,7 @@ def model(idx=None):
     otherwise, returns the specified widget's model.
 
     Args:
-        idx (int, optional): A tab index number, for example ``common.FileTab``.
+        idx (int, optional): A tab index number, for example, ``common.FileTab``.
 
     Returns:
         FilterProxyModel: A list widget's proxy model.
@@ -651,7 +651,7 @@ def source_model(idx=None):
     otherwise, returns the specified widget's source model.
 
     Args:
-        idx (int, optional): A tab index number, for example ``common.FileTab``.
+        idx (int, optional): A tab index number, for example, ``common.FileTab``.
 
     Returns:
         ItemModel: A list widget's source model.

@@ -1,15 +1,13 @@
 """Various methods used to initialize Bookmarks, mainly, :func:`.initialize()` and
-:func:`.uninitialize()`.
+:func:`.shutdown()`.
 
 """
-import importlib
 import json
 import os
 import sys
 import time
 
-import OpenImageIO
-from PySide2 import QtWidgets, QtGui
+from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 
@@ -25,12 +23,12 @@ dependencies = (
 def initialize(mode):
     """Initializes the components required to run Bookmarks.
 
-    It is important to call this function before running the app as it is responsible
+    It's important to call this function before running the app as it's responsible
     for loading the resource variables and starting the helper threads item models use
     to load information.
 
     Note:
-        Don't forget to call :func:`uninitialize` before terminating the application,
+        Don't forget to call :func:`shutdown` before terminating the application,
         to gracefully stop threads and remove previously initialized components from the
         memory.
 
@@ -46,38 +44,41 @@ def initialize(mode):
 
         common.initialize(common.StandaloneMode)
         common.main_widget.show()
-        common.uninitialize()
+        common.shutdown()
 
 
     Args:
-        mode (str): The initialization mode. One of :attr:`~bookmarks.common.core.StandaloneMode`
-            or :attr:`~bookmarks.common.core.EmbeddedMode`.
+        mode (str): The initialization mode. One of :attr:`~bookmarks.common.core.StandaloneMode`,
+            :attr:`~bookmarks.common.core.EmbeddedMode`, or :attr:`~bookmarks.common.core.CoreMode`.
 
     """
-    from . import verify_dependencies
-    verify_dependencies()
 
     if common.init_mode is not None:
         raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
-    if mode not in (common.StandaloneMode, common.EmbeddedMode):
+    if mode not in (common.StandaloneMode, common.EmbeddedMode, common.CoreMode):
         raise ValueError(
             f'Invalid initialization mode. Got "{mode}", expected '
-            f'`StandaloneMode` or `EmbeddedMode`'
+            f'`StandaloneMode` or `EmbeddedMode` or `CoreMode`.'
         )
 
+    print('[Bookmarks] Initializing...')
     common.init_mode = mode
 
     _init_config()
 
-    common.cursor = QtGui.QCursor()
     common.item_data = common.DataDict()
 
     if not os.path.isdir(common.temp_path()):
         os.makedirs(os.path.normpath(common.temp_path()))
 
-    common.init_signals()
+    common.init_signals(connect_signals=mode != common.CoreMode)
     common.init_active_mode()
     common.init_settings()
+
+    if mode == common.CoreMode:
+        return
+
+    common.cursor = QtGui.QCursor()
 
     _init_ui_scale()
     _init_dpi()
@@ -86,9 +87,31 @@ def initialize(mode):
     images.init_image_cache()
     images.init_resources()
 
-    from .. import standalone
     if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
-        standalone.BookmarksApp([])
+        from .. import standalone
+        standalone.set_application_properties()
+
+        app = QtWidgets.QApplication(sys.argv)
+
+        standalone.set_application_properties(app=app)
+
+        app.setApplicationName(common.product.title())
+
+        app.setOrganizationName(common.organization)
+
+        app.setOrganizationDomain(common.organization_domain)
+        app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
+        app.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
+        app.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
+        app.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
+
+        standalone.set_model_id()
+        standalone.set_window_icon(app)
+
+        app.eventFilter = standalone.global_event_filter
+        app.installEventFilter(app)
+
     elif not QtWidgets.QApplication.instance():
         raise RuntimeError('No QApplication instance found.')
 
@@ -113,59 +136,74 @@ def initialize(mode):
 
     # Wait for all threads to spin up before continuing
     n = 0.0
+    i = 0.01
+    now = time.time()
+    timeout = now + 10.0
     while not all(f.isRunning() for f in _threads):
-        n += 0.1
-        time.sleep(0.1)
-        if n > 2.0:
+        n += i
+        time.sleep(i)
+        if n >= timeout:
             break
 
 
-def initialize_core():
-    """"""
-    if common.init_mode is not None:
-        raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
-
-    common.init_mode = common.EmbeddedMode
-
-    _init_config()
-
-    common.item_data = common.DataDict()
-
-    if not os.path.isdir(common.temp_path()):
-        os.makedirs(os.path.normpath(common.temp_path()))
-
-    common.init_signals(connect_signals=False)
-    common.init_active_mode()
-    common.init_settings()
-
-
-def uninitialize():
+def shutdown():
     """Un-initializes all app components.
 
     """
-    from ..threads import threads
-    threads.quit_threads()
+    print('[Bookmarks] Shutting down...')
 
-    from .. import database
-    database.remove_all_connections()
+    common.settings.sync()
 
     try:
-        common.main_widget.hide()
-        common.main_widget.deleteLater()
-    except:
-        pass
-    common.main_widget = None
+        from ..threads import threads
+        threads.quit_threads()
+    except Exception as e:
+        print(f'Error quitting threads: {e}')
 
-    if common.init_mode == common.StandaloneMode:
-        QtWidgets.QApplication.instance().quit()
+    try:
+        from .. import database
+        database.remove_all_connections()
+    except Exception as e:
+        print(f'Error removing database connections: {e}')
 
-    common.Timer.delete_timers()
+    try:
+        if common.main_widget:
+            common.main_widget.hide()
+            common.main_widget.deleteLater()
+            common.main_widget = None
+    except Exception as e:
+        print(f'Error deleting main widget: {e}')
 
-    # This should reset all the object caches to their initial values
-    for k, v in common.__initial_values__.items():
-        setattr(common, k, v)
+    try:
+        if common.tray_widget:
+            common.tray_widget.hide()
+            common.tray_widget.deleteLater()
+            common.tray_widget = None
+    except Exception as e:
+        print(f'Error deleting tray widget: {e}')
 
-    common.remove_lock()
+    try:
+        common.Timer.delete_timers()
+    except Exception as e:
+        print(f'Error deleting timers: {e}')
+
+    try:
+        # This should reset all the object caches to their initial values
+        for k, v in common.__initial_values__.items():
+            setattr(common, k, v)
+    except Exception as e:
+        print(f'Error restoring module defaults: {e}')
+
+    try:
+        common.remove_lock()
+    except Exception as e:
+        print(f'Error removing lock file: {e}')
+
+    try:
+        if QtWidgets.QApplication.instance() and common.init_mode == common.StandaloneMode:
+            QtWidgets.QApplication.instance().exit(1)
+    except Exception as e:
+        print(f'Error quitting QApplication: {e}')
 
 
 def _init_config():
@@ -230,19 +268,3 @@ def _add_path_to_path(v, p):
 
     if _v.lower() not in os.environ['PATH'].lower():
         os.environ['PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
-
-
-def verify_dependencies():
-    """Checks the presence of all required python modules.
-
-    Raises:
-        ModuleNotFoundError: When a required python library was not found.
-
-    """
-    for mod in dependencies:
-        try:
-            importlib.import_module(mod)
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}'
-            ) from e

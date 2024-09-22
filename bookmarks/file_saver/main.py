@@ -211,7 +211,7 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'file_saver/extension',
                         'validator': None,
                         'widget': widgets.FormatComboBox,
-                        'placeholder': 'File extension, for example \'exr\'',
+                        'placeholder': 'File extension, for example, \'exr\'',
                         'description': 'A file extension, without the leading dot. for example'
                                        ' \'ma\'',
                     },
@@ -222,7 +222,7 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'description',
                         'validator': None,
                         'widget': ui.LineEdit,
-                        'placeholder': 'A short description, for example \'Compositing files\'',
+                        'placeholder': 'A short description, for example, \'Compositing files\'',
                         'description': 'A short description of the file\'s '
                                        'contents.\nIndicate significant changes and '
                                        'notes here.',
@@ -232,7 +232,7 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'file_saver/element',
                         'validator': base.text_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'The element being saved, for example \'CastleInterior\'',
+                        'placeholder': 'The element being saved, for example, \'CastleInterior\'',
                         'description': 'The name of the element being saved. for example, '
                                        '\'ForegroundTower\', or \'BackgroundElements\'',
                     },
@@ -241,9 +241,9 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'version',
                         'validator': base.version_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'A version number, for example \'v001\'',
+                        'placeholder': 'A version number, for example, \'v001\'',
                         'description': 'A version number with, or without, '
-                                       'a preceding \'v\'. for example \'v001\'.',
+                                       'a preceding \'v\'. for example, \'v001\'.',
                         'button': '+',
                         'button2': '-',
                     },
@@ -252,8 +252,8 @@ class FileSaverWidget(base.BasePropertyEditor):
                         'key': 'file_saver/user',
                         'validator': base.text_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Your name, for example \'JohnDoe\'',
-                        'description': 'The name of the current user, for example \'JohnDoe\','
+                        'placeholder': 'Your name, for example, \'JohnDoe\'',
+                        'description': 'The name of the current user, for example, \'JohnDoe\','
                                        ' or \'JD\'',
                     },
                 },

@@ -804,7 +804,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
 
         cmds.select(clear=True)
 
-        # make sure the selection is a transformable node (for example not a shape)
+        # make sure the selection is a transformable node (for example, not a shape)
         if not cmds.listRelatives(node, shapes=True):
             raise RuntimeError('Please select a transformable node.')
 

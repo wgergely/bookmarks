@@ -190,13 +190,16 @@ def quit_threads():
             thread.wait()
 
     n = 0
-    while any([get_thread(k).isRunning() for k in THREADS]):
-        if n >= 20:
+    i = 0.01
+    now = time.time()
+    timeout = now + 10.0
+    while any(get_thread(k).isRunning() for k in THREADS):
+        n += i
+        time.sleep(i)
+        if n >= timeout:
             for thread in THREADS.values():
                 thread.terminate()
             break
-        n += 1
-        time.sleep(0.3)
 
 
 def get_thread(k):

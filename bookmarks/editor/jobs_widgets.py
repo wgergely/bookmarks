@@ -93,7 +93,7 @@ class AddServerDialog(QtWidgets.QDialog):
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText(
-            'Enter the path to a server, for example \'//my_server/jobs\''
+            'Enter the path to a server, for example, \'//my_server/jobs\''
         )
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
@@ -521,8 +521,8 @@ class AddJobDialog(base.BasePropertyEditor):
                         'key': None,
                         'validator': base.job_name_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'Name, for example `MY_NEW_JOB`',
-                        'description': 'The job\'s name, for example `MY_NEW_JOB`.',
+                        'placeholder': 'Name, for example, `MY_NEW_JOB`',
+                        'description': 'The job\'s name, for example, `MY_NEW_JOB`.',
                     },
                 },
                 1: {

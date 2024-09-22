@@ -257,7 +257,7 @@ class PublishWidget(base.BasePropertyEditor):
                         'key': 'element',
                         'validator': base.text_validator,
                         'widget': ui.LineEdit,
-                        'placeholder': 'The element being published, for example \'CastleInterior\'',
+                        'placeholder': 'The element being published, for example, \'CastleInterior\'',
                         'description': 'The name of the element being published. E.g., '
                                        '\'ForegroundTower\', or \'BackgroundElements\'',
                     },
@@ -556,7 +556,7 @@ class PublishWidget(base.BasePropertyEditor):
                 dest,
                 source_color_space='',
                 target_color_space='sRGB',
-                size=int(common.thumbnail_size)
+                size=int(common.size_thumbnail)
             )
             if error == 1:
                 print(f'Error: Could not convert {temp}')

@@ -54,7 +54,7 @@ class MessageBox(QtWidgets.QDialog):
 
         # Shadow effect
         self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
-        self.effect.setBlurRadius(common.size(common.size_margin) * 2)
+        self.effect.setBlurRadius(common.Size.Margin(2.0))
         self.effect.setXOffset(0)
         self.effect.setYOffset(0)
         self.effect.setColor(QtGui.QColor(0, 0, 0, 200))
@@ -75,17 +75,17 @@ class MessageBox(QtWidgets.QDialog):
         if obj == self and event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
-            pen = QtGui.QPen(common.color(common.color_blue))
-            pen.setWidthF(common.size(common.size_separator) * 2)
+            pen = QtGui.QPen(common.Color.Blue())
+            pen.setWidthF(common.Size.Separator(2.0))
             painter.setPen(pen)
 
             rect = self.rect().adjusted(
-                common.size(common.size_margin * 1.5),
-                common.size(common.size_margin * 1.5),
-                -common.size(common.size_margin * 1.5),
-                -common.size(common.size_margin * 1.5)
+                common.Size.Margin(1.5),
+                common.Size.Margin(1.5),
+                -common.Size.Margin(1.5),
+                -common.Size.Margin(1.5)
             )
-            o = int(common.size(common.size_indicator))
+            o = int(common.Size.Indicator())
 
             # Get the background color set by the stylesheet
             color = self.palette().color(QtGui.QPalette.Background)
@@ -102,10 +102,10 @@ class MessageBox(QtWidgets.QDialog):
     def _create_ui(self):
         self.setLayout(QtWidgets.QHBoxLayout())
 
-        o = common.size(common.size_margin) * 2
+        o = common.Size.Margin(2.0)
         self.layout().setContentsMargins(o, o, o, o)
 
-        o = common.size(common.size_margin) * 0.5
+        o = common.Size.Margin(0.5)
         self.layout().setSpacing(o)
 
         # Main Row
@@ -118,12 +118,12 @@ class MessageBox(QtWidgets.QDialog):
         pixmap = images.rsc_pixmap(
             self.icon,
             self.palette().color(QtGui.QPalette.Text),
-            common.size(common.size_row_height * 1.5),
+            common.Size.RowHeight(1.5),
             opacity=0.5
         )
         label.setPixmap(pixmap)
-        label.setFixedWidth(common.size(common.size_row_height * 1.5))
-        label.setFixedHeight(common.size(common.size_row_height * 1.5))
+        label.setFixedWidth(common.Size.RowHeight(1.5))
+        label.setFixedHeight(common.Size.RowHeight(1.5))
 
         main_row.layout().addWidget(label, 0)
 
@@ -151,7 +151,7 @@ class MessageBox(QtWidgets.QDialog):
         columns.layout().addWidget(self.title_label, 1)
         columns.layout().addWidget(self.body_label, 1)
         columns.layout().addStretch()
-        columns.layout().addSpacing(common.size(common.size_margin))
+        columns.layout().addSpacing(common.Size.Margin())
         main_row.layout().addWidget(columns, 1)
 
         if self.buttons:
@@ -218,8 +218,8 @@ class MessageBox(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width * 0.90),
-            common.size(common.size_height * 0.66)
+            common.Size.DefaultWidth(0.90),
+            common.Size.DefaultHeight(0.66)
         )
 
     def showEvent(self, event):
@@ -239,7 +239,7 @@ class MessageBox(QtWidgets.QDialog):
 
 class Label(QtWidgets.QLabel):
     def __init__(
-            self, text, color=common.color(common.color_secondary_text), parent=None
+            self, text, color=common.Color.SecondaryText(), parent=None
     ):
         super().__init__(text, parent=parent)
 
@@ -256,21 +256,19 @@ class Label(QtWidgets.QLabel):
         if not isEnabled:
             self.setStyleSheet(
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
-                    common.rgb(self._color),
-                    common.size(common.size_font_small),
-                    common.font_db.medium_font(
-                        common.size(common.size_font_medium)
+                    common.Color.rgb(self._color),
+                    common.Size.SmallText(),
+                    common.Font.MediumFont(
+                        common.Size.MediumText()
                     )[0].family()
                 )
             )
         else:
             self.setStyleSheet(
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
-                    common.rgb(self.color),
-                    common.size(common.size_font_small),
-                    common.font_db.medium_font(
-                        common.size(common.size_font_medium)
-                    )[0].family()
+                    common.Color.rgb(self.color),
+                    common.Size.SmallText(),
+                    common.Font.MediumFont(common.Size.MediumText())[0].family()
                 )
             )
         self.update()
@@ -297,13 +295,44 @@ class Label(QtWidgets.QLabel):
 class LineEdit(QtWidgets.QLineEdit):
     """Custom line edit widget with a single underline."""
 
-    def __init__(self, parent=None):
+    def __init__(self, required=False, parent=None):
         super().__init__(parent=parent)
+        self._required = required
+        self._warning_action = None
+
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
         self.setAlignment(QtCore.Qt.AlignLeft)
+
+        if required:
+            self.set_warning()
+
+        self.textChanged.connect(self._on_text_changed)
+
+    def set_warning(self):
+        if not self._required:
+            return
+        icon = get_icon('alert', color=common.Color.LightYellow())
+        self._warning_action = QtWidgets.QAction(self)
+        self._warning_action.setIcon(icon)
+        self.addAction(self._warning_action, QtWidgets.QLineEdit.LeadingPosition)
+
+    def remove_warning(self):
+        if not self._required:
+            return
+
+        if self._warning_action:
+            self.removeAction(self._warning_action)
+            self._warning_action = None
+
+    @QtCore.Slot(str)
+    def _on_text_changed(self, text):
+        if text:
+            self.remove_warning()
+        else:
+            self.set_warning()
 
 
 class PaintedButton(QtWidgets.QPushButton):
@@ -338,38 +367,36 @@ class PaintedButton(QtWidgets.QPushButton):
         o = 0.3 if disabled else o
         painter.setOpacity(o)
 
-        painter.setBrush(common.color(common.color_dark_background))
-        _color = QtGui.QColor(common.color(common.color_separator))
-        _color.setAlpha(150)
-        pen = QtGui.QPen(_color)
-        pen.setWidthF(common.size(common.size_separator))
-        painter.setPen(pen)
-
-        o = common.size(common.size_separator)
-        rect = self.rect().adjusted(o, o, -o, -o)
-
-        o = common.size(common.size_indicator) * 1.5
-        painter.drawRoundedRect(rect, o, o)
+        painter.setBrush(common.Color.DarkBackground())
 
         if focus:
-            painter.setBrush(QtCore.Qt.NoBrush)
-            pen = QtGui.QPen(common.color(common.color_blue))
-            pen.setWidthF(common.size(common.size_separator))
-            painter.setPen(pen)
-            painter.drawRoundedRect(rect, o, o)
+            _color = common.Color.Blue()
+        else:
+            _color = common.Color.VeryDarkBackground()
+            _color.setAlpha(150)
+
+        pen = QtGui.QPen(_color)
+        pen.setWidthF(common.Size.Separator(2.0))
+        painter.setPen(pen)
+
+        o = common.Size.Separator()
+        rect = self.rect().adjusted(o, o, -o, -o)
+
+        o = common.Size.Indicator(1.5)
+        painter.drawRoundedRect(rect, o, o)
 
         rect = QtCore.QRect(self.rect())
         center = rect.center()
-        rect.setWidth(rect.width() - (common.size(common.size_indicator) * 2))
+        rect.setWidth(rect.width() - (common.Size.Indicator(2.0)))
         rect.moveCenter(center)
 
         common.draw_aliased_text(
             painter,
-            common.font_db.bold_font(common.size(common.size_font_medium))[0],
+            common.Font.MediumFont(common.Size.MediumText())[0],
             rect,
             self.text(),
             QtCore.Qt.AlignCenter,
-            common.color(common.color_text)
+            common.Color.Text()
         )
 
         painter.end()
@@ -382,8 +409,8 @@ class PaintedLabel(QtWidgets.QLabel):
     clicked = QtCore.Signal()
 
     def __init__(
-            self, text, color=common.color(common.color_text),
-            size=common.size(common.size_font_medium),
+            self, text, color=common.Color.Text(),
+            size=common.Size.MediumText(),
             parent=None
     ):
         super().__init__(text, parent=parent)
@@ -409,12 +436,13 @@ class PaintedLabel(QtWidgets.QLabel):
             super().setFixedWidth(self._fixed_width)
             return
 
-        font, metrics = common.font_db.bold_font(self._size)
+        font, metrics = common.Font.MediumFont(self._size)
         self.setFixedHeight(metrics.height())
         super().setFixedWidth(
             metrics.horizontalAdvance(self._text) +
-            common.size(common.size_indicator) * 2
+            common.Size.Indicator(2.0)
         )
+
     def setFixedWidth(self, v):
         self._fixed_width = v
         super().setFixedWidth(v)
@@ -439,10 +467,10 @@ class PaintedLabel(QtWidgets.QLabel):
         painter.setOpacity(o)
 
         rect = self.rect()
-        rect.setLeft(rect.left() + common.size(common.size_indicator))
+        rect.setLeft(rect.left() + common.Size.Indicator())
         common.draw_aliased_text(
             painter,
-            common.font_db.bold_font(self._size)[0],
+            common.Font.MediumFont(self._size)[0],
             self.rect(),
             self._text,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
@@ -678,7 +706,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         rect = self.rect().adjusted(o, o, -o, -o)
         text = QtGui.QFontMetrics(self.font()).elidedText(
             message,
@@ -688,7 +716,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
 
         painter.setOpacity(0.66)
         painter.setBrush(QtCore.Qt.NoBrush)
-        painter.setPen(common.color(common.color_secondary_text))
+        painter.setPen(common.Color.SecondaryText())
         painter.drawText(
             rect,
             QtCore.Qt.AlignCenter,
@@ -722,7 +750,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             QtGui.QPainter.SmoothPixmapTransform, on=True
         )
 
-        o = common.size(common.size_indicator)
+        o = common.Size.Indicator()
         rect = option.rect.adjusted(o * 0.3, o * 0.3, -o * 0.3, -o * 0.3)
 
         # Background
@@ -734,19 +762,19 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             painter.setPen(QtCore.Qt.NoPen)
 
             if selected or hover:
-                color = common.color(common.color_light_background)
+                color = common.Color.LightBackground()
             elif opened:
-                color = common.color(common.color_separator)
+                color = common.Color.VeryDarkBackground()
             else:
-                color = QtGui.QColor(0, 0, 0, 0)
+                color = common.Color.Transparent()
 
             painter.setBrush(color)
             painter.drawRoundedRect(rect, o, o)
 
             if focus:
                 painter.setBrush(QtCore.Qt.NoBrush)
-                pen = QtGui.QPen(common.color(common.color_blue))
-                pen.setWidthF(common.size(common.size_separator))
+                pen = QtGui.QPen(common.Color.Blue())
+                pen.setWidthF(common.Size.Separator())
                 painter.setPen(pen)
                 painter.drawRoundedRect(rect, o, o)
 
@@ -758,18 +786,18 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         rect.setWidth(rect.height())
         center = rect.center()
 
-        h = common.size(common.size_margin)
+        h = common.Size.Margin()
         rect.setSize(QtCore.QSize(h, h))
         rect.moveCenter(center)
 
         if checkable and checked:
             pixmap = images.rsc_pixmap(
-                'check', common.color(common.color_green), rect.height()
+                'check', common.Color.Green(), rect.height()
             )
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
             pixmap = images.rsc_pixmap(
-                'close', common.color(common.color_background), rect.height()
+                'close', common.Color.Background(), rect.height()
             )
             painter.drawPixmap(rect, pixmap)
         elif not checkable and decoration and isinstance(decoration, QtGui.QPixmap):
@@ -789,19 +817,17 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             )
 
         _fg = index.data(QtCore.Qt.ForegroundRole)
-        color = _fg if _fg else common.color(common.color_text)
-        color = common.color(common.color_selected_text) if selected else color
-        color = common.color(common.color_text) if checked else color
-        color = common.color(common.color_selected_text) if opened else color
+        color = _fg if _fg else common.Color.Text()
+        color = common.Color.SelectedText() if selected else color
+        color = common.Color.Text() if checked else color
+        color = common.Color.SelectedText() if opened else color
         painter.setBrush(color)
 
         # Label
-        padding = common.size(common.size_indicator) * 2
+        padding = common.Size.Indicator(2.0)
         x = rect.right() + padding
 
-        font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small)
-        )
+        font, metrics = common.Font.MediumFont(common.Size.SmallText())
 
         width = option.rect.width() - (rect.right() - option.rect.left()) - padding * 2
         text = metrics.elidedText(
@@ -826,13 +852,13 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         if index.isValid() and index.data(QtCore.Qt.SizeHintRole):
             height = index.data(QtCore.Qt.SizeHintRole).height() * x
         else:
-            height = common.size(common.size_row_height) * x
+            height = common.Size.RowHeight(x)
 
-        padding = common.size(common.size_indicator) * 2
+        padding = common.Size.Indicator(2.0)
         if index.data(QtCore.Qt.DisplayRole):
-            _, metrics = common.font_db.bold_font(common.size(common.size_font_small))
+            _, metrics = common.Font.MediumFont(common.Size.SmallText())
             text_width = metrics.boundingRect(index.data(QtCore.Qt.DisplayRole)).width()
-            width = padding + common.size(common.size_margin) + padding + text_width + padding
+            width = padding + common.Size.Margin() + padding + text_width + padding
         else:
             width = 0
         return QtCore.QSize(width, height)
@@ -845,7 +871,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         editor.setWindowFlags(QtCore.Qt.Widget)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         editor.setStyleSheet(
-            f'background-color: {common.rgb(common.color_separator)};'
+            f'background-color: {common.Color.VeryDarkBackground(qss=True)};'
             f'height: {option.rect.height()}px;'
         )
         return editor
@@ -937,20 +963,18 @@ class ListWidget(QtWidgets.QListWidget):
         item.setCheckState(QtCore.Qt.Unchecked)
 
     def addItem(
-            self, label, icon=None, color=common.color(common.color_secondary_text)
+            self, label, icon=None, color=common.Color.SecondaryText()
     ):
         if isinstance(label, QtWidgets.QListWidgetItem):
             return super().addItem(label)
 
-        _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small)
-        )
+        _, metrics = common.Font.MediumFont(common.Size.SmallText())
         width = metrics.horizontalAdvance(
             label
-        ) + common.size(common.size_row_height) + common.size(common.size_margin)
+        ) + common.Size.RowHeight() + common.Size.Margin()
         item = QtWidgets.QListWidgetItem(label)
 
-        size = QtCore.QSize(width, common.size(common.size_row_height))
+        size = QtCore.QSize(width, common.Size.RowHeight())
         item.setData(QtCore.Qt.SizeHintRole, size)
 
         if icon:
@@ -960,8 +984,8 @@ class ListWidget(QtWidgets.QListWidget):
             pixmap = images.rsc_pixmap(
                 icon,
                 color,
-                common.size(common.size_row_height) -
-                (common.size(common.size_indicator) * 2)
+                common.Size.RowHeight() -
+                (common.Size.Indicator(2.0))
             )
             item.setData(QtCore.Qt.DecorationRole, pixmap)
         else:
@@ -1067,7 +1091,7 @@ class ListViewWidget(QtWidgets.QListView):
             return
         item.setCheckState(QtCore.Qt.Unchecked)
 
-    def addItem(self, v, icon=None, color=common.color(common.color_secondary_text)):
+    def addItem(self, v, icon=None, color=common.Color.SecondaryText()):
         common.check_type(v, (str, QtGui.QStandardItem))
         common.check_type(icon, (QtGui.QPixmap, QtGui.QIcon, str, None))
         common.check_type(color, (QtGui.QColor, None))
@@ -1076,16 +1100,12 @@ class ListViewWidget(QtWidgets.QListView):
             self.model().sourceModel().appendRow(v)
             return
 
-        _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small)
-        )
-        width = metrics.horizontalAdvance(v) + common.size(
-            common.size_row_height
-        ) + common.size(common.size_margin)
+        _, metrics = common.Font.MediumFont(common.Size.SmallText())
+        width = metrics.horizontalAdvance(v) + common.Size.RowHeight() + common.Size.Margin()
 
         item = QtGui.QStandardItem(v)
 
-        size = QtCore.QSize(width, common.size(common.size_row_height))
+        size = QtCore.QSize(width, common.Size.RowHeight())
         item.setData(size, role=QtCore.Qt.SizeHintRole)
 
         if isinstance(icon, str):
@@ -1095,8 +1115,8 @@ class ListViewWidget(QtWidgets.QListView):
             pixmap = images.rsc_pixmap(
                 icon,
                 color,
-                common.size(common.size_row_height) -
-                (common.size(common.size_indicator) * 2)
+                common.Size.RowHeight() -
+                (common.Size.Indicator(2.0))
             )
             item.setData(pixmap, role=QtCore.Qt.DecorationRole)
         elif isinstance(icon, (QtGui.QIcon, QtGui.QPixmap)):
@@ -1116,8 +1136,8 @@ class ListViewWidget(QtWidgets.QListView):
 
 def get_icon(
         name,
-        color=common.color(common.color_disabled_text),
-        size=common.size(common.size_row_height) * 2,
+        color=common.Color.DisabledText(),
+        size=common.Size.RowHeight(2.0),
         opacity=1.0,
         resource=common.GuiResource
 ):
@@ -1146,14 +1166,14 @@ def get_icon(
     )
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
 
-    _c = common.color(common.color_selected_text) if color else None
+    _c = common.Color.SelectedText() if color else None
     pixmap = images.rsc_pixmap(
         name, _c, size, opacity=opacity, resource=resource
     )
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Active)
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected)
 
-    _c = common.color(common.color_separator) if color else None
+    _c = common.Color.VeryDarkBackground() if color else None
     pixmap = images.rsc_pixmap(
         'close', _c, size, opacity=0.5, resource=common.GuiResource
     )
@@ -1164,7 +1184,7 @@ def get_icon(
     return common.image_cache[images.IconType][k]
 
 
-def get_group(parent=None, vertical=True, margin=common.size(common.size_margin)):
+def get_group(parent=None, vertical=True, margin=common.Size.Margin()):
     """Utility method for creating a group widget.
 
     Returns:
@@ -1172,7 +1192,7 @@ def get_group(parent=None, vertical=True, margin=common.size(common.size_margin)
 
     """
     grp = QtWidgets.QGroupBox(parent=parent)
-    grp.setMinimumWidth(common.size(common.size_width) * 0.3)
+    grp.setMinimumWidth(common.Size.DefaultWidth(0.3))
 
     if vertical:
         QtWidgets.QVBoxLayout(grp)
@@ -1193,8 +1213,8 @@ def get_group(parent=None, vertical=True, margin=common.size(common.size_margin)
 
 def add_row(
         label,
-        color=common.color(common.color_secondary_text),
-        height=common.size(common.size_row_height),
+        color=common.Color.SecondaryText(),
+        height=common.Size.RowHeight(),
         cls=None,
         vertical=False,
         parent=None,
@@ -1212,12 +1232,13 @@ def add_row(
 
     if vertical:
         QtWidgets.QVBoxLayout(w)
+        w.layout().setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignTop)
     else:
         QtWidgets.QHBoxLayout(w)
+        w.layout().setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
 
     w.layout().setContentsMargins(0, 0, 0, 0)
-    w.layout().setSpacing(common.size(common.size_indicator))
-    w.layout().setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+    w.layout().setSpacing(common.Size.Indicator())
 
     w.setSizePolicy(
         QtWidgets.QSizePolicy.MinimumExpanding,
@@ -1232,11 +1253,11 @@ def add_row(
     if label:
         l = PaintedLabel(
             label,
-            size=common.size(common.size_font_small),
+            size=common.Size.SmallText(),
             color=color,
             parent=parent
         )
-        l.setFixedWidth(common.size(common.size_margin) * 8.6667)
+        l.setFixedWidth(common.Size.Margin(8.6667))
         w.layout().addWidget(l, 0)
 
     if parent:
@@ -1253,7 +1274,7 @@ def add_label(text, parent=None):
 
     """
     label = QtWidgets.QLabel(text, parent=parent)
-    label.setFixedHeight(common.size(common.size_row_height))
+    label.setFixedHeight(common.Size.RowHeight())
     label.setSizePolicy(
         QtWidgets.QSizePolicy.Expanding,
         QtWidgets.QSizePolicy.Expanding
@@ -1277,22 +1298,37 @@ def add_line_edit(label, parent=None):
 
 
 def add_description(
-        text, label=' ', height=None, color=common.color(common.color_secondary_text), parent=None
+        text, icon=None, label=' ', height=None, color=common.Color.SecondaryText(), parent=None
 ):
     """Utility method for adding a description field.
 
+    Args:
+        text (str): The text to display.
+        icon (QIcon): The icon to display.
+        label (str): The label to display.
+        height (int): The height of the widget.
+        color (QColor): The color of the text.
+        parent (QWidget): The parent widget.
+
     Returns:
-        QLabel: the added QLabel.
+        QWidget: The newly created widget.
 
     """
     row = add_row(label, height=height, parent=parent)
     row.layout().setSpacing(0)
 
-    label = Label(text, color=color, parent=parent)
-    row.layout().addWidget(label, 1)
-    parent.layout().addWidget(row, 1)
+    if icon:
+        label_ = QtWidgets.QLabel(parent=parent)
+        label_.setPixmap(icon.pixmap(common.Size.Margin()))
+        row.layout().addWidget(label_, 0)
+
+    _label = Label(text, color=color, parent=parent)
+    _label.setTextFormat(QtCore.Qt.RichText)
+    _label.setFocusPolicy(QtCore.Qt.NoFocus)
+    row.layout().addWidget(_label, 1)
+
+    parent.layout().addWidget(row, 0)
     row.setFocusPolicy(QtCore.Qt.NoFocus)
-    label.setFocusPolicy(QtCore.Qt.NoFocus)
     return row
 
 
@@ -1309,8 +1345,8 @@ def paint_background_icon(name, widget):
 
     pixmap = images.rsc_pixmap(
         name,
-        common.color(common.color_opaque),
-        common.size(common.size_row_height) * 3
+        common.Color.Opaque(),
+        common.Size.RowHeight(3.0)
     )
     rect = pixmap.rect()
     rect.moveCenter(widget.rect().center())
@@ -1331,7 +1367,7 @@ class GalleryItem(QtWidgets.QLabel):
     clicked = QtCore.Signal(str)
 
     def __init__(
-            self, label, data, thumbnail, height=common.size(common.size_row_height) * 2,
+            self, label, data, thumbnail, height=common.Size.RowHeight(2.0),
             parent=None
     ):
         super().__init__(parent=parent)
@@ -1410,11 +1446,11 @@ class GalleryItem(QtWidgets.QLabel):
             return
 
         # Paint the item's label when the mouse is over it
-        painter.setPen(common.color(common.color_text))
+        painter.setPen(common.Color.Text())
         rect = self.rect()
         rect.moveTopLeft(rect.topLeft() + QtCore.QPoint(1, 1))
 
-        font, _ = common.font_db.bold_font(common.size(common.size_font_medium))
+        font, _ = common.Font.MediumFont(common.Size.MediumText())
 
         common.draw_aliased_text(
             painter,
@@ -1432,7 +1468,7 @@ class GalleryItem(QtWidgets.QLabel):
             rect,
             self._label,
             QtCore.Qt.AlignCenter,
-            common.color(common.color_selected_text),
+            common.Color.SelectedText(),
         )
 
         painter.end()
@@ -1448,7 +1484,7 @@ class GalleryWidget(QtWidgets.QDialog):
     itemSelected = QtCore.Signal(str)
 
     def __init__(
-            self, label, columns=5, item_height=common.size(common.size_row_height) * 2,
+            self, label, columns=5, item_height=common.Size.RowHeight(2.0),
             parent=None
     ):
         super().__init__(parent=parent)
@@ -1479,7 +1515,7 @@ class GalleryWidget(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin) * 2
+        o = common.Size.Margin(2.0)
 
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
@@ -1488,17 +1524,17 @@ class GalleryWidget(QtWidgets.QDialog):
 
         label = PaintedLabel(
             self._label,
-            color=common.color(common.color_text),
-            size=common.size(common.size_font_large),
+            color=common.Color.Text(),
+            size=common.Size.LargeText(),
             parent=self
         )
         self.layout().addWidget(label)
-        self.layout().addSpacing(common.size(common.size_margin) * 1.5)
+        self.layout().addSpacing(common.Size.Margin(1.5))
 
         _width = (
-                (common.size(common.size_indicator) * 2) +
-                (common.size(common.size_margin) * 4) +
-                (common.size(common.size_indicator) * (self.columns - 1)) +
+                common.Size.Indicator(2.0) +
+                (common.Size.Margin(4.0)) +
+                (common.Size.Indicator(float(self.columns - 1))) +
                 self._item_height * self.columns
         )
 
@@ -1506,14 +1542,14 @@ class GalleryWidget(QtWidgets.QDialog):
         self.setMaximumWidth(_width)
 
         self.setMinimumHeight(
-            (common.size(common.size_indicator) * 2) +
-            (common.size(common.size_margin) * 4) +
+            (common.Size.Indicator(2.0)) +
+            (common.Size.Margin(4.0)) +
             self._item_height
         )
         self.setMaximumHeight(
-            (common.size(common.size_indicator) * 2) +
-            (common.size(common.size_margin) * 4) +
-            (common.size(common.size_indicator) * 9) +
+            (common.Size.Indicator(2.0)) +
+            (common.Size.Margin(4.0)) +
+            (common.Size.Indicator(9.0)) +
             (self._item_height * 10)
         )
 
@@ -1523,7 +1559,7 @@ class GalleryWidget(QtWidgets.QDialog):
         QtWidgets.QGridLayout(widget)
         widget.layout().setAlignment(QtCore.Qt.AlignCenter)
         widget.layout().setContentsMargins(0, 0, 0, 0)
-        widget.layout().setSpacing(common.size(common.size_indicator))
+        widget.layout().setSpacing(common.Size.Indicator())
 
         self.scroll_area = QtWidgets.QScrollArea(parent=self)
         self.scroll_area.setStyleSheet('border:none;')
@@ -1603,7 +1639,7 @@ class AbstractListModel(QtCore.QAbstractListModel):
 
     """
 
-    row_size = QtCore.QSize(1, common.size(common.size_row_height))
+    row_size = QtCore.QSize(1, common.Size.RowHeight())
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -1656,7 +1692,7 @@ class AbstractListModel(QtCore.QAbstractListModel):
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: label,
             QtCore.Qt.DecorationRole: None,
-            QtCore.Qt.ForegroundRole: common.color(common.color_disabled_text),
+            QtCore.Qt.ForegroundRole: common.Color.DisabledText(),
             QtCore.Qt.SizeHintRole: size,
             QtCore.Qt.UserRole: None,
             common.FlagsRole: QtCore.Qt.NoItemFlags

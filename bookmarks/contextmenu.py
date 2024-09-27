@@ -39,7 +39,7 @@ def resize_event_override(cls, event):
     # the rectangle must be translated and adjusted by 1 pixel to correctly
     # map the rounded shape
     rect = QtCore.QRectF(cls.rect()).adjusted(0.5, 0.5, -1.5, -1.5)
-    o = int(common.size(common.size_indicator) * 1.5)
+    o = int(common.Size.Indicator(1.5))
     path.addRoundedRect(rect, o, o)
 
     # QRegion is bitmap based, so the returned QPolygonF (which uses float values must
@@ -60,8 +60,8 @@ def show_event_override(cls, event):
     widths = []
     metrics = QtGui.QFontMetrics(cls.font())
 
-    menu_height = common.size(common.size_margin) * 2
-    icon_padding = common.size(common.size_margin)
+    menu_height = common.Size.Margin(2.0)
+    icon_padding = common.Size.Margin()
 
     show_icons = common.settings.value('settings/show_menu_icons')
     show_icons = not show_icons if show_icons is not None else True
@@ -281,7 +281,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         w = self.parent().window()
         on_top_active = w.windowFlags() & QtCore.Qt.WindowStaysOnTopHint
 
-        on_icon = ui.get_icon('check', color=common.color(common.color_green))
+        on_icon = ui.get_icon('check', color=common.Color.Green())
         logo_icon = ui.get_icon('icon')
 
         k = 'Window'
@@ -364,7 +364,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """List item sorting options.
 
         """
-        item_on_icon = ui.get_icon('check', color=common.color(common.color_green))
+        item_on_icon = ui.get_icon('check', color=common.Color.Green())
 
         m = self.parent().model().sourceModel()
         sort_order = m.sort_order()
@@ -532,7 +532,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        max_width = common.size(common.size_width) * 0.4
+        max_width = common.Size.DefaultWidth(0.4)
 
         k = 'Copy Path'
         if k not in self.menu:
@@ -552,7 +552,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][m] = {
                 'text': n,
                 'icon': ui.get_icon(
-                    'copy', color=common.color(common.color_separator)
+                    'copy', color=common.Color.VeryDarkBackground()
                 ),
                 'action': functools.partial(actions.copy_path, path, mode=mode),
             }
@@ -598,7 +598,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        on_icon = ui.get_icon('check', color=common.color(common.color_green))
+        on_icon = ui.get_icon('check', color=common.Color.Green())
         favourite_icon = ui.get_icon('favourite')
         archived_icon = ui.get_icon('archivedVisible')
 
@@ -643,7 +643,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
     def asset_progress_menu(self):
         on_icon = ui.get_icon('showbuttons')
-        off_icon = ui.get_icon('showbuttons', color=common.color(common.color_green))
+        off_icon = ui.get_icon('showbuttons', color=common.Color.Green())
         icon = on_icon if self.parent().progress_hidden() else off_icon
         t = 'Show' if self.parent().progress_hidden() else 'Hide'
 
@@ -661,7 +661,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """List item filter actions.
 
         """
-        item_on = ui.get_icon('check', color=common.color(common.color_green))
+        item_on = ui.get_icon('check', color=common.Color.Green())
         item_off = None
 
         k = 'List Filters'
@@ -930,7 +930,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[key()] = {
                 'text': 'Remove Thumbnail',
                 'action': actions.remove_thumbnail,
-                'icon': ui.get_icon('close', color=common.color(common.color_red))
+                'icon': ui.get_icon('close', color=common.Color.Red())
             }
         elif (
                 QtCore.QFileInfo(thumbnail_path).exists() and
@@ -948,7 +948,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Bookmark item properties editor.
 
         """
-        icon = ui.get_icon('add', color=common.color(common.color_green))
+        icon = ui.get_icon('add', color=common.Color.Green())
         self.menu[key()] = {
             'text': 'Edit Jobs...',
             'icon': icon,
@@ -983,7 +983,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         """
         expand_pixmap = ui.get_icon('expand')
-        collapse_pixmap = ui.get_icon('collapse', common.color(common.color_green))
+        collapse_pixmap = ui.get_icon('collapse', common.Color.Green())
 
         current_type = self.parent().model().sourceModel().data_type()
         groupped = current_type == common.SequenceItem
@@ -1010,13 +1010,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not common.active('asset'):
             return
 
-        item_on_pixmap = ui.get_icon('check', color=common.color(common.color_green))
+        item_on_pixmap = ui.get_icon('check', color=common.Color.Green())
         item_off_pixmap = ui.get_icon('folder')
 
         k = 'Select asset folder...'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon(
-            'folder', color=common.color(common.color_green)
+            'folder', color=common.Color.Green()
         )
 
         model = common.source_model(common.FileTab)
@@ -1055,7 +1055,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """
         self.menu[key()] = {
             'text': 'Remove from starred...',
-            'icon': ui.get_icon('close', color=common.color(common.color_red)),
+            'icon': ui.get_icon('close', color=common.Color.Red()),
             'checkable': False,
             'action': actions.toggle_favourite
         }
@@ -1092,7 +1092,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """
         self.menu[key()] = {
             'text': 'Add File...',
-            'icon': ui.get_icon('add', color=common.color(common.color_green)),
+            'icon': ui.get_icon('add', color=common.Color.Green()),
             'action': actions.show_add_file,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
@@ -1114,7 +1114,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         asset = self.index.data(common.ParentPathRole)[3]
         self.menu[key()] = {
             'text': 'Add Template File...',
-            'icon': ui.get_icon('add', color=common.color(common.color_green)),
+            'icon': ui.get_icon('add', color=common.Color.Green()),
             'action': functools.partial(actions.show_add_file, asset=asset)
         }
 
@@ -1274,7 +1274,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Add asset menu actions.
 
         """
-        add_pixmap = ui.get_icon('add', color=common.color(common.color_green))
+        add_pixmap = ui.get_icon('add', color=common.Color.Green())
         self.menu[key()] = {
             'icon': add_pixmap,
             'text': 'Add Asset...',
@@ -1342,7 +1342,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(
                 sg_actions.upload_thumbnail, sg_properties, thumbnail_path
             ),
-            'icon': ui.get_icon('sg', color=common.color(common.color_green)),
+            'icon': ui.get_icon('sg', color=common.Color.Green()),
         }
 
     def sg_url_menu(self):
@@ -1455,7 +1455,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
         self.menu[k][key()] = {
             'text': 'Link Assets with ShotGrid',
-            'icon': ui.get_icon('sg', color=common.color(common.color_green)),
+            'icon': ui.get_icon('sg', color=common.Color.Green()),
             'action': sg_actions.link_assets,
         }
 
@@ -1536,7 +1536,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[k][key()] = {
             'text': 'Publish Video',
-            'icon': ui.get_icon('sg', color=common.color(common.color_green)),
+            'icon': ui.get_icon('sg', color=common.Color.Green()),
             'action': functools.partial(sg_actions.publish, formats=('mp4', 'mov')),
         }
 
@@ -1592,7 +1592,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if akaconvert.KEY in os.environ and os.environ[akaconvert.KEY]:
             self.menu[key()] = {
                 'text': 'AkaConvert...',
-                'icon': ui.get_icon('studioaka', color=common.color(common.color_blue)),
+                'icon': ui.get_icon('studioaka', color=common.Color.Blue()),
                 'action': actions.convert_image_sequence_with_akaconvert
             }
 
@@ -1616,7 +1616,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         self.menu[key()] = {
-            'icon': ui.get_icon('close', color=common.color(common.color_red)),
+            'icon': ui.get_icon('close', color=common.Color.Red()),
             'text': 'Delete',
             'action': actions.delete_selected_files,
         }
@@ -1625,7 +1625,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Publish file item menu actions.
 
         """
-        pixmap = ui.get_icon('file', color=common.color(common.color_green))
+        pixmap = ui.get_icon('file', color=common.Color.Green())
         self.menu[key()] = {
             'icon': pixmap,
             'text': 'Publish...',

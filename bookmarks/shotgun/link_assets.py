@@ -17,7 +17,7 @@ instance = None
 NOT_LINKED = 'Not linked'
 CURRENT_VALUES = 'Linked (keep current values)'
 
-ROW_HEIGHT = common.size(common.size_row_height)
+ROW_HEIGHT = common.Size.RowHeight()
 ENTITY_TYPES = ('Asset', 'Shot', 'Sequence')
 
 
@@ -70,9 +70,9 @@ class TableWidget(QtWidgets.QTableWidget):
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
 
-        self.setColumnWidth(1, common.size(common.size_row_height))
-        self.setColumnWidth(2, common.size(common.size_width) * 0.4)
-        self.setColumnWidth(3, common.size(common.size_width) * 0.2)
+        self.setColumnWidth(1, common.Size.RowHeight())
+        self.setColumnWidth(2, common.Size.DefaultWidth(0.4))
+        self.setColumnWidth(3, common.Size.DefaultWidth(0.2))
 
         self.setShowGrid(False)
 
@@ -90,8 +90,8 @@ class TableWidget(QtWidgets.QTableWidget):
         _item.setFlags(QtCore.Qt.ItemIsEnabled)
         _item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         pixmap = images.rsc_pixmap(
-            'asset', common.color(common.color_dark_background),
-            common.size(common.size_margin)
+            'asset', common.Color.DarkBackground(),
+            common.Size.Margin()
         )
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
@@ -103,8 +103,8 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
         pixmap = images.rsc_pixmap(
-            'branch_closed', common.color(common.color_dark_background),
-            common.size(common.size_margin)
+            'branch_closed', common.Color.DarkBackground(),
+            common.Size.Margin()
         )
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
@@ -165,7 +165,7 @@ class LinkMultiple(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -427,6 +427,6 @@ class LinkMultiple(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_height)
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight()
         )

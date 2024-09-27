@@ -52,7 +52,7 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'icon': ui.get_icon('close', color=common.color(common.color_red)),
+            'icon': ui.get_icon('close', color=common.Color.Red()),
             'text': 'Clear History',
             'action': (
                 functools.partial(proxy.set_filter_text, ''),
@@ -68,21 +68,21 @@ class BaseControlButton(ui.ClickableIconButton):
             pixmap,
             description,
             color=(
-                    common.color(common.color_selected_text),
-                    common.color(common.color_disabled_text)
+                    common.Color.SelectedText(),
+                    common.Color.DisabledText()
             ),
             parent=None
     ):
         super().__init__(
             pixmap,
             color,
-            common.size(common.size_margin),
+            common.Size.Margin(),
             description=description,
             parent=parent
         )
         common.signals.updateTopBarButtons.connect(self.update)
 
-        self.setFixedWidth(common.size(common.size_margin) * 1.4)
+        self.setFixedWidth(common.Size.Margin(1.4))
 
 
 class FilterButton(BaseControlButton):
@@ -148,11 +148,11 @@ class ToggleSequenceButton(BaseControlButton):
         if self.state():
             return images.rsc_pixmap(
                 'collapse', self._on_color,
-                common.size(common.size_margin)
+                common.Size.Margin()
             )
         return images.rsc_pixmap(
             'expand', self._off_color,
-            common.size(common.size_margin)
+            common.Size.Margin()
         )
 
     def state(self):
@@ -193,12 +193,12 @@ class ToggleArchivedButton(BaseControlButton):
             return images.rsc_pixmap(
                 'archivedVisible',
                 self._on_color,
-                common.size(common.size_margin)
+                common.Size.Margin()
             )
         return images.rsc_pixmap(
             'archivedHidden',
             self._off_color,
-            common.size(common.size_margin)
+            common.Size.Margin()
         )
 
     def state(self):

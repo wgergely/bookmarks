@@ -60,7 +60,7 @@ class AddServerDialog(QtWidgets.QDialog):
 
         # Shadow effect
         self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
-        self.effect.setBlurRadius(common.size(common.size_margin) * 2)
+        self.effect.setBlurRadius(common.Size.Margin(2.0))
         self.effect.setXOffset(0)
         self.effect.setYOffset(0)
         self.effect.setColor(QtGui.QColor(0, 0, 0, 200))
@@ -76,18 +76,18 @@ class AddServerDialog(QtWidgets.QDialog):
 
         QtWidgets.QVBoxLayout(self)
 
-        o = common.size(common.size_margin)
-        _o = common.size(common.size_margin) * 3
+        o = common.Size.Margin()
+        _o = common.Size.Margin(3.0)
         self.layout().setSpacing(o)
         self.layout().setContentsMargins(_o, _o, _o, _o)
 
         self.ok_button = ui.PaintedButton('Add', parent=self)
         self.ok_button.setFixedHeight(
-            common.size(common.size_row_height) * 0.8
+            common.Size.RowHeight(0.8)
         )
         self.cancel_button = ui.PaintedButton('Cancel', parent=self)
         self.cancel_button.setFixedHeight(
-            common.size(common.size_row_height) * 0.8
+            common.Size.RowHeight(0.8)
         )
         self.pick_button = ui.PaintedButton('Pick', parent=self)
 
@@ -109,9 +109,9 @@ class AddServerDialog(QtWidgets.QDialog):
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_background))
+        painter.setBrush(common.Color.Background())
 
-        o = common.size(common.size_margin) * 2
+        o = common.Size.Margin(2.0)
         painter.drawRect(self.rect().adjusted(o, o, -o, -o))
         painter.end()
 
@@ -126,7 +126,7 @@ class AddServerDialog(QtWidgets.QDialog):
         self.pick_button.clicked.connect(self.pick)
         self.editor.textChanged.connect(
             lambda: self.editor.setStyleSheet(
-                f'color: {common.rgb(common.color_green)};'
+                f'color: {common.Color.Green(qss=True)};'
             )
         )
 
@@ -193,7 +193,7 @@ class AddServerDialog(QtWidgets.QDialog):
         # Indicate the selected item is invalid and keep the editor open
         self.editor.setStyleSheet(
             'color: {0}; border-color: {0}'.format(
-                common.rgb(common.color_red)
+                common.Color.Red(qss=True)
             )
         )
         self.editor.blockSignals(True)
@@ -224,8 +224,8 @@ class AddServerDialog(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_row_height) * 2
+            common.Size.DefaultWidth(),
+            common.Size.RowHeight(2.0)
         )
 
 
@@ -260,7 +260,7 @@ class ServersWidgetContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Add server...',
             'action': self.parent().add,
-            'icon': ui.get_icon('add', color=common.color(common.color_green))
+            'icon': ui.get_icon('add', color=common.Color.Green())
         }
 
     def reveal_menu(self):
@@ -278,7 +278,7 @@ class ServersWidgetContextMenu(contextmenu.BaseContextMenu):
         """
         self.menu['Remove'] = {
             'action': self.parent().remove,
-            'icon': ui.get_icon('close', color=common.color(common.color_red))
+            'icon': ui.get_icon('close', color=common.Color.Red())
         }
 
     def refresh_menu(self):
@@ -389,7 +389,7 @@ class ServersWidget(ui.ListWidget):
 
         size = QtCore.QSize(
             0,
-            common.size(common.size_row_height) * 0.8
+            common.Size.RowHeight(0.8)
         )
 
         for path in sorted(common.servers, key=lambda x: x.lower()):
@@ -418,16 +418,16 @@ class ServersWidget(ui.ListWidget):
         selected_index = common.get_selected_index(self)
 
         pixmap = images.rsc_pixmap(
-            'server', common.color(common.color_text),
-            common.size(common.size_row_height) * 0.8
+            'server', common.Color.Text(),
+            common.Size.RowHeight(0.8)
         )
         pixmap_selected = images.rsc_pixmap(
-            'server', common.color(common.color_green),
-            common.size(common.size_row_height) * 0.8
+            'server', common.Color.Green(),
+            common.Size.RowHeight(0.8)
         )
         pixmap_disabled = images.rsc_pixmap(
-            'close', common.color(common.color_red),
-            common.size(common.size_row_height) * 0.8
+            'close', common.Color.Red(),
+            common.Size.RowHeight(0.8)
         )
         icon = QtGui.QIcon()
 
@@ -513,7 +513,7 @@ class AddJobDialog(base.BasePropertyEditor):
         0: {
             'name': 'Add Job',
             'icon': '',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -691,8 +691,8 @@ class AddJobDialog(base.BasePropertyEditor):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 1.5,
-            common.size(common.size_height)
+            common.Size.DefaultWidth(1.5),
+            common.Size.DefaultHeight()
         )
 
 
@@ -737,7 +737,7 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Add bookmark item...',
             'action': self.parent().add_bookmark_item,
-            'icon': ui.get_icon('add', color=common.color(common.color_green))
+            'icon': ui.get_icon('add', color=common.Color.Green())
         }
 
     def reveal_menu(self):
@@ -847,8 +847,8 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
 
             """
             w = QtWidgets.QDialog(parent=self.parent())
-            w.setMinimumWidth(common.size(common.size_width))
-            w.setMinimumHeight(common.size(common.size_height * 0.5))
+            w.setMinimumWidth(common.Size.DefaultWidth())
+            w.setMinimumHeight(common.Size.DefaultHeight(0.5))
             b = QtWidgets.QTextBrowser(parent=w)
             b.setText(s)
             QtWidgets.QVBoxLayout(w)
@@ -893,8 +893,8 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
 
             """
             w = QtWidgets.QDialog(parent=self.parent())
-            w.setMinimumWidth(common.size(common.size_width))
-            w.setMinimumHeight(common.size(common.size_height * 0.5))
+            w.setMinimumWidth(common.Size.DefaultWidth())
+            w.setMinimumHeight(common.Size.DefaultHeight(0.5))
             b = QtWidgets.QTextBrowser(parent=w)
             b.setText(s)
             QtWidgets.QVBoxLayout(w)
@@ -1001,7 +1001,7 @@ class JobsModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.SizeHintRole:
             return QtCore.QSize(
                 0,
-                common.size(common.size_row_height) * 0.8
+                common.Size.RowHeight(0.8)
             )
 
         if role == QtCore.Qt.TextAlignmentRole:
@@ -1020,17 +1020,17 @@ class JobsModel(QtCore.QAbstractItemModel):
             if isinstance(node, BookmarkItemNode):
                 return QtCore.QSize(
                     super().parent().width() * 0.5,
-                    common.size(common.size_row_height) * 0.8
+                    common.Size.RowHeight(0.8)
                 )
             elif isinstance(node, JobNode):
                 return QtCore.QSize(
                     super().parent().width() * 0.5,
-                    common.size(common.size_row_height) * 0.8
+                    common.Size.RowHeight(0.8)
                 )
             else:
                 return QtCore.QSize(
                     super().parent().width() * 0.5,
-                    common.size(common.size_row_height)
+                    common.Size.RowHeight()
                 )
 
         if index.column() == 0:
@@ -1051,35 +1051,35 @@ class JobsModel(QtCore.QAbstractItemModel):
 
             if role == QtCore.Qt.ForegroundRole:
                 if isinstance(node, JobNode) and self.hasChildren(index):
-                    return common.color(common.color_text)
+                    return common.Color.Text()
                 elif isinstance(node, JobNode) and not self.hasChildren(index):
-                    return common.color(common.color_disabled_text)
+                    return common.Color.DisabledText()
                 elif isinstance(node, BookmarkItemNode) and node.name in common.bookmarks:
-                    return common.color(common.color_text)
+                    return common.Color.Text()
                 elif isinstance(node, BookmarkItemNode) and node.name not in common.bookmarks:
-                    return common.color(common.color_disabled_text)
+                    return common.Color.DisabledText()
 
             if role == QtCore.Qt.DecorationRole:
                 if isinstance(node, ServerNode):
                     return ui.get_icon('server')
                 elif isinstance(node, JobNode) and self.hasChildren(index):
-                    return ui.get_icon('asset', color=common.color(common.color_disabled_text))
+                    return ui.get_icon('asset', color=common.Color.DisabledText())
                 elif isinstance(node, JobNode) and not self.hasChildren(index):
-                    return ui.get_icon('asset', color=common.color(common.color_dark_background))
+                    return ui.get_icon('asset', color=common.Color.DarkBackground())
                 elif isinstance(node, BookmarkItemNode) and node.name in common.bookmarks:
-                    return ui.get_icon('bookmark', color=common.color(common.color_green))
+                    return ui.get_icon('bookmark', color=common.Color.Green())
                 elif isinstance(node, BookmarkItemNode):
-                    return ui.get_icon('bookmark', color=common.color(common.color_disabled_text))
+                    return ui.get_icon('bookmark', color=common.Color.DisabledText())
 
         if index.column() == 1:
 
             if isinstance(node, JobNode):
                 if role == QtCore.Qt.DecorationRole:
-                    return ui.get_icon('add_circle', color=common.color(common.color_green))
+                    return ui.get_icon('add_circle', color=common.Color.Green())
                 if role == QtCore.Qt.DisplayRole:
                     return 'Add bookmark item'
                 if role == QtCore.Qt.ForegroundRole:
-                    return common.color(common.color_green)
+                    return common.Color.Green()
                 if role == QtCore.Qt.WhatsThisRole:
                     return 'Click to add a new bookmark item'
                 if role == QtCore.Qt.ToolTipRole:
@@ -1095,14 +1095,14 @@ class JobsModel(QtCore.QAbstractItemModel):
                         return 'inactive'
                 if role == QtCore.Qt.ForegroundRole:
                     if node.name in common.bookmarks:
-                        return common.color(common.color_green)
+                        return common.Color.Green()
                     else:
-                        return common.color(common.color_disabled_text)
+                        return common.Color.DisabledText()
                 if role == QtCore.Qt.DecorationRole:
                     if node.name in common.bookmarks:
-                        return ui.get_icon('check', color=common.color(common.color_green))
+                        return ui.get_icon('check', color=common.Color.Green())
                     else:
-                        return ui.get_icon('close', color=common.color(common.color_red))
+                        return ui.get_icon('close', color=common.Color.Red())
                 if role == QtCore.Qt.WhatsThisRole:
                     return f'Bookmark item: {node.name}'
                 if role == QtCore.Qt.ToolTipRole:
@@ -1289,7 +1289,7 @@ class JobsModel(QtCore.QAbstractItemModel):
             # yield the match
             path = entry.path.replace('\\', '/')
 
-            if entry.name == common.bookmark_cache_dir:
+            if entry.name == common.bookmark_item_cache_dir:
                 _path = '/'.join(path.split('/')[:-1])
                 yield _path
 
@@ -1305,7 +1305,7 @@ class JobsView(QtWidgets.QTreeView):
         self.setModel(JobsModel(parent=self))
 
         self.setRootIsDecorated(True)
-        self.setIndentation(common.size(common.size_margin))
+        self.setIndentation(common.Size.Margin())
         self.setUniformRowHeights(False)
 
         self.setItemDelegate(ui.ListWidgetDelegate(parent=self))
@@ -1327,7 +1327,7 @@ class JobsView(QtWidgets.QTreeView):
         header.setStretchLastSection(True)
         header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
-        header.setMinimumSectionSize(common.size(common.size_width) * 0.2)
+        header.setMinimumSectionSize(common.Size.DefaultWidth(0.2))
 
         self.setHeader(header)
         self.header().hide()
@@ -1386,7 +1386,7 @@ class JobsView(QtWidgets.QTreeView):
         self.header().resizeSections(QtWidgets.QHeaderView.ResizeToContents)
         self.header().resizeSection(
             0,
-            self.width() - self.header().sectionSize(1) - common.size(common.size_margin)
+            self.width() - self.header().sectionSize(1) - common.Size.Margin()
         )
 
     @QtCore.Slot(str)
@@ -1543,6 +1543,6 @@ class JobsView(QtWidgets.QTreeView):
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_height) * 0.8
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight(0.8)
         )

@@ -61,7 +61,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         0: {
             'name': 'Settings',
             'icon': 'bookmark',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -269,7 +269,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         3: {
             'name': 'Links',
             'icon': 'link',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -298,7 +298,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         4: {
             'name': 'Application Launcher',
             'icon': 'icon',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -317,7 +317,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         5: {
             'name': 'Database',
             'icon': 'bookmark',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {

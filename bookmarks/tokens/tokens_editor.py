@@ -122,7 +122,7 @@ class TokenEditor(QtWidgets.QDialog):
         """
         return QtCore.QSize(
             self.parent().geometry().width(),
-            common.size(common.size_row_height) * 7
+            common.Size.RowHeight(7.0)
         )
 
     def showEvent(self, event):
@@ -152,7 +152,7 @@ class FormatEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -172,9 +172,7 @@ class FormatEditor(QtWidgets.QDialog):
         self.cancel_button = ui.PaintedButton('Cancel')
 
         row = ui.add_row(
-            None, height=common.size(
-                common.size_row_height
-            ), parent=self
+            None, height=common.Size.RowHeight(), parent=self
         )
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
@@ -203,7 +201,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -236,9 +234,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         self.cancel_button = ui.PaintedButton('Cancel')
 
         row = ui.add_row(
-            None, height=common.size(
-                common.size_row_height
-            ), parent=self
+            None, height=common.Size.RowHeight(), parent=self
         )
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
@@ -281,7 +277,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
         common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(o)
 
@@ -309,7 +305,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
         _row1 = ui.add_row(None, height=None, vertical=True, parent=grp)
 
         for _k in ('name', 'value', 'description'):
-            row = ui.add_row(_k.title(), height=common.size(common.size_row_height), parent=_row1)
+            row = ui.add_row(_k.title(), height=common.Size.RowHeight(), parent=_row1)
             editor = ui.LineEdit(parent=row)
             editor.setObjectName(f'section_item_{_k}')
 
@@ -319,11 +315,11 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
             if _k in ('name', 'description'):
                 editor.setStyleSheet(
-                    f'color: {common.rgb(common.color_secondary_text)};'
+                    f'color: {common.Color.SecondaryText(qss=True)};'
                 )
             else:
                 editor.setStyleSheet(
-                    f'color: {common.rgb(common.color_text)};'
+                    f'color: {common.Color.Text(qss=True)};'
                 )
             row.layout().addWidget(editor, 1)
 
@@ -332,8 +328,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         button = ui.ClickableIconButton(
             'add_circle',
-            (common.color(common.color_text), common.color(common.color_text)),
-            common.size(common.size_margin),
+            (common.Color.Text(), common.Color.Text()),
+            common.Size.Margin(),
             description='Insert token',
             parent=_row2
         )
@@ -345,8 +341,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         button = ui.ClickableIconButton(
             'arrow_up',
-            (common.color(common.color_text), common.color(common.color_text)),
-            common.size(common.size_margin),
+            (common.Color.Text(), common.Color.Text()),
+            common.Size.Margin(),
             description='Move item up',
             parent=_row2
         )
@@ -357,8 +353,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         button = ui.ClickableIconButton(
             'arrow_down',
-            (common.color(common.color_text), common.color(common.color_text)),
-            common.size(common.size_margin),
+            (common.Color.Text(), common.Color.Text()),
+            common.Size.Margin(),
             description='Move item down',
             parent=_row2
         )
@@ -369,8 +365,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         button = ui.ClickableIconButton(
             'archive',
-            (common.color(common.color_red), common.color(common.color_red)),
-            common.size(common.size_margin),
+            (common.Color.Red(), common.Color.Red()),
+            common.Size.Margin(),
             description='Remove item',
             parent=_row2
         )
@@ -400,13 +396,13 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 log.error(f'Invalid data. Key: {k}, value: {v}')
                 return
 
-        h = common.size(common.size_row_height)
+        h = common.Size.RowHeight()
 
         main_grp = base.add_section(
             'file',
             SECTIONS[section]['name'],
             self,
-            color=common.color(common.color_dark_background)
+            color=common.Color.DarkBackground()
         )
 
         self.ui_groups[section] = main_grp
@@ -430,8 +426,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
         if section in (tokens.PublishConfig, tokens.FFMpegTCConfig, tokens.FileNameConfig):
             add_button = ui.ClickableIconButton(
                 'add',
-                (common.color(common.color_green), common.color(common.color_green)),
-                common.size(common.size_margin) * 1.5,
+                (common.Color.Green(), common.Color.Green()),
+                common.Size.Margin(1.5),
                 description='Add new item',
                 parent=control_row
             )
@@ -715,12 +711,12 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         if v != self.current_data[key]:
             self.changed_data[key] = v
-            editor.setStyleSheet(f'color: {common.rgb(common.color_green)};')
+            editor.setStyleSheet(f'color: {common.Color.Green(qss=True)};')
             return
 
         if key in self.changed_data:
             del self.changed_data[key]
-        editor.setStyleSheet(f'color: {common.rgb(common.color_text)};')
+        editor.setStyleSheet(f'color: {common.Color.Text(qss=True)};')
 
     @QtCore.Slot()
     def save_changes(self):

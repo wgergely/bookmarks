@@ -51,7 +51,7 @@ class UIScaleFactorsCombobox(QtWidgets.QComboBox):
         """Initializes data.
 
         """
-        size = QtCore.QSize(1, common.size(common.size_row_height) * 0.8)
+        size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
         self.blockSignals(True)
         for n in common.ui_scale_factors:
@@ -288,7 +288,7 @@ class PreferenceEditor(base.BasePropertyEditor):
         5: {
             'name': 'About',
             'icon': None,
-            'color': common.color(common.color_secondary_text),
+            'color': common.Color.SecondaryText(),
             'groups': {
                 0: {
                     0: {

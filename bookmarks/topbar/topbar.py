@@ -82,8 +82,8 @@ class TaskFolderPicker(ui.PaintedLabel):
     def __init__(self, parent=None):
         super().__init__(
             'Select folder',
-            size=common.size(common.size_font_medium) * 1.1,
-            color=common.color(common.color_selected_text),
+            size=common.Size.MediumText(1.1),
+            color=common.Color.SelectedText(),
             parent=parent
         )
 
@@ -95,12 +95,12 @@ class TaskFolderPicker(ui.PaintedLabel):
     @property
     def _color(self):
         if not common.active('task'):
-            return common.color(common.color_blue)
+            return common.Color.Blue()
         if common.widget(common.TaskItemSwitch).isVisible():
-            return common.color(common.color_blue)
+            return common.Color.Blue()
         if common.active('task'):
-            return common.color(common.color_green)
-        return common.color(common.color_text)
+            return common.Color.Green()
+        return common.Color.Text()
 
     @_color.setter
     def _color(self, v):
@@ -143,8 +143,8 @@ class ContextStatusBar(QtWidgets.QWidget):
         self._connect_signals()
 
     def _create_ui(self):
-        o = common.size(common.size_indicator) * 3
-        height = common.size(common.size_margin) + o
+        o = common.Size.Indicator(3.0)
+        height = common.Size.Margin() + o
 
         self.setFixedHeight(height)
 
@@ -156,8 +156,8 @@ class ContextStatusBar(QtWidgets.QWidget):
 
         self.label_widget = ui.PaintedLabel(
             '',
-            color=common.color(common.color_text),
-            size=common.size(common.size_font_medium) * 1.1,
+            color=common.Color.Text(),
+            size=common.Size.MediumText(1.1),
             parent=self
         )
         self.refresh_widget = buttons.RefreshButton(
@@ -166,16 +166,16 @@ class ContextStatusBar(QtWidgets.QWidget):
 
         self.arrow_left_button = ui.ClickableIconButton(
             'arrow_left',
-            (common.color(common.color_text), common.color(common.color_text)),
-            size=common.size(common.size_margin),
+            (common.Color.Text(), common.Color.Text()),
+            size=common.Size.Margin(),
             description='Previous item',
             parent=self
         )
 
         self.arrow_right_button = ui.ClickableIconButton(
             'arrow_right',
-            (common.color(common.color_text), common.color(common.color_text)),
-            size=common.size(common.size_margin),
+            (common.Color.Text(), common.Color.Text()),
+            size=common.Size.Margin(),
             description='Next item',
             parent=self
         )
@@ -344,8 +344,8 @@ class TopBarWidget(QtWidgets.QWidget):
         self._connect_signals()
 
     def _create_ui(self):
-        o = common.size(common.size_indicator) * 3
-        height = common.size(common.size_margin) + o
+        o = common.Size.Indicator(3.0)
+        height = common.Size.Margin() + o
 
         QtWidgets.QVBoxLayout(self)
 

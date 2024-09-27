@@ -136,7 +136,7 @@ class StatusLabel(ui.PaintedLabel):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Fixed
         )
-        self.setMinimumWidth(common.size(common.size_width * 0.33))
+        self.setMinimumWidth(common.Size.DefaultWidth(0.33))
 
 
 class AdaptersModel(ui.AbstractListModel):
@@ -255,19 +255,19 @@ class MediaModel(QtCore.QAbstractItemModel):
         is_media_node = node.parent() != self._root_node
 
         if role == QtCore.Qt.ForegroundRole and is_media_node:
-            return common.color(common.color_text)
+            return common.Color.Text()
         if role == QtCore.Qt.ForegroundRole and not is_media_node:
-            return common.color(common.color_blue)
+            return common.Color.Blue()
         if role == QtCore.Qt.FontRole:
-            font, _ = common.font_db.medium_font(
-                common.size(common.size_font_small)
+            font, _ = common.Font.MediumFont(
+                common.Size.SmallText()
             )
             return font
         if role == QtCore.Qt.SizeHintRole and is_media_node:
-            o = common.size(common.size_margin * 1.2)
+            o = common.Size.Margin(1.2)
             return QtCore.QSize(o, o)
         if role == QtCore.Qt.SizeHintRole and not is_media_node:
-            o = common.size(common.size_margin)
+            o = common.Size.Margin()
             return QtCore.QSize(o, o)
         if role == QtCore.Qt.DecorationRole and is_media_node:
             return ui.get_icon('file')
@@ -314,7 +314,7 @@ class MediaView(QtWidgets.QTreeView):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setModel(MediaModel())
-        self.setMinimumHeight(common.size(common.size_height * 1.2))
+        self.setMinimumHeight(common.Size.DefaultHeight(1.2)))
         self.setRootIsDecorated(True)
         self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -329,8 +329,8 @@ class MediaView(QtWidgets.QTreeView):
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.size(common.size_width * 1),
-            common.size(common.size_height * 1),
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight()),
         )
 
 
@@ -342,7 +342,7 @@ class EdlWidget(base.BasePropertyEditor):
         0: {
             'name': 'Sources',
             'icon': 'asset',
-            'color': common.color(common.color_yellow),
+            'color': common.Color.Yellow(),
             'groups': {
                 0: {
                     0: {
@@ -384,7 +384,7 @@ class EdlWidget(base.BasePropertyEditor):
         1: {
             'name': 'Options',
             'icon': 'settings',
-            'color': common.color(common.color_green),
+            'color': common.Color.Green(),
             'groups': {
                 0: {
                     0: {
@@ -432,7 +432,7 @@ class EdlWidget(base.BasePropertyEditor):
         2: {
             'name': 'Media',
             'icon': 'image',
-            'color': common.color(common.color_blue),
+            'color': common.Color.Blue(),
             'groups': {
                 0: {
                     0: {

@@ -61,7 +61,7 @@ class JobsEditor(base.BasePropertyEditor):
         0: {
             'name': 'Edit Jobs',
             'icon': 'icon_bw',
-            'color': common.color(common.color_green),
+            'color': common.Color.Green(),
             'groups': {
                 0: {
                     0: {
@@ -71,12 +71,6 @@ class JobsEditor(base.BasePropertyEditor):
                         'widget': None,
                         'placeholder': None,
                         'description': 'Edit the list of servers Bookmarks should read jobs from.',
-                        # 'help': f'Edit the list of servers Bookmarks should read jobs from. The server should be '
-                        #         f'a directory where jobs are kept, for example, '
-                        #         '<span style="color:{c};">Z:/</span> or'
-                        #         '<span style="color:{c};">//server/jobs</span>.'.format(c=common.rgb(
-                        #         common.color_green)
-                        # ),
                         'button': 'Add server...'
                     },
                     1: {

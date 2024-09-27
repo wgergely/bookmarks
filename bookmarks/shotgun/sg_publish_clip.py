@@ -59,7 +59,7 @@ class PublishWidget(base.BasePropertyEditor):
         0: {
             'name': 'Publish File',
             'icon': '',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {

@@ -50,7 +50,7 @@ class CopyClipboardEditor(base.BasePropertyEditor):
         0: {
             'name': 'Copy Properties',
             'icon': 'settings',
-            'color': common.color(common.color_green),
+            'color': common.Color.Green(),
             'groups': {
                 0: {
                     0: {
@@ -107,7 +107,7 @@ class CopyClipboardEditor(base.BasePropertyEditor):
         )
 
         self.setWindowTitle('Copy Properties')
-        self.setFixedWidth(common.size(common.size_width * 0.66))
+        self.setFixedWidth(common.Size.DefaultWidth(0.66))
 
     def db_source(self):
         return None

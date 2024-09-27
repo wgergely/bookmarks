@@ -120,7 +120,7 @@ class AssetTypeComboBox(QtWidgets.QComboBox):
         """Initializes data.
 
         """
-        size = QtCore.QSize(1, common.size(common.size_row_height) * 0.8)
+        size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
         self.blockSignals(True)
         for n in ('Asset', 'Shot'):
@@ -151,7 +151,7 @@ class SyncWidget(base.BasePropertyEditor):
         0: {
             'name': 'Options',
             'icon': 'icon',
-            'color': common.color(common.color_green),
+            'color': common.Color.Green(),
             'groups': {
                 0: {
                     0: {
@@ -218,7 +218,7 @@ class SyncWidget(base.BasePropertyEditor):
         1: {
             'name': 'Source Data',
             'icon': 'file',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -291,7 +291,7 @@ class SyncWidget(base.BasePropertyEditor):
         2: {
             'name': 'Asset Template',
             'icon': 'folder',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 1: {
                     0: {
@@ -311,7 +311,7 @@ class SyncWidget(base.BasePropertyEditor):
         3: {
             'name': 'ShotGrid',
             'icon': 'sg',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {

@@ -47,7 +47,7 @@ token_validator = QtGui.QRegExpValidator()
 token_validator.setRegExp(QtCore.QRegExp(r'.*'))
 
 span = {
-    'start': f'<span style="color:{common.rgb(common.color_green)}">',
+    'start': f'<span style="color:{common.Color.Green(qss=True)}">',
     'end': '</span>',
 }
 
@@ -70,7 +70,7 @@ def add_section(icon, label, parent, color=None):
     common.check_type(parent, QtWidgets.QWidget)
     common.check_type(color, (QtGui.QColor, None))
 
-    h = common.size(common.size_row_height)
+    h = common.Size.RowHeight()
     parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
     if not any((icon, label)):
@@ -88,8 +88,8 @@ def add_section(icon, label, parent, color=None):
     if label:
         w = ui.PaintedLabel(
             label,
-            size=common.size(common.size_font_large),
-            color=common.color(common.color_text),
+            size=common.Size.LargeText(),
+            color=common.Color.Text(),
             parent=parent
         )
         row.layout().addWidget(w, 0)
@@ -194,8 +194,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
-        self.setMinimumWidth(common.size(common.size_width) * 0.5)
-        self.setMinimumHeight(common.size(common.size_height) * 0.5)
+        self.setMinimumWidth(common.Size.DefaultWidth(0.5))
+        self.setMinimumHeight(common.Size.DefaultHeight(0.5))
 
         if all((server, job, root)):
             if not asset:
@@ -214,7 +214,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             # Shadow effect
             self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
-            self.effect.setBlurRadius(common.size(common.size_margin) * 2)
+            self.effect.setBlurRadius(common.Size.Margin(2.0))
             self.effect.setXOffset(0)
             self.effect.setYOffset(0)
             self.effect.setColor(QtGui.QColor(0, 0, 0, 200))
@@ -224,12 +224,12 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self._connect_signals()
 
     def _create_ui(self):
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
 
         QtWidgets.QHBoxLayout(self)
 
         if self._frameless:
-            o = common.size(common.size_margin) * 2
+            o = common.Size.Margin(2.0)
             self.layout().setContentsMargins(o, o, o, o)
         else:
             self.layout().setContentsMargins(0, 0, 0, 0)
@@ -242,7 +242,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         # Separator pixmap
         pixmap = images.rsc_pixmap(
-            'gradient3', None, common.size(common.size_margin), opacity=0.5
+            'gradient3', None, common.Size.Margin(), opacity=0.5
         )
         separator = QtWidgets.QLabel(parent=self)
         separator.setScaledContents(True)
@@ -253,7 +253,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             self.left_row.hide()
 
         self.left_row.setStyleSheet(
-            f'background-color: {common.rgb(common.color_separator)};'
+            f'background-color: {common.Color.VeryDarkBackground(qss=True)};'
         )
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
@@ -549,7 +549,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
     def _add_buttons(self):
         if not self._buttons:
             return
-        h = common.size(common.size_row_height)
+        h = common.Size.RowHeight()
 
         self.save_button = ui.PaintedButton(
             self._buttons[0], parent=self
@@ -568,10 +568,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
             None, height=h * 2, parent=self.right_row
         )
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
-        row.layout().addSpacing(common.size(common.size_margin))
+        row.layout().addSpacing(common.Size.Margin())
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
-        row.layout().addSpacing(common.size(common.size_margin))
+        row.layout().addSpacing(common.Size.Margin())
 
     def add_section_header_button(self, name, widget):
         """Add a header button to help reveal the given section widget.
@@ -796,7 +796,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    f'color: {common.rgb(common.color_green)};'
+                    f'color: {common.Color.Green(qss=True)};'
                 )
             return
 
@@ -805,7 +805,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                f'color: {common.rgb(common.color_text)};'
+                f'color: {common.Color.Text(qss=True)};'
             )
 
     @QtCore.Slot()
@@ -833,9 +833,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
         if self._frameless:
             painter = QtGui.QPainter(self)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.color_background))
+            painter.setBrush(common.Color.Background())
 
-            o = common.size(common.size_margin) * 2
+            o = common.Size.Margin(2.0)
             painter.drawRect(self.rect().adjusted(o, o, -o, -o))
             painter.end()
 
@@ -876,8 +876,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 1.33,
-            common.size(common.size_height) * 1.5
+            common.Size.DefaultWidth(1.33),
+            common.Size.DefaultHeight(1.5)
         )
 
     @QtCore.Slot(str)

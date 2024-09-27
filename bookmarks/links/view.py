@@ -46,7 +46,7 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Add Folder',
-            'icon': ui.get_icon('add_link', color=common.color(common.color_green)),
+            'icon': ui.get_icon('add_link', color=common.Color.Green()),
             'action': self.parent().add_link,
             'shortcut': shortcuts.get(
                 shortcuts.LinksViewShortcuts,
@@ -77,6 +77,7 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             'text': 'Paste',
             'icon': ui.get_icon('add_link'),
             'action': self.parent().paste_links,
+            'disabled': not common.get_clipboard(common.AssetLinksClipboard),
             'shortcut': shortcuts.get(
                 shortcuts.LinksViewShortcuts,
                 shortcuts.PasteLinks
@@ -86,12 +87,26 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
                 shortcuts.PasteLinks
             )
         }
+        self.menu[contextmenu.key()] = {
+            'text': 'Apply clipboard to all',
+            'icon': ui.get_icon('add_link'),
+            'action': self.parent().apply_clipboard_to_all,
+            'disabled': not common.get_clipboard(common.AssetLinksClipboard),
+            'shortcut': shortcuts.get(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.PasteLinksToAll
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.LinksViewShortcuts,
+                shortcuts.PasteLinksToAll
+            ),
+        }
 
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'text': 'Clear all',
-            'icon': ui.get_icon('remove_link', color=common.color(common.color_red)),
+            'text': 'Remove links',
+            'icon': ui.get_icon('remove_link', color=common.Color.Red()),
             'action': self.parent().clear_links,
             'shortcut': shortcuts.get(
                 shortcuts.LinksViewShortcuts,
@@ -123,32 +138,61 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
         if node.is_leaf():
             return
 
-        self.menu[contextmenu.key()] = {
-            'text': 'Save Preset...',
-            'icon': ui.get_icon('add_preset', color=common.color(common.color_green)),
-            'action': self.parent().save_preset,
-            'help': 'Save the current set of links as a preset.',
-        }
+        if node.api().get(force=True):
+            self.menu[contextmenu.key()] = {
+                'text': 'Save as New Preset...',
+                'icon': ui.get_icon('add_preset', color=common.Color.Green()),
+                'action': self.parent().save_preset_to_database,
+                'help': 'Save the current set of links as a preset.',
+            }
+
+        presets = lib.LinksAPI.presets()
+        if not presets:
+            return
 
         k = 'Apply Preset'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('preset')
 
-        presets = lib.LinksAPI.presets()
-        if not presets:
+        k_ = 'Apply Preset to All Items'
+        if k_ not in self.menu:
+            self.menu[k_] = collections.OrderedDict()
+            self.menu[f'{k_}:icon'] = ui.get_icon('preset')
+
+        self.separator()
+
+        k__ = 'Remove Preset'
+        if k__ not in self.menu:
+            self.menu[k__] = collections.OrderedDict()
+            self.menu[f'{k__}:icon'] = ui.get_icon('preset', color=common.Color.Red())
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Remove All Presets',
+            'icon': ui.get_icon('preset', color=common.Color.Red()),
+            'action': self.parent().remove_all_presets,
+            'help': 'Remove all presets.',
+        }
+
+        for _k in presets:
             self.menu[k][contextmenu.key()] = {
-                'text': 'No presets found!',
-                'disabled': True
+                'text': _k,
+                'icon': ui.get_icon('preset', color=common.Color.Blue()),
+                'action': functools.partial(self.parent().apply_preset, _k),
+                'help': f'Add the preset path: {_k}.',
             }
-        else:
-            for _k in presets:
-                self.menu[k][contextmenu.key()] = {
-                    'text': _k,
-                    'icon': ui.get_icon('preset', color=common.color(common.color_blue)),
-                    'action': functools.partial(self.parent().apply_preset, _k),
-                    'help': f'Add the preset path: {_k}.',
-                }
+            self.menu[k_][contextmenu.key()] = {
+                'text': _k,
+                'icon': ui.get_icon('preset', color=common.Color.Blue()),
+                'action': functools.partial(self.parent().apply_preset, _k, apply_to_all=True),
+                'help': f'Add the preset path: {_k}.',
+            }
+            self.menu[k__][contextmenu.key()] = {
+                'text': _k,
+                'icon': ui.get_icon('preset', color=common.Color.Red()),
+                'action': functools.partial(self.parent().clear_preset, _k),
+                'help': f'Add the preset path: {_k}.',
+            }
 
     def add_child_menu(self):
         if not self.index.isValid():
@@ -166,7 +210,7 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Remove',
-            'icon': ui.get_icon('remove_link', color=common.color(common.color_red)),
+            'icon': ui.get_icon('remove_link', color=common.Color.Red()),
             'action': self.parent().remove_link,
             'shortcut': shortcuts.get(
                 shortcuts.LinksViewShortcuts,
@@ -255,13 +299,13 @@ class PresetNameDialog(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_indicator) * 6
+        o = common.Size.Indicator(6.0)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o * 0.5)
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText('Enter a preset name, for example, \'Preset1\'')
-        self.editor.setMinimumWidth(common.size(common.size_width) * 0.5)
+        self.editor.setMinimumWidth(common.Size.DefaultWidth(0.5))
 
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
@@ -312,13 +356,13 @@ class PresetNameDialog(QtWidgets.QDialog):
         for i in range(1, self.presets_combobox.count()):
             self.presets_combobox.setItemIcon(
                 i,
-                ui.get_icon('preset', color=common.color(common.color_blue))
+                ui.get_icon('preset', color=common.Color.Blue())
             )
 
         self.presets_combobox.addItem('Save as new...')
         self.presets_combobox.setItemIcon(
             self.presets_combobox.count() - 1,
-            ui.get_icon('add_preset', color=common.color(common.color_green))
+            ui.get_icon('add_preset', color=common.Color.Green())
         )
 
         self.presets_combobox.setCurrentIndex(0)
@@ -349,14 +393,14 @@ class PresetNameDialog(QtWidgets.QDialog):
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        pen = QtGui.QPen(common.color(common.color_blue))
-        pen.setWidthF(common.size(common.size_separator) * 2)
+        pen = QtGui.QPen(common.Color.Blue())
+        pen.setWidthF(common.Size.Separator(2.0))
         painter.setPen(pen)
 
-        painter.setBrush(common.color(common.color_background))
+        painter.setBrush(common.Color.Background())
 
-        o = common.size(common.size_indicator) * 2
-        _o = common.size(common.size_indicator)
+        o = common.Size.Indicator(2.0)
+        _o = common.Size.Indicator()
         painter.drawRoundedRect(
             self.rect().adjusted(_o, _o, -_o, -_o),
             o,
@@ -388,8 +432,8 @@ class PresetNameDialog(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.5,
-            common.size(common.size_row_height)
+            common.Size.DefaultWidth(0.5),
+            common.Size.RowHeight()
         )
 
 
@@ -410,9 +454,6 @@ class LinksView(QtWidgets.QTreeView):
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setHeaderHidden(True)
 
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
         self._expanded_nodes = []
         self._selected_node = None
 
@@ -432,6 +473,7 @@ class LinksView(QtWidgets.QTreeView):
         connect(shortcuts.RemoveLink, self.remove_link)
         connect(shortcuts.CopyLinks, self.copy_links)
         connect(shortcuts.PasteLinks, self.paste_links)
+        connect(shortcuts.PasteLinksToAll, self.apply_clipboard_to_all)
         connect(shortcuts.RevealLink, self.reveal)
         connect(shortcuts.ReloadLinks, self.reload_paths)
 
@@ -457,6 +499,7 @@ class LinksView(QtWidgets.QTreeView):
 
         self.model().modelReset.connect(self.restore_selected_node)
         self.model().layoutChanged.connect(self.restore_selected_node)
+        self.expanded.connect(self.restore_selected_node)
 
     @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex)
     def emit_links_file_changed(self, current, previous, *args, **kwargs):
@@ -499,8 +542,8 @@ class LinksView(QtWidgets.QTreeView):
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_height)
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight()
         )
 
     def get_node_from_selection(self):
@@ -616,7 +659,8 @@ class LinksView(QtWidgets.QTreeView):
                 path = node.path()
 
             if path == self._selected_node:
-                self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
+                self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
+                self.setCurrentIndex(index)
                 self.scrollTo(index)
                 break
 
@@ -660,9 +704,7 @@ class LinksView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def add_link(self):
-        """
-        Add a new link.
-        """
+        """Add a new link."""
         node = self.get_node_from_selection()
         if not node:
             return
@@ -717,19 +759,12 @@ class LinksView(QtWidgets.QTreeView):
             self.clear_links()
             return
 
-        if common.show_message(
-                'Remove Link',
-                body=f'Are you sure you want to remove the link:\n{node.path()}?',
-                buttons=[common.YesButton, common.NoButton], modal=True, message_type='error'
-        ) == QtWidgets.QDialog.Rejected:
-            return
-
         self.model().remove_link(node.parent().path(), node.path())
 
     @common.error
     @common.debug
     @QtCore.Slot()
-    def clear_links(self):
+    def clear_links(self, force=False):
         """
         Clear all links.
         """
@@ -740,12 +775,13 @@ class LinksView(QtWidgets.QTreeView):
         if node.is_leaf():
             raise ValueError('Cannot clear links from a leaf node.')
 
-        if common.show_message(
-                'Clear All Links',
-                body='Are you sure you want to clear all links? This action not undoable.',
-                buttons=[common.YesButton, common.NoButton], modal=True, message_type='error'
-        ) == QtWidgets.QDialog.Rejected:
-            return
+        if not force:
+            if common.show_message(
+                    'Remove links',
+                    body='Are you sure you want to remove the links from the selected item? This action not undoable.',
+                    buttons=[common.YesButton, common.NoButton], modal=True, message_type='error'
+            ) == QtWidgets.QDialog.Rejected:
+                return
 
         self.model().clear_links(node.path())
 
@@ -818,6 +854,35 @@ class LinksView(QtWidgets.QTreeView):
     @common.error
     @common.debug
     @QtCore.Slot()
+    def apply_clipboard_to_all(self):
+        """
+        Paste links from the clipboard to all items.
+        """
+        if not common.get_clipboard(common.AssetLinksClipboard):
+            raise ValueError('No links in the clipboard.')
+
+        if not common.show_message(
+                'Paste to All',
+                body='Are you sure you want to paste the links to all items? This action is not undoable.',
+                buttons=[common.YesButton, common.NoButton], modal=True
+        ) == QtWidgets.QDialog.Accepted:
+            return
+
+        # Loop through all indexes
+        for i in range(self.model().rowCount(parent=self.rootIndex())):
+            index = self.model().index(i, 0, self.rootIndex())
+            if not index.isValid():
+                continue
+
+            self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
+            self.selectionModel().setCurrentIndex(index, QtCore.QItemSelectionModel.ClearAndSelect)
+
+            self.clear_links(force=True)
+            self.paste_links()
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
     def reveal(self):
         """
         Reveal the link in the file explorer.
@@ -836,7 +901,7 @@ class LinksView(QtWidgets.QTreeView):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def save_preset(self):
+    def save_preset_to_database(self):
         """
         Save the current view as a preset.
         """
@@ -865,7 +930,7 @@ class LinksView(QtWidgets.QTreeView):
             ) == QtWidgets.QDialog.Rejected:
                 return
 
-        node.api().save_preset(name, node.path())
+        node.api().save_preset_to_database(name, node.path())
 
     @common.error
     @common.debug
@@ -901,6 +966,34 @@ class LinksView(QtWidgets.QTreeView):
 
         self.model().apply_preset(preset, path=path)
 
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def clear_preset(self, preset):
+        """Remove the selected preset."""
+        if not common.show_message(
+                'Remove Preset',
+                body=f'Are you sure you want to remove the preset "{preset}"? This action is not undoable.',
+                buttons=[common.YesButton, common.NoButton], modal=True
+        ) == QtWidgets.QDialog.Accepted:
+            return
+
+        lib.LinksAPI.clear_preset(preset)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def remove_all_presets(self):
+        """Remove all presets."""
+        if not common.show_message(
+                'Remove All Presets',
+                body='Are you sure you want to remove all presets? This action is not undoable.',
+                buttons=[common.YesButton, common.NoButton], modal=True
+        ) == QtWidgets.QDialog.Accepted:
+            return
+
+        lib.LinksAPI.clear_presets()
+
 
 class NumberBar(QtWidgets.QWidget):
 
@@ -923,8 +1016,8 @@ class NumberBar(QtWidgets.QWidget):
         painter.setBrush(QtGui.QColor(0, 0, 0, alpha))
         painter.drawRoundedRect(
             event.rect(),
-            common.size(common.size_indicator),
-            common.size(common.size_indicator)
+            common.Size.Indicator(),
+            common.Size.Indicator()
         )
 
         block = self.parent().firstVisibleBlock()
@@ -943,16 +1036,16 @@ class NumberBar(QtWidgets.QWidget):
 
             # We want the line number for the selected line to be bold.
             if block_number == self.parent().textCursor().blockNumber():
-                painter.setPen(common.color(common.color_blue))
+                painter.setPen(common.Color.Blue())
             else:
-                painter.setPen(common.color(common.color_light_background))
+                painter.setPen(common.Color.LightBackground())
             painter.setFont(font)
 
             # Draw the line number right justified at the position of the line.
             paint_rect = QtCore.QRect(
                 0,
                 block_top,
-                self.width() - (common.size(common.size_indicator) * 2),
+                self.width() - (common.Size.Indicator(2.0)),
                 metrics.height()
             )
 
@@ -973,7 +1066,7 @@ class NumberBar(QtWidgets.QWidget):
         metrics = self.parent().fontMetrics()
 
         count = self.parent().blockCount()
-        width = metrics.width(f'{count}') + common.size(common.size_margin)
+        width = metrics.width(f'{count}') + common.Size.Margin()
         return width
 
     def update_width(self):
@@ -1005,7 +1098,17 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
         self._number_bar = NumberBar(parent=self)
 
         self.setPlaceholderText('Select an item to view its relative links')
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Expanding
+        )
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
+
+    def sizeHint(self):
+        return QtCore.QSize(
+            common.Size.DefaultHeight(),
+            common.Size.DefaultWidth()
+        )
 
     def resizeEvent(self, event):
         cr = self.contentsRect()
@@ -1044,7 +1147,7 @@ class LinksTextEditor(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(common.size(common.size_indicator) * 1)
+        self.layout().setSpacing(common.Size.Indicator())
 
         self._text_editor = PlainTextEdit(parent=self)
         self._text_editor.setSizePolicy(
@@ -1116,8 +1219,36 @@ class LinksTextEditor(QtWidgets.QWidget):
         self.linksFileChanged.emit(self._current_path)
 
 
-class FolderTemplatesComboBox(QtWidgets.QComboBox):
-    pass
+class AssetTemplatesComboBox(QtWidgets.QComboBox):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        view = QtWidgets.QListView(parent=self)
+        self.setView(view)
+
+        self._initialized = False
+
+    def showEvent(self, event):
+        QtCore.QTimer.singleShot(300, self.init_data)
+
+    def init_data(self):
+        if self._initialized:
+            return
+
+        from ..templates import lib
+
+        self.clear()
+        self.addItem('Select an asset template...')
+        self.setCurrentIndex(0)
+
+        templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.DatabaseTemplate)
+        if not templates:
+            return
+
+        for template in sorted(templates, key=lambda x: x['name'].lower()):
+            self.addItem(template['name'], userData=template['name'])
+
+        self._initialized = True
 
 
 class LinksEditor(QtWidgets.QSplitter):
@@ -1139,33 +1270,37 @@ class LinksEditor(QtWidgets.QSplitter):
         self._connect_signals()
 
     def _create_ui(self):
-        o = common.size(common.size_indicator) * 2
+        o = common.Size.Indicator(2.0)
         self.setContentsMargins(o, o, o, o)
 
         widget = QtWidgets.QWidget(parent=self)
         QtWidgets.QVBoxLayout(widget)
 
         widget.layout().setContentsMargins(0, 0, 0, 0)
-        widget.layout().setSpacing(0)
+        widget.layout().setSpacing(common.Size.Margin(0.5))
 
         self.addWidget(widget)
 
         self._links_view_widget = LinksView(parent=self)
         widget.layout().addWidget(self._links_view_widget)
 
-        bottom_row = QtWidgets.QWidget(parent=self)
-        QtWidgets.QHBoxLayout(bottom_row)
+        bottom_row = ui.get_group(parent=widget)
 
-        widget.layout().addWidget(bottom_row)
+        self._folder_template_widget = AssetTemplatesComboBox(parent=self)
+        self._create_folders_widget = ui.PaintedButton('Create Missing', parent=self)
 
-        bottom_row.layout().setContentsMargins(0, 0, 0, 0)
-        bottom_row.layout().setSpacing(common.size(common.size_indicator) * 1)
-
-        self._create_folders_widget = ui.PaintedButton('Create Link Folders', parent=self)
-        self._folder_template_widget = FolderTemplatesComboBox(parent=self)
+        ui.add_description(
+            'Select an asset template to create the missing folders.\n'
+            f'The template will be expanded into each missing link. '
+            f'<span style="color: {common.Color.Red(qss=True)};">This action cannot be undone</span>, so ensure '
+            f'the selected asset template is intended to be expanded into nested folders.',
+            label=None,
+            icon=ui.get_icon('alert', color=common.Color.Red()),
+            parent=bottom_row
+        )
+        bottom_row.layout().addWidget(self._folder_template_widget, 1)
 
         bottom_row.layout().addWidget(self._create_folders_widget, 1)
-        bottom_row.layout().addWidget(self._folder_template_widget, 0.5)
         bottom_row.layout().addStretch(1.5)
 
         self._links_editor_widget = LinksTextEditor(parent=self)

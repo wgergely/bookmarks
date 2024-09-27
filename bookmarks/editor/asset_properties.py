@@ -67,7 +67,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         0: {
             'name': 'Settings',
             'icon': '',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -177,7 +177,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         2: {
             'name': 'Settings',
             'icon': 'bookmark',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -255,7 +255,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         3: {
             'name': 'Links',
             'icon': '',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {

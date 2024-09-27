@@ -7,7 +7,7 @@ suitable placeholder image. See  :func:`get_placeholder_path`.
 
 Note:
     The thumbnail files are stored in the bookmark item cache folder (see
-    ``common.bookmark_cache_dir``).
+    ``common.bookmark_item_cache_dir``).
 
 Under the hood, :func:`get_thumbnail` uses :meth:`ImageCache.get_pixmap` and
 :meth:`ImageCache.get_image`.
@@ -111,7 +111,7 @@ def init_pixel_ratio():
 
 
 def get_thumbnail(
-        server, job, root, source, size=common.size_thumbnail,
+        server, job, root, source, size=common.Size.Thumbnail(apply_scale=False),
         fallback_thumb='placeholder',
         get_path=False
 ):
@@ -308,7 +308,7 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
         thumbnail_path,
         source_color_space='',
         target_color_space='sRGB',
-        size=int(common.size_thumbnail)
+        size=int(common.Size.Thumbnail(apply_scale=False))
     )
     if error == 1:
         raise RuntimeError('Failed to make thumbnail.')
@@ -341,7 +341,7 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     if proxy or common.is_collapsed(source):
         source = common.proxy_path(source)
     name = common.get_hash(source) + '.' + common.thumbnail_format
-    return f'{server}/{job}/{root}/{common.bookmark_cache_dir}/thumbnails/{name}'
+    return f'{server}/{job}/{root}/{common.bookmark_item_cache_dir}/thumbnails/{name}'
 
 
 @functools.lru_cache(maxsize=4194304)

@@ -48,13 +48,13 @@ class BaseLinkWidget(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
         row = ui.add_row(
             f'Select {self.entity_type.title()}',
-            height=common.size(common.size_row_height),
+            height=common.Size.RowHeight(),
             parent=self
         )
 
@@ -62,7 +62,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
             ['Select entity...', ], parent=self
         )
         self.combobox.model().set_entity_type(self.entity_type)
-        self.combobox.setMinimumWidth(common.size(common.size_width) * 0.5)
+        self.combobox.setMinimumWidth(common.Size.DefaultWidth(0.5))
 
         self.create_button = ui.PaintedButton(
             'Create New', parent=self
@@ -73,7 +73,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         row.layout().addWidget(self.visit_button, 0)
         row.layout().addWidget(self.create_button, 0)
 
-        row = ui.add_row(None, height=common.size(common.size_row_height), parent=self)
+        row = ui.add_row(None, height=common.Size.RowHeight(), parent=self)
 
         self.link_button = ui.PaintedButton(
             f'Link {self.entity_type.title()} Entity',
@@ -204,10 +204,10 @@ class BaseLinkWidget(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
+            common.Size.DefaultWidth(),
             (
-                    (common.size(common.size_margin) * 2) +
-                    (common.size(common.size_row_height) * 2)
+                    (common.Size.Margin(2.0)) +
+                    (common.Size.RowHeight(2.0))
             )
         )
 
@@ -230,7 +230,7 @@ class EntityNameEditor(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -273,9 +273,9 @@ class EntityNameEditor(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
+            common.Size.DefaultWidth(),
             (
-                    (common.size(common.size_margin) * 2) +
-                    (common.size(common.size_row_height) * 2)
+                    (common.Size.Margin(2.0)) +
+                    (common.Size.RowHeight(2.0))
             )
         )

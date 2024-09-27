@@ -297,7 +297,7 @@ class AssetItemModel(models.ItemModel):
             )
 
         # Cache the list of assets for later use
-        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
         if not assets_cache_dir.exists():
             assets_cache_dir.mkpath('.')
         assets_cache_name = common.get_hash(source)
@@ -331,7 +331,7 @@ class AssetItemModel(models.ItemModel):
 
         """
         # Read from the cache if it exists
-        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
         if not assets_cache_dir.exists():
             assets_cache_dir.mkpath('.')
         assets_cache_name = common.get_hash(path)
@@ -411,7 +411,7 @@ class AssetItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_row_height))
+        return QtCore.QSize(1, common.Size.RowHeight())
 
 
 class AssetItemView(views.ThreadedItemView):
@@ -459,9 +459,7 @@ class AssetItemView(views.ThreadedItemView):
         self.resized.connect(self.adapt_horizontal_header)
 
         self.horizontalHeader().setHidden(False)
-        self.horizontalHeader().setMinimumSectionSize(
-            common.size(common.size_section)
-        )
+        self.horizontalHeader().setMinimumSectionSize(common.Size.Section())
 
         for idx in range(self.model().columnCount()):
             if idx == 0:
@@ -480,7 +478,7 @@ class AssetItemView(views.ThreadedItemView):
         the window size is small.
 
         """
-        min_width = common.size(common.size_width) * 1.66
+        min_width = common.Size.DefaultWidth(1.66)
 
         hidden = self.progress_hidden()
         hidden = True if self.width() < min_width else hidden
@@ -496,7 +494,7 @@ class AssetItemView(views.ThreadedItemView):
         """Inline buttons count.
 
         """
-        if self.columnWidth(0) < common.size(common.size_width) * 0.66:
+        if self.columnWidth(0) < common.Size.DefaultWidth(0.66):
             return 0
         if self.buttons_hidden():
             return 0

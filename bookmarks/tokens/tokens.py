@@ -572,7 +572,7 @@ class TokenConfig(QtCore.QObject):
     """The class is used to interface with token configuration stored in the
     bookmark item's database.
 
-    As token config data might be used in performance sensitive sections,
+    As token config data might be used in performance-sensitive sections,
     the instance is shutdownd until :meth:`data` is called. This will load
     values from the database and cache it internally. This cached data won't be
     updated from the database until :meth:`.data(force=True)` is called.

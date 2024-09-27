@@ -57,7 +57,10 @@ bookmarks = {}
 favourites = {}
 hashes = {}
 timers = {}
+
 font_cache = {}
+metrics_cache = {}
+
 db_connections = {}
 
 active_paths = None
@@ -73,9 +76,6 @@ delegate_bg_subdir_rectangles = {}
 delegate_bg_brushes = {}
 delegate_clickable_rectangles = {}
 delegate_description_rectangles = {}
-
-color_cache = {}
-color_cache_str = {}
 
 elided_text = {}
 
@@ -112,6 +112,7 @@ screen_capture_widget = None
 pick_thumbnail_widget = None
 notes_widget = None
 
+
 # Save the initial module values for later use
 __initial_values__ = {
     k: (v.copy() if isinstance(v, dict) else v) for (k, v) in
@@ -120,6 +121,7 @@ __initial_values__ = {
 
 # Make submodules available from this top module
 from .core import *
+from .hash import *
 from .data import *
 from .env import *
 from .font import *

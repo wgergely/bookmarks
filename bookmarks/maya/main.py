@@ -33,7 +33,7 @@ def init_tool_button(*args, **kwargs):
 
     if ptr is None:
         common.maya_button_widget = MayaButtonWidget(
-            common.size(common.size_row_height * 2)
+            common.Size.RowHeight(2.0))
         )
         common.maya_button_widget.show()
         return
@@ -41,7 +41,7 @@ def init_tool_button(*args, **kwargs):
     parent = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
     if not parent:
         common.maya_button_widget = MayaButtonWidget(
-            common.size(common.size_row_height * 2)
+            common.Size.RowHeight(2.0))
         )
         common.maya_button_widget.show()
         return
@@ -277,14 +277,14 @@ class PanelPicker(QtWidgets.QDialog):
             bottomright = self.mapFromGlobal(bottomright)
 
             capture_rect = QtCore.QRect(top_left, bottomright)
-            pen = QtGui.QPen(common.color(common.color_green))
-            pen.setWidth(common.size(common.size_separator) * 2)
+            pen = QtGui.QPen(common.Color.Green())
+            pen.setWidth(common.Size.Separator(2.0))
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             painter.drawRect(capture_rect)
 
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.color_green))
+            painter.setBrush(common.Color.Green())
             painter.setOpacity(0.3)
             painter.drawRect(capture_rect)
 
@@ -419,7 +419,7 @@ class MayaButtonWidget(ui.ClickableIconButton):
 
         rect = self.rect()
         center = rect.center()
-        o = common.size(common.size_indicator) * 2
+        o = common.Size.Indicator(2.0)
         rect = rect.adjusted(0, 0, -o, -o)
         rect.moveCenter(center)
 
@@ -587,8 +587,8 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         """
         width = parent.viewport().geometry().width()
-        width = (width * 0.5) if width > common.size(common.size_width) else width
-        width = width - common.size(common.size_indicator)
+        width = (width * 0.5) if width > common.Size.DefaultWidth() else width
+        width = width - common.Size.Indicator()
 
         widget = contextmenu.PluginContextMenu(index, parent=parent)
         if index.isValid():
@@ -601,7 +601,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             widget.move(common.cursor.pos())
 
         widget.setFixedWidth(width)
-        widget.move(widget.x() + common.size(common.size_indicator), widget.y())
+        widget.move(widget.x() + common.Size.Indicator(), widget.y())
         common.move_widget_to_available_geo(widget)
         widget.exec_()
 
@@ -615,8 +615,8 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             'dockable': True,
             'allowedArea': None,
             'retain': True,
-            'width': common.size(common.size_width) * 0.5,
-            'height': common.size(common.size_height) * 0.5
+            'width': common.Size.DefaultWidth(0.5),
+            'height': common.Size.DefaultHeight(0.5)
         }
 
         try:
@@ -631,7 +631,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         """
         painter = QtGui.QPainter()
         painter.begin(self)
-        painter.setBrush(common.color(common.color_separator))
+        painter.setBrush(common.Color.VeryDarkBackground())
         painter.setPen(QtCore.Qt.NoPen)
         painter.drawRect(self.rect())
         painter.end()
@@ -641,6 +641,6 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.5,
-            common.size(common.size_height) * 0.5
+            common.Size.DefaultWidth(0.5),
+            common.Size.DefaultHeight(0.5)
         )

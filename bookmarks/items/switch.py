@@ -73,7 +73,7 @@ class BaseSwitchView(views.ThreadedItemView):
 
         # Shadow effect
         self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
-        self.effect.setBlurRadius(common.size(common.size_margin) * 2)
+        self.effect.setBlurRadius(common.Size.Margin(2.0))
         self.effect.setXOffset(0)
         self.effect.setYOffset(0)
         self.effect.setColor(QtGui.QColor(0, 0, 0, 200))
@@ -117,11 +117,11 @@ class BaseSwitchView(views.ThreadedItemView):
         """Slot -> Resizes the view to the given rect.
 
         """
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         rect = rect.adjusted(o, 0, -o, -o)
 
         center = rect.center()
-        max_width = common.size(common.size_width)
+        max_width = common.Size.DefaultWidth()
         if rect.width() > max_width:
             rect.setWidth(max_width)
             rect.moveCenter(center)
@@ -129,7 +129,7 @@ class BaseSwitchView(views.ThreadedItemView):
         self.setGeometry(rect)
 
         top_left = common.widget(self.tab_idx).mapToGlobal(rect.topLeft())
-        top_left.setY(top_left.y() - common.size(common.size_margin * 2))
+        top_left.setY(top_left.y() - common.Size.Margin(2.0))
         self.move(top_left)
 
     def inline_icons_count(self):
@@ -206,17 +206,17 @@ class BaseSwitchView(views.ThreadedItemView):
             painter = QtGui.QPainter()
             painter.begin(widget)
 
-            o = common.size(common.size_indicator * 2)
+            o = common.Size.Indicator(2.0)
             painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
 
-            _o = common.size(common.size_margin) * 2
+            _o = common.Size.Margin(2.0)
             rect = QtCore.QRect(widget.rect()).adjusted(_o, _o, -_o, -_o)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.color_dark_background))
+            painter.setBrush(common.Color.DarkBackground())
             painter.drawRoundedRect(rect, o, o)
 
-            pen = QtGui.QPen(common.color(common.color_blue))
-            pen.setWidthF(common.size(common.size_separator * 2))
+            pen = QtGui.QPen(common.Color.Blue())
+            pen.setWidthF(common.Size.Separator(2.0))
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             f = pen.widthF()
@@ -303,42 +303,42 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
 
         # Set rect with separator
         rect = QtCore.QRect(option.rect)
-        rect.setHeight(rect.height() - common.size(common.size_separator))
-        rect.setLeft(common.size(common.size_indicator))
+        rect.setHeight(rect.height() - common.Size.Separator())
+        rect.setLeft(common.Size.Indicator())
 
-        o = common.size(common.size_separator)
+        o = common.Size.Separator()
         _rect = rect.adjusted(o, o, -o, -o)
-        o = common.size(common.size_indicator) * 2
+        o = common.Size.Indicator(2.0)
 
         if index.data(QtCore.Qt.DisplayRole) == common.active('task'):
 
             painter.setOpacity(0.66)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.color_green))
+            painter.setBrush(common.Color.Green())
             painter.drawRoundedRect(_rect, o, o)
 
             painter.setOpacity(1.0)
-            pen = QtGui.QPen(common.color(common.color_green))
-            pen.setWidth(common.size(common.size_separator) * 2)
+            pen = QtGui.QPen(common.Color.Green())
+            pen.setWidth(common.Size.Separator(2.0))
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             painter.drawRoundedRect(_rect, o, o)
         elif selected:
             painter.setOpacity(0.66)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.color_light_background))
+            painter.setBrush(common.Color.LightBackground())
             painter.drawRoundedRect(_rect, o, o)
 
             painter.setOpacity(1.0)
-            pen = QtGui.QPen(common.color(common.color_blue))
-            pen.setWidth(common.size(common.size_separator) * 2)
+            pen = QtGui.QPen(common.Color.Blue())
+            pen.setWidth(common.Size.Separator(2.0))
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             painter.drawRoundedRect(_rect, o, o)
         elif hover:
             painter.setOpacity(0.3)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.color_light_background))
+            painter.setBrush(common.Color.LightBackground())
             painter.drawRoundedRect(_rect, o, o)
 
     @delegate.save_painter
@@ -368,25 +368,23 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
             active = index.data(common.PathRole) == common.active('task', path=True)
             has_children = bool(index.data(common.NoteCountRole))
 
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         rect = QtCore.QRect(option.rect)
 
-        color = common.color(common.color_light_background)
-        color = common.color(common.color_text) if hover else color
-        color = common.color(common.color_selected_text) if selected or active or has_children else color
+        color = common.Color.LightBackground()
+        color = common.Color.Text() if hover else color
+        color = common.Color.SelectedText() if selected or active or has_children else color
 
-        font = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )[0]
+        font = common.Font.MediumFont(common.Size.MediumText())[0]
 
         _rect = QtCore.QRect(0, 0, o, o)
         _rect.moveCenter(option.rect.center())
         _rect.moveLeft(
-            option.rect.left() + ((o + common.size(common.size_indicator)) * 0.5)
+            option.rect.left() + ((o + common.Size.Indicator()) * 0.5)
         )
 
         icon = index.data(QtCore.Qt.DecorationRole)
-        icon = ui.get_icon('check', color=common.color(common.color_green), size=o) if active else icon
+        icon = ui.get_icon('check', color=common.Color.Green(), size=o) if active else icon
         if icon:
             icon.paint(painter, _rect, QtCore.Qt.AlignCenter)
 
@@ -403,11 +401,9 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
 
         if index.data(common.DescriptionRole):
 
-            color = common.color(
-                common.color_green
-            ) if active else common.color(common.color_secondary_text)
-            color = common.color(common.color_text) if hover else color
-            color = common.color(common.color_text) if selected else color
+            color = common.Color.Green() if active else common.Color.SecondaryText()
+            color = common.Color.Text() if hover else color
+            color = common.Color.Text() if selected else color
             items.append((index.data(common.DescriptionRole), color))
 
         for idx, val in enumerate(items):
@@ -419,17 +415,15 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
 
             width = common.draw_aliased_text(
                 painter,
-                common.font_db.medium_font(common.size(common.size_font_small))[0],
+                common.Font.MediumFont(common.Size.SmallText())[0],
                 rect,
-                '    ｜    ', align, common.color(common.color_separator)
+                '    ｜    ', align, common.Color.VeryDarkBackground()
             )
             rect.setLeft(rect.left() + width)
 
             width = common.draw_aliased_text(
                 painter,
-                common.font_db.bold_font(
-                    common.size(common.size_font_medium)
-                )[0],
+                common.Font.MediumFont(common.Size.MediumText())[0],
                 rect,
                 text,
                 align,
@@ -441,7 +435,7 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
         """Size hint.
 
         """
-        return QtCore.QSize(0, common.size(common.size_row_height))
+        return QtCore.QSize(0, common.Size.RowHeight())
 
 
 class BaseItemModel(models.ItemModel):
@@ -526,7 +520,7 @@ class BaseItemModel(models.ItemModel):
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
                 index.data(common.PathRole),
-                size=common.size(common.size_row_height),
+                size=common.Size.RowHeight(),
                 fallback_thumb='folder'
             )
             icon = QtGui.QIcon(pixmap)
@@ -707,7 +701,7 @@ class TaskItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_row_height) * 1.2)
+        return QtCore.QSize(1, common.Size.RowHeight(1.2))
 
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings

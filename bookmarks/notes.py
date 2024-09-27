@@ -61,7 +61,7 @@ class Lockfile(QtCore.QSettings):
         if index.isValid():
             p = '/'.join(index.data(common.ParentPathRole)[0:3])
             f = QtCore.QFileInfo(index.data(common.PathRole))
-            self.config_path = f'{p}/{common.bookmark_cache_dir}/locks/{f.baseName()}.lock'
+            self.config_path = f'{p}/{common.bookmark_item_cache_dir}/locks/{f.baseName()}.lock'
             _dir = QtCore.QFileInfo(self.config_path).dir()
             if not _dir.exists():
                 _dir.mkpath('.')
@@ -150,8 +150,8 @@ class SyntaxHighlighter(QtGui.QSyntaxHighlighter):
 
     @functools.lru_cache(maxsize=4194304)
     def _get_text_format(self, k, href):
-        light_font, _ = common.font_db.light_font(common.size(common.size_font_medium))
-        large_font, _ = common.font_db.bold_font(common.size(common.size_font_large))
+        light_font, _ = common.Font.LightFont(common.Size.MediumText())
+        large_font, _ = common.Font.MediumFont(common.Size.LargeText())
         f = QtGui.QTextCharFormat()
         f.setFont(light_font)
         if k == 'bold':
@@ -161,17 +161,17 @@ class SyntaxHighlighter(QtGui.QSyntaxHighlighter):
         elif k == 'header':
             f.setFont(large_font)
             f.setFontWeight(QtGui.QFont.Bold)
-            f.setForeground(common.color(common.color_blue))
+            f.setForeground(common.Color.Blue())
         elif k == 'image':
-            f.setForeground(common.color(common.color_blue))
+            f.setForeground(common.Color.Blue())
         elif k == 'quote':
-            f.setForeground(common.color(common.color_blue))
+            f.setForeground(common.Color.Blue())
         elif k == 'url':
             f.setFontWeight(QtGui.QFont.Bold)
-            f.setForeground(common.color(common.color_blue))
+            f.setForeground(common.Color.Blue())
         elif k == 'filepath':
             f.setFontWeight(QtGui.QFont.Bold)
-            f.setForeground(common.color(common.color_green))
+            f.setForeground(common.Color.Green())
         return f
 
     def highlightBlock(self, text):
@@ -195,9 +195,9 @@ class TextEditor(QtWidgets.QTextBrowser):
         self.highlighter = SyntaxHighlighter(self.document())
 
         self.document().setUseDesignMetrics(True)
-        self.document().setDocumentMargin(common.size(common.size_margin))
+        self.document().setDocumentMargin(common.Size.Margin())
 
-        self.setTabStopWidth(common.size(common.size_margin))
+        self.setTabStopWidth(common.Size.Margin())
 
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -251,7 +251,7 @@ class TextEditor(QtWidgets.QTextBrowser):
 
                 _rect = self.cursorRect(cursor)
                 _center = _rect.center()
-                _rect.setWidth(common.size(common.size_margin))
+                _rect.setWidth(common.Size.Margin())
                 _rect.moveCenter(_center)
 
                 if not _rect.contains(pos):
@@ -298,7 +298,7 @@ class TextEditor(QtWidgets.QTextBrowser):
 
                 _rect = self.cursorRect(cursor)
                 _center = _rect.center()
-                _rect.setWidth(common.size(common.size_margin))
+                _rect.setWidth(common.Size.Margin())
                 _rect.moveCenter(_center)
 
                 if not _rect.contains(pos):
@@ -349,8 +349,8 @@ class RemoveNoteButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'close',
-            (common.color(common.color_red), common.color(common.color_red)),
-            common.size(common.size_margin) * 1.2,
+            (common.Color.Red(), common.Color.Red()),
+            common.Size.Margin(1.2),
             description='Delete note',
             parent=parent
         )
@@ -390,8 +390,8 @@ class DragIndicatorButton(QtWidgets.QLabel):
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         pixmap = images.rsc_pixmap(
-            'drag_indicator', common.color(common.color_dark_background),
-            common.size(common.size_margin) * 1.2
+            'drag_indicator', common.Color.DarkBackground(),
+            common.Size.Margin(1.2)
         )
         self.setPixmap(pixmap)
 
@@ -459,9 +459,9 @@ class OverlayWidget(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_dark_background))
+        painter.setBrush(common.Color.DarkBackground())
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.size(common.size_margin) * 0.2
+        o = common.Size.Margin(0.2)
         painter.drawRoundedRect(self.rect(), o, o)
 
     def begin_drag(self):
@@ -489,9 +489,9 @@ class DragOverlayWidget(OverlayWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_blue))
+        painter.setBrush(common.Color.Blue())
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.size(common.size_margin) * 0.2
+        o = common.Size.Margin(0.2)
         painter.setOpacity(0.5)
         painter.drawRoundedRect(card_widget.geometry(), o, o)
 
@@ -536,7 +536,7 @@ class CardWidget(QtWidgets.QWidget):
     def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
 
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         _o = o / 2.0
 
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -545,7 +545,7 @@ class CardWidget(QtWidgets.QWidget):
         self.title_editor = QtWidgets.QLineEdit(parent=self)
         self.title_editor.setStyleSheet(
             f'QLineEdit {{ background-color: transparent;'
-            f'font-size: {int(common.size(common.size_font_large))}px;}}'
+            f'font-size: {int(common.Size.LargeText())}px;}}'
         )
         self.title_editor.setPlaceholderText('Edit title...')
         self.title_editor.setStatusTip('Edit title...')
@@ -565,11 +565,11 @@ class CardWidget(QtWidgets.QWidget):
         self.title_editor.setWhatsThis('Edit note')
         self.title_editor.setToolTip('Edit note')
 
-        h = common.size(common.size_margin) * 1.3
+        h = common.Size.Margin(1.3)
         self.fold_button = ui.ClickableIconButton(
             'branch_open',
-            (common.color(common.color_text),
-             common.color(common.color_text)),
+            (common.Color.Text(),
+             common.Color.Text()),
             h,
             description='Fold/Unfold the note',
             state=True,
@@ -582,12 +582,12 @@ class CardWidget(QtWidgets.QWidget):
             QtWidgets.QSizePolicy.Minimum,
         )
 
-        info = f'<span style="font-size:{int(common.size_font_small)}px;">'
+        info = f'<span style="font-size:{int(common.Size.SmallText(apply_scale=False))}px;">'
         if 'created_by' in self.extra_data:
-            info += f'Added by <span style="color:{common.rgb(common.color_green)};">' \
+            info += f'Added by <span style="color:{common.Color.Green(qss=True)};">' \
                     f'{self.extra_data["created_by"]}</span>'
         if 'created_at' in self.extra_data:
-            info += f' at <span style="color:{common.rgb(common.color_green)};">' \
+            info += f' at <span style="color:{common.Color.Green(qss=True)};">' \
                     f'{self.extra_data["created_at"]}</span>'
         info += '</span>'
         label = QtWidgets.QLabel(info, parent=self)
@@ -732,9 +732,9 @@ class CardsScrollWidget(QtWidgets.QScrollArea):
         QtWidgets.QVBoxLayout(widget)
         widget.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
 
-        o = common.size(common.size_margin) * 0.5
+        o = common.Size.Margin(0.5)
         widget.layout().setContentsMargins(o, o, o, o)
-        widget.layout().setSpacing(common.size(common.size_indicator) * 2)
+        widget.layout().setSpacing(common.Size.Indicator(2.0))
 
         self.setWidget(widget)
 
@@ -886,11 +886,11 @@ class CardsWidget(QtWidgets.QDialog):
         QtWidgets.QHBoxLayout(widget)
         self.layout().addWidget(widget, 0)
 
-        h = common.size(common.size_margin) * 1.4
+        h = common.Size.Margin(1.4)
         self.add_button = ui.ClickableIconButton(
             'add',
-            (common.color(common.color_green),
-             common.color(common.color_selected_text)),
+            (common.Color.Green(),
+             common.Color.SelectedText()),
             h,
             description='Click to add a new note',
             state=True,
@@ -904,17 +904,16 @@ class CardsWidget(QtWidgets.QDialog):
             self.index.data(common.ParentPathRole)[1],
             self.index.data(common.ParentPathRole)[2],
             self.index.data(common.PathRole),
-            size=common.size(common.size_row_height)
+            size=common.Size.RowHeight()
         )
         if not pixmap.isNull():
             label = QtWidgets.QLabel(parent=self)
             label.setPixmap(pixmap)
         widget.layout().addWidget(label, 0)
 
-        info = ''
-        info = f'<span style="font-size:{int(common.size_font_large)}px;">'
+        info = f'<span style="font-size:{int(common.Size.LargeText(apply_scale=False))}px;">'
         info += f'{self.index.data(QtCore.Qt.DisplayRole)}'
-        info += f'<span style="color:{common.rgb(common.color_secondary_text)};">'
+        info += f'<span style="color:{common.Color.SecondaryText(qss=True)};">'
         info += ' notes'
         if self.lock.is_locked():
             info += ' (read-only)'
@@ -930,11 +929,11 @@ class CardsWidget(QtWidgets.QDialog):
 
         # Separator pixmap
         pixmap = images.rsc_pixmap(
-            'gradient2', None, common.size(common.size_row_height), opacity=0.5
+            'gradient2', None, common.Size.RowHeight(), opacity=0.5
         )
         separator = QtWidgets.QLabel(parent=self)
         separator.setScaledContents(True)
-        separator.setFixedHeight(common.size(common.size_row_height))
+        separator.setFixedHeight(common.Size.RowHeight())
         separator.setPixmap(pixmap)
         self.layout().addWidget(separator, 1)
 
@@ -956,8 +955,8 @@ class CardsWidget(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_height)
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight()
         )
 
     @property

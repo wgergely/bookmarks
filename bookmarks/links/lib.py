@@ -13,8 +13,6 @@ class LinksAPI:
         links_file (str): The full path to the .links file.
 
     """
-    #: Clipboard used to store a set of links temporarily
-    _clipboard = []
 
     #: Cache to store api instances
     _instances = {}
@@ -52,7 +50,6 @@ class LinksAPI:
         """
         for k in cls._instances.keys():
             cls._instances[k].get(force=True)
-            cls._instances[k].exists(force=True)
 
     @classmethod
     def clear_cache(cls):
@@ -299,6 +296,30 @@ class LinksAPI:
         return {k: v[k] for k in sorted(v.keys(), key=str.lower)}
 
     @staticmethod
+    def clear_preset(preset):
+        """Clear a preset from the active bookmark item's database."""
+        args = common.active('root', args=True)
+        if not args:
+            raise RuntimeError('Clearing a preset requires a root item to be active')
+
+        if not preset or not isinstance(preset, str):
+            raise RuntimeError('Preset name cannot be empty')
+
+        db = database.get(*args)
+        v = db.value(db.source(), 'asset_link_presets', database.BookmarkTable)
+
+        if not v or preset not in v:
+            raise RuntimeError(f'Preset "{preset}" does not exist')
+
+        del v[preset]
+        db.set_value(db.source(), 'asset_link_presets', v, database.BookmarkTable)
+
+        # Verify
+        v = db.value(db.source(), 'asset_link_presets', database.BookmarkTable)
+        if preset in v:
+            raise RuntimeError(f'Failed to remove preset "{preset}"')
+
+    @staticmethod
     def clear_presets():
         """
         Clear all presets from the active bookmark item's database.
@@ -311,15 +332,19 @@ class LinksAPI:
         db = database.get(*args)
         db.set_value(db.source(), 'asset_link_presets', {}, database.BookmarkTable)
 
-    def save_preset(self, name, force=True):
-        """
-        Save the current links as a preset in the active bookmark item's database.
+    @staticmethod
+    def _save_data_to_database(name, data, force=True):
+        """ Save a preset to the active bookmark item's database.
 
         Args:
-            name (str): The name of the preset to save.
+            name (str): The name of the preset.
+            data (list): The data to save.
             force (bool): If True, overwrite an existing preset with the same name.
 
         """
+        if not data or not isinstance(data, (list, tuple)):
+            raise RuntimeError('No links to save as a preset')
+
         args = common.active('root', args=True)
         if not args:
             raise RuntimeError('Saving a preset requires a root item to be active')
@@ -334,11 +359,7 @@ class LinksAPI:
         if not force and name in v:
             raise RuntimeError(f'Preset "{name}" already exists')
 
-        links = self.get(force=True)
-        if not links:
-            raise RuntimeError('No links to save as a preset')
-
-        v[name] = links
+        v[name] = data
 
         db.set_value(db.source(), 'asset_link_presets', v, database.BookmarkTable)
 
@@ -346,6 +367,18 @@ class LinksAPI:
         v = db.value(db.source(), 'asset_link_presets', database.BookmarkTable)
         if name not in v:
             raise RuntimeError(f'Failed to save preset "{name}"')
+
+    def save_preset_to_database(self, name, force=True):
+        """
+        Save the current links as a preset in the active bookmark item's database.
+
+        Args:
+            name (str): The name of the preset to save.
+            force (bool): If True, overwrite an existing preset with the same name.
+
+        """
+        links = self.get(force=True)
+        self._save_data_to_database(name, links, force=force)
 
     def apply_preset(self, preset):
         """
@@ -399,30 +432,6 @@ class LinksAPI:
         if name in v:
             raise RuntimeError(f'Failed to remove preset "{name}"')
 
-    @classmethod
-    def _get_clipboard(cls):
-        """
-        Get the clipboard.
-
-        Returns:
-            list: The clipboard.
-
-        """
-        if not cls._clipboard:
-            cls._clipboard = []
-        return cls._clipboard
-
-    @classmethod
-    def _set_clipboard(cls, value):
-        """
-        Set the clipboard.
-
-        Args:
-            value (list): The value to set.
-
-        """
-        cls._clipboard = value
-
     def copy_to_clipboard(self, links=None):
         """
         Copy the current links to the clipboard.
@@ -438,7 +447,7 @@ class LinksAPI:
         if not v:
             raise RuntimeError('No links to copy to the clipboard')
 
-        self._set_clipboard(v)
+        common.set_clipboard(common.AssetLinksClipboard, v)
 
     def paste_from_clipboard(self):
         """
@@ -448,7 +457,7 @@ class LinksAPI:
             list: A list of links that were skipped.
 
         """
-        v = self._get_clipboard()
+        v = common.get_clipboard(common.AssetLinksClipboard)
         if not v:
             raise RuntimeError('Clipboard is empty')
 

@@ -12,8 +12,8 @@ from .. import images
 from .. import log
 from .. import ui
 
-THUMBNAIL_EDITOR_SIZE = common.size(common.size_margin) * 10
-HEIGHT = common.size(common.size_row_height) * 0.8
+THUMBNAIL_EDITOR_SIZE = common.Size.Margin(10.0)
+HEIGHT = common.Size.RowHeight(0.8)
 TEMP_THUMBNAIL_PATH = '{temp}/{product}/temp/{uuid}.{ext}'
 
 AssetTypes = ('Asset', 'Sequence', 'Shot')
@@ -50,7 +50,7 @@ def process_image(source):
         destination,
         source_color_space='',
         target_color_space='sRGB',
-        size=int(common.size_thumbnail)
+        size=int(common.Size.Thumbnail(apply_scale=False))
     )
     if error == 1:
         raise RuntimeError('Failed to convert the thumbnail')
@@ -61,7 +61,7 @@ def process_image(source):
 
     image = images.ImageCache.get_image(
         destination,
-        int(common.size_thumbnail),
+        int(common.Size.Thumbnail(apply_scale=False)),
         force=True
     )
     if not image or image.isNull():
@@ -105,16 +105,16 @@ class BaseComboBox(QtWidgets.QComboBox):
         """
         idx = self.count() - 1
         sg_pixmap = images.rsc_pixmap(
-            'sg', common.color(common.color_separator),
-            common.size(common.size_margin) * 2
+            'sg', common.Color.VeryDarkBackground(),
+            common.Size.Margin(2.0)
         )
         check_pixmap = images.rsc_pixmap(
-            'check', common.color(common.color_green),
-            common.size(common.size_margin) * 2
+            'check', common.Color.Green(),
+            common.Size.Margin(2.0)
         )
         error_pixmap = images.rsc_pixmap(
-            'close', common.color(common.color_red),
-            common.size(common.size_margin) * 2
+            'close', common.Color.Red(),
+            common.Size.Margin(2.0)
         )
 
         error_icon = QtGui.QIcon(error_pixmap)
@@ -184,10 +184,10 @@ class ThumbnailContextMenu(contextmenu.BaseContextMenu):
 
         """
         add_pixmap = images.rsc_pixmap(
-            'add', common.color(common.color_green), common.size(common.size_margin)
+            'add', common.Color.Green(), common.Size.Margin()
         )
         remove_pixmap = images.rsc_pixmap(
-            'close', common.color(common.color_red), common.size(common.size_margin)
+            'close', common.Color.Red(), common.Size.Margin()
         )
 
         self.menu['Capture...'] = {
@@ -218,8 +218,8 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     ):
         super().__init__(
             'pick_image',
-            (common.color(common.color_blue),
-             common.color(common.color_dark_background)),
+            (common.Color.Blue(),
+             common.Color.DarkBackground()),
             size=size,
             description='Drag-and-drop an image to add, click to capture, '
                         'or right-click to pick a custom thumbnail...',
@@ -349,11 +349,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         painter.setBrush(QtGui.QColor(0, 0, 0, 75))
         painter.drawRect(self.rect())
 
-        o = common.size(common.size_separator)
+        o = common.Size.Separator()
 
-        color = common.color(common.color_separator)
+        color = common.Color.VeryDarkBackground()
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.size(common.size_separator))
+        pen.setWidthF(common.Size.Separator())
         painter.setPen(pen)
 
         image = images.resize_image(
@@ -375,7 +375,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         painter.drawImage(rect, image, image.rect())
 
         # Paint new indicator
-        size = common.size(common.size_font_large) * 0.5
+        size = common.Size.LargeText(0.5)
         rect = QtCore.QRect(0, 0, size, size)
 
         pos = QtCore.QPoint(
@@ -383,19 +383,20 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             size * 0.5,
         )
         rect.moveTopLeft(pos)
-        painter.setBrush(common.color(common.color_green))
+        painter.setBrush(common.Color.Green())
         painter.setPen(QtCore.Qt.NoPen)
         painter.drawRoundedRect(rect, size, size)
 
     def _paint_background(self, painter):
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_separator))
+        painter.setBrush(common.Color.VeryDarkBackground())
         painter.drawRect(self.rect())
 
-    def _paint_current_thumbnail(self, painter):
-        """Paints the current thumbnail of the given source.
+    def _get_source_pixmap(self):
+        """Returns the current thumbnail of the given source.
 
         """
+        color = None
         if not all((self.window().server, self.window().job, self.window().root)):
             pixmap = images.rsc_pixmap(
                 self.fallback_thumb, None, self.rect().height()
@@ -409,19 +410,29 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
                 self.rect().height(),
                 fallback_thumb=self.fallback_thumb
             )
+        if not color or not isinstance(color, QtGui.QColor):
+            color = common.Color.DarkBackground()
+        if not isinstance(pixmap, QtGui.QPixmap) or pixmap.isNull():
+            return QtGui.QPixmap(), color
 
-            if color:
-                painter.setBrush(color)
-                painter.drawRect(self.rect())
+    def _paint_current_thumbnail(self, painter):
+        """Paints the current thumbnail of the given source.
+
+        """
+        pixmap, color = self._get_source_pixmap()
+
+        if color:
+            painter.setBrush(color)
+            painter.drawRect(self.rect())
 
         if not isinstance(pixmap, QtGui.QPixmap) or pixmap.isNull():
             return
 
-        o = common.size(common.size_separator)
+        o = common.Size.Separator()
 
-        color = common.color(common.color_separator)
+        color = common.Color.VeryDarkBackground()
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.size(common.size_separator))
+        pen.setWidthF(common.Size.Separator())
         painter.setPen(pen)
 
         s = float(self.rect().height())

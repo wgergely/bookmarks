@@ -325,7 +325,7 @@ class BookmarkItemModel(models.ItemModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_row_height))
+        return QtCore.QSize(1, common.Size.RowHeight())
 
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings

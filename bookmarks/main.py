@@ -391,23 +391,21 @@ class MainWidget(QtWidgets.QWidget):
     def _paint_background(self, painter):
         rect = QtCore.QRect(self.rect())
         pen = QtGui.QPen(QtGui.QColor(35, 35, 35, 255))
-        pen.setWidth(common.size(common.size_separator))
+        pen.setWidth(common.Size.Separator())
         painter.setPen(pen)
-        painter.setBrush(common.color(common.color_separator).darker(110))
+        painter.setBrush(common.Color.VeryDarkBackground().darker(110))
         painter.drawRect(rect)
 
     def _paint_loading(self, painter):
-        font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )
+        font, metrics = common.Font.MediumFont(common.Size.MediumText())
         rect = QtCore.QRect(self.rect())
         align = QtCore.Qt.AlignCenter
         color = QtGui.QColor(255, 255, 255, 80)
 
         pixmaprect = QtCore.QRect(rect)
         center = pixmaprect.center()
-        s = common.size(common.size_row_height) * 3
-        o = common.size(common.size_margin)
+        s = common.Size.RowHeight(3.0)
+        o = common.Size.Margin()
 
         pixmaprect.setWidth(s)
         pixmaprect.setHeight(s)
@@ -456,6 +454,6 @@ class MainWidget(QtWidgets.QWidget):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_height)
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight()
         )

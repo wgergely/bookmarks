@@ -103,10 +103,10 @@ class TimecodeModel(ui.AbstractListModel):
             name = super().data(index, QtCore.Qt.DisplayRole)
             if template == name:
                 return ui.get_icon(
-                    'check', color=common.color(common.color_green), size=common.size(common.size_margin) * 2
+                    'check', color=common.Color.Green(), size=common.Size.Margin(2.0)
                 )
             return ui.get_icon(
-                'branch_closed', color=common.color(common.color_separator), size=common.size(common.size_margin) * 2
+                'branch_closed', color=common.Color.VeryDarkBackground(), size=common.Size.Margin(2.0)
             )
 
         return super().data(index, role)
@@ -207,13 +207,13 @@ class SourceColorSpaceModel(ui.AbstractListModel):
             if template == name:
                 return ui.get_icon(
                     'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    color=common.Color.Green(),
+                    size=common.Size.Margin(2.0)
                 )
             return ui.get_icon(
                 'branch_closed',
-                color=common.color(common.color_separator),
-                size=common.size(common.size_margin) * 2
+                color=common.Color.VeryDarkBackground(),
+                size=common.Size.Margin(2.0)
             )
 
         return super().data(index, role)
@@ -298,13 +298,13 @@ class TargetColorSpaceModel(ui.AbstractListModel):
             if template == name:
                 return ui.get_icon(
                     'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    color=common.Color.Green(),
+                    size=common.Size.Margin(2.0)
                 )
             return ui.get_icon(
                 'branch_closed',
-                color=common.color(common.color_separator),
-                size=common.size(common.size_margin) * 2
+                color=common.Color.VeryDarkBackground(),
+                size=common.Size.Margin(2.0)
             )
 
         return super().data(index, role)
@@ -344,13 +344,13 @@ class PresetModel(ui.AbstractListModel):
             if template == name:
                 return ui.get_icon(
                     'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    color=common.Color.Green(),
+                    size=common.Size.Margin(2.0)
                 )
             return ui.get_icon(
                 'branch_closed',
-                color=common.color(common.color_separator),
-                size=common.size(common.size_margin) * 2
+                color=common.Color.VeryDarkBackground(),
+                size=common.Size.Margin(2.0)
             )
 
         return super().data(index, role)
@@ -426,13 +426,13 @@ class SizeComboBoxModel(ui.AbstractListModel):
             if template == name:
                 return ui.get_icon(
                     'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    color=common.Color.Green(),
+                    size=common.Size.Margin(2.0)
                 )
             return ui.get_icon(
                 'branch_closed',
-                color=common.color(common.color_separator),
-                size=common.size(common.size_margin) * 2
+                color=common.Color.VeryDarkBackground(),
+                size=common.Size.Margin(2.0)
             )
 
         return super().data(index, role)
@@ -458,7 +458,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         0: {
             'name': 'Convert Image Sequence to Video',
             'icon': 'convert',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -522,8 +522,8 @@ class FFMpegWidget(base.BasePropertyEditor):
         self._index = index
         self._connect_settings_save_signals(common.SECTIONS['ffmpeg'])
 
-        self.setFixedWidth(common.size(common.size_width))
-        self.setFixedHeight(common.size(common.size_height * 0.80))
+        self.setFixedWidth(common.Size.DefaultWidth())
+        self.setFixedHeight(common.Size.DefaultHeight(0.8))
         self.setWindowFlags(
             self.windowFlags() | QtCore.Qt.FramelessWindowHint
         )
@@ -765,7 +765,7 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.66, common.size(common.size_height) * 0.66
+            common.Size.DefaultWidth(0.66), common.Size.DefaultHeight(0.66)
         )
 
     def showEvent(self, event):

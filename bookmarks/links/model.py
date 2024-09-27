@@ -145,7 +145,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
     """
     A model representing the asset links as a tree.
     """
-    row_size = QtCore.QSize(1, common.size(common.size_row_height))
+    row_size = QtCore.QSize(1, common.Size.RowHeight())
 
     def __init__(self, parent=None):
         """
@@ -280,16 +280,6 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         return 1
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
-        """
-        Return the data stored under the given role for the item referred to by the index.
-
-        Args:
-            index (QtCore.QModelIndex): The index of the item.
-            role (int): The role.
-
-        Returns:
-            The data.
-        """
         if not index.isValid():
             return None
 
@@ -318,13 +308,13 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
 
         elif role == QtCore.Qt.DecorationRole:
             if not node.exists():
-                return ui.get_icon('alert', color=common.color(common.color_red))
+                return ui.get_icon('alert', color=common.Color.Red())
 
             if node.is_leaf():
-                return ui.get_icon('link', color=common.color(common.color_blue))
+                return ui.get_icon('link', color=common.Color.Blue())
 
             if node.child_count() > 0:
-                icon = ui.get_icon('link', color=common.color(common.color_selected_text))
+                icon = ui.get_icon('link', color=common.Color.SelectedText())
             else:
                 icon = ui.get_icon('folder')
 
@@ -332,7 +322,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
 
         elif role == QtCore.Qt.SizeHintRole:
             if node.is_leaf():
-                return QtCore.QSize(1, common.size(common.size_row_height) * 0.66)
+                return QtCore.QSize(1, common.Size.RowHeight(0.66))
             return self.row_size
 
         elif role == QtCore.Qt.UserRole:
@@ -341,37 +331,15 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         return None
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
-        """
-        Return the data for the given role and section in the header with the specified orientation.
-
-        Args:
-            section (int): The section number.
-            orientation (QtCore.Qt.Orientation): The orientation.
-            role (int): The role.
-
-        Returns:
-            The header data.
-        """
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
-                return "Links"
+                return 'Links'
             else:
-                return f"Row {section}"
+                return f'Row {section}'
 
         return None
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
-        """
-        Return the index of the item in the model specified by the given row, column, and parent index.
-
-        Args:
-            row (int): The row.
-            column (int): The column.
-            parent (QtCore.QModelIndex): The parent index.
-
-        Returns:
-            QtCore.QModelIndex: The index.
-        """
         if not self.hasIndex(row, column, parent):
             return QtCore.QModelIndex()
 
@@ -387,15 +355,6 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
     def parent(self, index):
-        """
-        Return the parent of the model item with the given index.
-
-        Args:
-            index (QtCore.QModelIndex): The index.
-
-        Returns:
-            QtCore.QModelIndex: The parent index.
-        """
         if not index.isValid():
             return QtCore.QModelIndex()
 
@@ -422,13 +381,11 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         if self.root_node() is None:
             return
 
+        self.beginResetModel()
         for parent_node in self.root_node().children():
             if parent_node.path() != path:
                 continue
-
             parent_node.api().clear()
-
-            self.beginResetModel()
             parent_node.children().clear()
             self.endResetModel()
 

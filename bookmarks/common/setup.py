@@ -64,8 +64,6 @@ def initialize(mode):
     print('[Bookmarks] Initializing...')
     common.init_mode = mode
 
-    _init_config()
-
     common.item_data = common.DataDict()
 
     if not os.path.isdir(common.temp_path()):
@@ -80,8 +78,9 @@ def initialize(mode):
 
     common.cursor = QtGui.QCursor()
 
-    _init_ui_scale()
-    _init_dpi()
+    from . import ui
+    ui._init_ui_scale()
+    ui._init_dpi()
 
     from .. import images
     images.init_image_cache()
@@ -116,7 +115,10 @@ def initialize(mode):
         raise RuntimeError('No QApplication instance found.')
 
     images.init_pixel_ratio()
-    common.init_font()
+
+    from . import font
+    font._init_font_db()
+    ui._init_stylesheet()
 
     if mode == common.StandaloneMode:
         standalone.init()
@@ -205,56 +207,6 @@ def shutdown():
     except Exception as e:
         print(f'Error quitting QApplication: {e}')
 
-
-def _init_config():
-    """Load the config values from common.CONFIG and set them in the `common`
-    module as properties.
-
-    """
-    p = common.rsc(common.CONFIG)
-
-    with open(p, 'r', encoding='utf8') as f:
-        config = json.loads(
-            f.read(),
-            parse_int=int,
-            parse_float=float,
-            object_hook=common.int_key
-        )
-
-    # Set config values in the common module
-    for k, v in config.items():
-        setattr(common, k, v)
-
-
-def _init_ui_scale():
-    v = common.settings.value('settings/ui_scale')
-
-    if v is None or not isinstance(v, str):
-        common.ui_scale_factor = 1.0
-        return
-
-    if '%' not in v:
-        v = 1.0
-    else:
-        v = v.strip('%')
-    try:
-        v = float(v) * 0.01
-    except:
-        v = 1.0
-    v = round(v, 2)
-    if not common.ui_scale_factors or v not in common.ui_scale_factors:
-        v = 1.0
-
-    common.ui_scale_factor = v
-
-
-def _init_dpi():
-    if common.get_platform() == common.PlatformWindows:
-        common.dpi = 72.0
-    elif common.get_platform() == common.PlatformMacOS:
-        common.dpi = 96.0
-    elif common.get_platform() == common.PlatformUnsupported:
-        common.dpi = 72.0
 
 
 def _add_path_to_path(v, p):

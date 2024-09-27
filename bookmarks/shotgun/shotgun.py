@@ -532,13 +532,13 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def get_sg_icon(self):
         icon = QtGui.QIcon()
-        pixmap = images.rsc_pixmap('sg', common.color(common.color_separator), common.size(common.size_row_height))
+        pixmap = images.rsc_pixmap('sg', common.Color.VeryDarkBackground(), common.Size.RowHeight())
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
-        pixmap = images.rsc_pixmap('sg', common.color(common.color_selected_text), common.size(common.size_row_height))
+        pixmap = images.rsc_pixmap('sg', common.Color.SelectedText(), common.Size.RowHeight())
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
         pixmap = images.rsc_pixmap(
-            'sg', common.color(common.color_disabled_text), common.size(common.size_row_height),
+            'sg', common.Color.DisabledText(), common.Size.RowHeight(),
             opacity=0.66
         )
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
@@ -546,7 +546,7 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def get_spinner(self):
         icon = QtGui.QIcon()
-        pixmap = images.rsc_pixmap('spinner', common.color(common.color_text), common.size(common.size_row_height))
+        pixmap = images.rsc_pixmap('spinner', common.Color.Text(), common.Size.RowHeight())
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
@@ -600,7 +600,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole:
             return self._icon(data)
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(1, common.size(common.size_row_height))
+            return QtCore.QSize(1, common.Size.RowHeight())
         return None
 
     def _description(self, v):
@@ -656,7 +656,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if k in v and v[k]:
             args = [int(f) for f in v['bg_color'].split(',')]
             color = QtGui.QColor(*args)
-            pixmap = images.rsc_pixmap('sg', color, common.size(common.size_margin))
+            pixmap = images.rsc_pixmap('sg', color, common.Size.Margin())
             return QtGui.QIcon(pixmap)
 
         # Otherwise return the standard shotgun icon
@@ -708,7 +708,7 @@ class EntityComboBox(QtWidgets.QComboBox):
 
     """
 
-    def __init__(self, items, fixed_height=common.size(common.size_row_height), parent=None):
+    def __init__(self, items, fixed_height=common.Size.RowHeight(), parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         if not self.parent():

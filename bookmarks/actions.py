@@ -382,7 +382,7 @@ def import_favourites(*args, source=None):
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
                     root = '/'.join(
-                        (server, job, root, common.bookmark_cache_dir)
+                        (server, job, root, common.bookmark_item_cache_dir)
                     )
                     _zip.extract(
                         file_info.fileName(), root
@@ -700,8 +700,8 @@ def increase_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size.height() + common.size(common.size_thumbnail / 15)
-    if v >= common.size_thumbnail:
+    v = model.row_size.height() + common.Size.Thumbnail((1.0 / 15.0), apply_scale=False)
+    if v >= common.Size.Thumbnail(apply_scale=False):
         return
 
     widget.set_row_size(v)
@@ -718,7 +718,7 @@ def decrease_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size.height() - common.size(common.size_thumbnail / 15)
+    v = model.row_size.height() - common.Size.Thumbnail((1.0/15.0), apply_scale=False)
     if v <= model.default_row_size().height():
         v = model.default_row_size().height()
 
@@ -929,7 +929,7 @@ def refresh(idx=None):
         # Read from the cache if it exists
         p = model.source_path()
         source = '/'.join(p) if p else ''
-        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
         if not assets_cache_dir.exists():
             assets_cache_dir.mkpath('.')
         assets_cache_name = common.get_hash(source)

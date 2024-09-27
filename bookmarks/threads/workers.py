@@ -883,7 +883,7 @@ class ThumbnailWorker(BaseWorker):
                 destination,
                 source_color_space='',
                 target_color_space='sRGB',
-                size=int(common.size_thumbnail),
+                size=int(common.Size.Thumbnail(apply_scale=False)),
             )
             images.ImageCache.flush(source)
 
@@ -896,7 +896,7 @@ class ThumbnailWorker(BaseWorker):
             hash = common.get_hash(destination)
 
             images.ImageCache.get_image(fpath, int(size), hash=hash, force=True)
-            images.ImageCache.setValue(hash, common.color(common.color_dark_background), images.ColorType)
+            images.ImageCache.setValue(hash, common.Color.DarkBackground(), images.ColorType)
             return True
 
         except TypeError:

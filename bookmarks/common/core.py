@@ -1,21 +1,49 @@
 """Common attributes, methods and flag values.
 
 """
-
+import enum
 import functools
-import hashlib
 import os
 import re
 import sys
 import time
 import uuid
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
 
-#: The config filename
-CONFIG = 'config.json'
+documentation_url = 'https://bookmarks-vfx.com'
+github_url = 'https://github.com/wgergely/bookmarks'
+env_key = 'Bookmarks_ROOT'
+product = 'bookmarks'
+organization = 'bookmarks'
+organization_domain = 'bookmarks-vfx.com'
+link_file = '.links'
+bookmark_item_cache_dir = '.bookmark'
+bookmark_item_database = 'bookmark.db'
+favorite_file_ext = 'bfav'
+user_settings = 'user_settings.ini'
+stylesheet_file = 'stylesheet.qss'
+default_bookmarks_template = 'default_bookmark_items.json'
+max_list_items = 999999
+
+ui_scale_factors = [
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+    2.0,
+    2.5,
+    3.0
+]
+
+thumbnail_format = 'png'
 
 #: Startup mode when bookmarks is called as a library
 CoreMode = 'CoreMode'
@@ -154,18 +182,102 @@ ThumbnailResource = 'thumbnails'
 FormatResource = 'formats'
 TemplateResource = 'templates'
 
-hashes_mutex = QtCore.QMutex()
+
+class Font(enum.Enum):
+    BlackFont = 'bmRobotoBlack'
+    BoldFont = 'bmRobotoBold'
+    MediumFont = 'bmRobotoMedium'
+    LightFont = 'bmRobotoRegular'
+
+    def __call__(self, size):
+        from .. import common
+        return common.font_db.get(size, self)
 
 
-def rsc(rel_path):
-    """Returns a resource item from the `rsc` directory.
+class Size(enum.Enum):
+    SmallText = 11.0
+    MediumText = 12.0
+    LargeText = 16.0
+    Indicator = 4.0
+    Separator = 1.0
+    Margin = 18.0
+    Section = 86.0
+    RowHeight = 34.0
+    Thumbnail = 512.0
+    DefaultWidth = 640.0
+    DefaultHeight = 480.0
 
-    """
-    v = os.path.normpath('/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path)))
-    f = QtCore.QFileInfo(v)
-    if not f.exists():
-        raise RuntimeError(f'{f.filePath()} does not exist.')
-    return f.filePath()
+    def __new__(cls, value):
+        obj = object.__new__(cls)
+        obj._value_ = float(value)
+        return obj
+
+    def __eq__(self, other):
+        if isinstance(other, (float, int)):
+            return self._value_ == float(other)
+        return super().__eq__(other)
+
+    def __call__(self, multiplier=1.0, apply_scale=True):
+        if apply_scale:
+            return round(self.value * float(multiplier))
+        return round(self._value_ * float(multiplier))
+
+    @property
+    def value(self):
+        return self.size(self._value_)
+
+    @classmethod
+    def size(cls, value):
+        from ..common import ui_scale_factor, dpi
+        return round(float(value) * (float(dpi) / 72.0)) * float(ui_scale_factor)
+
+
+class Color(enum.Enum):
+    Opaque = (0, 0, 0, 30)
+    Transparent = (0, 0, 0, 0)
+    #
+    VeryDarkBackground = (40, 40, 40)
+    DarkBackground = (65, 65, 65)
+    Background = (85, 85, 85)
+    LightBackground = (120, 120, 120)
+    #
+    DisabledText = (145, 145, 145)
+    SecondaryText = (185, 185, 185)
+    Text = (225, 225, 225)
+    SelectedText = (255, 255, 255)
+    #
+    Blue = (88, 138, 180)
+    LightBlue = (50, 50, 195, 180)
+    MediumBlue = (66, 118, 160, 180)
+    DarkBlue = (31, 39, 46)
+    Red = (219, 114, 114)
+    LightRed = (240, 100, 100, 180)
+    MediumRed = (210, 75, 75, 180)
+    DarkRed = (65, 35, 35, 180)
+    Green = (90, 200, 155)
+    LightGreen = (80, 150, 100, 180)
+    MediumGreen = (65, 110, 75, 180)
+    DarkGreen = (35, 65, 45)
+    Yellow = (253, 166, 1, 200)
+    LightYellow = (255, 220, 100, 180)
+    MediumYellow = (255, 200, 50, 180)
+    DarkYellow = (155, 125, 25)
+
+    def __new__(cls, r, g, b, a=255):
+        obj = object.__new__(cls)
+        obj._value_ = (r, g, b, a)
+        return obj
+
+    def __call__(self, qss=False):
+        v = QtGui.QColor(*self._value_)
+        if not qss:
+            return v
+        return self.rgb(v)
+
+    @staticmethod
+    def rgb(color):
+        rgb = [str(f) for f in color.getRgb()]
+        return f'rgba({",".join(rgb)})'
 
 
 def check_type(value, _type):
@@ -197,41 +309,6 @@ def check_type(value, _type):
                 f'Invalid type. Expected "{_type.__name__}", got "'
                 f'{type(value).__name__}"'
             )
-
-
-@functools.lru_cache(maxsize=4194304)
-def get_hash(key):
-    """Calculates the md5 hash of a string.
-
-    In practice, we use this function to generate hashes for file paths. These
-    hashes are used by the `ImageCache`, `user_settings` and `BookmarkDB` to
-    associate data with the file items. Generated hashes are server agnostic,
-    meaning, if the passed string contains a known server's name, we'll remove it
-    before hashing.
-
-    Args:
-        key (str): A key string to calculate a md5 hash for.
-
-    Returns:
-        str: MD5 hexadecimal digest of the key.
-
-    """
-    # Path must not contain backslashes
-    if '\\' in key:
-        key = key.replace('\\', '/')
-
-    for s in common.servers:
-        if s not in key:
-            continue
-
-        l = len(s)
-        if key[:l] == s:
-            key = key[l:]
-            key = key.lstrip('/')
-            break
-
-    # Otherwise, we calculate, save and return the digest
-    return hashlib.md5(key.encode('utf8')).hexdigest()
 
 
 def error(func):
@@ -360,25 +437,6 @@ def get_username():
             v = os.environ['USER']
     v = v.replace('.', '')
     return v
-
-
-def get_template_file_path(name):
-    """Returns the path to the source template file.
-
-    Args:
-        name (str): The name of the template file.
-
-    Returns:
-        str: The path to the template file.
-
-    """
-    return os.path.normpath(
-        os.path.sep.join(
-            (
-                __file__, os.pardir, os.pardir, 'rsc', 'templates', name
-            )
-        )
-    )
 
 
 def temp_path():
@@ -553,176 +611,6 @@ def int_key(x):
     return x
 
 
-class DataDict(dict):
-    """Custom dictionary class used to store model item data.
-
-    This class adds compatibility for :class:`weakref.ref` referencing
-    and custom attributes for storing data states.
-
-    """
-
-    def __str__(self):
-        return (
-            f'<DataDict ({len(self)} items); '
-            f'(loaded={self.loaded}, '
-            f'refresh_needed={self.refresh_needed}, '
-            f'data_type={self.data_type})>'
-        )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self._loaded = False
-        self._refresh_needed = False
-        self._data_type = None
-        self._sg_names = []
-        self._sg_task_names = []
-        self._file_types = []
-        self._subdirectories = []
-        self._servers = []
-        self._jobs = []
-        self._roots = []
-
-    @property
-    def loaded(self):
-        """Special attribute used by the item models and associated thread workers.
-
-        When set to `True`, the helper threads have finished populating data and the item
-        is considered fully loaded.
-
-        """
-        return self._loaded
-
-    @loaded.setter
-    def loaded(self, v):
-        self._loaded = v
-
-    @property
-    def refresh_needed(self):
-        """Used to signal that the cached data is out of date and needs updating.
-
-        """
-        return self._refresh_needed
-
-    @refresh_needed.setter
-    def refresh_needed(self, v):
-        self._refresh_needed = v
-
-    @property
-    def data_type(self):
-        """Returns the associated model item type.
-
-        """
-        return self._data_type
-
-    @data_type.setter
-    def data_type(self, v):
-        self._data_type = v
-
-    @property
-    def sg_names(self):
-        """Returns a list of Shotgun task names associated with the data dictionary."""
-        return self._sg_names
-
-    @sg_names.setter
-    def sg_names(self, v):
-        self._sg_names = v
-
-    @property
-    def sg_task_names(self):
-        """Returns a list of Shotgun task names associated with the data dictionary."""
-        return self._sg_task_names
-
-    @sg_task_names.setter
-    def sg_task_names(self, v):
-        self._sg_task_names = v
-
-    @property
-    def file_types(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._file_types
-
-    @file_types.setter
-    def file_types(self, v):
-        self._file_types = v
-
-    @property
-    def subdirectories(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._subdirectories
-
-    @subdirectories.setter
-    def subdirectories(self, v):
-        self._subdirectories = v
-
-    @property
-    def servers(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._servers
-
-    @servers.setter
-    def servers(self, v):
-        self._servers = v
-
-    @property
-    def jobs(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._jobs
-
-    @jobs.setter
-    def jobs(self, v):
-        self._jobs = v
-
-    @property
-    def roots(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._roots
-
-    @roots.setter
-    def roots(self, v):
-        self._roots = v
-
-
-class Timer(QtCore.QTimer):
-    """A custom QTimer class used across the app.
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        common.timers[repr(self)] = self
-
-    def setObjectName(self, v):
-        """Set the instance object name.
-
-        Args:
-            v (str): Object name.
-
-        """
-        v = f'{v}_{uuid.uuid1().hex}'
-        super().setObjectName(v)
-
-    @classmethod
-    def delete_timers(cls):
-        """Delete all cached timers instances.
-
-        """
-        for k in list(common.timers):
-            try:
-                common.timers[k].isActive()
-            except:
-                # The C++ object is probably already deleted
-                del common.timers[k]
-                continue
-
-            # Check thread affinity
-            if common.timers[k].thread() != QtCore.QThread.currentThread():
-                continue
-            common.timers[k].stop()
-            common.timers[k].deleteLater()
-            del common.timers[k]
-
-
 def sanitize_hashtags(s):
     """Sanitize hashtags in a string.
 
@@ -780,3 +668,43 @@ def split_text_and_hashtags(s):
     tokens_text = ' '.join(hash_tokens)
 
     return regular_text, tokens_text
+
+
+class Timer(QtCore.QTimer):
+    """A custom QTimer class used across the app.
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        common.timers[repr(self)] = self
+
+    def setObjectName(self, v):
+        """Set the instance object name.
+
+        Args:
+            v (str): Object name.
+
+        """
+        v = f'{v}_{uuid.uuid1().hex}'
+        super().setObjectName(v)
+
+    @classmethod
+    def delete_timers(cls):
+        """Delete all cached timers instances.
+
+        """
+        for k in list(common.timers):
+            try:
+                common.timers[k].isActive()
+            except:
+                # The C++ object is probably already deleted
+                del common.timers[k]
+                continue
+
+            # Check thread affinity
+            if common.timers[k].thread() != QtCore.QThread.currentThread():
+                continue
+            common.timers[k].stop()
+            common.timers[k].deleteLater()
+            del common.timers[k]

@@ -289,7 +289,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
         0: {
             'name': 'AkaConvert',
             'icon': 'studioaka',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     common.idx(reset=True, start=0): {
@@ -367,8 +367,8 @@ class AkaConvertWidget(base.BasePropertyEditor):
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
-        self.setFixedWidth(common.size(common.size_width))
-        self.setFixedHeight(common.size(common.size_height * 1.05))
+        self.setFixedWidth(common.Size.DefaultWidth())
+        self.setFixedHeight(common.Size.DefaultHeight(1.05)))
         self.setWindowFlags(
             self.windowFlags() | QtCore.Qt.FramelessWindowHint
         )
@@ -495,7 +495,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.66, common.size(common.size_height) * 1.2
+            common.Size.DefaultWidth(0.66), common.Size.DefaultHeight(1.2)
         )
 
     def showEvent(self, event):

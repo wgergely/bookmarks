@@ -172,9 +172,9 @@ class MinimizeButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'minimize',
-            (common.color(common.color_red), common.color(common.color_secondary_text)),
-            common.size(common.size_margin) -
-            common.size(common.size_indicator),
+            (common.Color.Red(), common.Color.SecondaryText()),
+            common.Size.Margin() -
+            common.Size.Indicator(),
             description='Click to minimize the window...',
             parent=parent
         )
@@ -186,9 +186,9 @@ class CloseButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'close',
-            (common.color(common.color_red), common.color(common.color_secondary_text)),
-            common.size(common.size_margin) -
-            common.size(common.size_indicator),
+            (common.Color.Red(), common.Color.SecondaryText()),
+            common.Size.Margin() -
+            common.Size.Indicator(),
             description='Click to close the window...',
             parent=parent
         )
@@ -215,8 +215,8 @@ class HeaderWidget(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setFixedHeight(
-            common.size(common.size_margin) +
-            (common.size(common.size_indicator) * 2)
+            common.Size.Margin() +
+            (common.Size.Indicator(2.0))
         )
 
         self._create_ui()
@@ -237,9 +237,9 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.layout().addStretch()
         self.layout().addWidget(MinimizeButton(parent=self))
-        self.layout().addSpacing(common.size(common.size_indicator) * 2)
+        self.layout().addSpacing(common.Size.Indicator(2.0))
         self.layout().addWidget(CloseButton(parent=self))
-        self.layout().addSpacing(common.size(common.size_indicator) * 2)
+        self.layout().addSpacing(common.Size.Indicator(2.0))
 
     def mousePressEvent(self, event):
         """Event handler.

@@ -42,27 +42,27 @@ STATES = {
     OmittedState: {
         'name': 'Skip',
         'icon': 'progress-dot-24',
-        'color': common.color(common.color_opaque),
+        'color': common.Color.Opaque(),
     },
     InProgressState: {
         'name': 'In\nProgress',
         'icon': 'progress-hourglass-24',
-        'color': common.color(common.color_yellow),
+        'color': common.Color.Yellow(),
     },
     PendingState: {
         'name': 'Pending',
         'icon': 'progress-task-planning-24',
-        'color': common.color(common.color_background),
+        'color': common.Color.Background(),
     },
     CompletedState: {
         'name': 'Done',
         'icon': 'progress-task-completed-24',
-        'color': common.color(common.color_green),
+        'color': common.Color.Green(),
     },
     PriorityState: {
         'name': 'Priority',
         'icon': 'progress-task-important-24',
-        'color': common.color(common.color_dark_red),
+        'color': common.Color.DarkRed(),
     },
 }
 
@@ -177,7 +177,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
             return
 
         rect = QtCore.QRect(option.rect)
-        o = common.size(common.size_margin) * 3.0
+        o = common.Size.Margin(3.0)
         rect.setWidth(o)
 
         painter.setOpacity(0.5)
@@ -193,7 +193,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         selected = option.state & QtWidgets.QStyle.State_Selected
         hover = option.state & QtWidgets.QStyle.State_MouseOver
         rect = QtCore.QRect(option.rect)
-        rect.setBottom(rect.bottom() - common.size(common.size_separator))
+        rect.setBottom(rect.bottom() - common.Size.Separator())
 
         # Draw background
         color = STATES[data['value']]['color']
@@ -206,7 +206,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         painter.drawRect(rect)
 
         if selected:
-            _color = common.color(common.color_light_background)
+            _color = common.Color.LightBackground()
             painter.setBrush(_color)
             painter.setOpacity(0.15)
             painter.drawRect(rect)
@@ -214,10 +214,10 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         rect.setWidth(rect.height())
         center = rect.center()
 
-        r = common.size(common.size_margin)
+        r = common.Size.Margin()
         rect.setSize(QtCore.QSize(r, r))
         rect.moveCenter(center)
-        rect.moveLeft(option.rect.left() + common.size(common.size_indicator) * 2)
+        rect.moveLeft(option.rect.left() + common.Size.Indicator(2.0))
 
         if data['value'] == OmittedState:
             if hover:
@@ -248,10 +248,10 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 255)))
         _rect = QtCore.QRect(option.rect)
 
-        _o = common.size(common.size_indicator) * 2
+        _o = common.Size.Indicator(2.0)
         _rect.setLeft(right_edge + _o)
 
-        font, metrics = common.font_db.light_font(common.size(common.size_font_small))
+        font, metrics = common.Font.LightFont(common.Size.SmallText())
         painter.setFont(font)
         painter.drawText(
             _rect, QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft, text
@@ -267,7 +267,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
             f'selection-background-color:rgba(180,180,180,255);'
             f'margin:0px;'
             f'padding:0px;'
-            f'min-width:{common.size(common.size_width) * 0.33}px;'
+            f'min-width:{common.Size.DefaultWidth(0.33)}px;'
             f'height:{option.rect.height()}px;'
         )
         editor.currentIndexChanged.connect(

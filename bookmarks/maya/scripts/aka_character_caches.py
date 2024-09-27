@@ -243,7 +243,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
             common.active('job'),
             common.active('root'),
             common.active('asset', path=True),
-            size=common.size(common.size_row_height) * 3,
+            size=common.Size.RowHeight(3.0),
             fallback_thumb='placeholder',
             get_path=False
         )
@@ -252,7 +252,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
         label = QtWidgets.QLabel(parent=self)
         label.setPixmap(pixmap)
         row.layout().addWidget(label, 0)
-        row.layout().addSpacing(common.size(common.size_margin) * 0.5)
+        row.layout().addSpacing(common.Size.Margin(0.5))
 
         active_index = common.active_index(common.AssetTab)
         if not active_index or not active_index.isValid():
@@ -260,7 +260,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
         asset_name = active_index.data(QtCore.Qt.DisplayRole)
         asset_name = asset_name if asset_name else 'Export Cache'
 
-        row.layout().addWidget(ui.PaintedLabel(asset_name, size=common.size(common.size_font_large)))
+        row.layout().addWidget(ui.PaintedLabel(asset_name, size=common.Size.LargeText()))
 
         for k in DEFAULT_VALUES:
             grp = ui.get_group(parent=self, )
@@ -896,7 +896,7 @@ class ExportCharacterCachesDialog(QtWidgets.QDialog):
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.size_width), common.size(common.size_height))
+        return QtCore.QSize(common.Size.DefaultWidth(), common.Size.DefaultHeight())
 
 
 def run():

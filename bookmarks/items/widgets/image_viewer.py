@@ -53,14 +53,14 @@ def get_item_info(ref):
 
     s = ref()[common.PathRole]
     s = s if isinstance(s, str) else ''
-    info.append((common.color(common.color_text), s if s else ''))
+    info.append((common.Color.Text(), s if s else ''))
 
     if not ref or not ref():
         return info
 
     s = ref()[common.DescriptionRole]
     s = s if isinstance(s, str) else ''
-    info.append((common.color(common.color_green), s if s else ''))
+    info.append((common.Color.Green(), s if s else ''))
 
     if not ref or not ref():
         return info
@@ -68,7 +68,7 @@ def get_item_info(ref):
     s = ref()[common.FileDetailsRole]
     s = s if isinstance(s, str) else ''
     s = '   ｜   '.join(s.split(';')) if s else '-'
-    info.append((common.color(common.color_text), s if s else '-'))
+    info.append((common.Color.Text(), s if s else '-'))
 
     if not ref or not ref():
         return info
@@ -91,7 +91,7 @@ def get_item_info(ref):
     for n, _s in enumerate([f.strip() for f in s.split('\n') if f]):
         if n > 32:
             break
-        info.append((common.color(common.color_secondary_text), _s if _s else ''))
+        info.append((common.Color.SecondaryText(), _s if _s else ''))
 
     return info
 
@@ -117,7 +117,7 @@ class Viewer(QtWidgets.QGraphicsView):
         self.scene().addItem(self.item)
 
         self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setBackgroundBrush(QtGui.QColor(0, 0, 0, 0))
+        self.setBackgroundBrush(common.Color.Transparent())
         self.setInteractive(True)
         self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
 
@@ -136,12 +136,10 @@ class Viewer(QtWidgets.QGraphicsView):
         painter.begin(self.viewport())
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
-        font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )
+        font, metrics = common.Font.MediumFont(common.Size.MediumText())
         rect.setHeight(metrics.height())
 
         for color, text in get_item_info(self.parent()._ref):
@@ -273,8 +271,8 @@ class ImageViewer(QtWidgets.QWidget):
             return
 
         _max = max(br.width(), br.height())
-        if _max > common.size_thumbnail:
-            scale_ratio = 1 / (_max / common.size_thumbnail)
+        if _max > common.Size.Thumbnail(apply_scale=False):
+            scale_ratio = 1 / (_max / common.Size.Thumbnail(apply_scale=False))
             self.viewer.scale(scale_ratio, scale_ratio)
             self.viewer.repaint()
 

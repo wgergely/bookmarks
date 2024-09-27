@@ -152,11 +152,11 @@ class TemplateModel(ui.AbstractListModel):
 
             if template == v['name']:
                 pixmap = images.rsc_pixmap(
-                    'check', common.color(common.color_green), common.size(common.size_margin) * 2
+                    'check', common.Color.Green(), common.Size.Margin(2.0)
                 )
             else:
                 pixmap = images.rsc_pixmap(
-                    'file', common.color(common.color_separator), common.size(common.size_margin) * 2
+                    'file', common.Color.VeryDarkBackground(), common.Size.Margin(2.0)
                 )
             icon = QtGui.QIcon(pixmap)
 
@@ -194,7 +194,7 @@ class PublishWidget(base.BasePropertyEditor):
         0: {
             'name': 'Publish File',
             'icon': 'icon',
-            'color': common.color(common.color_green),
+            'color': common.Color.Green(),
             'groups': {
                 0: {
                     0: {
@@ -204,7 +204,7 @@ class PublishWidget(base.BasePropertyEditor):
                         'widget': functools.partial(
                             ui.PaintedLabel,
                             '',
-                            color=common.color(common.color_selected_text)
+                            color=common.Color.SelectedText()
                         ),
                         'placeholder': '',
                         'description': 'Source file path',
@@ -216,7 +216,7 @@ class PublishWidget(base.BasePropertyEditor):
                         'widget': functools.partial(
                             ui.PaintedLabel,
                             '',
-                            color=common.color(common.color_green)
+                            color=common.Color.Green()
                         ),
                         'placeholder': '',
                         'description': 'The publish\'s destination path',
@@ -267,7 +267,7 @@ class PublishWidget(base.BasePropertyEditor):
         2: {
             'name': 'Options',
             'icon': None,
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -363,7 +363,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         """
         self.progress_widget = QtWidgets.QProgressDialog(parent=self)
-        self.progress_widget.setFixedWidth(common.size(common.size_width))
+        self.progress_widget.setFixedWidth(common.Size.DefaultWidth())
         self.progress_widget.setLabelText('Publishing, please wait...')
         self.progress_widget.setWindowTitle('Publish')
         self.progress_widget.close()
@@ -431,12 +431,12 @@ class PublishWidget(base.BasePropertyEditor):
             kwargs['publish_template'], **kwargs
         )
 
-        r = common.rgb(common.color_red)
+        r = common.Color.Red(qss=True)
         v = v.replace(
             tokens.invalid_token, f'<span style="color:{r}">{tokens.invalid_token}</span>'
         )
         v = v.replace(
-            '###', f'<span style="color:{common.rgb(common.color_red)}">###</span>'
+            '###', f'<span style="color:{common.Color.Red(qss=True)}">###</span>'
         )
 
         self.destination_editor.setText(v)
@@ -556,7 +556,7 @@ class PublishWidget(base.BasePropertyEditor):
                 dest,
                 source_color_space='',
                 target_color_space='sRGB',
-                size=int(common.size_thumbnail)
+                size=int(common.Size.Thumbnail(apply_scale=False))
             )
             if error == 1:
                 print(f'Error: Could not convert {temp}')

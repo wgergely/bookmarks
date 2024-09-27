@@ -5,6 +5,8 @@ correctly. Still, all size values must be queried using :func:`.size()` to get a
 dependent pixel value.
 
 """
+import os
+import re
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -17,43 +19,125 @@ CancelButton = 'Cancel'
 NoButton = 'No'
 
 
-def size(v):
-    """Return a size value based on the current UI scale factors.
+def _init_ui_scale():
+    v = common.settings.value('settings/ui_scale')
 
-    Args:
-        v (int): A size value in pixels.
+    if v is None or not isinstance(v, str):
+        common.ui_scale_factor = 1.0
+        return
 
-    """
-    _v = (float(v) * (float(common.dpi) / 72.0)) * float(common.ui_scale_factor)
-    return int(_v)
+    if '%' not in v:
+        v = 1.0
+    else:
+        v = v.strip('%')
+    try:
+        v = float(v) * 0.01
+    except:
+        v = 1.0
+    v = round(v, 2)
+    if not common.ui_scale_factors or v not in common.ui_scale_factors:
+        v = 1.0
+
+    common.ui_scale_factor = v
 
 
-def color(v):
-    """Get and cache a QColor."""
-    r = repr(v)
-    if r not in common.color_cache:
-        common.color_cache[r] = QtGui.QColor(*v)
-    return common.color_cache[r]
+def _init_dpi():
+    if common.get_platform() == common.PlatformWindows:
+        common.dpi = 72.0
+    elif common.get_platform() == common.PlatformMacOS:
+        common.dpi = 96.0
+    elif common.get_platform() == common.PlatformUnsupported:
+        common.dpi = 72.0
 
 
-def rgb(v):
-    """Returns the `rgba(r,g,b,a)` string representation of a QColor.
+def _init_stylesheet():
+    """Loads and stores the custom stylesheet used by the app.
 
-    Args:
-            v (QColor or int): A color.
+    The stylesheet template is stored in the ``rsc/stylesheet.qss`` file, and we use
+    the values in ``config.json`` to expand it.
 
     Returns:
-            str: The string representation of the color.
+        str: The stylesheet.
 
     """
-    if not isinstance(v, QtGui.QColor):
-        v = common.color(v)
-    r = repr(v)
-    if r not in common.color_cache_str:
-        common.color_cache_str[r] = (
-            f'rgba({",".join([str(f) for f in v.getRgb()])})'
-        )
-    return common.color_cache_str[r]
+    from .. import images
+    from . import core
+
+    path = common.rsc(common.stylesheet_file)
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f'Stylesheet file not found: {path}')
+
+    if common.stylesheet:
+        raise RuntimeError('Stylesheet already initialized!')
+
+    with open(path, 'r', encoding='utf-8') as f:
+        qss = f.read()
+
+    kwargs = {}
+
+    for enum in core.Font:
+        if not enum:
+            raise RuntimeError(f'Font {enum.name} not found!')
+        font, _ = enum(common.Size.MediumText())
+        kwargs[enum.name] = font.family()
+
+    for enum in core.Color:
+        key = enum.name
+        if key in kwargs:
+            raise KeyError(f'Key {key} already set!')
+        kwargs[enum.name] = common.Color.rgb(enum())
+
+    for enum in core.Size:
+        for i in [float(f) / 10.0 for f in range(1, 101)]:
+            key = f'{enum.name}@{i:.1f}'
+            if key in kwargs:
+                raise KeyError(f'Key {key} already set!')
+            kwargs[key] = round(enum() * i)
+
+    for entry in os.scandir(common.rsc('gui')):
+        if not entry.name.endswith('png'):
+            continue
+        key = f'{entry.name.split(".")[0]}'
+        if key in kwargs:
+            raise KeyError(f'Key {key} already set!')
+
+        kwargs[key] = images.rsc_pixmap(key, None, None, get_path=True)
+
+    # Tokens are defined as "<token>" in the stylesheet file
+    for match in re.finditer(r'<(.*?)>', qss):
+        if not match:
+            continue
+
+        key = match.group(1)
+        if key not in kwargs:
+            raise KeyError(f'Key {key} not found in kwargs!')
+
+        qss = qss.replace(f'<{key}>', str(kwargs[key]))
+
+    # Make sure all tokens are replaced
+    if re.search(r'<(.*?)>', qss):
+        raise RuntimeError('Not all tokens were replaced!')
+
+    common.stylesheet = qss
+    return qss
+
+
+def rsc(rel_path):
+    """Get the absolute path to a resource item from the relative path.
+
+    Args:
+        rel_path (str): The relative path to the resource item.
+
+    Returns:
+        str: The absolute path to the resource item.
+
+    """
+    v = os.path.normpath('/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path)))
+
+    f = QtCore.QFileInfo(v)
+    if not f.exists():
+        raise RuntimeError(f'{f.filePath()} does not exist.')
+    return f.filePath()
 
 
 def status_bar_message(message):
@@ -184,103 +268,10 @@ def set_stylesheet(w):
     """
     if common.init_mode is None:
         raise RuntimeError('Not yet initialized!')
-
     if not common.stylesheet:
-        init_stylesheet()
+        raise RuntimeError('Stylesheet not initialized!')
 
     w.setStyleSheet(common.stylesheet)
-
-
-def init_stylesheet():
-    """Loads and stores the custom stylesheet used by the app.
-    
-    The stylesheet template is stored in the ``rsc/stylesheet.qss`` file, and we use
-    the values in ``config.json`` to expand it.
-
-    Returns:
-        str: The stylesheet.
-    
-    """
-    path = common.rsc(common.stylesheet_file)
-
-    with open(path, 'r', encoding='utf-8') as f:
-        f.seek(0)
-        qss = f.read()
-
-    try:
-        from .. import images
-        primary = common.font_db.bold_font(
-            size(common.size_font_medium)
-        )[0].family()
-        secondary = common.font_db.medium_font(
-            size(common.size_font_small)
-        )[0].family()
-
-        qss = qss.format(
-            font_primary=primary,
-            font_secondary=secondary,
-            size_font_small=int(size(common.size_font_small)),
-            size_font_medium=int(size(common.size_font_medium)),
-            size_font_large=int(size(common.size_font_large)),
-            size_separator=int(size(common.size_separator)),
-            size_separator2=int(size(common.size_separator) * 2.0),
-            size_indicator=int(size(common.size_indicator)),
-            size_indicator1=int(size(common.size_indicator) * 1.5),
-            size_indicator2=int(size(common.size_indicator) * 2.0),
-            size_indicator3=int(size(common.size_indicator) * 3.0),
-            size_margin=int(size(common.size_margin)),
-            size_margin2=int(size(common.size_margin) * 2.0),
-            size_margin3=int(size(common.size_margin) * 3.0),
-            size_margin4=int(size(common.size_margin) * 4.0),
-            size_row_height=int(size(common.size_row_height)),
-            size_row_height2=int(size(common.size_row_height) * 0.8),
-            color_background=rgb(common.color_background),
-            color_light_background=rgb(common.color_light_background),
-            color_dark_background=rgb(common.color_dark_background),
-            color_text=rgb(common.color_text),
-            color_secondary_text=rgb(common.color_secondary_text),
-            color_selected_text=rgb(common.color_selected_text),
-            color_disabled_text=rgb(common.color_disabled_text),
-            color_separator=rgb(common.color_separator),
-            #
-            color_red=rgb(common.color_red),
-            color_light_red=rgb(common.color_light_red),
-            color_medium_red=rgb(common.color_medium_red),
-            color_dark_red=rgb(common.color_dark_red),
-            #
-            color_blue=rgb(common.color_blue),
-            color_light_blue=rgb(common.color_light_blue),
-            color_medium_blue=rgb(common.color_medium_blue),
-            color_dark_blue=rgb(common.color_dark_blue),
-            #
-            color_green=rgb(common.color_green),
-            color_light_green=rgb(common.color_light_green),
-            color_medium_green=rgb(common.color_medium_green),
-            color_dark_green=rgb(common.color_dark_green),
-            #
-            color_opaque=rgb(common.color_opaque),
-            branch_closed=images.rsc_pixmap(
-                'branch_closed', None, None, get_path=True
-            ),
-            branch_open=images.rsc_pixmap(
-                'branch_open', None, None, get_path=True
-            ),
-            check=images.rsc_pixmap(
-                'check', None, None, get_path=True
-            ),
-            close=images.rsc_pixmap(
-                'close', None, None, get_path=True
-            ),
-            menu_border_radius=int(size(common.size_margin) * 0.5)
-        )
-    except KeyError as err:
-        from . import log
-        msg = f'Looks like there might be an error in the stylesheet file: {err}'
-        log.error(msg)
-        raise
-
-    common.stylesheet = qss
-    return qss
 
 
 def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
@@ -366,7 +357,7 @@ def close_message():
 def show_message(
         title, body='', disable_animation=False, icon='icon', message_type='info', buttons=None, modal=False,
         parent=None
-        ):
+):
     """Show a message box.
 
     Args:

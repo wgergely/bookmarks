@@ -29,7 +29,7 @@ class TextFilterEditor(QtWidgets.QWidget):
 
         # Shadow effect
         self.effect = QtWidgets.QGraphicsDropShadowEffect(self)
-        self.effect.setBlurRadius(common.size(common.size_margin))
+        self.effect.setBlurRadius(common.Size.Margin())
         self.effect.setXOffset(0)
         self.effect.setYOffset(0)
         self.effect.setColor(QtGui.QColor(0, 0, 0, 255))
@@ -70,7 +70,7 @@ class TextFilterEditor(QtWidgets.QWidget):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin) * 2
+        o = common.Size.Margin(2.0)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -78,14 +78,14 @@ class TextFilterEditor(QtWidgets.QWidget):
         row = ui.add_row(
             None,
             parent=self,
-            height=common.size(common.size_row_height)
+            height=common.Size.RowHeight()
         )
 
         self.history_button = ui.ClickableIconButton(
             'filter',
-            (common.color(common.color_secondary_text),
-             common.color(common.color_secondary_text)),
-            common.size(common.size_margin)
+            (common.Color.SecondaryText(),
+             common.Color.SecondaryText()),
+            common.Size.Margin()
         )
         self.history_button.setFocusPolicy(QtCore.Qt.NoFocus)
         row.layout().addWidget(self.history_button, 0)
@@ -153,8 +153,8 @@ class TextFilterEditor(QtWidgets.QWidget):
         self.editor.setText(text)
 
     def _get_rect(self):
-        o = common.size(common.size_margin)
-        r = common.size(common.size_row_height)
+        o = common.Size.Margin()
+        r = common.Size.RowHeight()
 
         rect = self.rect().adjusted(o, o, -o, -o)
         rect.setHeight(r + (o * 2))
@@ -175,13 +175,13 @@ class TextFilterEditor(QtWidgets.QWidget):
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        pen = QtGui.QPen(common.color(common.color_separator))
-        pen.setWidthF(common.size(common.size_separator))
+        pen = QtGui.QPen(common.Color.VeryDarkBackground())
+        pen.setWidthF(common.Size.Separator())
         painter.setPen(pen)
 
-        i = common.size(common.size_indicator)
+        i = common.Size.Indicator()
         rect = self._get_rect()
-        painter.setBrush(common.color(common.color_dark_background))
+        painter.setBrush(common.Color.DarkBackground())
         painter.setOpacity(self._opacity)
         painter.drawRoundedRect(rect, i, i)
 

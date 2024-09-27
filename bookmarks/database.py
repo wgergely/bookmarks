@@ -3,12 +3,12 @@ properties related to bookmark items. These properties include custom descriptio
 height), and values from :mod:`bookmarks.tokens.tokens`, among others.
 
 The database file for each bookmark item is located at the root of the item's cache folder, as specified by
-:attr:`common.bookmark_cache_dir`. The database path is constructed as follows:
+:attr:`common.bookmark_item_cache_dir`. The database path is constructed as follows:
 
 .. code-block:: python
     :linenos:
 
-    f'{server}/{job}/{root}/{common.bookmark_cache_dir}/{common.bookmark_database}'
+    f'{server}/{job}/{root}/{common.bookmark_item_cache_dir}/{common.bookmark_item_database}'
 
 The database table structure is defined by :attr:`TABLES`, which maps SQLite column types to the corresponding Python
 types used in the app.
@@ -516,8 +516,8 @@ class BookmarkDB(QtCore.QObject):
         self.root = root
 
         self._bookmark = f'{server}/{job}/{root}'
-        self._bookmark_root = f'{self._bookmark}/{common.bookmark_cache_dir}'
-        self._database_path = f'{self._bookmark_root}/{common.bookmark_database}'
+        self._bookmark_root = f'{self._bookmark}/{common.bookmark_item_cache_dir}'
+        self._database_path = f'{self._bookmark_root}/{common.bookmark_item_database}'
 
         if not self._create_bookmark_dir():
             self.connect_to_db(memory=True)
@@ -587,7 +587,7 @@ class BookmarkDB(QtCore.QObject):
         self._version = [int(i) for i in v.split('.')] if v else [0, 0, 0]
 
     def _create_bookmark_dir(self):
-        """Create the `bookmark_cache_dir` if it doesn't already exist.
+        """Create the `bookmark_item_cache_dir` if it doesn't already exist.
 
         Returns:
             bool: `True` if the folder already exists or was successfully created; `False` if the folder cannot
@@ -630,17 +630,25 @@ class BookmarkDB(QtCore.QObject):
             raise ValueError(f'Table "{table}" not found in TABLES.')
 
         sql = f'PRAGMA table_info(\'{table}\');'
-        res = self._connection.execute(sql)
-        data = res.fetchall()
 
-        columns = [c[1] for c in data]
+        try:
+            res = self._connection.execute(sql)
+        except sqlite3.Error as e:
+            log.error(e)
+            raise
+
+        columns = [c[1] for c in res]  # Direct iteration over the cursor without fetchall
         missing = list(set(TABLES[table]) - set(columns))
 
         for column in missing:
             sql_type = f'{column} {TABLES[table][column]["sql"]}'
             sql = f'ALTER TABLE {table} ADD COLUMN {sql_type};'
-            self._connection.execute(sql)
-            log.success(f'Added missing column "{column}"')
+            try:
+                self._connection.execute(sql)
+                log.success(f'Added missing column "{column}"')
+            except sqlite3.Error as e:
+                log.error(f'Failed to add column "{column}": {e}')
+                raise
 
     def _add_info(self):
         columns = sorted(TABLES[InfoTable])
@@ -706,7 +714,7 @@ class BookmarkDB(QtCore.QObject):
             column (str): The column name.
             table (str): The name of the database table.
 
-        Returns:
+        Yields:
             list: A list of values from the column.
 
         """
@@ -722,14 +730,10 @@ class BookmarkDB(QtCore.QObject):
         except sqlite3.Error as e:
             self._is_valid = False
             log.error(e)
-            return []
+            return
 
-        values = []
-        for row in res.fetchall():
-            v = row[0]
-            _v = convert_return_values(table, column, v)
-            values.append(_v)
-        return values
+        for row in res:
+            yield convert_return_values(table, column, row[0])
 
     def get_row(self, source, table):
         """Retrieve a row from the database.
@@ -799,6 +803,41 @@ class BookmarkDB(QtCore.QObject):
         except sqlite3.Error as e:
             self._is_valid = False
             log.error(e)
+
+    def get_rows(self, table):
+        """Retrieve all rows from the database.
+
+        Args:
+            table (str): The name of the database table.
+
+        Yields:
+            dict: A dictionary containing column-value pairs for each row.
+
+        """
+        if table not in TABLES:
+            raise ValueError(f'Table "{table}" not found in TABLES.')
+
+        sql = f'SELECT * FROM {table}'
+
+        try:
+            res = self._connection.execute(sql)
+            self._is_valid = True
+        except sqlite3.Error as e:
+            self._is_valid = False
+            log.error(e)
+            return
+
+        columns = [f[0] for f in res.description]
+
+        for row in res:
+            data = {}
+
+            for idx, column in enumerate(columns):
+                if column == 'id':
+                    continue
+                data[column] = convert_return_values(table, column, row[idx])
+
+            yield data
 
     def value(self, source, key, table):
         """Retrieve a value from the database.

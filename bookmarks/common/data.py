@@ -11,6 +11,136 @@ from PySide2 import QtCore
 from . import common
 
 
+class DataDict(dict):
+    """Custom dictionary class used to store model item data.
+
+    This class adds compatibility for :class:`weakref.ref` referencing
+    and custom attributes for storing data states.
+
+    """
+
+    def __str__(self):
+        return (
+            f'<DataDict ({len(self)} items); '
+            f'(loaded={self.loaded}, '
+            f'refresh_needed={self.refresh_needed}, '
+            f'data_type={self.data_type})>'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._loaded = False
+        self._refresh_needed = False
+        self._data_type = None
+        self._sg_names = []
+        self._sg_task_names = []
+        self._file_types = []
+        self._subdirectories = []
+        self._servers = []
+        self._jobs = []
+        self._roots = []
+
+    @property
+    def loaded(self):
+        """Special attribute used by the item models and associated thread workers.
+
+        When set to `True`, the helper threads have finished populating data and the item
+        is considered fully loaded.
+
+        """
+        return self._loaded
+
+    @loaded.setter
+    def loaded(self, v):
+        self._loaded = v
+
+    @property
+    def refresh_needed(self):
+        """Used to signal that the cached data is out of date and needs updating.
+
+        """
+        return self._refresh_needed
+
+    @refresh_needed.setter
+    def refresh_needed(self, v):
+        self._refresh_needed = v
+
+    @property
+    def data_type(self):
+        """Returns the associated model item type.
+
+        """
+        return self._data_type
+
+    @data_type.setter
+    def data_type(self, v):
+        self._data_type = v
+
+    @property
+    def sg_names(self):
+        """Returns a list of Shotgun task names associated with the data dictionary."""
+        return self._sg_names
+
+    @sg_names.setter
+    def sg_names(self, v):
+        self._sg_names = v
+
+    @property
+    def sg_task_names(self):
+        """Returns a list of Shotgun task names associated with the data dictionary."""
+        return self._sg_task_names
+
+    @sg_task_names.setter
+    def sg_task_names(self, v):
+        self._sg_task_names = v
+
+    @property
+    def file_types(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._file_types
+
+    @file_types.setter
+    def file_types(self, v):
+        self._file_types = v
+
+    @property
+    def subdirectories(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._subdirectories
+
+    @subdirectories.setter
+    def subdirectories(self, v):
+        self._subdirectories = v
+
+    @property
+    def servers(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._servers
+
+    @servers.setter
+    def servers(self, v):
+        self._servers = v
+
+    @property
+    def jobs(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._jobs
+
+    @jobs.setter
+    def jobs(self, v):
+        self._jobs = v
+
+    @property
+    def roots(self):
+        """Returns a list of file types stored in the data dictionary."""
+        return self._roots
+
+    @roots.setter
+    def roots(self, v):
+        self._roots = v
+
+
 def sort_data(ref, sort_by, sort_order):
     """Sort the given data using `sort_by` and `sort_order`.
 

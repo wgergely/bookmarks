@@ -71,7 +71,7 @@ class DropWidget(QtWidgets.QWidget):
         self._placeholder_text = None
 
         self.setAcceptDrops(True)
-        self.setFixedHeight(common.size(common.size_row_height) * 4)
+        self.setFixedHeight(common.Size.RowHeight(4.0))
         self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
 
         self.clicked.connect(self.pick)
@@ -126,9 +126,9 @@ class DropWidget(QtWidgets.QWidget):
     def _draw_background(self, painter, hover):
         painter.setOpacity(0.55 if hover else 0.45)
 
-        o = common.size(common.size_indicator) * 1.5
+        o = common.Size.Indicator(1.5)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_separator))
+        painter.setBrush(common.Color.VeryDarkBackground())
         painter.drawRoundedRect(self.rect(), o, o)
 
         if self._path:
@@ -136,9 +136,9 @@ class DropWidget(QtWidgets.QWidget):
 
         rect = self.rect().adjusted(o, o, -o, -o)
 
-        color = common.color(common.color_green) if hover else common.color(common.color_separator)
+        color = common.Color.Green() if hover else common.Color.VeryDarkBackground()
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.size(common.size_separator) * 2)
+        pen.setWidthF(common.Size.Separator(2.0))
         pen.setStyle(QtCore.Qt.DashLine)
         pen.setCapStyle(QtCore.Qt.RoundCap)
         pen.setJoinStyle(QtCore.Qt.RoundJoin)
@@ -157,11 +157,11 @@ class DropWidget(QtWidgets.QWidget):
 
         painter.setOpacity(1.0 if hover else 0.8)
 
-        o = common.size(common.size_margin) * 1.5
+        o = common.Size.Margin(1.5)
 
-        color = common.color(common.color_green) if hover else common.color(common.color_secondary_text)
-        color = common.color(common.color_selected_text) if self._path else color
-        color = common.color(common.color_green) if self._drag_in_progress else color
+        color = common.Color.Green() if hover else common.Color.SecondaryText()
+        color = common.Color.SelectedText() if self._path else color
+        color = common.Color.Green() if self._drag_in_progress else color
 
         if self._path:
             rect = self.rect().adjusted(o * 3, o, -o, -o)
@@ -169,7 +169,7 @@ class DropWidget(QtWidgets.QWidget):
             rect = self.rect().adjusted(o, o, -o, -o)
 
         common.draw_aliased_text(
-            painter, common.font_db.bold_font(common.size(common.size_font_large))[0], rect, v,
+            painter, common.Font.MediumFont(common.Size.LargeText())[0], rect, v,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight, color, )
 
     def _draw_background_icon(self, painter, hover):
@@ -179,24 +179,24 @@ class DropWidget(QtWidgets.QWidget):
             icon = 'file'
 
         if hover:
-            color = common.color(common.color_green)
+            color = common.Color.Green()
         else:
-            color = common.color(common.color_disabled_text)
+            color = common.Color.DisabledText()
 
         if self._path:
             icon = 'check'
-            color = common.color(common.color_green)
+            color = common.Color.Green()
 
         if self._drag_in_progress:
             icon = 'add_file'
-            color = common.color(common.color_green)
+            color = common.Color.Green()
 
-        h = common.size(common.size_margin)
+        h = common.Size.Margin()
         pixmap = images.rsc_pixmap(icon, color, h)
 
         prect = pixmap.rect()
         prect.moveCenter(self.rect().center())
-        prect.moveLeft(common.size(common.size_margin) * 2)
+        prect.moveLeft(common.Size.Margin(2.0))
 
         painter.drawPixmap(prect, pixmap, pixmap.rect())
 

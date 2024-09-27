@@ -22,11 +22,11 @@ from . import delegate
 from . import models
 from .widgets import filter_editor
 from .. import actions
-from .. import log
 from .. import common
 from .. import contextmenu
 from .. import database
 from .. import images
+from .. import log
 from .. import ui
 from ..threads import threads
 
@@ -46,21 +46,25 @@ class DropIndicatorWidget(QtWidgets.QWidget):
         """
         painter = QtGui.QPainter()
         painter.begin(self)
-        pen = QtGui.QPen(common.color(common.color_blue))
-        pen.setWidth(common.size(common.size_indicator))
+        pen = QtGui.QPen(common.Color.Blue())
+        pen.setWidth(common.Size.Indicator())
         painter.setPen(pen)
-        painter.setBrush(common.color(common.color_blue))
+        painter.setBrush(common.Color.Blue())
         painter.setOpacity(0.35)
         painter.drawRect(self.rect())
         painter.setOpacity(1.0)
+
+        font, _ = common.Font.MediumFont(common.Size.MediumText())
+
         common.draw_aliased_text(
             painter,
-            common.font_db.bold_font(common.size(common.size_font_medium))[0],
+            font,
             self.rect(),
             'Drop to add bookmark',
             QtCore.Qt.AlignCenter,
-            common.color(common.color_blue)
+            common.Color.Blue()
         )
+
         painter.end()
 
     def show(self):
@@ -77,20 +81,19 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._pixmap = pixmap
         self._text = text
 
-        _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )
+        _, metrics = common.MediumFont(common.Size.MediumText())
         self._text_width = metrics.horizontalAdvance(text)
 
-        width = self._text_width + common.size(common.size_margin)
-        width = common.size(common.size_width) + common.size(
-            common.size_margin
-        ) if width > common.size(common.size_width) else width
+        width = self._text_width + common.Size.Margin()
+        width = (
+            common.Size.DefaultWidth() + common.Size.Margin()
+            if width > common.Size.DefaultWidth() else width
+        )
 
-        self.setFixedHeight(common.size(common.size_row_height))
+        self.setFixedHeight(common.Size.RowHeight())
 
         longest_edge = max((pixmap.width(), pixmap.height()))
-        o = common.size(common.size_indicator)
+        o = common.Size.Indicator()
         self.setFixedWidth(
             longest_edge + (o * 2) + width
         )
@@ -121,33 +124,33 @@ class DragPixmapFactory(QtWidgets.QWidget):
         painter.begin(self)
 
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_dark_background))
+        painter.setBrush(common.Color.DarkBackground())
         painter.setOpacity(0.6)
-        o = common.size(common.size_indicator)
+        o = common.Size.Indicator()
         painter.drawRoundedRect(self.rect(), o, o)
         painter.setOpacity(1.0)
 
         pixmap_rect = QtCore.QRect(
-            0, 0, common.size(common.size_row_height), common.size(common.size_row_height)
+            0, 0, common.Size.RowHeight(), common.Size.RowHeight()
         )
         painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
 
-        width = self._text_width + common.size(common.size_indicator)
-        max_width = common.size(common.size_width)
+        width = self._text_width + common.Size.Indicator()
+        max_width = common.Size.DefaultWidth()
         width = max_width if width > max_width else width
         rect = QtCore.QRect(
-            common.size(common.size_row_height) + common.size(common.size_indicator),
+            common.Size.RowHeight() + common.Size.Indicator(),
             0,
             width,
             self.height()
         )
         common.draw_aliased_text(
             painter,
-            common.font_db.bold_font(common.size(common.size_font_medium))[0],
+            common.Font.MediumFont(common.Size.MediumText())[0],
             rect,
             self._text,
             QtCore.Qt.AlignCenter,
-            common.color(common.color_selected_text)
+            common.Color.SelectedText()
         )
         painter.end()
 
@@ -163,23 +166,21 @@ class ItemDrag(QtGui.QDrag):
         model = index.model().sourceModel()
         self.setMimeData(model.mimeData([index, ]))
 
-        def _get(s, color=common.color(common.color_green)):
+        def _get(s, color=common.Color.Green()):
             return images.rsc_pixmap(
                 s, color,
-                common.size(
-                    common.size_margin
-                ) * common.pixel_ratio
+                common.Size.Margin() * common.pixel_ratio
             )
 
         # Set drag icon
         self.setDragCursor(_get('add_circle'), QtCore.Qt.CopyAction)
         self.setDragCursor(_get('file'), QtCore.Qt.MoveAction)
         self.setDragCursor(
-            _get('close', color=common.color(common.color_red)),
+            _get('close', color=common.Color.Red()),
             QtCore.Qt.ActionMask
         )
         self.setDragCursor(
-            _get('close', color=common.color(common.color_red)),
+            _get('close', color=common.Color.Red()),
             QtCore.Qt.IgnoreAction
         )
 
@@ -187,8 +188,8 @@ class ItemDrag(QtGui.QDrag):
         if index.data(common.ItemTabRole) in (common.BookmarkTab, common.AssetTab):
             pixmap = images.rsc_pixmap(
                 'copy',
-                common.color(common.color_disabled_text),
-                common.size(common.size_row_height)
+                common.Color.DisabledText(),
+                common.Size.RowHeight()
             )
             pixmap = DragPixmapFactory.pixmap(pixmap, '< Item Properties >')
             self.setPixmap(pixmap)
@@ -208,25 +209,25 @@ class ItemDrag(QtGui.QDrag):
                     index.data(common.ParentPathRole)[1],
                     index.data(common.ParentPathRole)[2],
                     source,
-                    size=common.size(common.size_row_height),
+                    size=common.Size.RowHeight(),
                 )
             elif alt_modifier and shift_modifier:
                 pixmap = images.rsc_pixmap(
-                    'folder', common.color(common.color_secondary_text),
-                    common.size(common.size_row_height)
+                    'folder', common.Color.SecondaryText(),
+                    common.Size.RowHeight()
                 )
                 source = QtCore.QFileInfo(source).dir().path()
             elif alt_modifier:
                 pixmap = images.rsc_pixmap(
-                    'file', common.color(common.color_secondary_text),
-                    common.size(common.size_row_height)
+                    'file', common.Color.SecondaryText(),
+                    common.Size.RowHeight()
                 )
                 source = common.get_sequence_start_path(source)
             elif shift_modifier:
                 source = common.get_sequence_start_path(source) + ', ++'
                 pixmap = images.rsc_pixmap(
-                    'multiples_files', common.color(common.color_secondary_text),
-                    common.size(common.size_row_height)
+                    'multiples_files', common.Color.SecondaryText(),
+                    common.Size.RowHeight()
                 )
             else:
                 return
@@ -406,17 +407,17 @@ class ProgressWidget(QtWidgets.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
-        color = common.color(common.color_separator)
+        color = common.Color.VeryDarkBackground()
         painter.setBrush(color)
         painter.drawRect(self.rect())
         painter.setOpacity(0.8)
         common.draw_aliased_text(
             painter,
-            common.font_db.bold_font(common.size(common.size_font_medium))[0],
+            common.Font.MediumFont(common.Size.MediumText())[0],
             self.rect(),
             self._message,
             QtCore.Qt.AlignCenter,
-            common.color(common.color_text)
+            common.Color.Text()
         )
         painter.end()
 
@@ -466,11 +467,11 @@ class FilterOnOverlayWidget(ProgressWidget):
 
         painter.save()
 
-        o = common.size(common.size_separator)
+        o = common.Size.Separator()
         rect = self.rect().adjusted(o, o, -o, -o)
         painter.setBrush(QtCore.Qt.NoBrush)
-        pen = QtGui.QPen(common.color(common.color_blue))
-        pen.setWidth(common.size(common.size_separator) * 2.0)
+        pen = QtGui.QPen(common.Color.Blue())
+        pen.setWidth(common.Size.Separator(2.0))
         painter.setPen(pen)
 
         painter.drawRect(rect)
@@ -488,11 +489,11 @@ class FilterOnOverlayWidget(ProgressWidget):
         painter.save()
 
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_red))
+        painter.setBrush(common.Color.Red())
         painter.setOpacity(0.8)
 
         rect = self.rect()
-        rect.setHeight(common.size(common.size_separator) * 2.0)
+        rect.setHeight(common.Size.Separator(2.0))
         painter.drawRect(rect)
         rect.moveBottom(self.rect().bottom())
         painter.drawRect(rect)
@@ -650,7 +651,7 @@ class BaseItemView(QtWidgets.QTableView):
         """Returns the visibility of the inline icon buttons.
 
         """
-        if self.width() < common.size(common.size_width) * 0.66:
+        if self.width() < common.Size.DefaultWidth(0.66):
             return True
         return self._buttons_hidden
 
@@ -1275,14 +1276,14 @@ class BaseItemView(QtWidgets.QTableView):
 
         """
         text = self.get_hint_string()
-        self._paint_message(text, color=common.color(common.color_green))
+        self._paint_message(text, color=common.Color.Green())
 
     def paint_loading(self, widget, event):
         """Paints the hint message.
 
         """
         text = 'Loading items. Please wait...'
-        self._paint_message(text, color=common.color(common.color_text))
+        self._paint_message(text, color=common.Color.Text())
 
     def paint_status_message(self, widget, event):
         """Displays a visual hint for the user to indicate if the list
@@ -1290,9 +1291,9 @@ class BaseItemView(QtWidgets.QTableView):
 
         """
         text = self.get_status_string()
-        self._paint_message(text, color=common.color(common.color_red))
+        self._paint_message(text, color=common.Color.Red())
 
-    def _paint_message(self, text, color=common.color(common.color_text)):
+    def _paint_message(self, text, color=common.Color.Text()):
         """Utility method used to paint a message.
 
         """
@@ -1327,13 +1328,11 @@ class BaseItemView(QtWidgets.QTableView):
             n += 1
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.size(common.size_indicator)
+        o = common.Size.Indicator()
 
         rect = rect.adjusted(o * 3, o, -o * 3, -o)
 
-        font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small)
-        )
+        font, metrics = common.Font.MediumFont(common.Size.SmallText())
         text = metrics.elidedText(
             text,
             QtCore.Qt.ElideRight,
@@ -1436,7 +1435,8 @@ class BaseItemView(QtWidgets.QTableView):
         if p and len(p) == 3:
             # Read from the cache if it exists
             source = '/'.join(p)
-            assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_cache_dir}/assets')
+            assets_cache_dir = QtCore.QDir(
+                f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
             if not assets_cache_dir.exists():
                 assets_cache_dir.mkpath('.')
 
@@ -1798,7 +1798,7 @@ class BaseItemView(QtWidgets.QTableView):
 
             # Adjust the scroll amount based on the row size
             if self.model().sourceModel().row_size.height() > (
-                    common.size(common.size_row_height) * 2):
+                    common.Size.RowHeight(2.0)):
                 o = 9 if shift_modifier else 1
             else:
                 o = 9 if shift_modifier else 3

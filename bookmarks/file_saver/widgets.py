@@ -87,20 +87,20 @@ class TaskModel(ui.AbstractListModel):
             if common.active('task') == sub_folder:
                 _icon = ui.get_icon(
                     'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    color=common.Color.Green(),
+                    size=common.Size.Margin(2.0)
                 )
             else:
                 _icon = ui.get_icon(
                     icon,
-                    size=common.size(common.size_margin) * 2
+                    size=common.Size.Margin(2.0)
                 )
 
             v = f'{folder}/{sub_folder}'
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(v),
                 QtCore.Qt.DecorationRole: _icon,
-                QtCore.Qt.ForegroundRole: common.color(common.color_text),
+                QtCore.Qt.ForegroundRole: common.Color.Text(),
                 QtCore.Qt.SizeHintRole: self.row_size,
                 QtCore.Qt.StatusTipRole: description,
                 QtCore.Qt.AccessibleDescriptionRole: description,
@@ -121,13 +121,13 @@ class TaskModel(ui.AbstractListModel):
 
         _icon = ui.get_icon(
             'folder',
-            size=common.size(common.size_margin) * 2
+            size=common.Size.Margin(2.0)
         )
         description = 'Custom task folder.'
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.display_name(path),
             QtCore.Qt.DecorationRole: _icon,
-            QtCore.Qt.ForegroundRole: common.color(common.color_text),
+            QtCore.Qt.ForegroundRole: common.Color.Text(),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.StatusTipRole: description,
             QtCore.Qt.AccessibleDescriptionRole: description,
@@ -161,13 +161,13 @@ class TemplateModel(ui.AbstractListModel):
             if template == v['name']:
                 icon = ui.get_icon(
                     'check',
-                    color=common.color(common.color_green),
-                    size=common.size(common.size_margin) * 2
+                    color=common.Color.Green(),
+                    size=common.Size.Margin(2.0)
                 )
             else:
                 icon = ui.get_icon(
                     'file',
-                    size=common.size(common.size_margin) * 2
+                    size=common.Size.Margin(2.0)
                 )
 
             self._data[len(self._data)] = {
@@ -216,13 +216,13 @@ class FormatModel(ui.AbstractListModel):
                     icon = ui.get_icon(
                         ext,
                         color=None,
-                        size=common.size(common.size_margin) * 2,
+                        size=common.Size.Margin(2.0),
                         resource=common.FormatResource
                     )
                 except:
                     icon = ui.get_icon(
                         'file',
-                        size=common.size(common.size_margin) * 2
+                        size=common.Size.Margin(2.0)
                     )
 
                 self._data[len(self._data)] = {
@@ -322,8 +322,8 @@ class PrefixEditor(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.5,
-            common.size(common.size_row_height)
+            common.Size.DefaultWidth(0.5),
+            common.Size.RowHeight()
         )
 
 
@@ -331,7 +331,7 @@ class FileNameInfo(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setFixedHeight(common.size(common.size_row_height) * 1.5)
+        self.setFixedHeight(common.Size.RowHeight(1.5))
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding

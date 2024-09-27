@@ -496,7 +496,7 @@ class ExportWidget(base.BasePropertyEditor):
         0: {
             'name': 'Export Object Sets',
             'icon': 'set',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -598,7 +598,7 @@ class ExportWidget(base.BasePropertyEditor):
 
         """
         self.progress_widget = QtWidgets.QProgressDialog(parent=self)
-        self.progress_widget.setFixedWidth(common.size(common.size_width))
+        self.progress_widget.setFixedWidth(common.Size.DefaultWidth())
         self.progress_widget.setLabelText('Exporting, please wait...')
         self.progress_widget.setWindowTitle('Export Progress')
 
@@ -781,6 +781,6 @@ class ExportWidget(base.BasePropertyEditor):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width) * 0.66,
-            common.size(common.size_height * 1.2)
+            common.Size.DefaultWidth(0.66),
+            common.Size.DefaultHeight(1.2))
         )

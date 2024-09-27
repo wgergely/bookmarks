@@ -236,8 +236,8 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.error
     @common.debug
     def init_icons(self):
-        pixmap1 = images.rsc_pixmap('sg', common.color(common.color_green), common.size(common.size_margin))
-        pixmap2 = images.rsc_pixmap('check', common.color(common.color_selected_text), common.size(common.size_margin))
+        pixmap1 = images.rsc_pixmap('sg', common.Color.Green(), common.Size.Margin())
+        pixmap2 = images.rsc_pixmap('check', common.Color.SelectedText(), common.Size.Margin())
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap1, mode=QtGui.QIcon.Normal)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Active)
@@ -245,7 +245,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         self.task_icon = icon
 
         self.step_icon = QtGui.QIcon(
-            images.rsc_pixmap('sg', common.color(common.color_blue), common.size(common.size_margin))
+            images.rsc_pixmap('sg', common.Color.Blue(), common.Size.Margin())
         )
 
     def entities_to_nodes(self):
@@ -378,19 +378,19 @@ class TaskModel(QtCore.QAbstractItemModel):
             return ''
 
         if role == QtCore.Qt.ForegroundRole and column == 0:
-            return common.color(common.color_text)
+            return common.Color.Text()
         if role == QtCore.Qt.ForegroundRole and column > 0:
-            return common.color(common.color_disabled_text)
+            return common.Color.DisabledText()
 
         if role == QtCore.Qt.FontRole and column == 0:
-            font, _ = common.font_db.bold_font(common.size(common.size_font_medium))
+            font, _ = common.Font.MediumFont(common.Size.MediumText())
             return font
         if role == QtCore.Qt.FontRole and column > 0:
-            font, _ = common.font_db.medium_font(common.size(common.size_font_small))
+            font, _ = common.Font.MediumFont(common.Size.SmallText())
             return font
 
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(0, common.size(common.size_row_height))
+            return QtCore.QSize(0, common.Size.RowHeight())
 
         if role == QtCore.Qt.DecorationRole and column == 0:
             return self.task_icon
@@ -412,10 +412,10 @@ class TaskModel(QtCore.QAbstractItemModel):
                 return 'Error getting name'
 
         if role == QtCore.Qt.ForegroundRole:
-            return common.color(common.color_blue)
+            return common.Color.Blue()
 
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(0, common.size(common.size_row_height) * 0.66)
+            return QtCore.QSize(0, common.Size.RowHeight(0.66))
 
         if role == QtCore.Qt.DecorationRole:
             if 'name' in entity and entity['name'] == NoEntity:
@@ -487,7 +487,7 @@ class TaskView(QtWidgets.QTreeView):
         self.setSortingEnabled(True)
         self.setItemsExpandable(True)
         self.setRootIsDecorated(True)
-        self.setIndentation(common.size(common.size_margin))
+        self.setIndentation(common.Size.Margin())
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
         header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, parent=self)
@@ -511,7 +511,7 @@ class TaskView(QtWidgets.QTreeView):
         if not self.model():
             return
 
-        fixed = common.size(common.size_width) * 0.3
+        fixed = common.Size.DefaultWidth(0.3)
         w = (self.rect().width() - fixed) / (self.model().columnCount(QtCore.QModelIndex()) - 1)
         for x in range(self.model().columnCount(QtCore.QModelIndex())):
             if x == 0:
@@ -576,7 +576,7 @@ class TaskPicker(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
+        o = common.Size.Margin()
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -775,4 +775,4 @@ class TaskPicker(QtWidgets.QDialog):
         """Returns a size hint.
 
         """
-        return QtCore.QSize(common.size(common.size_width) * 1.5, common.size(common.size_height) * 1.3)
+        return QtCore.QSize(common.Size.DefaultWidth(1.5), common.Size.DefaultHeight(1.3))

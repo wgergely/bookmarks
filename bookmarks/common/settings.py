@@ -1,7 +1,7 @@
 """Defines a customized QSettings object used to store user settings.
 
 The user settings are stored in an ini file stored at :func:`.get_user_settings_path`.
-The current ui state, current active paths and application settings are all stored in here.
+The current ui state, current active paths, and app settings are all stored in here.
 
 """
 import collections

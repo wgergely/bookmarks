@@ -59,7 +59,7 @@ DEFAULT_ITEM = {
 }
 
 #: Default launcher item size
-THUMBNAIL_EDITOR_SIZE = common.size(common.size_margin) * 5
+THUMBNAIL_EDITOR_SIZE = common.Size.Margin(5.0)
 
 
 def close():
@@ -115,7 +115,7 @@ class ApplicationLauncherItemEditor(QtWidgets.QDialog):
         if not self.parent():
             common.set_stylesheet(self)
 
-        o = common.size(common.size_margin) * 0.5
+        o = common.Size.Margin(0.5)
 
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
@@ -123,24 +123,22 @@ class ApplicationLauncherItemEditor(QtWidgets.QDialog):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         grp = ui.get_group(
-            margin=common.size(common.size_indicator),
+            margin=common.Size.Indicator(),
             vertical=False, parent=self
         )
         grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        h = common.size(common.size_margin) * 2
+        h = common.Size.Margin(2.0)
 
         self.thumbnail_viewer_widget = QtWidgets.QLabel(parent=grp)
-        w = h * len(DEFAULT_ITEM) + (common.size(common.size_indicator) * 2)
+        w = h * len(DEFAULT_ITEM) + (common.Size.Indicator(2.0))
         self.thumbnail_viewer_widget.setFixedSize(QtCore.QSize(w, w))
         grp.layout().addWidget(self.thumbnail_viewer_widget, 0)
 
         self.thumbnail_viewer_widget.setPixmap(images.rsc_pixmap('icon', color=None, size=w))
 
         _grp = ui.get_group(
-            margin=common.size(
-                common.size_indicator
-            ), parent=grp
+            margin=common.Size.Indicator(), parent=grp
         )
         _grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
@@ -210,8 +208,8 @@ class ApplicationLauncherItemEditor(QtWidgets.QDialog):
         """
         image = QtGui.QImage(path)
         if not path or image.isNull():
-            h = common.size(common.size_margin) * 2
-            w = h * len(DEFAULT_ITEM) + (common.size(common.size_indicator) * 2)
+            h = common.Size.Margin(2.0)
+            w = h * len(DEFAULT_ITEM) + (common.Size.Indicator(2.0))
             self.thumbnail_viewer_widget.setPixmap(images.rsc_pixmap('icon', None, w))
             return
 
@@ -312,8 +310,8 @@ class ApplicationLauncherItemEditor(QtWidgets.QDialog):
 
         """
         return QtCore.QSize(
-            common.size(common.size_width),
-            common.size(common.size_row_height)
+            common.Size.DefaultWidth(),
+            common.Size.RowHeight()
         )
 
 
@@ -328,7 +326,7 @@ class ApplicationLauncherListContextMenu(contextmenu.BaseContextMenu):
         """
         self.menu[contextmenu.key()] = {
             'text': 'Add item...',
-            'icon': ui.get_icon('add', color=common.color(common.color_green)),
+            'icon': ui.get_icon('add', color=common.Color.Green()),
             'action': self.parent().add_new_item
         }
 
@@ -344,7 +342,7 @@ class ApplicationLauncherListContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Remove item',
-            'icon': ui.get_icon('close', color=common.color(common.color_red)),
+            'icon': ui.get_icon('close', color=common.Color.Red()),
             'action': functools.partial(self.parent().remove_item, self.index)
         }
 
@@ -463,7 +461,7 @@ class ApplicationLauncherListWidget(ui.ListWidget):
         """
         item = QtWidgets.QListWidgetItem()
 
-        size = QtCore.QSize(1, common.size(common.size_row_height))
+        size = QtCore.QSize(1, common.Size.RowHeight())
         pixmap = QtGui.QPixmap(data['thumbnail'])
         pixmap.setDevicePixelRatio(common.pixel_ratio)
         icon = QtGui.QIcon(pixmap)
@@ -496,7 +494,7 @@ class ApplicationLauncherWidget(ui.GalleryWidget):
     def __init__(self, parent=None):
         super().__init__(
             'Application Launcher',
-            item_height=common.size(common.size_row_height) * 4,
+            item_height=common.Size.RowHeight(4.0),
             parent=parent
         )
 

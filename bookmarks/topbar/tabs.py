@@ -61,16 +61,14 @@ class BaseTabButton(QtWidgets.QLabel):
         return self._label
 
     def get_width(self):
-        o = common.size(common.size_indicator) * 6
-        _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )
+        o = common.Size.Indicator(6.0)
+        _, metrics = common.Font.MediumFont(common.Size.MediumText())
         return metrics.horizontalAdvance(self.text()) + o
 
     @QtCore.Slot()
     def adjust_size(self):
         """Slot responsible for setting the size of the widget to match the text."""
-        o = common.size(common.size_margin) * 2
+        o = common.Size.Margin(2.0)
         if self.tab_idx == common.FavouriteTab:
             self.setMaximumWidth(o)
             self.setMinimumWidth(o)
@@ -103,22 +101,16 @@ class BaseTabButton(QtWidgets.QLabel):
         painter.setPen(QtCore.Qt.NoPen)
 
         if common.current_tab() == self.tab_idx:
-            color = common.color(
-                common.color_selected_text
-            ) if hover else common.color(common.color_text)
+            color = common.Color.SelectedText() if hover else common.Color.Text()
             painter.setBrush(color)
         else:
-            color = common.color(common.color_text) if hover else common.color(
-                common.color_background
-            )
+            color = common.Color.Text() if hover else common.Color.Background()
             painter.setBrush(color)
 
-        font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )
+        font, metrics = common.Font.MediumFont(common.Size.MediumText())
 
         if (metrics.horizontalAdvance(self.text()) + (
-                common.size(common.size_margin) * 0.5)) < self.rect().width():
+                common.Size.Margin(0.5))) < self.rect().width():
             # Draw label
             width = metrics.horizontalAdvance(self.text())
             x = (self.width() / 2.0) - (width / 2.0)
@@ -129,12 +121,10 @@ class BaseTabButton(QtWidgets.QLabel):
             pixmap = images.rsc_pixmap(
                 self.icon,
                 color,
-                common.size(common.size_margin)
+                common.Size.Margin()
             )
             _rect = QtCore.QRect(
-                0, 0, common.size(
-                    common.size_margin
-                ), common.size(common.size_margin)
+                0, 0, common.Size.Margin(), common.Size.Margin()
             )
             _rect.moveCenter(self.rect().center())
             painter.drawPixmap(
@@ -144,20 +134,16 @@ class BaseTabButton(QtWidgets.QLabel):
             )
 
         # Draw indicator line below icon or text
-        rect.setHeight(common.size(common.size_separator) * 2.0)
+        rect.setHeight(common.Size.Separator(2.0))
         painter.setPen(QtCore.Qt.NoPen)
         rect.setWidth(self.rect().width())
 
         if common.current_tab() == self.tab_idx:
             painter.setOpacity(0.9)
-            color = common.color(
-                common.color_text
-            ) if hover else common.color(common.color_selected_text)
+            color = common.Color.Text() if hover else common.Color.SelectedText()
         else:
             painter.setOpacity(0.3)
-            color = common.color(
-                common.color_text
-            ) if hover else common.color(common.color_blue)
+            color = common.Color.Text() if hover else common.Color.Blue()
 
         painter.setBrush(color)
         painter.drawRect(rect)

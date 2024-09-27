@@ -259,7 +259,7 @@ class ItemModel(QtCore.QAbstractTableModel):
     def headerData(self, idx, orientation, role=QtCore.Qt.DisplayRole):
         if orientation == QtCore.Qt.Vertical:
             if role == QtCore.Qt.SizeHintRole:
-                v = QtCore.QSize(common.size(common.size_margin), self.row_size.height())
+                v = QtCore.QSize(common.Size.Margin(), self.row_size.height())
                 return v
         return None
 
@@ -517,7 +517,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.size_row_height))
+        return QtCore.QSize(1, common.Size.RowHeight())
 
     @common.debug
     @common.error
@@ -549,9 +549,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         h = self.default_row_size().height()
         val = h if val is None else val
         val = h if val < h else val
-        val = int(common.size_thumbnail) if val >= int(
-            common.size_thumbnail
-        ) else val
+        val = int(common.Size.Thumbnail(apply_scale=False)) if val >= int(common.Size.Thumbnail(apply_scale=False)) else val
         self.row_size.setHeight(int(val))
         self.rowHeightChanged.emit(self.row_size.height())
 

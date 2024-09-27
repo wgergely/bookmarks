@@ -218,7 +218,7 @@ class ScreenCapture(QtWidgets.QDialog):
 
         pen = QtGui.QPen(
             QtGui.QColor(255, 255, 255, 64),
-            common.size(common.size_separator),
+            common.Size.Separator(),
             QtCore.Qt.DotLine
         )
         painter.setPen(pen)

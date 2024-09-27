@@ -64,7 +64,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Apply scene settings...',
-            'icon': ui.get_icon('check', color=common.color(common.color_green)),
+            'icon': ui.get_icon('check', color=common.Color.Green()),
             'action': actions.apply_settings
         }
 
@@ -79,7 +79,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Save Scene...',
-            'icon': ui.get_icon('add_file', color=common.color(common.color_green)),
+            'icon': ui.get_icon('add_file', color=common.Color.Green()),
             'action': lambda: actions.save_scene(increment=False)
         }
         if common.get_sequence(scene.fileName()):
@@ -268,8 +268,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def maya_preferences_menu(self):
-        item_on_icon = ui.get_icon('check', color=common.color(common.color_green))
-        item_off_icon = ui.get_icon('close', color=common.color(common.color_red))
+        item_on_icon = ui.get_icon('check', color=common.Color.Green())
+        item_off_icon = ui.get_icon('close', color=common.Color.Red())
 
         k = 'Options'
         self.menu[k] = collections.OrderedDict()

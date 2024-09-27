@@ -43,10 +43,10 @@ class BaseFilterModel(ui.AbstractListModel):
 
             text = text.lower().strip()
             if _text == text:
-                return ui.get_icon('check', color=common.color(common.color_green))
+                return ui.get_icon('check', color=common.Color.Green())
 
             if _text == f'"{text}"':
-                return ui.get_icon('check', color=common.color(common.color_green))
+                return ui.get_icon('check', color=common.Color.Green())
 
         return super().data(index, role)
 
@@ -91,37 +91,37 @@ class BaseFilterModel(ui.AbstractListModel):
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.section_name_label,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_row_height) * 0.66),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.RowHeight(0.66)),
             common.FlagsRole: QtCore.Qt.NoItemFlags,
         }
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
         }
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
         }
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: show_all_label,
             QtCore.Qt.DecorationRole: ui.get_icon(
-                'archivedVisible', color=common.color(common.color_green)),
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_row_height) * 0.66),
+                'archivedVisible', color=common.Color.Green()),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.RowHeight(0.66)),
         }
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
         }
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: '',
             common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_separator)),
+            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
         }
 
         icon = ui.get_icon(self.icon)
@@ -156,8 +156,8 @@ class BaseFilterButton(QtWidgets.QComboBox):
         self.setModel(Model())
 
         self.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
-        self.setFixedHeight(common.size(common.size_margin))
-        self.setMinimumWidth(common.size(common.size_margin) * 3)
+        self.setFixedHeight(common.Size.Margin())
+        self.setMinimumWidth(common.Size.Margin(3.0))
         self.setMaxVisibleItems(48)
 
         min_width = self.minimumSizeHint().width()
@@ -325,9 +325,9 @@ class SubdirFilterModel(BaseFilterModel):
 
                 data[idx + insert_idx] = {
                     QtCore.Qt.DisplayRole: hide_all_label,
-                    QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.size(common.size_row_height) * 0.66),
+                    QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.RowHeight(0.66)),
                     QtCore.Qt.DecorationRole: ui.get_icon(
-                        'archivedHidden', color=common.color(common.color_red)),
+                        'archivedHidden', color=common.Color.Red()),
                     QtCore.Qt.StatusTipRole: hide_all_label,
                     QtCore.Qt.AccessibleDescriptionRole: hide_all_label,
                     QtCore.Qt.WhatsThisRole: hide_all_label,

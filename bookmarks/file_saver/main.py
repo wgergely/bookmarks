@@ -185,7 +185,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         0: {
             'name': 'Save File',
             'icon': 'file',
-            'color': common.color(common.color_dark_background),
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -303,7 +303,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.update_timer.timeout.connect(self.verify_unique)
 
         self.filename_editor.setStyleSheet(
-            f'color:{common.rgb(common.color_green)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: '
+            f'color:{common.Color.Green(qss=True)};font-size:{int(common.Size.MediumText(apply_scale=False))}px;qproperty-alignment: '
             f'AlignCenter;'
         )
 
@@ -444,7 +444,7 @@ class FileSaverWidget(base.BasePropertyEditor):
             ext=_get('file_saver_extension').lower()
         )
         v = _strip(v)
-        r = common.rgb(common.color_red)
+        r = common.Color.Red(qss=True)
         v = v.replace(
             tokens.invalid_token,
             f'<span style="color:{r}">{tokens.invalid_token}</span>'
@@ -453,7 +453,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         v = v.replace(
             '###',
             '<span style="color:{}">###</span>'.format(
-                common.rgb(common.color_red)
+                common.Color.Red(qss=True)
             )
         )
 
@@ -471,13 +471,13 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                f'color:{common.rgb(common.color_red)};font-size:'
-                f'{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
+                f'color:{common.Color.Red(qss=True)};font-size:'
+                f'{int(common.Size.MediumText(apply_scale=False))}px;qproperty-alignment: AlignCenter;'
             )
         else:
             self.filename_editor.setStyleSheet(
-                f'color:{common.rgb(common.color_green)};font-size:'
-                f'{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
+                f'color:{common.Color.Green(qss=True)};font-size:'
+                f'{int(common.Size.MediumText(apply_scale=False))}px;qproperty-alignment: AlignCenter;'
             )
 
     def parent_folder(self):

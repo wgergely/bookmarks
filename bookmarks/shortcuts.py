@@ -66,9 +66,17 @@ AddLink = common.idx()
 RemoveLink = common.idx()
 CopyLinks = common.idx()
 PasteLinks = common.idx()
+PasteLinksToAll = common.idx()
 RevealLink = common.idx()
 EditLinks = common.idx()
 ReloadLinks = common.idx()
+
+# Templates editor shortcuts
+AddDefaultTemplate = common.idx()
+NewTemplate = common.idx()
+RemoveTemplate = common.idx()
+RemoveAllTemplates = common.idx()
+ReloadTemplates = common.idx()
 
 
 JobEditorShortcuts = {
@@ -117,6 +125,13 @@ LinksViewShortcuts = {
         'description': 'Paste links',
         'shortcut': None,
     },
+    PasteLinksToAll: {
+        'value': 'Ctrl+Shift+V',
+        'default': 'Ctrl+Shift+V',
+        'repeat': False,
+        'description': 'Paste links to all current items',
+        'shortcut': None,
+    },
     RevealLink: {
         'value': 'Ctrl+O',
         'default': 'Ctrl+O',
@@ -138,6 +153,45 @@ LinksViewShortcuts = {
         'description': 'Reload links',
         'shortcut': None,
     },
+}
+
+TemplatesViewShortcuts = {
+    AddDefaultTemplate: {
+        'value': 'Ctrl+Shift+N',
+        'default': 'Ctrl+Shift+N',
+        'repeat': False,
+        'description': 'Create a new template',
+        'shortcut': None,
+    },
+    NewTemplate: {
+        'value': QtGui.QKeySequence.New,
+        'default': QtGui.QKeySequence.New,
+        'repeat': False,
+        'description': 'Create a new template',
+        'shortcut': None,
+    },
+    RemoveTemplate: {
+        'value': QtGui.QKeySequence.Delete,
+        'default': QtGui.QKeySequence.Delete,
+        'repeat': False,
+        'description': 'Remove template',
+        'shortcut': None,
+    },
+    RemoveAllTemplates: {
+        'value': 'Ctrl+Shift+Delete',
+        'default': 'Ctrl+Shift+Delete',
+        'repeat': False,
+        'description': 'Remove template',
+        'shortcut': None,
+    },
+    ReloadTemplates: {
+        'value': 'Ctrl+R',
+        'default': 'Ctrl+R',
+        'repeat': False,
+        'description': 'Refresh data',
+        'shortcut': None,
+    },
+
 }
 
 MainWidgetShortcuts = {

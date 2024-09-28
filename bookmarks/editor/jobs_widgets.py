@@ -525,18 +525,6 @@ class AddJobDialog(base.BasePropertyEditor):
                         'description': 'The job\'s name, for example, `MY_NEW_JOB`.',
                     },
                 },
-                1: {
-                    0: {
-                        'name': 'Template',
-                        'key': None,
-                        'validator': None,
-                        'widget': functools.partial(
-                            templates.TemplatesWidget, templates.JobTemplateMode
-                        ),
-                        'placeholder': None,
-                        'description': 'Select a folder template to create this asset.',
-                    },
-                },
             },
         },
     }
@@ -582,7 +570,7 @@ class AddJobDialog(base.BasePropertyEditor):
         editor = self.parent().window().job_editor
         model = editor.model()
         server = model.root_node.name
-        jobs = [f.name[len(server)+1:] for f in model.root_node.children if isinstance(f, JobNode)]
+        jobs = [f.name[len(server) + 1:] for f in model.root_node.children if isinstance(f, JobNode)]
         completer = QtWidgets.QCompleter(sorted(jobs))
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.name_editor.setCompleter(completer)
@@ -684,7 +672,6 @@ class AddJobDialog(base.BasePropertyEditor):
 
         common.center_to_parent(self, self.parent().window())
         self.name_editor.setFocus()
-
 
     def sizeHint(self):
         """Returns a size hint.
@@ -883,10 +870,7 @@ class JobsViewContextMenu(contextmenu.BaseContextMenu):
 
         path = index.data(QtCore.Qt.UserRole)
 
-        v = common.get_links(
-            f'{server}/{path[len(server) + 1:].split("/")[0]}',
-            section='links/job'
-        )
+        v = []
 
         def _show_links(s):
             """Shows a popup with the bookmark item as json text.
@@ -1238,25 +1222,13 @@ class JobsModel(QtCore.QAbstractItemModel):
             except:
                 continue
 
-            # Use paths in the link file, if available
-            links = common.get_links(file_info.filePath(), section='links/job')
-            if links:
-                for link in links:
-                    _file_info = QtCore.QFileInfo(f'{file_info.filePath()}/{link}')
-                    yield _file_info.filePath()
-            else:
-                yield file_info.filePath()
+            yield file_info.filePath()
 
     def bookmark_item_generator(self, path, recursion=0, max_recursion=2):
         """Recursive scanning function for finding bookmark folders
         inside the given path.
 
         """
-        # If links exist, return items stored in the link file and nothing else
-        if recursion == 0:
-            links = common.get_links(path, section='links/root')
-            for v in links:
-                yield f'{path}/{v}'
 
         # Otherwise parse the folder
         recursion += 1
@@ -1289,7 +1261,7 @@ class JobsModel(QtCore.QAbstractItemModel):
             # yield the match
             path = entry.path.replace('\\', '/')
 
-            if entry.name == common.bookmark_item_cache_dir:
+            if entry.name == common.bookmark_item_data_dir:
                 _path = '/'.join(path.split('/')[:-1])
                 yield _path
 

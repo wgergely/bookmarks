@@ -18,7 +18,7 @@ from .. import ui
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
 from ..links.lib import LinksAPI
-from ..links.view import PlainTextEdit
+from ..links.view import PlainTextEdit, LinksEditor
 
 
 class TemplatesContextMenu(contextmenu.BaseContextMenu):
@@ -648,9 +648,6 @@ class ExtractTemplateDialog(QtWidgets.QDialog):
         if not self.folder_editor.text():
             raise ValueError('Folder path is required.')
 
-        if not os.path.exists(self.folder_editor.text()):
-            raise ValueError(f'Path "{self.folder_editor.text()}" does not exist.')
-
         self.folderSelected.emit(
             self.folder_editor.text(),
             self.extract_to_links_toggle.isChecked()
@@ -838,7 +835,7 @@ class TemplatesViewDelegate(QtWidgets.QStyledItemDelegate):
         if not node.is_leaf():
             return
 
-        is_default = '!Default Template!' in index.data(QtCore.Qt.DisplayRole)
+        is_default = TemplateItem.default_template_name in index.data(QtCore.Qt.DisplayRole)
 
         # Paint left gradient
         rect = QtCore.QRect(option.rect)
@@ -881,7 +878,8 @@ class TemplatesViewDelegate(QtWidgets.QStyledItemDelegate):
                 color = common.Color.SecondaryText()
 
             if idx == 0 and is_default:
-                text = text.strip('!')
+                char = text[0]
+                text = text.strip(char)
 
             painter.setFont(font)
             painter.setPen(color)
@@ -1130,13 +1128,6 @@ class TemplatesView(QtWidgets.QTreeView):
         self.model().modelReset.connect(self.restore_selected_node)
         self.expanded.connect(self.restore_selected_node)
 
-    def showEvent(self, event):
-        """Show event.
-
-        """
-        QtCore.QTimer.singleShot(100, self.init_data)
-        super().showEvent(event)
-
     @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex)
     def emit_template_file_changed(self, current, previous, *args, **kwargs):
         """Emit the templateChanged signal."""
@@ -1343,7 +1334,7 @@ class TemplatesView(QtWidgets.QTreeView):
             if not node.is_leaf():
                 continue
 
-            if node.api['name'] == '!Default Template!':
+            if node.api['name'] == node.api.default_template_name:
                 if common.show_message(
                         'Default Template Exists',
                         body='The default template already exists. Do you want to update/overwrite it?',
@@ -1555,7 +1546,7 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == '!Default Template!':
+        if node.api['name'] == node.api.default_template_name:
             raise ValueError('Cannot add link preset to the default template.')
 
         try:
@@ -1585,7 +1576,7 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == '!Default Template!':
+        if node.api['name'] == node.api.default_template_name:
             raise ValueError('Cannot remove link preset from the default template.')
 
         if common.show_message(
@@ -1621,10 +1612,8 @@ class TemplatesView(QtWidgets.QTreeView):
         actions.reveal(data['path'])
 
 
-
-
 class TemplatesEditor(QtWidgets.QSplitter):
-    """The main widget for managing templates."""
+    """The widget containing :class:`TemplatesView` and :class:`TemplatePreviewView`."""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -1641,7 +1630,7 @@ class TemplatesEditor(QtWidgets.QSplitter):
         self._connect_signals()
 
     def _create_ui(self):
-        o = common.Size.Indicator(2.0)
+        o = 0
         self.setContentsMargins(o, o, o, o)
 
         widget = QtWidgets.QWidget(parent=self)
@@ -1662,79 +1651,78 @@ class TemplatesEditor(QtWidgets.QSplitter):
         self._templates_view_widget.templateDataChanged.connect(
             self._templates_editor_widget.model().init_data)
 
-# class TemplatesMainWidget(QtWidgets.QDialog):
-#     """The main widget for managing templates."""
-#
-#     AddAssetTab = 0
-#     EditTemplatesTab = 1
-#     EditPresetsTab = 2
-#
-#     def __init__(self, parent=None):
-#         super().__init__(parent=parent)
-#
-#         self.setWindowTitle('Asset Templates')
-#
-#         if not self.parent():
-#             common.set_stylesheet(self)
-#
-#         self._tabs_widget = None
-#
-#         self._add_asset_widget = None
-#         self._template_widget = None
-#         self._preset_widget = None
-#
-#         self._name_editor = None
-#         self._create_asset_button = None
-#
-#         self._create_ui()
-#         self._connect_signals()
-#
-#     def _create_ui(self):
-#         QtWidgets.QVBoxLayout(self)
-#
-#         o = common.Size.Margin(0.66)
-#         self.layout().setSpacing(common.Size.Margin(1.5))
-#         self.layout().setContentsMargins(o, o, o, o)
-#
-#         self._tabs_widget = QtWidgets.QTabWidget(parent=self)
-#         self._tabs_widget.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
-#         self.layout().addWidget(self._tabs_widget, 1)
-#
-#         widget = QtWidgets.QWidget(parent=self)
-#         QtWidgets.QVBoxLayout(widget)
-#         widget.layout().setAlignment(QtCore.Qt.AlignCenter)
-#         widget.layout().setSpacing(common.Size.Margin(0.5))
-#         o = common.Size.Margin()
-#         widget.layout().setContentsMargins(o, o, o, o)
-#
-#         widget.layout().addStretch(100)
-#
-#         row = ui.add_row(None, height=None, parent=widget)
-#         label = ui.PaintedLabel('Create Asset', size=common.Size.LargeText(), parent=widget)
-#         row.layout().addWidget(label, 1)
-#
-#         row = ui.add_row(None, height=None, parent=widget)
-#         self._name_editor = ui.LineEdit(required=True, parent=row)
-#         self._name_editor.setPlaceholderText('Enter a name...')
-#         self._name_editor.setValidator(name_validator)
-#         row.layout().addWidget(self._name_editor, 1)
-#
-#         row = ui.add_row(None, height=None, parent=widget)
-#         self._create_asset_button = ui.PaintedButton('Create', parent=row)
-#         row.layout().addWidget(self._create_asset_button, 1)
-#
-#         widget.layout().addStretch(100)
-#
-#         # Add the widget to the tab
-#         self._tabs_widget.addTab(widget, 'Create Asset')
-#
-#
-#         widget = QtWidgets.QSplitter(parent=self)
-#         widget.setOrientation(QtCore.Qt.Horizontal)
-#         widget.addWidget(QtWidgets.QWidget(parent=self))
-#
-#         self._template_widget = TemplatesView(parent=self)
-#         self._tabs_widget.addTab(self._template_widget, 'Edit Templates')
-#
-#     def _connect_signals(self):
-#         pass
+    def init_data(self):
+        self._templates_view_widget.init_data()
+
+
+class TemplatesMainWidget(QtWidgets.QDialog):
+    """The main widget for managing templates."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.setWindowTitle('Asset Templates')
+
+        if not self.parent():
+            common.set_stylesheet(self)
+
+        self._tabs_widget = None
+
+        self._add_asset_widget = None
+        self._asset_templates_widget = None
+        self._asset_links_widget = None
+
+        self._name_editor = None
+        self._create_asset_button = None
+        self._done_button = None
+
+        self._create_ui()
+        self._connect_signals()
+
+        QtCore.QTimer.singleShot(200, self.init_data)
+
+    def _create_ui(self):
+        QtWidgets.QVBoxLayout(self)
+
+        o = common.Size.Margin(0.66)
+        self.layout().setSpacing(common.Size.Margin(1.5))
+        self.layout().setContentsMargins(o, o, o, o)
+
+        self._tabs_widget = QtWidgets.QTabWidget(parent=self)
+        self._tabs_widget.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.layout().addWidget(self._tabs_widget, 1)
+
+        self._asset_links_widget = LinksEditor(parent=self)
+        self._tabs_widget.addTab(self._asset_links_widget, 'Asset Links')
+
+        self._asset_templates_widget = TemplatesEditor(parent=self)
+        self._tabs_widget.addTab(self._asset_templates_widget, 'Asset Templates')
+
+        row = ui.add_row(None, height=None, parent=self)
+        self._done_button = ui.PaintedButton('Done', parent=row)
+        row.layout().addWidget(self._done_button, 0)
+
+    def _connect_signals(self):
+        self._asset_templates_widget._templates_view_widget.model().modelReset.connect(
+            lambda: self._asset_links_widget._asset_templates_widget.init_data(force=True))
+        self._done_button.clicked.connect(self.accept)
+
+        common.signals.bookmarkItemActivated.connect(self.close)
+        common.signals.assetItemActivated.connect(self.close)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def init_data(self):
+        if not common.active('root'):
+            raise ValueError('This widget requires a root item to be active prior to initialization.')
+
+        # Let's make sure the default database template is created automatically
+        if not TemplateItem.is_default_template_created(_type=TemplateType.DatabaseTemplate):
+            item = TemplateItem()
+            item.type = TemplateType.DatabaseTemplate
+            item.save(force=True)
+
+        # Initializes the asset links editor data
+        self._asset_links_widget._links_view_widget.add_paths_from_active()
+        self._asset_templates_widget.init_data()

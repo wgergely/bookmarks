@@ -25,6 +25,8 @@ class BaseTabButton(QtWidgets.QLabel):
 
         self.setStatusTip(description)
         self.setToolTip(description)
+        self.setWhatsThis(description)
+
         self.setSizePolicy(
             QtWidgets.QSizePolicy.Fixed,
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -46,7 +48,6 @@ class BaseTabButton(QtWidgets.QLabel):
         self.update()
 
     def mouseReleaseEvent(self, event):
-        """Only triggered when the left buttons is pressed."""
         if not isinstance(event, QtGui.QMouseEvent):
             return
         if event.button() == QtCore.Qt.LeftButton:
@@ -68,13 +69,9 @@ class BaseTabButton(QtWidgets.QLabel):
     @QtCore.Slot()
     def adjust_size(self):
         """Slot responsible for setting the size of the widget to match the text."""
+        self.setMaximumWidth(self.get_width())
         o = common.Size.Margin(2.0)
-        if self.tab_idx == common.FavouriteTab:
-            self.setMaximumWidth(o)
-            self.setMinimumWidth(o)
-        else:
-            self.setMaximumWidth(self.get_width())
-            self.setMinimumWidth(o)
+        self.setMinimumWidth(o)
         self.update()
 
     def showEvent(self, event):
@@ -107,7 +104,7 @@ class BaseTabButton(QtWidgets.QLabel):
             color = common.Color.Text() if hover else common.Color.Background()
             painter.setBrush(color)
 
-        font, metrics = common.Font.MediumFont(common.Size.MediumText())
+        font, metrics = common.Font.BoldFont(common.Size.MediumText())
 
         if (metrics.horizontalAdvance(self.text()) + (
                 common.Size.Margin(0.5))) < self.rect().width():

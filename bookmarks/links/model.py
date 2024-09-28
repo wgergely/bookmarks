@@ -235,26 +235,6 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
                 parent_node.append_child(child_node)
             self.endResetModel()
 
-    def reload_paths(self):
-        """
-        Reload all currently added paths in the model.
-
-        """
-        if self.root_node() is None:
-            return
-
-        self.beginResetModel()
-
-        # Refresh cached api data
-        LinksAPI.update_cached_data()
-
-        current_paths = [parent_node.path() for parent_node in self.root_node().children()]
-
-        self.root_node().children().clear()
-        for path in current_paths:
-            self.add_path(path)
-        self.endResetModel()
-
     def root_node(self):
         """
         Get the root node.
@@ -264,6 +244,18 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
 
         """
         return self._root_node
+
+    def clear(self):
+        """
+        Clear all children of the root node.
+
+        """
+        if not self.root_node():
+            return
+
+        self.beginResetModel()
+        self.root_node().children().clear()
+        self.endResetModel()
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         if self.root_node() is None:
@@ -287,14 +279,16 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         if not node:
             return None
 
+
         if role == QtCore.Qt.DisplayRole:
+            root_path = common.active('root', path=True)
             if node.is_leaf():
                 name = node.path()
             else:
-                root = common.active('root', path=True)
+
                 name = node.path().replace('.links', '').replace('\\', '/').strip('/')
-                if root and root.lower() in name:
-                    name = name[len(root):].strip('/')
+                if root_path in name:
+                    name = name[len(root_path):].strip('/')
 
             if not node.exists():
                 name = f'[Not yet created] {name}'

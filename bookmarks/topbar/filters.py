@@ -7,10 +7,11 @@ from .. import common
 from .. import log
 from .. import ui
 
-show_all_label = 'Show all'
-hide_all_label = 'Hide all'
+show_all_label = 'Show All'
+hide_all_label = 'Hide All'
 
 class BaseFilterModel(ui.AbstractListModel):
+    row_size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
     def __init__(self, section_name_label, data_source, tab_index, icon, parent=None):
         self.tab_index = tab_index
@@ -21,37 +22,15 @@ class BaseFilterModel(ui.AbstractListModel):
 
         super().__init__(parent=parent)
 
-        common.signals.internalDataReady.connect(self.internal_data_ready)
+        common.signals.internalDataReady.connect(self.on_internal_data_ready)
         common.signals.bookmarksChanged.connect(self.reset_data)
-        common.signals.bookmarkActivated.connect(self.reset_data)
+        common.signals.bookmarkItemActivated.connect(self.reset_data)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
-        if role == QtCore.Qt.DecorationRole:
-            _text = common.model(self.tab_index).filter_text()
-            _text = _text.lower().strip() if _text else ''
-
-            if not _text:
-                return super().data(index, role)
-
-            text = super().data(index, QtCore.Qt.DisplayRole)
-            if not text:
-                return super().data(index, role)
-            if text == show_all_label:
-                return super().data(index, role)
-            if text == self.section_name_label:
-                return super().data(index, role)
-
-            text = text.lower().strip()
-            if _text == text:
-                return ui.get_icon('check', color=common.Color.Green())
-
-            if _text == f'"{text}"':
-                return ui.get_icon('check', color=common.Color.Green())
-
         return super().data(index, role)
 
     @QtCore.Slot(weakref.ref)
-    def internal_data_ready(self, ref):
+    def on_internal_data_ready(self, ref):
         if not ref():
             return
 
@@ -90,52 +69,20 @@ class BaseFilterModel(ui.AbstractListModel):
             return
 
         self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: self.section_name_label,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.RowHeight(0.66)),
-            common.FlagsRole: QtCore.Qt.NoItemFlags,
-        }
-
-        self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: '',
-            common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
-        }
-        self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: '',
-            common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
-        }
-
-        self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: show_all_label,
             QtCore.Qt.DecorationRole: ui.get_icon(
                 'archivedVisible', color=common.Color.Green()),
             QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.RowHeight(0.66)),
         }
 
-        self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: '',
-            common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
-        }
-        self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: '',
-            common.FlagsRole: QtCore.Qt.NoItemFlags,
-            QtCore.Qt.SizeHintRole: QtCore.QSize(1, common.Size.Separator()),
-        }
-
-        icon = ui.get_icon(self.icon)
-
         for v in sorted(getattr(data, self.data_source)):
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: v,
                 QtCore.Qt.SizeHintRole: self.row_size,
-                QtCore.Qt.DecorationRole: icon,
                 QtCore.Qt.StatusTipRole: v,
                 QtCore.Qt.AccessibleDescriptionRole: v,
                 QtCore.Qt.WhatsThisRole: v,
                 QtCore.Qt.ToolTipRole: v,
-                QtCore.Qt.TextAlignmentRole: QtCore.Qt.AlignCenter,
             }
 
 
@@ -144,24 +91,23 @@ class BaseFilterButton(QtWidgets.QComboBox):
 
     """
 
-    def __init__(self, Model, tab_index, parent=None):
+    def __init__(self, model_cls, tab_index, parent=None):
         super().__init__(parent=parent)
 
         self.tab_index = tab_index
+
         view = QtWidgets.QListView(parent=self)
-        view.setSizeAdjustPolicy(
-            QtWidgets.QAbstractScrollArea.AdjustToContents
-        )
+        view.setSpacing(0)
+
         self.setView(view)
-        self.setModel(Model())
+        self.setModel(model_cls(parent=self))
 
         self.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.setFixedHeight(common.Size.Margin())
         self.setMinimumWidth(common.Size.Margin(3.0))
         self.setMaxVisibleItems(48)
 
-        min_width = self.minimumSizeHint().width()
-        self.view().setMinimumWidth(min_width * 3)
+        self.view().setMinimumWidth(common.Size.DefaultWidth(0.33))
 
         common.signals.internalDataReady.connect(self.update_visibility)
         common.signals.updateTopBarButtons.connect(self.update_visibility)
@@ -170,6 +116,8 @@ class BaseFilterButton(QtWidgets.QComboBox):
         common.signals.internalDataReady.connect(self.select_text)
 
         self.textActivated.connect(self.update_filter_text)
+        self.model().modelReset.connect(self.select_text)
+
 
     @QtCore.Slot(str)
     def update_filter_text(self, text):
@@ -221,18 +169,17 @@ class BaseFilterButton(QtWidgets.QComboBox):
         _text = _text.lower().strip() if _text else ''
 
         if not _text:
+            self.setCurrentIndex(0)
             return
 
         for i in range(self.count()):
             text = self.itemText(i)
             if not text:
                 continue
-            if text == show_all_label:
-                continue
-            if text == self.model().section_name_label:
-                continue
 
             text = text.lower().strip()
+            if text == show_all_label:
+                continue
             if _text == text:
                 self.setCurrentIndex(i)
                 return
@@ -240,6 +187,7 @@ class BaseFilterButton(QtWidgets.QComboBox):
             if _text == f'"{text}"':
                 self.setCurrentIndex(i)
                 return
+        self.setCurrentIndex(0)
 
 
 class TaskFilterModel(BaseFilterModel):
@@ -287,7 +235,7 @@ class TypeFilterModel(BaseFilterModel):
             'File Types', 'file_types', common.FileTab, 'file', parent=parent
         )
 
-        common.signals.assetActivated.connect(self.reset_data)
+        common.signals.assetItemActivated.connect(self.reset_data)
         common.signals.taskFolderChanged.connect(self.reset_data)
 
 
@@ -309,7 +257,7 @@ class SubdirFilterModel(BaseFilterModel):
             'Folders', 'subdirectories', common.FileTab, 'folder', parent=parent
         )
 
-        common.signals.assetActivated.connect(self.reset_data)
+        common.signals.assetItemActivated.connect(self.reset_data)
         common.signals.taskFolderChanged.connect(self.reset_data)
 
     def init_data(self, *args, **kwargs):
@@ -368,8 +316,6 @@ class SubdirFilterButton(BaseFilterButton):
                     continue
                 if text == show_all_label:
                     continue
-                if text == self.model().section_name_label:
-                    continue
                 if text == hide_all_label:
                     continue
                 filter_texts.append(f'--"{text}"')
@@ -377,27 +323,6 @@ class SubdirFilterButton(BaseFilterButton):
         else:
             super().update_filter_text(text)
 
-
-class ServersFilterModel(BaseFilterModel):
-
-    def __init__(self, parent=None):
-        super().__init__(
-            'Servers', 'servers', common.BookmarkTab, 'icon', parent=parent
-        )
-
-        common.signals.assetActivated.connect(self.reset_data)
-        common.signals.taskFolderChanged.connect(self.reset_data)
-
-
-class ServersFilterButton(BaseFilterButton):
-    """The combo box used to set a text filter based on the available file types
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(
-            ServersFilterModel, common.BookmarkTab, parent=parent
-        )
 
 
 class JobsFilterModel(BaseFilterModel):
@@ -407,7 +332,7 @@ class JobsFilterModel(BaseFilterModel):
             'Jobs', 'jobs', common.BookmarkTab, 'icon', parent=parent
         )
 
-        common.signals.assetActivated.connect(self.reset_data)
+        common.signals.assetItemActivated.connect(self.reset_data)
         common.signals.taskFolderChanged.connect(self.reset_data)
 
 
@@ -419,26 +344,4 @@ class JobsFilterButton(BaseFilterButton):
     def __init__(self, parent=None):
         super().__init__(
             JobsFilterModel, common.BookmarkTab, parent=parent
-        )
-
-
-class RootsFilterModel(BaseFilterModel):
-
-    def __init__(self, parent=None):
-        super().__init__(
-            'Bookmarks', 'roots', common.BookmarkTab, 'icon', parent=parent
-        )
-
-        common.signals.assetActivated.connect(self.reset_data)
-        common.signals.taskFolderChanged.connect(self.reset_data)
-
-
-class RootsFilterButton(BaseFilterButton):
-    """The combo box used to set a text filter based on the available file types
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(
-            RootsFilterModel, common.BookmarkTab, parent=parent
         )

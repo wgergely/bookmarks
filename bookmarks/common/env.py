@@ -6,6 +6,7 @@ Mainly used to get binary paths, such as ffmpeg.
 import functools
 import os
 import re
+import shutil
 
 from PySide2 import QtCore, QtWidgets
 
@@ -123,36 +124,7 @@ def get_user_setting(binary_name):
 
 
 def _parse_path_env(binary_name):
-    items = {
-        os.path.normpath(k.lower()).strip(): QtCore.QFileInfo(k).filePath() for k
-        in os.environ['PATH'].split(';')
-    }
-
-    for k, v in items.items():
-        if not os.path.isdir(v):
-            continue
-
-        for entry in os.scandir(v):
-            try:
-                if not entry.is_file():
-                    continue
-            except:
-                continue
-
-            _filepath = QtCore.QFileInfo(entry.path).filePath()
-            _name = _filepath.split('/')[-1]
-
-            match = re.match(
-                rf'^{binary_name}$|{binary_name}\..+',
-                _name,
-                flags=re.IGNORECASE
-            )
-            if not match:
-                continue
-
-            return _filepath
-
-    return None
+    return shutil.which(binary_name)
 
 
 class EnvPathEditor(QtWidgets.QWidget):

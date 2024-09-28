@@ -119,12 +119,12 @@ class CoreSignals(QtCore.QObject):
     #: Signal a ShotGrid connection closure
     sgConnectionClosed = QtCore.Signal()
 
-    #: Signal emitted when a bookmark item is activated by the user
-    bookmarkActivated = QtCore.Signal(str, str, str)
-    #: Signal emitted when an asset item is activated by the user
-    assetActivated = QtCore.Signal(str, str, str, str)
-    #: Signal emitted when a file item is activated by the user
-    fileActivated = QtCore.Signal(str, str, str, str, str)
+    #: Signal emitted when a bookmark item is set active
+    bookmarkItemActivated = QtCore.Signal(str, str, str)
+    #: Signal emitted when an asset item is set active
+    assetItemActivated = QtCore.Signal(str, str, str, str)
+    #: Signal emitted when a file item is set active
+    fileItemActivated = QtCore.Signal(str, str, str, str, str)
 
     #: Signal emitted when a task folder is changed by the user
     taskFolderChanged = QtCore.Signal(str)
@@ -154,8 +154,8 @@ class CoreSignals(QtCore.QObject):
         self.generateThumbnailsChanged.connect(actions.generate_thumbnails_changed)
 
         self.taskFolderChanged.connect(actions.adjust_tab_button_size)
-        self.bookmarkActivated.connect(actions.adjust_tab_button_size)
-        self.assetActivated.connect(actions.adjust_tab_button_size)
+        self.bookmarkItemActivated.connect(actions.adjust_tab_button_size)
+        self.assetItemActivated.connect(actions.adjust_tab_button_size)
 
         self.sgConnectionAttemptStarted.connect(
             lambda *x: common.show_message(

@@ -221,17 +221,17 @@ class MainWidget(QtWidgets.QWidget):
 
         # Standard activation signals
         b.activated.connect(
-            lambda x: common.signals.bookmarkActivated.emit(
+            lambda x: common.signals.bookmarkItemActivated.emit(
                 *x.data(common.ParentPathRole)[0:3]
             )
         )
         a.activated.connect(
-            lambda x: common.signals.assetActivated.emit(
+            lambda x: common.signals.assetItemActivated.emit(
                 *x.data(common.ParentPathRole)[0:4]
             )
         )
         f.activated.connect(
-            lambda x: common.signals.fileActivated.emit(
+            lambda x: common.signals.fileItemActivated.emit(
                 *x.data(common.ParentPathRole)[0:5]
             )
         )

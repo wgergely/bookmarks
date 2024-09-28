@@ -61,7 +61,7 @@ class Lockfile(QtCore.QSettings):
         if index.isValid():
             p = '/'.join(index.data(common.ParentPathRole)[0:3])
             f = QtCore.QFileInfo(index.data(common.PathRole))
-            self.config_path = f'{p}/{common.bookmark_item_cache_dir}/locks/{f.baseName()}.lock'
+            self.config_path = f'{p}/{common.bookmark_item_data_dir}/locks/{f.baseName()}.lock'
             _dir = QtCore.QFileInfo(self.config_path).dir()
             if not _dir.exists():
                 _dir.mkpath('.')

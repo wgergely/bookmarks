@@ -5,8 +5,9 @@ import os
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from . import lib
+from .lib import LinksAPI
 from .model import AssetLinksModel
-from .. import actions
+from .. import actions, images
 from .. import common
 from .. import contextmenu
 from .. import shortcuts
@@ -45,7 +46,7 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             return
 
         self.menu[contextmenu.key()] = {
-            'text': 'Add Folder',
+            'text': 'Add Folder to Preset',
             'icon': ui.get_icon('add_link', color=common.Color.Green()),
             'action': self.parent().add_link,
             'shortcut': shortcuts.get(
@@ -249,13 +250,13 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
             }
 
     def add_view_menu(self):
-        """Add view menu.
+        """Add the view menu.
 
         """
         self.menu[contextmenu.key()] = {
             'text': 'Refresh',
             'icon': ui.get_icon('refresh'),
-            'action': self.parent().reload_paths,
+            'action': self.parent().add_paths_from_active,
             'shortcut': shortcuts.get(
                 shortcuts.LinksViewShortcuts,
                 shortcuts.ReloadLinks
@@ -451,7 +452,11 @@ class LinksView(QtWidgets.QTreeView):
         """
         super().__init__(parent=parent)
         self.setWindowTitle('Asset Links')
+
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+
         self.setHeaderHidden(True)
 
         self._expanded_nodes = []
@@ -475,16 +480,15 @@ class LinksView(QtWidgets.QTreeView):
         connect(shortcuts.PasteLinks, self.paste_links)
         connect(shortcuts.PasteLinksToAll, self.apply_clipboard_to_all)
         connect(shortcuts.RevealLink, self.reveal)
-        connect(shortcuts.ReloadLinks, self.reload_paths)
+        connect(shortcuts.ReloadLinks, self.add_paths_from_active)
 
     def _init_model(self):
         self.setModel(AssetLinksModel(parent=self))
 
     def _connect_signals(self):
         self.selectionModel().selectionChanged.connect(self.emit_links_file_changed)
-        self.model().modelAboutToBeReset.connect(
-            lambda: self.emit_links_file_changed(QtCore.QModelIndex(), QtCore.QModelIndex())
-        )
+        self.selectionModel().currentChanged.connect(self.emit_links_file_changed)
+        self.model().modelReset.connect(self.emit_links_file_changed)
 
         self.model().modelAboutToBeReset.connect(self.save_expanded_nodes)
         self.model().layoutAboutToBeChanged.connect(self.save_expanded_nodes)
@@ -501,18 +505,20 @@ class LinksView(QtWidgets.QTreeView):
         self.model().layoutChanged.connect(self.restore_selected_node)
         self.expanded.connect(self.restore_selected_node)
 
-    @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex)
-    def emit_links_file_changed(self, current, previous, *args, **kwargs):
+    @QtCore.Slot()
+    def emit_links_file_changed(self, *args, **kwargs):
         """
         Emit the linksFileChanged signal.
 
         """
-        if isinstance(current, QtCore.QItemSelection):
-            index = next(iter(current.indexes()), QtCore.QModelIndex())
-        elif isinstance(current, QtCore.QModelIndex):
-            index = current
+        if not self.selectionModel().hasSelection():
+            self.linksFileChanged.emit('')
+            return
+
+        if self.selectionModel().currentIndex().isValid():
+            index = self.selectionModel().currentIndex()
         else:
-            index = QtCore.QModelIndex()
+            index = next(f for f in self.selectionModel().selectedIndexes())
 
         if not index.isValid():
             self.linksFileChanged.emit('')
@@ -520,14 +526,11 @@ class LinksView(QtWidgets.QTreeView):
 
         node = index.internalPointer()
         if not node:
+            self.linksFileChanged.emit('')
             return
 
-        if node.is_leaf():
-            path = node.parent().path()
-        else:
-            path = node.path()
-
-        self.linksFileChanged.emit(path)
+        p = node.parent().path() if node.is_leaf() else node.path()
+        self.linksFileChanged.emit(p)
 
     def contextMenuEvent(self, event):
         """Context menu event.
@@ -694,11 +697,29 @@ class LinksView(QtWidgets.QTreeView):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def reload_paths(self):
-        """
-        Clear all paths.
-        """
-        self.model().reload_paths()
+    def add_paths_from_active(self):
+        """Refresh the model with the folder paths in the active root item root."""
+        # Refresh cached api data
+        LinksAPI.update_cached_data()
+
+        path = common.active('root', path=True)
+        if not path:
+            raise ValueError('A root item must be active!')
+        if not os.path.exists(path):
+            raise ValueError(f'Path does not exist: {path}')
+
+        self.model().clear()
+
+        for entry in os.scandir(path):
+            if not entry.is_dir():
+                continue
+            if entry.is_symlink():
+                continue
+            if not os.access(entry.path, os.W_OK):
+                continue
+            if entry.name.startswith('.'):
+                continue
+            self.model().add_path(entry.path.replace('\\', '/'))
 
     @common.error
     @common.debug
@@ -1096,17 +1117,22 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
         super().__init__(parent=parent)
 
         self._number_bar = NumberBar(parent=self)
-
-        self.setPlaceholderText('Select an item to view its relative links')
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.Expanding,
-            QtWidgets.QSizePolicy.Expanding
-        )
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
+
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Minimum,
+            QtWidgets.QSizePolicy.MinimumExpanding
+        )
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.Size.DefaultHeight(),
+            common.Size.DefaultHeight(0.5),
+            common.Size.DefaultWidth()
+        )
+
+    def minimumSizeHint(self):
+        return QtCore.QSize(
+            common.Size.DefaultHeight(0.1),
             common.Size.DefaultWidth()
         )
 
@@ -1124,13 +1150,14 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
 
 
 class LinksTextEditor(QtWidgets.QWidget):
-    linksFileChanged = QtCore.Signal(str)
+    """The text editor widget for editing the contents of the current .links file."""
+    linksFileEdited = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self._text_editor = None
-        self._apply_button = None
+        self._save_button = None
 
         self._current_path = None
 
@@ -1157,45 +1184,46 @@ class LinksTextEditor(QtWidgets.QWidget):
 
         self.layout().addWidget(self._text_editor)
 
-        self._apply_button = ui.PaintedButton(
+        self._save_button = ui.PaintedButton(
             'Save', parent=self
         )
-        self.layout().addWidget(self._apply_button)
+        self.layout().addWidget(self._save_button)
 
     def _connect_signals(self):
-        self._apply_button.clicked.connect(self.emit_link_file_changed)
+        self._save_button.clicked.connect(self.emit_link_file_changed)
 
     @QtCore.Slot(str)
     def link_changed(self, path):
         """
-        Slot called when the links file changed in the view.
+        Slot called when the .links file changed in the view.
 
         Args:
             path (str): The path to the links file.
 
         """
+        self._current_path = path
+
         if self._text_editor is None:
             return
 
-        if path == self._current_path:
-            return
-
-        self._text_editor.clear()
-        self._current_path = None
-
         if not path:
+            self._text_editor.clear()
             self.setDisabled(True)
             return
 
+        self._text_editor.clear()
         self.setDisabled(False)
 
         api = lib.LinksAPI(path)
         if not os.path.exists(api.links_file):
+            self._text_editor.setPlaceholderText(f'No links file found in {api.links_file}')
             return
 
         links = api.get(force=True)
-        self._text_editor.setPlainText('\n'.join(links))
-        self._current_path = path
+        if not links:
+            self._text_editor.setPlaceholderText(f'No links file found in {api.links_file}')
+        else:
+            self._text_editor.setPlainText('\n'.join(links))
 
     @common.error
     @common.debug
@@ -1206,7 +1234,7 @@ class LinksTextEditor(QtWidgets.QWidget):
 
         v = self._text_editor.toPlainText()
         links = sorted(
-            {f.replace('\\', '/').strip(' .-_') for f in v.split('\n') if f.rstrip()},
+            {f.replace('\\', '/').strip(' .-_/') for f in v.split('\n') if f.rstrip()},
             key=str.lower
         )
 
@@ -1216,7 +1244,7 @@ class LinksTextEditor(QtWidgets.QWidget):
         for link in links:
             api.add(link, force=True)
 
-        self.linksFileChanged.emit(self._current_path)
+        self.linksFileEdited.emit(self._current_path)
 
 
 class AssetTemplatesComboBox(QtWidgets.QComboBox):
@@ -1228,11 +1256,8 @@ class AssetTemplatesComboBox(QtWidgets.QComboBox):
 
         self._initialized = False
 
-    def showEvent(self, event):
-        QtCore.QTimer.singleShot(300, self.init_data)
-
-    def init_data(self):
-        if self._initialized:
+    def init_data(self, force=False):
+        if not force and self._initialized:
             return
 
         from ..templates import lib
@@ -1251,7 +1276,7 @@ class AssetTemplatesComboBox(QtWidgets.QComboBox):
         self._initialized = True
 
 
-class LinksEditor(QtWidgets.QSplitter):
+class LinksEditor(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -1263,15 +1288,23 @@ class LinksEditor(QtWidgets.QSplitter):
 
         self._links_view_widget = None
         self._links_editor_widget = None
-        self._create_folders_widget = None
-        self._folder_template_widget = None
+        self._create_folders_button = None
+        self._asset_templates_widget = None
 
         self._create_ui()
         self._connect_signals()
 
+        self.setFocusProxy(self._links_view_widget)
+
     def _create_ui(self):
-        o = common.Size.Indicator(2.0)
-        self.setContentsMargins(o, o, o, o)
+        self.setContentsMargins(0, 0, 0, 0)
+        QtWidgets.QVBoxLayout(self)
+
+        # Add splitter
+        splitter = QtWidgets.QSplitter(parent=self)
+        splitter.setOrientation(QtCore.Qt.Horizontal)
+        splitter.setChildrenCollapsible(True)
+        self.layout().addWidget(splitter)
 
         widget = QtWidgets.QWidget(parent=self)
         QtWidgets.QVBoxLayout(widget)
@@ -1279,36 +1312,69 @@ class LinksEditor(QtWidgets.QSplitter):
         widget.layout().setContentsMargins(0, 0, 0, 0)
         widget.layout().setSpacing(common.Size.Margin(0.5))
 
-        self.addWidget(widget)
+        splitter.addWidget(widget)
+
+        # Add title row
+        row = ui.add_row(None, height=None, parent=widget)
+        row.layout().setAlignment(QtCore.Qt.AlignLeft)
+
+        thumbnail_label = QtWidgets.QLabel(parent=self)
+        thumbnail_label.setScaledContents(True)
+        thumbnail_label.setFixedHeight(common.Size.RowHeight(0.8))
+        thumbnail_label.setFixedWidth(common.Size.RowHeight(0.8))
+        thumbnail_label.setAlignment(QtCore.Qt.AlignCenter)
+        pixmap, _ = images.get_thumbnail(
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
+            common.active('root', path=True),
+            size=common.Size.RowHeight(),
+            fallback_thumb='asset'
+        )
+        thumbnail_label.setPixmap(pixmap)
+
+        row.layout().addWidget(thumbnail_label, 0)
+
+        title_label = ui.PaintedLabel(
+            '  |  '.join(common.active('root', args=True)[1:]),
+            size=common.Size.MediumText(1.0),
+            color=common.Color.Text(),
+            font=common.Font.BoldFont,
+            parent=self
+        )
+        row.layout().addWidget(title_label, 1)
 
         self._links_view_widget = LinksView(parent=self)
         widget.layout().addWidget(self._links_view_widget)
 
         bottom_row = ui.get_group(parent=widget)
 
-        self._folder_template_widget = AssetTemplatesComboBox(parent=self)
-        self._create_folders_widget = ui.PaintedButton('Create Missing', parent=self)
+        self._asset_templates_widget = AssetTemplatesComboBox(parent=self)
+        self._create_folders_button = ui.PaintedButton('Create Missing', parent=self)
 
         ui.add_description(
             'Select an asset template to create the missing folders.\n'
             f'The template will be expanded into each missing link. '
             f'<span style="color: {common.Color.Red(qss=True)};">This action cannot be undone</span>, so ensure '
             f'the selected asset template is intended to be expanded into nested folders.',
-            label=None,
+            label='',
             icon=ui.get_icon('alert', color=common.Color.Red()),
             parent=bottom_row
         )
-        bottom_row.layout().addWidget(self._folder_template_widget, 1)
+        bottom_row.layout().addWidget(self._asset_templates_widget, 1)
 
-        bottom_row.layout().addWidget(self._create_folders_widget, 1)
+        bottom_row.layout().addWidget(self._create_folders_button, 1)
         bottom_row.layout().addStretch(1.5)
 
         self._links_editor_widget = LinksTextEditor(parent=self)
-        self.addWidget(self._links_editor_widget)
+        self._links_editor_widget.setDisabled(True)
+        splitter.addWidget(self._links_editor_widget)
 
     def _connect_signals(self):
         self._links_view_widget.linksFileChanged.connect(self._links_editor_widget.link_changed)
-        self._links_editor_widget.linksFileChanged.connect(self._links_view_widget.reload_path)
 
-    def add_path(self, path):
-        self._links_view_widget.add_path(path)
+        self._links_view_widget.model().modelAboutToBeReset.connect(lambda: self._links_editor_widget.link_changed(''))
+        self._links_editor_widget.linksFileEdited.connect(self._links_view_widget.reload_path)
+
+    def showEvent(self, event):
+        self._links_view_widget.setFocus(QtCore.Qt.OtherFocusReason)

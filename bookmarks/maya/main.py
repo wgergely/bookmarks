@@ -32,17 +32,13 @@ def init_tool_button(*args, **kwargs):
     ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
 
     if ptr is None:
-        common.maya_button_widget = MayaButtonWidget(
-            common.Size.RowHeight(2.0))
-        )
+        common.maya_button_widget = MayaButtonWidget(common.Size.RowHeight(2.0))
         common.maya_button_widget.show()
         return
 
     parent = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
     if not parent:
-        common.maya_button_widget = MayaButtonWidget(
-            common.Size.RowHeight(2.0))
-        )
+        common.maya_button_widget = MayaButtonWidget(common.Size.RowHeight(2.0))
         common.maya_button_widget.show()
         return
 
@@ -545,9 +541,9 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             actions.execute
         )
 
-        common.signals.assetActivated.connect(actions.set_workspace)
-        common.signals.assetActivated.connect(actions.set_sg_context)
-        common.signals.assetActivated.connect(actions.add_hud)
+        common.signals.assetItemActivated.connect(actions.set_workspace)
+        common.signals.assetItemActivated.connect(actions.set_sg_context)
+        common.signals.assetItemActivated.connect(actions.add_hud)
 
     def context_callbacks(self):
         """This method is called by the Maya plug-in when initializing

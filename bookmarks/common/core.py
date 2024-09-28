@@ -14,13 +14,12 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from .. import common
 
 documentation_url = 'https://bookmarks-vfx.com'
-github_url = 'https://github.com/wgergely/bookmarks'
 env_key = 'Bookmarks_ROOT'
 product = 'bookmarks'
 organization = 'bookmarks'
 organization_domain = 'bookmarks-vfx.com'
 link_file = '.links'
-bookmark_item_cache_dir = '.bookmark'
+bookmark_item_data_dir = '.bookmark'
 bookmark_item_database = 'bookmark.db'
 favorite_file_ext = 'bfav'
 user_settings = 'user_settings.ini'
@@ -60,9 +59,6 @@ BookmarkItemSwitch = 5
 AssetItemSwitch = 6
 TaskItemSwitch = 7
 
-InfoThread = 0
-ThumbnailThread = 1
-
 PlatformWindows = 0
 PlatformMacOS = 1
 PlatformUnsupported = 2
@@ -90,13 +86,12 @@ def idx_func():
 
     def _idx_func(reset=False, start=None):
         """
-        The index function. Increments and returns a counter. Can reset the counter 
-        to the start value and set a new start value.
+        The index function. Increments and returns a counter.
 
         Args:
-            reset (bool, optional): If True, resets the counter to the start value.
+            reset (bool, optional): If True, reset the counter to the start value.
                                     Defaults to False.
-            start (int, optional): If provided, sets a new start value.
+            start (int, optional): If provided, set a new start value.
                                        Defaults to None.
 
         Returns:
@@ -188,6 +183,7 @@ class Font(enum.Enum):
     BoldFont = 'bmRobotoBold'
     MediumFont = 'bmRobotoMedium'
     LightFont = 'bmRobotoRegular'
+    ThinFont = 'bmRobotoThin'
 
     def __call__(self, size):
         from .. import common

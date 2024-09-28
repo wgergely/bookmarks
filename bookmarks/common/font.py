@@ -79,6 +79,8 @@ class FontDatabase(QtGui.QFontDatabase):
             style = 'Medium'
         elif role == Font.LightFont:
             style = 'Light'
+        elif role == Font.ThinFont:
+            style = 'Thin'
         else:
             raise ValueError(f'Invalid font role, expected one of {[f for f in Font]}')
 

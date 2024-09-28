@@ -153,59 +153,36 @@ def shutdown():
 
     """
     print('[Bookmarks] Shutting down...')
-
-    common.settings.sync()
-
     try:
+        common.settings.sync()
+
         from ..threads import threads
         threads.quit_threads()
-    except Exception as e:
-        print(f'Error quitting threads: {e}')
 
-    try:
         from .. import database
         database.remove_all_connections()
-    except Exception as e:
-        print(f'Error removing database connections: {e}')
 
-    try:
         if common.main_widget:
             common.main_widget.hide()
             common.main_widget.deleteLater()
             common.main_widget = None
-    except Exception as e:
-        print(f'Error deleting main widget: {e}')
 
-    try:
         if common.tray_widget:
             common.tray_widget.hide()
             common.tray_widget.deleteLater()
             common.tray_widget = None
-    except Exception as e:
-        print(f'Error deleting tray widget: {e}')
 
-    try:
         common.Timer.delete_timers()
-    except Exception as e:
-        print(f'Error deleting timers: {e}')
 
-    try:
         # This should reset all the object caches to their initial values
         for k, v in common.__initial_values__.items():
             setattr(common, k, v)
-    except Exception as e:
-        print(f'Error restoring module defaults: {e}')
 
-    try:
         common.remove_lock()
     except Exception as e:
-        print(f'Error removing lock file: {e}')
-
-    try:
-        if QtWidgets.QApplication.instance() and common.init_mode == common.StandaloneMode:
-            QtWidgets.QApplication.instance().exit(1)
-    except Exception as e:
-        print(f'Error quitting QApplication: {e}')
+        print(f'Error during shutdown: {e}')
+    finally:
+        QtWidgets.QApplication.instance().exit(0)
 
 
 

@@ -103,9 +103,6 @@ def sg_get_tasks(sg, entity):
     return sg.find('Task', filters, fields)
 
 
-SHOT_REGEX = r'.*_([0-9]{3})_([0-9]{4})'
-
-
 class AssetTypeComboBox(QtWidgets.QComboBox):
     """Editor used to pick a ui scale value.
 
@@ -289,26 +286,6 @@ class SyncWidget(base.BasePropertyEditor):
             },
         },
         2: {
-            'name': 'Asset Template',
-            'icon': 'folder',
-            'color': common.Color.DarkBackground(),
-            'groups': {
-                1: {
-                    0: {
-                        'name': 'Asset Template',
-                        'key': 'sg_sync/asset_template',
-                        'validator': None,
-                        'widget': functools.partial(
-                            templates.TemplatesWidget, templates.AssetTemplateMode
-                        ),
-                        'placeholder': None,
-                        'description': 'The asset template used to create missing assets on the server.',
-                        'help': 'The asset template used to create missing assets on the server.',
-                    },
-                },
-            },
-        },
-        3: {
             'name': 'ShotGrid',
             'icon': 'sg',
             'color': common.Color.DarkBackground(),

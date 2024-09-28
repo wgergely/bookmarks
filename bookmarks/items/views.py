@@ -439,8 +439,8 @@ class FilterOnOverlayWidget(ProgressWidget):
     def _connect_signals(self):
         super()._connect_signals()
 
-        common.signals.bookmarkActivated.connect(self.update)
-        common.signals.assetActivated.connect(self.update)
+        common.signals.bookmarkItemActivated.connect(self.update)
+        common.signals.assetItemActivated.connect(self.update)
         common.signals.tabChanged.connect(self.update)
         common.signals.updateTopBarButtons.connect(self.update)
         common.signals.filterTextChanged.connect(self.update)
@@ -1436,7 +1436,7 @@ class BaseItemView(QtWidgets.QTableView):
             # Read from the cache if it exists
             source = '/'.join(p)
             assets_cache_dir = QtCore.QDir(
-                f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
+                f'{common.active("root", path=True)}/{common.bookmark_item_data_dir}/assets')
             if not assets_cache_dir.exists():
                 assets_cache_dir.mkpath('.')
 

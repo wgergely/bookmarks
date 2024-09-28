@@ -170,14 +170,6 @@ def queue_sg_query(*args):
     get_thread(QueuedSGQuery).startTimer.emit()
 
 
-def reset_all_queues():
-    """Clear all thread queues.
-
-    """
-    for k in THREADS:
-        THREADS[k]['queue'].clear()
-
-
 def quit_threads():
     """Terminate all running threads.
 
@@ -199,7 +191,7 @@ def quit_threads():
         if n >= timeout:
             for thread in THREADS.values():
                 thread.terminate()
-            break
+            return
 
 
 def get_thread(k):

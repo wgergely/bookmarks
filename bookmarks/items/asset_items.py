@@ -7,19 +7,10 @@ and ``asset`` components.
     server, job, root, asset = common.active('asset', args=True)
     asset = f'{server}/{job}/{root}/{asset}'
 
-
 The app considers folders found in the root of a bookmark item assets.
 We don't have any notion of asset types (like how some pipelines make a distinction
 between shots and assets), nor do we understand nested assets by default (like a
 ``SEQ010/SH010`` structure).
-
-Hint:
-
-    It is possible to use nested assets with a little workaround. If an asset folder
-    contains a special ``.link`` file, any relative path defined inside it will be read
-    and added to the asset items. See :func:`~bookmarks.common.core.get_links` for
-    details.
-
 
 Asset data is queried by :class:`AssetItemModel`, and displayed by
 :class:`AssetItemView`. Any custom logic of how assets are queried should be
@@ -45,6 +36,7 @@ from .. import contextmenu
 from .. import database
 from .. import log
 from .. import progress
+from ..links.lib import LinksAPI
 from ..threads import threads
 from ..tokens import tokens
 
@@ -296,14 +288,6 @@ class AssetItemModel(models.ItemModel):
                 }
             )
 
-        # Cache the list of assets for later use
-        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
-        if not assets_cache_dir.exists():
-            assets_cache_dir.mkpath('.')
-        assets_cache_name = common.get_hash(source)
-        with open(f'{assets_cache_dir.path()}/{assets_cache_name}.cache', 'w') as f:
-            f.write('\n'.join([v[common.PathRole] for v in data.values()]))
-
         # Explicitly emit `activeChanged` to notify other dependent models
         self.activeChanged.emit(self.active_index())
 
@@ -330,48 +314,39 @@ class AssetItemModel(models.ItemModel):
             DirEntry: Entry instances of valid asset folders.
 
         """
-        # Read from the cache if it exists
-        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
-        if not assets_cache_dir.exists():
-            assets_cache_dir.mkpath('.')
-        assets_cache_name = common.get_hash(path)
-        cache = f'{assets_cache_dir.path()}/{assets_cache_name}.cache'
-
-        if os.path.isfile(cache):
-            with open(cache, 'r') as f:
-                for line in f:
-                    yield line.strip()
-            return
-
         try:
             it = os.scandir(path)
         except OSError as e:
             log.error(e)
             return
 
-        # Get folders from the root of the bookmark item
+        # Iterate over the directories in the root item folder
         for entry in it:
             if self._interrupt_requested:
                 return
+
             if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
-
-            # Check if the asset has links to sub-folders
-            links = common.get_links(
-                entry.path.replace('\\', '/'),
-                section='links/asset'
-            )
-
-            for link in links:
-                yield f'{path}/{entry.name}/{link}'
-
-            # Don't yield the asset if it has links
-            if links:
+            if not os.access(entry.path, os.R_OK):
                 continue
 
-            yield entry.path.replace('\\', '/')
+            asset_root = f'{path}/{entry.name}'.replace('\\', '/')
+
+            # Check if the root item has links
+            api = LinksAPI(asset_root)
+            links = api.get(force=False)
+
+            for rel_path in links:  # using cached values here
+                abs_path = api.to_absolute(rel_path)
+                if not os.path.exists(abs_path):
+                    continue
+                yield abs_path
+
+            # If no links were found, yield the root item
+            if not links:
+                yield entry.path.replace('\\', '/')
 
     def save_active(self):
         """Saves the active item.

@@ -239,13 +239,17 @@ def get_asset_text_segments(text, label):
     # Segments dictionary
     d = {}
 
-    s_color = common.Color.DarkBlue()
+    s_color = common.Color.VeryDarkBackground()
 
-    # Process each sub-folder as a separate text segment
+    # Process each subfolder as a separate text segment
     v = text.split('/')
 
     for i, s in enumerate(v):
-        c = common.Color.Text()
+        if i == 0:
+            c = common.Color.Text()
+        else:
+            c = common.Color.SecondaryText()
+
         s = s.strip().strip('_').strip('.')
 
         d[len(d)] = (s, c)
@@ -594,12 +598,12 @@ def get_text_segments(index):
     if len(pp) == 3:
         return get_asset_text_segments(
             index.data(QtCore.Qt.DisplayRole),
-            index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
+            ''
         )
     elif len(pp) == 4:
         return get_asset_text_segments(
             index.data(QtCore.Qt.DisplayRole),
-            index.data(common.DescriptionRole) if not common.settings.value('settings/hide_item_descriptions') else ''
+            ''
         )
     elif len(pp) > 4:
         return get_file_text_segments(
@@ -688,7 +692,7 @@ def draw_subdir_bg_rectangles(text_edge, *args):
     if rect.right() > (text_edge + o):
         rect.setRight(text_edge)
 
-    # Make sure we don't shrink the rectangle too small
+    # Make sure not to shrink the rectangle too small
     if rect.left() + common.Size.Margin() < text_edge + o:
         if rect.contains(cursor_position):
             painter.setBrush(QtGui.QColor(0, 0, 0, 80))
@@ -1992,7 +1996,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         _font, _metrics = common.Font.MediumFont(common.Size.SmallText())
         x = count_rect.center().x() - (_metrics.horizontalAdvance(text) / 2.0) + \
             common.Size.Separator()
-        y = count_rect.center().y() + (_metrics.ascent() / 2.0)
+        y = count_rect.center().y() + (_metrics.ascent() / 2.0) - (_metrics.descent() / 2.0)
 
         painter.setBrush(common.Color.Text())
         draw_painter_path(painter, x, y, _font, text)
@@ -2344,6 +2348,15 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             cursor_position
         ) = args
 
+        if option.rect.height() < common.Size.RowHeight():
+            font, metrics = common.Font.BoldFont(common.Size.MediumText(0.8))
+        elif option.rect.height() > common.Size.RowHeight():
+            font, metrics = common.Font.BoldFont(common.Size.MediumText(1.0))
+        elif option.rect.height() > common.Size.RowHeight(4.0):
+            font, metrics = common.Font.BoldFont(common.Size.MediumText(1.3))
+        elif option.rect.height() > common.Size.RowHeight(8.0):
+            font, metrics = common.Font.BoldFont(common.Size.MediumText(2.0))
+
         if not index.isValid():
             return
         if not index.data(QtCore.Qt.DisplayRole):
@@ -2385,8 +2398,25 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 description_rect.width(),
             )
             x = description_rect.left()
-            y = description_rect.center().y() + (metrics.ascent() / 2.0)
+            y = description_rect.center().y() + (metrics.ascent() / 2.0) - (metrics.descent() / 2.0)
             draw_painter_path(painter, x, y, font, text)
+
+        description = (index.data(common.DescriptionRole)
+                       if not common.settings.value('settings/hide_item_descriptions') else '')
+
+        if description and not description_rect.contains(cursor_position):
+            _font, _metrics = common.Font.LightFont(common.Size.MediumText(1.0))
+            painter.setOpacity(1.0)
+            painter.setBrush(common.Color.Text())
+            text = elided_text(
+                _metrics,
+                description,
+                QtCore.Qt.ElideRight,
+                description_rect.width(),
+            )
+            x = description_rect.right() - _metrics.width(text)
+            y = description_rect.center().y() + (_metrics.ascent() / 2.0) - (_metrics.descent() / 2.0)
+            draw_painter_path(painter, x, y, _font, text)
 
         # Monkey patch
         data_rect = QtCore.QRect(rectangles[DataRect])
@@ -2396,11 +2426,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             rectangles[DataRect].setRight(
                 rectangles[DataRect].right() - common.Size.Margin()
             )
-
-        if hover or selected or active:
-            painter.setOpacity(1.0)
-        else:
-            painter.setOpacity(0.66)
 
         # If the text segments role has not yet been set, we'll set it here
         text_segments = get_text_segments(index)
@@ -2413,11 +2438,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         r.moveLeft(r.left() + offset)
         rect.moveLeft(rect.left() + offset)
 
-        color = common.Color.Green()
-        color = color if active else common.Color.Blue()
-        color = common.Color.LightGreen() if r.contains(
-            cursor_position
-        ) else color
+        color = common.Color.Opaque()
         color = common.Color.VeryDarkBackground() if archived else color
 
         if r.contains(cursor_position):
@@ -2427,8 +2448,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 color = common.Color.Green()
 
         painter.setBrush(color)
-        pen = QtGui.QPen(color.darker(220))
+        pen = QtGui.QPen(common.Color.Opaque())
         pen.setWidth(common.Size.Separator())
+
         if not archived:
             painter.setPen(pen)
 
@@ -2450,6 +2472,17 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         for segment in text_segments.values():
             text, _color = segment
 
+            if text.lower() in filter_text.lower():
+                font.setUnderline(True)
+                if hover or active or selected:
+                    _color = common.Color.SelectedText()
+                else:
+                    _color = common.Color.Green().lighter(150)
+                font.setBold(True)
+            else:
+                font.setUnderline(False)
+                font.setBold(False)
+
             _text = text
             width = metrics.width(text)
             _r = QtCore.QRect(rect)
@@ -2470,15 +2503,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                     QtCore.Qt.ElideRight,
                     _r.width()
                 )
-
-            if _text.lower() in filter_text.lower():
-                font.setUnderline(True)
-                if hover or active or selected:
-                    _color = common.Color.SelectedText()
-                else:
-                    _color = common.Color.Green().lighter(150)
-            else:
-                font.setUnderline(False)
 
             _color = common.Color.DisabledText() if archived else _color
 
@@ -2504,8 +2528,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             __r = QtCore.QRect(r)
             __r.setLeft(overlay_rect_left_edge)
 
-            painter.setOpacity(0.2)
-            painter.setBrush(common.Color.DarkBlue())
+            painter.setBrush(common.Color.Opaque())
             painter.setPen(QtCore.Qt.NoPen)
             painter.drawRect(__r)
 

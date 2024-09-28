@@ -112,9 +112,9 @@ class TextFilterEditor(QtWidgets.QWidget):
         common.signals.tabChanged.connect(self.close)
         common.signals.switchViewToggled.connect(self.close)
         common.signals.taskFolderChanged.connect(self.close)
-        common.signals.bookmarkActivated.connect(self.close)
-        common.signals.assetActivated.connect(self.close)
-        common.signals.fileActivated.connect(self.close)
+        common.signals.bookmarkItemActivated.connect(self.close)
+        common.signals.assetItemActivated.connect(self.close)
+        common.signals.fileItemActivated.connect(self.close)
 
     def set_completer(self):
         """Sets the editor's completer.

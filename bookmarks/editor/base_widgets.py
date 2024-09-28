@@ -396,12 +396,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         """Returns the current thumbnail of the given source.
 
         """
-        color = None
-        if not all((self.window().server, self.window().job, self.window().root)):
-            pixmap = images.rsc_pixmap(
-                self.fallback_thumb, None, self.rect().height()
-            )
-        else:
+        if all((self.window().server, self.window().job, self.window().root)):
             pixmap, color = images.get_thumbnail(
                 self.window().server,
                 self.window().job,
@@ -410,10 +405,14 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
                 self.rect().height(),
                 fallback_thumb=self.fallback_thumb
             )
-        if not color or not isinstance(color, QtGui.QColor):
-            color = common.Color.DarkBackground()
-        if not isinstance(pixmap, QtGui.QPixmap) or pixmap.isNull():
-            return QtGui.QPixmap(), color
+            if not color or not isinstance(color, QtGui.QColor):
+                color = common.Color.VeryDarkBackground()
+            return pixmap, color
+
+        pixmap = images.rsc_pixmap(
+            self.fallback_thumb, None, self.rect().height()
+        )
+        return pixmap, common.Color.VeryDarkBackground()
 
     def _paint_current_thumbnail(self, painter):
         """Paints the current thumbnail of the given source.

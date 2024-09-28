@@ -57,7 +57,7 @@ QCheckBox {
     max-height: <RowHeight@0.8>px;
     min-height: <RowHeight@0.8>px;
     border-radius: <Indicator@1.5>px;
-    border: <Separator@2.0>px solid <Opaque>;
+    border: <Separator@2.0>px solid <Transparent>;
     background-color: <DarkBackground>;
     margin: 0;
     padding: 0;
@@ -157,23 +157,19 @@ QComboBox {
     max-height: <RowHeight@0.8>px;
     min-height: <RowHeight@0.8>px;
 }
-
 QComboBox:hover {
     color: <SelectedText>;
 }
-
 QComboBox:disabled {
     color: <DisabledText>;
     background-color: <DarkBackground>;
 }
-
 QComboBox:on {
     color: <DisabledText>;
     background-color: <VeryDarkBackground>;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
-
 QComboBox::drop-down {
     width: 0;
     height: 0;
@@ -182,17 +178,14 @@ QComboBox::drop-down {
     border: none;
     border-radius: 0;
 }
-
 QComboBox QListView {
     border-radius: 0;
 }
-
 QComboBox QListView::item {
     color: <Text>;
     background-color: <DarkBackground>;
     padding-left: <Indicator@1.0>px;
 }
-
 QComboBox QListView::item:hover {
     color: <SelectedText>;
     background-color: <LightBackground>;
@@ -253,7 +246,9 @@ QTreeView,
 QListWidget,
 QListView {
     border-radius: <Indicator@1.5>px;
-    background: <DarkBackground>;
+    padding: <Separator@1.0>px;
+    background: <Opaque>;
+    border: <Separator@1.0>px solid <Opaque>;
 }
 
 QTableWidget::item,
@@ -492,65 +487,55 @@ QTableView {
     gridline-color: <VeryDarkBackground>;
 }
 
-
+QTabWidget,
 QTabWidget > QFrame {
     background-color: <Transparent>;
-    border: <Separator@2.0>px solid <DarkBackground>;
-    border-radius: <Indicator@1.5>px;
-    margin: 0;
-    padding: <Separator@2.0>;
+    border: <Separator@1.0>px solid <Opaque>;
+    padding: <Indicator@1.0>px;
+    border-radius: <Indicator@2.0>px;
 }
 
 QTabWidget::pane {
-    outline: 0;
-    padding: 0;
-    margin: 0;
     border: none;
+    background-color: <Transparent>;
+    border-radius: 0;
+    margin-top: <Indicator@3.0>px;
 }
 
 QTabWidget::tab-bar {
-    left: <Indicator@1.5>px;
-    top: <Separator@2.0>px;
+    font-family: "<BoldFont>";
+    font-size: <LargeText@1.0>px;
+    left: <Indicator@2.0>px;
+    top: 0;
 }
 
 QTabBar {
-    font-family: "<MediumFont>";
-    color: <SecondaryText>;
+    font-family: "<BoldFont>";
+    font-size: <MediumText@1.1>px;
 }
 
 QTabBar:focus {
-    border: <Indicator@1.5>px solid <Transparent>;
+    border: none;
 }
 
 QTabBar::tab {
-    border: <Separator@2.0>px solid <Transparent>;
-    border-top-left-radius: <Indicator@1.5>px;
-    border-top-right-radius: <Indicator@1.5>px;
-    padding: <Indicator@1.0>px;
-    margin: <Separator@4.0>px, 0, <Separator@4.0>px, 0;
+    font-family: "<BoldFont>";
+    font-size: <MediumText@1.1>px;
+    border: none;
+    border-radius: 0;
+    padding: <Indicator@2.0>px;
+    background: <Transparent>;
 }
 
 QTabBar::tab:selected {
-    font-family: "<MediumFont>";
-    font-size: <SmallText@1.0>px;
     color: <Text>;
-    background: <LightBackground>;
-    border-top: <Separator@2.0>px solid <DarkBackground>;
-    border-left: <Separator@2.0>px solid <DarkBackground>;
-    border-right: <Separator@2.0>px solid <DarkBackground>;
-    border-bottom: <Separator@2.0>px solid <DarkBackground>;
+    border-bottom: <Separator@4.0>px solid <Blue>;
 }
 QTabBar::tab:selected:focus {
-    border-top: <Separator@2.0>px solid <Blue>;
-    border-left: <Separator@2.0>px solid <Blue>;
-    border-right: <Separator@2.0>px solid <Blue>;
 }
 QTabBar::tab:!selected {
-    font-family: "<MediumFont>";
-    font-size: <SmallText@1.0>px;
     color: <SecondaryText>;
-    background: <Opaque>;
-    border-bottom: <Separator@2.0>px solid <DarkBackground>;
+    border-bottom: <Separator@4.0>px solid <DarkBackground>;
 }
 
 CheckBoxButton,
@@ -751,4 +736,54 @@ ImageViewer {
 
 BaseSwitchView {
     margin: <Margin@3.0>px;
+}
+
+BaseFilterButton {
+    color: <SecondaryText>;
+    text-align: left;
+    background-color: <Opaque>;
+    border-radius: <Indicator@1.5>px;
+    border: <Separator@2.0>px solid <Transparent>;
+    margin: 0;
+    padding: 0 <MediumText@2.0>px;
+    height: <RowHeight@0.5>px;
+    max-height: <RowHeight@0.5>px;
+    min-height: <RowHeight@0.5>px;
+    combobox-popup: 0;
+    background: <Opaque>;
+}
+BaseFilterButton:hover {
+    color: <SelectedText>;
+}
+BaseFilterButton:disabled {
+    color: <DisabledText>;
+    background-color: <DarkBackground>;
+}
+BaseFilterButton:on {
+    color: <DisabledText>;
+    background-color: <VeryDarkBackground>;
+}
+
+BaseFilterButton QAbstractItemView {
+    font-family: "<LightFont>";
+    font-size: <MediumText@1.0>px;
+    margin: 0;
+    padding: 0;
+    border: <Separator@1.0>px solid <Opaque>;
+    border-radius: 0;
+}
+BaseFilterButton QAbstractItemView:focus {
+    border: <Separator@1.0>px solid <DarkBackground>;
+}
+BaseFilterButton QAbstractItemView::item {
+    color: <SecondaryText>;
+    border: none;
+    outline: 0;
+    background-color: <VeryDarkBackground>;
+    background: <VeryDarkBackground>;
+    padding-left: <Indicator@2.0>px;
+}
+BaseFilterButton QAbstractItemView::item:hover {
+    color: <SelectedText>;
+    background-color: <LightBackground>;
 }

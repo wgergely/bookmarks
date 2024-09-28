@@ -145,7 +145,7 @@ def sort_data(ref, sort_by, sort_order):
     """Sort the given data using `sort_by` and `sort_order`.
 
     Args:
-        ref (weakref.ref): Pointer to a :class:`~bookmarks.common.core.DataDict` instance.
+        ref (weakref.ref): Pointer to a :class:`~bookmarks.common.data.DataDict` instance.
         sort_by (int): The role to use to sort the data.
         sort_order (bool): The sort order.
 

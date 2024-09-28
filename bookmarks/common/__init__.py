@@ -55,7 +55,6 @@ servers = {}
 default_bookmarks = {}
 bookmarks = {}
 favourites = {}
-hashes = {}
 timers = {}
 
 font_cache = {}

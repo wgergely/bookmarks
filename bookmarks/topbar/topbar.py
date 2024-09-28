@@ -192,8 +192,8 @@ class ContextStatusBar(QtWidgets.QWidget):
         self.layout().addStretch()
 
     def _connect_signals(self):
-        common.signals.bookmarkActivated.connect(self.update)
-        common.signals.assetActivated.connect(self.update)
+        common.signals.bookmarkItemActivated.connect(self.update)
+        common.signals.assetItemActivated.connect(self.update)
         common.signals.taskFolderChanged.connect(self.update)
         common.signals.tabChanged.connect(self.update)
         common.signals.updateTopBarButtons.connect(self.update)

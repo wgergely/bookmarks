@@ -382,7 +382,7 @@ def import_favourites(*args, source=None):
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
                     root = '/'.join(
-                        (server, job, root, common.bookmark_item_cache_dir)
+                        (server, job, root, common.bookmark_item_data_dir)
                     )
                     _zip.extract(
                         file_info.fileName(), root
@@ -627,6 +627,7 @@ def toggle_bookmark_switch_view():
     if common.widget(common.BookmarkItemSwitch).isVisible():
         common.widget(common.BookmarkItemSwitch).model().sourceModel().reset_data()
 
+
 @QtCore.Slot()
 @must_be_initialized
 def toggle_asset_switch_view():
@@ -700,7 +701,7 @@ def increase_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size.height() + common.Size.Thumbnail((1.0 / 15.0), apply_scale=False)
+    v = model.row_size.height() + common.Size.Thumbnail((1.0 / 30.0), apply_scale=False)
     if v >= common.Size.Thumbnail(apply_scale=False):
         return
 
@@ -718,7 +719,7 @@ def decrease_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size.height() - common.Size.Thumbnail((1.0/15.0), apply_scale=False)
+    v = model.row_size.height() - common.Size.Thumbnail((1.0 / 30.0), apply_scale=False)
     if v <= model.default_row_size().height():
         v = model.default_row_size().height()
 
@@ -929,7 +930,7 @@ def refresh(idx=None):
         # Read from the cache if it exists
         p = model.source_path()
         source = '/'.join(p) if p else ''
-        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_cache_dir}/assets')
+        assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_data_dir}/assets')
         if not assets_cache_dir.exists():
             assets_cache_dir.mkpath('.')
         assets_cache_name = common.get_hash(source)
@@ -1522,24 +1523,6 @@ def execute(index, first=False):
     url = QtCore.QUrl.fromLocalFile(path)
     QtGui.QDesktopServices.openUrl(url)
 
-
-@common.debug
-@common.error
-def suggest_prefix(job):
-    """Suggests a prefix for the given job.
-
-    Args:
-        job (Job): The `job` to suggest prefix for.
-
-    """
-    substrings = re.sub(r'[\_\-\s]+', ';', job).split(';')
-    if (not substrings or len(substrings) < 2) and len(job) > 3:
-        prefix = job[0:3].upper()
-    else:
-        prefix = ''.join([f[0] for f in substrings]).upper()
-    return prefix
-
-
 @common.debug
 @common.error
 @selection
@@ -1705,7 +1688,7 @@ def copy_properties(index):
     if not pp:
         return
 
-    from . editor import clipboard
+    from .editor import clipboard
     editor = clipboard.show(
         *pp[0:3],
         asset=pp[3] if len(pp) == 4 else None,
@@ -1809,184 +1792,6 @@ def convert_image_sequence(index):
 def convert_image_sequence_with_akaconvert(index):
     from .external import akaconvert
     akaconvert.show(index)
-
-
-def add_zip_template(source, mode, prompt=False):
-    """Adds the selected source zip archive as a `mode` template file.
-
-    Args:
-        source (str): Path to a zip template file.
-        mode (str): A template mode (one of  'job' or 'asset').
-        prompt (bool): Prompt user to confirm overriding existing files.
-
-    Returns:
-        str: Path to the saved template file, or None.
-
-    """
-    common.check_type(source, str)
-    common.check_type(mode, str)
-
-    file_info = QtCore.QFileInfo(source)
-    if not file_info.exists():
-        raise RuntimeError('Source does not exist.')
-
-    # Test the zip before saving it
-    if not zipfile.is_zipfile(source):
-        raise RuntimeError('Source is not a zip file.')
-
-    with zipfile.ZipFile(source, compression=zipfile.ZIP_STORED) as f:
-        corrupt = f.testzip()
-        if corrupt:
-            raise RuntimeError(f'The zip archive seems corrupt: {corrupt}')
-
-    from . import templates
-    root = templates.get_template_folder(mode)
-    name = QtCore.QFileInfo(source).fileName()
-    file_info = QtCore.QFileInfo(f'{root}/{name}')
-
-    # Let's check if file exists before we copy anything...
-    s = 'A template file with the same name exists already.'
-    if file_info.exists() and not prompt:
-        raise RuntimeError(s)
-
-    if file_info.exists():
-        if common.show_message(
-                'Overwrite existing file?', body='A template file with the same name exists already.',
-                buttons=[common.YesButton, common.CancelButton], message_type=None,
-                modal=True, ) == QtWidgets.QDialog.Rejected:
-            return None
-        QtCore.QFile.remove(file_info.filePath())
-
-    # If copied successfully, let's reload the
-    if not QtCore.QFile.copy(source, file_info.filePath()):
-        raise RuntimeError('An unknown error occurred adding the template.')
-
-    common.signals.templatesChanged.emit()
-    return file_info.filePath()
-
-
-def extract_zip_template(source, destination, name):
-    """Expands the selected source zip archive to `destination` as `name`.
-
-    The contents will be expanded to a `{destination}/{name}` where name is an
-    arbitrary name of a job or an asset item to be created.
-
-    Args:
-        source (str): Path to a zip archive.
-        destination (str): Path to a folder
-        name (str):
-            Name of the root folder where the archive contents will be expanded to.
-
-    Returns:
-        str: Path to the expanded archive contents.
-
-    """
-    for arg in (source, destination, name):
-        common.check_type(arg, str)
-    if not destination:
-        raise ValueError('Destination not set')
-
-    if '/' in name:
-        name = name.split('/')[-1]
-        destination += '/' + '/'.join(name.split('/')[:-1])
-
-    file_info = QtCore.QFileInfo(destination)
-    if not file_info.exists():
-        raise RuntimeError(f'{file_info.filePath()} does not exist.')
-    if not file_info.isWritable():
-        raise RuntimeError(f'{file_info.filePath()} not writable')
-
-    if not name:
-        raise ValueError('Must enter a name.')
-
-    source_file_info = QtCore.QFileInfo(source)
-    if not source_file_info.exists():
-        raise RuntimeError(
-            f'{source_file_info.filePath()} does not exist.'
-        )
-
-    dest_file_info = QtCore.QFileInfo(f'{destination}/{name}')
-    if dest_file_info.exists():
-        raise RuntimeError(
-            f'{dest_file_info.fileName()} exists already.'
-        )
-
-    with zipfile.ZipFile(
-            source_file_info.absoluteFilePath(), 'r', compression=zipfile.ZIP_STORED
-    ) as f:
-        corrupt = f.testzip()
-        if corrupt:
-            raise RuntimeError(f'The zip archive seems corrupt: {corrupt}')
-
-        f.extractall(
-            dest_file_info.absoluteFilePath(), members=None, pwd=None
-        )
-
-    common.signals.templateExpanded.emit(dest_file_info.filePath())
-    return dest_file_info.filePath()
-
-
-def remove_zip_template(source, prompt=True):
-    """Deletes a zip template file from the disk.
-
-    Args:
-        source (str): Path to a zip template file.
-        prompt (bool): Prompt the user for confirmation.
-
-    """
-    common.check_type(source, str)
-
-    file_info = QtCore.QFileInfo(source)
-
-    if not file_info.exists():
-        raise RuntimeError('Template does not exist.')
-
-    if prompt:
-        if common.show_message(
-                'Delete template?',
-                body=f'Are you sure you want to delete {file_info.fileName()}? This action cannot be undone.',
-                buttons=[common.YesButton, common.CancelButton], message_type='error',
-                modal=True, ) == QtWidgets.QDialog.Rejected:
-            return
-
-    if not QtCore.QFile.remove(source):
-        raise RuntimeError('Could not delete the template archive.')
-
-    common.signals.templatesChanged.emit()
-
-
-@common.error
-@common.debug
-def pick_template(mode):
-    """Prompts the user to pick a new `*.zip` file containing a template
-    directory structure.
-
-    The template is copied to ``%localappdata%/[product]/[mode]_templates/*.zip``
-    folder.
-
-    Args:
-        mode (str): A template mode, e.g. `JobTemplateMode`.
-
-    """
-    common.check_type(mode, str)
-
-    dialog = QtWidgets.QFileDialog(parent=None)
-    dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
-    dialog.setViewMode(QtWidgets.QFileDialog.List)
-    dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptOpen)
-    dialog.setNameFilters(['*.zip', ])
-    dialog.setFilter(QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot)
-    dialog.setLabelText(
-        QtWidgets.QFileDialog.Accept, f'Select a {mode.title()} template'
-    )
-    dialog.setWindowTitle(f'Select *.zip archive to use as a {mode.lower()} template')
-    if dialog.exec_() == QtWidgets.QDialog.Rejected:
-        return
-    source = next((f for f in dialog.selectedFiles()), None)
-    if not source:
-        return
-
-    add_zip_template(source, mode)
 
 
 @common.debug

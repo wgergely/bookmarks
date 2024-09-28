@@ -3,12 +3,12 @@ properties related to bookmark items. These properties include custom descriptio
 height), and values from :mod:`bookmarks.tokens.tokens`, among others.
 
 The database file for each bookmark item is located at the root of the item's cache folder, as specified by
-:attr:`common.bookmark_item_cache_dir`. The database path is constructed as follows:
+:attr:`common.bookmark_item_data_dir`. The database path is constructed as follows:
 
 .. code-block:: python
     :linenos:
 
-    f'{server}/{job}/{root}/{common.bookmark_item_cache_dir}/{common.bookmark_item_database}'
+    f'{server}/{job}/{root}/{common.bookmark_item_data_dir}/{common.bookmark_item_database}'
 
 The database table structure is defined by :attr:`TABLES`, which maps SQLite column types to the corresponding Python
 types used in the app.
@@ -516,7 +516,7 @@ class BookmarkDB(QtCore.QObject):
         self.root = root
 
         self._bookmark = f'{server}/{job}/{root}'
-        self._bookmark_root = f'{self._bookmark}/{common.bookmark_item_cache_dir}'
+        self._bookmark_root = f'{self._bookmark}/{common.bookmark_item_data_dir}'
         self._database_path = f'{self._bookmark_root}/{common.bookmark_item_database}'
 
         if not self._create_bookmark_dir():
@@ -587,7 +587,7 @@ class BookmarkDB(QtCore.QObject):
         self._version = [int(i) for i in v.split('.')] if v else [0, 0, 0]
 
     def _create_bookmark_dir(self):
-        """Create the `bookmark_item_cache_dir` if it doesn't already exist.
+        """Create the `bookmark_item_data_dir` if it doesn't already exist.
 
         Returns:
             bool: `True` if the folder already exists or was successfully created; `False` if the folder cannot

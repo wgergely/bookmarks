@@ -1,4 +1,5 @@
 import os
+import re
 
 from .. import common
 from .. import database
@@ -64,15 +65,20 @@ class LinksAPI:
     @staticmethod
     def _normalize_link(link):
         """
-        Normalize a link to ensure a consistent format.
+        Normalize path.
 
         Args:
             link (str): The link to normalize.
 
         Returns:
             str: The normalized link.
+
         """
-        return os.path.normpath(link).replace('\\', '/')
+        link = os.path.normpath(link)
+        link = link.replace('\\', '/')
+        link = link.strip('/')
+        link = re.sub(r'[/]+', '/', link)  # Remove multiple slashes
+        return link
 
     @classmethod
     def verify_link(cls, link):
@@ -182,14 +188,29 @@ class LinksAPI:
             list: A list of file paths.
         """
         if self._cache is not None and not force:
-            links = self._cache
-        else:
-            links = self._read_links_from_file()
-            self._cache = links
+            return self._cache
 
-        if absolute:
-            return sorted([self.to_absolute(link) for link in links], key=str.lower)
-        return links
+        links = []
+        if self._cache is None:
+            links = self._read_links_from_file()
+
+        _links = []
+        for l in links:
+            l = self._normalize_link(l)
+            if absolute:
+                l = self.to_absolute(l)
+
+            try:
+                self.verify_link(l)
+            except:
+                continue
+
+            _links.append(l)
+
+        v = sorted(_links, key=str.lower)
+        self._cache = v
+
+        return v
 
     def add(self, link, force=False):
         """
@@ -202,6 +223,9 @@ class LinksAPI:
         Returns:
             bool: True if the link was added, False if it already exists.
         """
+        link = self._normalize_link(link)
+        self.verify_link(link)
+
         if os.path.isabs(link):
             link = self.to_relative(link)
 
@@ -218,8 +242,8 @@ class LinksAPI:
             raise RuntimeError(f'Link "{link}" already exists')
 
         links.append(link)
-        self._cache = sorted(set(links), key=str.lower)
-        self._write_links_to_file(self._cache)
+        self._write_links_to_file(sorted(set(links), key=str.lower))
+        self.get(force=True)
 
     def remove(self, link):
         """

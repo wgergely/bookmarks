@@ -73,8 +73,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                         'description': 'A short name of the bookmark (or job) used '
                                        'when saving files.\n\nfor example, '
                                        '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
-                                       'the prefix specified here.',
-                        'button': 'Suggest'
+                                       'the prefix specified here.'
                     },
                 },
                 1: {
@@ -405,7 +404,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
         """
         self.init_db_data()
-        self.description_editor.setFocus(QtCore.Qt.PopupFocusReason)
+        self.description_editor.setFocus(QtCore.Qt.OtherFocusReason)
 
     @common.error
     @common.debug
@@ -453,15 +452,6 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
     def _get_name(self):
         return self.job
-
-    @QtCore.Slot()
-    def prefix_button_clicked(self):
-        """Suggest a prefix based on the job's name.
-
-        """
-        prefix = actions.suggest_prefix(self.job)
-        self.prefix_editor.setText(prefix)
-        self.prefix_editor.textEdited.emit(prefix)
 
     @QtCore.Slot()
     def link_button_clicked(self):

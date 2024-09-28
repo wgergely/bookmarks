@@ -411,11 +411,13 @@ class PaintedLabel(QtWidgets.QLabel):
     def __init__(
             self, text, color=common.Color.Text(),
             size=common.Size.MediumText(),
+            font=common.Font.MediumFont,
             parent=None
     ):
         super().__init__(text, parent=parent)
 
         self._size = size
+        self._font = font
         self._color = color
         self._text = text
         self._fixed_width = None
@@ -436,7 +438,7 @@ class PaintedLabel(QtWidgets.QLabel):
             super().setFixedWidth(self._fixed_width)
             return
 
-        font, metrics = common.Font.MediumFont(self._size)
+        font, metrics = self._font(self._size)
         self.setFixedHeight(metrics.height())
         super().setFixedWidth(
             metrics.horizontalAdvance(self._text) +
@@ -470,7 +472,7 @@ class PaintedLabel(QtWidgets.QLabel):
         rect.setLeft(rect.left() + common.Size.Indicator())
         common.draw_aliased_text(
             painter,
-            common.Font.MediumFont(self._size)[0],
+            self._font(self._size)[0],
             self.rect(),
             self._text,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
@@ -1001,139 +1003,6 @@ class ListWidget(QtWidgets.QListWidget):
         self.resized.emit(event.size())
 
 
-class ListViewWidget(QtWidgets.QListView):
-    """A custom list widget used to display selectable item.
-
-    """
-    progressUpdate = QtCore.Signal(str, str)
-    resized = QtCore.Signal(QtCore.QSize)
-    itemEntered = QtCore.Signal(QtCore.QModelIndex)
-
-    def __init__(self, default_message='No items', default_icon='icon', parent=None):
-        super().__init__(parent=parent)
-        if not self.parent():
-            common.set_stylesheet(self)
-
-        self.default_message = default_message
-        self.default_icon = default_icon
-
-        self.server = None
-        self.job = None
-        self.root = None
-
-        self.setResizeMode(QtWidgets.QListView.Adjust)
-        self.setEditTriggers(
-            QtWidgets.QAbstractItemView.DoubleClicked |
-            QtWidgets.QAbstractItemView.EditKeyPressed
-        )
-        self.setAcceptDrops(False)
-        self.setDragEnabled(False)
-        self.setSpacing(0)
-        self.setMouseTracking(True)
-        self.viewport().setMouseTracking(True)
-        self.setItemDelegate(ListWidgetDelegate(parent=self))
-        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
-        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-        self.setModel(QtCore.QSortFilterProxyModel(parent=self))
-        self.model().setSourceModel(QtGui.QStandardItemModel(parent=self))
-        self.model().sourceModel().setColumnCount(1)
-        self.model().setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
-
-        self.overlay = ListOverlayWidget(parent=self.viewport())
-        self.overlay.show()
-
-        self.installEventFilter(self)
-
-    def eventFilter(self, widget, event):
-        """Event filter handler.
-
-        """
-        if widget is not self:
-            return False
-        if event.type() == QtCore.QEvent.Paint:
-            paint_background_icon(self.default_icon, widget)
-            return True
-        return False
-
-    def _connect_signals(self):
-        self.resized.connect(self.overlay.resize)
-        self.progressUpdate.connect(self.overlay.set_message)
-        self.progressUpdate.connect(lambda x, y: common.signals.showStatusTipMessage.emit(x))
-
-        self.itemEntered.connect(
-            lambda item: common.signals.showStatusTipMessage.emit(
-                item.data(QtCore.Qt.DisplayRole)
-            )
-        )
-
-    def mouseMoveEvent(self, event):
-        super().mouseMoveEvent(event)
-        pos = self.mapFromGlobal(common.cursor.pos())
-        if self.rect().contains(pos):
-            index = self.indexAt(pos)
-            if not index.isValid():
-                return
-            self.itemEntered.emit(index)
-
-    @QtCore.Slot(QtGui.QStandardItem)
-    def toggle(self, item):
-        if not item.flags() & QtCore.Qt.ItemIsUserCheckable:
-            return
-        if item.checkState() == QtCore.Qt.Unchecked:
-            item.setCheckState(QtCore.Qt.Checked)
-            return
-        item.setCheckState(QtCore.Qt.Unchecked)
-
-    def addItem(self, v, icon=None, color=common.Color.SecondaryText()):
-        common.check_type(v, (str, QtGui.QStandardItem))
-        common.check_type(icon, (QtGui.QPixmap, QtGui.QIcon, str, None))
-        common.check_type(color, (QtGui.QColor, None))
-
-        if isinstance(v, QtGui.QStandardItem):
-            self.model().sourceModel().appendRow(v)
-            return
-
-        _, metrics = common.Font.MediumFont(common.Size.SmallText())
-        width = metrics.horizontalAdvance(v) + common.Size.RowHeight() + common.Size.Margin()
-
-        item = QtGui.QStandardItem(v)
-
-        size = QtCore.QSize(width, common.Size.RowHeight())
-        item.setData(size, role=QtCore.Qt.SizeHintRole)
-
-        if isinstance(icon, str):
-            item.setFlags(
-                QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
-            )
-            pixmap = images.rsc_pixmap(
-                icon,
-                color,
-                common.Size.RowHeight() -
-                (common.Size.Indicator(2.0))
-            )
-            item.setData(pixmap, role=QtCore.Qt.DecorationRole)
-        elif isinstance(icon, (QtGui.QIcon, QtGui.QPixmap)):
-            item.setData(icon, role=QtCore.Qt.DecorationRole)
-        else:
-            item.setFlags(
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsUserCheckable
-            )
-
-        item.setCheckState(QtCore.Qt.Unchecked)
-        self.model().sourceModel().appendRow(item)
-
-    def resizeEvent(self, event):
-        self.resized.emit(event.size())
-
-
 def get_icon(
         name,
         color=common.Color.DisabledText(),
@@ -1264,23 +1133,6 @@ def add_row(
         parent.layout().addWidget(w, 1)
 
     return w
-
-
-def add_label(text, parent=None):
-    """Utility method for creating a label.
-
-    Returns:
-        QLabel: label widget.
-
-    """
-    label = QtWidgets.QLabel(text, parent=parent)
-    label.setFixedHeight(common.Size.RowHeight())
-    label.setSizePolicy(
-        QtWidgets.QSizePolicy.Expanding,
-        QtWidgets.QSizePolicy.Expanding
-    )
-    label.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-    parent.layout().addWidget(label, 0)
 
 
 def add_line_edit(label, parent=None):

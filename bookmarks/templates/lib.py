@@ -95,6 +95,8 @@ class TemplateItem(object):
         'date',
     )
 
+    default_template_name = '!Default Template!'
+
     #: Default compression method
     compression = zipfile.ZIP_STORED
 
@@ -748,24 +750,28 @@ class TemplateItem(object):
 
         return link_paths
 
-    def extract_template(self, destination_path, extract_contents_to_links=True):
+    def extract_template(self, root_path, extract_contents_to_links=True, ignore_existing_folders=False):
         """
         Extracts the template to the specified destination directory.
 
         By default, if present, the .links file is placed in the root of the destination directory.
         However, if `extract_contents_to_links=True`, the contents of the template will be extracted into
-        each subfolder specified in the .links file, leaving the root of the destination directory empty.
+        each subfolder specified in the `.links` file, leaving the root of the destination directory empty (except for
+        the folders defined in the .links file).
 
         Args:
-            destination_path (str): The path where the template should be extracted.
+            root_path (str): The path where the template should be extracted.
             extract_contents_to_links (bool): Whether to extract the contents
-                to the links specified in the .links file.
+                to the links specified in the `.links` file.
+            ignore_existing_folders (bool): Raise an error if a destination folder already exists when False.
 
         """
-        if not os.path.exists(destination_path):
-            parent_dir = os.path.dirname(destination_path)
+        if not os.path.exists(root_path):
+            parent_dir = os.path.dirname(root_path)
             if not os.path.exists(parent_dir):
                 raise FileNotFoundError(f'Parent directory does not exist: {parent_dir}')
+
+        root_path = os.path.normpath(root_path).replace('\\', '/')
 
         if not self._template:
             raise ValueError('Template is empty')
@@ -773,55 +779,67 @@ class TemplateItem(object):
         if self._has_error:
             raise TemplateError('Template has errors')
 
-        _paths = []
+        abs_paths = []
 
         if not self._has_links and extract_contents_to_links:
             raise TemplateError('Cannot extract contents to links without a .links file!')
         elif extract_contents_to_links:
+            # Get the links embedded in the template
             links = self.get_links()
             if not links:
-                raise TemplateError('Empty .links file!')
+                raise TemplateError('No .links found in the template!')
 
-            for link in links:
-                p = os.path.join(destination_path, link)
-                p = os.path.normpath(p).replace('\\', '/')
-                _paths.append(p)
+            for rel_path in links:
+                abs_path = f'{root_path}/{rel_path}'
+
+                if os.path.exists(abs_path) and not ignore_existing_folders:
+                    raise FileExistsError(f'Path already exists: {abs_path}')
+
+                abs_paths.append(abs_path)
         else:
-            _paths.append(destination_path)
+            abs_paths.append(root_path)
 
+        # Extract the template
         zp = io.BytesIO(self._template)
         with zipfile.ZipFile(zp, 'r') as zf:
             extracted_files = self._safe_extract(zf)
 
-        for root_dir in _paths:
+        links_data = None
+        skipped_files = []
+
+        for abs_path in abs_paths:
             for rel_path, data in extracted_files:
-
-                # Make folders
                 is_dir = rel_path.endswith('/')
-                if is_dir:
-                    p = os.path.join(root_dir, rel_path.rstrip('/'))
-                    p = os.path.normpath(p).replace('\\', '/')
-                    if not os.path.exists(p):
-                        os.makedirs(p, exist_ok=True)
-                    continue
 
-                if '.links' in rel_path:
-                    if not os.path.exists(f'{root_dir}/.links'):
-                        with open(f'{root_dir}/.links', 'wb') as f:
-                            f.write(data)
+                if is_dir:
+                    p = f'{abs_path}/{rel_path}'.rstrip('/')
+                    os.makedirs(p, exist_ok=True)
                     continue
+                else:
+                    # Skip the .links file but store its data for later use to ensure that the .links
+                    # file is extracted only once into the root of the destination directory,
+                    # regardless of the value of `extract_contents_to_links`.
+                    if rel_path.endswith('.links'):
+                        links_data = data
+                        continue
 
                 # Write files
-                p = os.path.join(root_dir, rel_path)
-                p = os.path.normpath(p).replace('\\', '/')
+                file_path = f'{abs_path}/{rel_path}'
+                parent_dir = os.path.dirname(file_path)
+                os.makedirs(parent_dir, exist_ok=True)
 
-                parent_dir = os.path.dirname(p)
-                if not os.path.exists(parent_dir):
-                    os.makedirs(parent_dir, exist_ok=True)
+                if os.path.exists(file_path):
+                    log.error(f'File already exists: {file_path}')
+                    skipped_files.append(file_path)
+                    continue
 
-                with open(p, 'wb') as f:
+                with open(file_path, 'wb') as f:
                     f.write(data)
 
+        # Write the .links file to the root of the destination directory
+        if links_data:
+            with open(f'{root_path}/.links', 'wb') as f:
+                f.write(links_data)
 
     def folder_to_template(self, source_folder, skip_system_files=True, max_size_mb=100):
         """Adds a folder and its contents to the template replacing the current template.
@@ -902,7 +920,6 @@ class TemplateItem(object):
         print(f'Folders: {folders}')
         return files, folders
 
-
     def new_template_from_tokens(self):
         """Create a default template based on the current token config.
 
@@ -912,7 +929,7 @@ class TemplateItem(object):
         """
 
         self.clear_metadata()
-        self._metadata['name'] = '!Default Template!'
+        self._metadata['name'] = self.default_template_name
         self._metadata['description'] = 'The default template generated based on the current asset folder settings.'
         self._metadata['author'] = common.get_username()
         self._metadata['date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -943,7 +960,6 @@ class TemplateItem(object):
         zp.seek(0)
         self._template = zp.getvalue()
 
-
     @classmethod
     def get_saved_templates(cls, _type):
         """Yields :class:`TemplateItem` instances saved in the database or on disk."""
@@ -970,3 +986,31 @@ class TemplateItem(object):
                     continue
 
                 yield cls(path=f'{cls.default_user_folder}/{entry.name}')
+
+    @staticmethod
+    def is_default_template_created(_type=TemplateType.DatabaseTemplate):
+        """Check if the default template is saved in the database or on disk.
+
+        Args:
+            _type (TemplateType, Optional): Type of template to check, defaults to TemplateType.DatabaseTemplate
+
+        Returns:
+            bool: True if the default template is saved.
+
+        """
+        if _type == TemplateType.DatabaseTemplate:
+            args = common.active('root', args=True)
+            if not args:
+                raise RuntimeError('A root item must be active to check the database templates')
+
+            db = database.get(*args)
+            return common.get_hash(TemplateItem.default_template_name) in db.get_column('id',
+                                                                                        database.TemplateDataTable)
+
+        if _type == TemplateType.UserTemplate:
+            if not os.path.exists(TemplateItem.default_user_folder):
+                return False
+
+            for entry in os.scandir(TemplateItem.default_user_folder):
+                if entry.name.endswith(f'.{TemplateItem.default_extension}'):
+                    return True

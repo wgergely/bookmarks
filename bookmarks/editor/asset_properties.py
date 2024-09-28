@@ -73,7 +73,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                     0: {
                         'name': 'Name',
                         'key': None,
-                        'validator': base.job_name_validator,
+                        'validator': None,
                         'widget': ui.LineEdit,
                         'placeholder': 'Enter name, for example, \'SH0010\'',
                         'description': 'The asset\'s name, for example, \'SH0010\'',
@@ -86,26 +86,6 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'placeholder': 'A description, for example, \'My first shot\'',
                         'description': 'A short description of the asset, for example, \'My '
                                        'first shot.\'.',
-                    },
-                },
-                1: {
-                    0: {
-                        'name': 'Template',
-                        'key': None,
-                        'validator': None,
-                        'widget': functools.partial(
-                            templates.TemplatesWidget,
-                            templates.AssetTemplateMode
-                        ),
-                        'placeholder': None,
-                        'description': 'Select a folder template to create this asset.',
-                        'help': 'Select a folder template to create this asset. Templates are simple zip files that '
-                                'contain a folder structure and a set of files. The template can contain a `.link` '
-                                'file '
-                                'which will be used to read nested assets inside the template. This can be useful if an'
-                                'asset is made up of multiple tasks, for example, a shot asset may contain a `lighting` and '
-                                '`anim`'
-                                'tasks.',
                     },
                 },
             },
@@ -253,13 +233,13 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             },
         },
         3: {
-            'name': 'Links',
+            'name': 'Urls',
             'icon': '',
             'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
-                        'name': 'Link #1',
+                        'name': 'Urls #1',
                         'key': 'url1',
                         'validator': None,
                         'widget': ui.LineEdit,
@@ -269,7 +249,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
                         'button': 'Visit',
                     },
                     1: {
-                        'name': 'Link #2',
+                        'name': 'Urls #2',
                         'key': 'url2',
                         'validator': None,
                         'widget': ui.LineEdit,
@@ -283,78 +263,28 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         }
     }
 
-    def __init__(self, server, job, root, asset=None, parent=None):
-        if asset:
-            buttons = ('Save', 'Cancel')
-        else:
-            buttons = ('Add Asset', 'Cancel')
+    def __init__(self, server, job, root, asset, parent=None):
+        buttons = ('Save', 'Cancel')
 
         super().__init__(
             server,
             job,
             root,
-            asset=asset,
+            asset,
             db_table=database.AssetTable,
             fallback_thumb='thumb_asset0',
             buttons=buttons,
             parent=parent
         )
 
-        if asset:
-            # When `asset` is set, the template_editor is no longer used, so
-            # we can hide it:
-            self.name_editor.setText(asset)
-            self.name_editor.setDisabled(True)
-            self.template_editor.parent().parent().setHidden(True)
-            self.setWindowTitle('/'.join((server, job, root, asset)))
-        else:
-            self.setWindowTitle(f'{server}/{job}/{root}: Create Asset')
-            self.name_editor.setFocus()
+        self.name_editor.setText(asset)
+        self.name_editor.setDisabled(True)
+        self.setWindowTitle('/'.join((server, job, root, asset)))
 
     def _connect_signals(self):
         super()._connect_signals()
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
-        self.itemCreated.connect(self.create_link_file)
         self.itemCreated.connect(common.signals.assetAdded)
-
-    def create_link_file(self, path):
-        """Creates a link file for nested assets.
-
-        Args:
-            path (str): Path to the newly created asset.
-
-        """
-        if not path:
-            return
-
-        path = path.replace('\\', '/')
-
-        bookmark = '/'.join((self.server, self.job, self.root))
-        asset = path.replace(bookmark, '').strip('/')
-
-        # Nothing to do if the asset is not nested
-        if '/' not in asset:
-            return
-
-        root = '/'.join(
-            (
-                self.server,
-                self.job,
-                self.root,
-                asset.split('/')[0]
-            )
-        )
-        rel = '/'.join(asset.split('/')[1:])
-        if not common.add_link(root, rel, section='links/asset'):
-            log.error('Could not add link')
-
-    def name(self):
-        """Returns the name of the asset.
-
-        """
-        name = self.name_editor.text()
-        name = self.asset if self.asset else name
-        return name if name else None
 
     def db_source(self):
         """A file path to use as the source of database values.
@@ -363,20 +293,12 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             str: The database source file.
 
         """
-        if not self.name():
-            return '/'.join(
-                (
-                    self.server,
-                    self.job,
-                    self.root,
-                )
-            )
         return '/'.join(
             (
                 self.server,
                 self.job,
                 self.root,
-                self.name()
+                self.asset
             )
         )
 
@@ -385,8 +307,8 @@ class AssetPropertyEditor(base.BasePropertyEditor):
 
         """
         self.init_db_data()
-        self._set_completer()
         self._disable_shotgun()
+        self.description_editor.setFocus(QtCore.Qt.OtherFocusReason)
 
     def init_db_data(self):
         super().init_db_data()
@@ -413,44 +335,12 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             self.server,
             self.job,
             self.root,
-            self.name()
+            self.asset
         )
         sg_properties.init()
 
         if not sg_properties.verify(bookmark=True):
             self.sg_type_editor.parent().parent().parent().setDisabled(True)
-
-    def _set_completer(self):
-        """Add the current list of assets to the name editor's completer.
-
-        """
-        items = []
-
-        model = common.source_model(common.AssetTab)
-        data = model.model_data()
-        for idx in data:
-            if data[idx][common.FlagsRole] & common.MarkedAsArchived:
-                continue
-            v = data[idx][common.ParentPathRole][-1]
-            items.append(v)
-
-            match = re.search(r'[0-9]+$', v)
-            if match:
-                pad = len(match.group(0))
-                num = int(match.group(0))
-                span = match.span()
-                _v1 = str(num + 1).zfill(pad)
-                _v2 = str(num + 10).zfill(pad)
-                v1 = v[0:span[0]] + _v1 + v[span[1]:-1]
-                v2 = v[0:span[0]] + _v2 + v[span[1]:-1]
-                items.append(v1)
-                items.append(v2)
-
-        items = sorted(set(items), reverse=True)
-        completer = QtWidgets.QCompleter(items, parent=self)
-        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        common.set_stylesheet(completer.popup())
-        self.name_editor.setCompleter(completer)
 
     @common.error
     @common.debug
@@ -478,7 +368,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             self.server,
             self.job,
             self.root,
-            self.name()
+            self.asset
         )
         sg_properties.init()
 
@@ -489,31 +379,6 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         sg_properties.asset_name = self.sg_name_editor.text()
 
         return sg_properties
-
-    def create_asset(self):
-        """Creates a new asset based on the current name and template selections.
-
-        """
-        name = self.name()
-        editor = self.template_editor.template_list_widget
-
-        if not name:
-            raise RuntimeError('Must enter a name to create asset.')
-
-        file_info = QtCore.QFileInfo(f'{self.server}/{self.job}/{self.root}/{name}')
-        if not file_info.exists() and not file_info.dir().mkpath('.'):
-            raise RuntimeError(f'Could not create {file_info.dir().path()}')
-
-        editor.create(
-            file_info.fileName(),
-            file_info.dir().absolutePath()
-        )
-
-        if not file_info.exists():
-            raise RuntimeError('Failed to create asset.')
-
-        self.create_link_file(file_info.absoluteFilePath())
-        self.itemCreated.emit(file_info.absoluteFilePath())
 
     @common.error
     @QtCore.Slot()
@@ -529,6 +394,6 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             self.server,
             self.job,
             self.root,
-            self.name(),
+            self.asset,
             self.sg_type_editor.currentText()
         )

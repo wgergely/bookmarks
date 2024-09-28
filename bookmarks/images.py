@@ -7,7 +7,7 @@ suitable placeholder image. See  :func:`get_placeholder_path`.
 
 Note:
     The thumbnail files are stored in the bookmark item cache folder (see
-    ``common.bookmark_item_cache_dir``).
+    ``common.bookmark_item_data_dir``).
 
 Under the hood, :func:`get_thumbnail` uses :meth:`ImageCache.get_pixmap` and
 :meth:`ImageCache.get_image`.
@@ -341,7 +341,7 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     if proxy or common.is_collapsed(source):
         source = common.proxy_path(source)
     name = common.get_hash(source) + '.' + common.thumbnail_format
-    return f'{server}/{job}/{root}/{common.bookmark_item_cache_dir}/thumbnails/{name}'
+    return f'{server}/{job}/{root}/{common.bookmark_item_data_dir}/thumbnails/{name}'
 
 
 @functools.lru_cache(maxsize=4194304)

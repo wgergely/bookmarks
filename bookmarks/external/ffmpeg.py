@@ -146,9 +146,6 @@ PRESETS = {
     },
 }
 
-SHOT = 0
-ASSET = 1
-
 
 def get_supported_formats(ffmpeg_console_output):
     """Return a list of supported formats from the ffmpeg console output.

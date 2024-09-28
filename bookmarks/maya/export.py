@@ -782,5 +782,5 @@ class ExportWidget(base.BasePropertyEditor):
         """
         return QtCore.QSize(
             common.Size.DefaultWidth(0.66),
-            common.Size.DefaultHeight(1.2))
+            common.Size.DefaultHeight(1.2)
         )

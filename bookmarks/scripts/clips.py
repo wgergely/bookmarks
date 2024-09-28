@@ -314,7 +314,7 @@ class MediaView(QtWidgets.QTreeView):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setModel(MediaModel())
-        self.setMinimumHeight(common.Size.DefaultHeight(1.2)))
+        self.setMinimumHeight(common.Size.DefaultHeight(1.2))
         self.setRootIsDecorated(True)
         self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -328,10 +328,7 @@ class MediaView(QtWidgets.QTreeView):
         )
 
     def sizeHint(self):
-        return QtCore.QSize(
-            common.Size.DefaultWidth(),
-            common.Size.DefaultHeight()),
-        )
+        return QtCore.QSize(common.Size.DefaultWidth(), common.Size.DefaultHeight())
 
 
 class EdlWidget(base.BasePropertyEditor):

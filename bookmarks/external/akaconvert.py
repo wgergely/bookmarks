@@ -368,7 +368,7 @@ class AkaConvertWidget(base.BasePropertyEditor):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         self.setFixedWidth(common.Size.DefaultWidth())
-        self.setFixedHeight(common.Size.DefaultHeight(1.05)))
+        self.setFixedHeight(common.Size.DefaultHeight(1.05))
         self.setWindowFlags(
             self.windowFlags() | QtCore.Qt.FramelessWindowHint
         )

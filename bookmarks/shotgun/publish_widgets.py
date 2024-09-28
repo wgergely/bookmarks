@@ -314,42 +314,6 @@ class AssetEntityEditor(shotgun.EntityComboBox):
         return entity
 
 
-class StatusEditor(shotgun.EntityComboBox):
-    """Lets the user select a status code."""
-
-    def __init__(self, parent=None):
-        super().__init__([NOT_SELECTED, ], parent=parent)
-        self.init_data()
-        self.model().sourceModel().entityDataReceived.connect(self.select_default)
-
-    def init_data(self):
-        """Request Status entity data.
-
-        """
-        model = self.model().sourceModel()
-
-        # Disable filtering
-        self.model().set_entity_type(None)
-
-        model.entityDataRequested.emit(
-            model.uuid, common.active('server'), common.active('job'), common.active('root'),
-            None, True, 'Status', [], [], )
-
-    def select_default(self):
-        """Select the default status code, if a 'default' value is found in
-        the entity list.
-
-        """
-        for idx in range(self.count()):
-            entity = self.itemData(idx, role=shotgun.EntityRole)
-            if not entity:
-                continue
-            k = 'default'
-            if k in entity and entity[k]:
-                self.setCurrentIndex(idx)
-                return
-        self.setCurrentIndex(0)
-
 
 class TaskEditor(shotgun.EntityComboBox):
     """Lets the user select a ShotGrid task."""

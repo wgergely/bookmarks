@@ -263,29 +263,6 @@ class ApplicationLauncherItemEditor(QtWidgets.QDialog):
 
         self.done(QtWidgets.QDialog.Accepted)
 
-    @QtCore.Slot()
-    def path_button_clicked(self):
-        """Button click action.
-
-        """
-        self._pick(self.path_editor, caption='Pick an Executable')
-
-    @QtCore.Slot()
-    def thumbnail_button_clicked(self):
-        """Button click action.
-
-        """
-        self._pick(
-            self.thumbnail_editor,
-            caption='Pick a Thumbnail',
-            filter=images.get_oiio_namefilters(),
-            dir=QtCore.QFileInfo(
-                common.rsc(
-                    common.FormatResource
-                )
-            ).filePath()
-        )
-
     def _pick(self, editor, caption=None, filter=None, dir=None):
         _file = QtWidgets.QFileDialog.getOpenFileName(
             parent=self,

@@ -200,7 +200,7 @@ class BookmarkItemModel(models.ItemModel):
             else:
                 flags = models.DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
 
-            if k in common.default_bookmarks:
+            if k in common.env_bookmark_items:
                 flags = flags | common.MarkedAsDefault
 
             filepath = file_info.filePath()

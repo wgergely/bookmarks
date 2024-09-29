@@ -9,15 +9,15 @@ from ..templates.lib import TemplateItem, TemplateType
 
 
 class JobStyle(enum.IntEnum):
-    NoSubdirectories = 0 # no subdirectories
-    JobHasClient = 1 # 1 subdirectory
-    JobHasClientAndDepartment = 2 # 2 subdirectories
-
+    NoSubdirectories = 0  # no subdirectories
+    JobsHaveClient = 1  # 1 subdirectory
+    JobsHaveClientAndDepartment = 2  # 2 subdirectories
 
 
 class ServerAPI:
     server_settings_key = 'user/servers'
     job_style_settings_key = 'servers/jobstyle'
+    bookmark_settings_key = 'user/bookmarks'
 
     @classmethod
     def add_server(cls, path):
@@ -42,8 +42,8 @@ class ServerAPI:
 
         path = path.replace('\\', '/')
 
-        common.settings.sync()
-        values = common.settings.value(cls.server_settings_key, {})
+        values = common.settings.value(cls.server_settings_key)
+        values = values if values else {}
         values = {k.rstrip('/'): v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
 
         if path in values:
@@ -71,10 +71,13 @@ class ServerAPI:
         if common.settings is None:
             raise ValueError('The user settings object is not initialized.')
 
+        if path in {v['server'] for v in common.bookmarks.values()}:
+            raise ValueError('Cannot remove server. Server is currently bookmarked.')
+
         path = path.replace('\\', '/')
 
-        common.settings.sync()
-        values = common.settings.value(cls.server_settings_key, {})
+        values = common.settings.value(cls.server_settings_key)
+        values = values if values else {}
 
         if path not in values:
             raise ValueError('Server does not exist in the list of user specified servers.')
@@ -93,19 +96,23 @@ class ServerAPI:
     @classmethod
     def clear_servers(cls):
         """Clears the list of user specified servers."""
-        common.settings.sync()
-        values = common.settings.value(cls.server_settings_key, {})
+        values = common.settings.value(cls.server_settings_key)
+        values = values if values else {}
 
         for k in list(values.keys()):
+            if k in {v['server'] for v in common.bookmarks.values()}:
+                log.error(f'Cannot remove server {k} as it is in use by a bookmark item')
+                continue
             del values[k]
             del common.servers[k]
+
+            common.settings.setValue(cls.server_settings_key, values)
             common.signals.serverRemoved.emit(k)
+            common.signals.serversChanged.emit()
 
         common.settings.setValue(cls.server_settings_key, {})
-        common.servers = {}
-
-        common.signals.serversChanged.emit()
-        common.signals.bookmarksChanged.emit()
+        if common.settings.value(cls.server_settings_key):
+            raise RuntimeError('Failed to clear servers')
 
     @classmethod
     def get_servers(cls, force=False):
@@ -118,12 +125,11 @@ class ServerAPI:
         if not force and common.servers is not None:
             return common.servers
 
-        common.settings.sync()
-
-        values = common.settings.value(cls.server_settings_key, {})
+        values = common.settings.value(cls.server_settings_key)
+        values = values if values else {}
         values = {k.rstrip('/'): v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
 
-        common.servers = values.copy()
+        common.servers = values
         return values.copy()
 
     @staticmethod
@@ -138,9 +144,8 @@ class ServerAPI:
             bool: True if the user has the specified access rights, False otherwise
 
         """
-        for m in (os.R_OK, os.W_OK, os.X_OK):
-            if not os.access(path, m):
-                return False
+        if not os.access(path, os.R_OK | os.W_OK | os.X_OK):
+            return False
         return True
 
     @classmethod
@@ -187,8 +192,8 @@ class ServerAPI:
                 result = subprocess.run(['net', 'use'], capture_output=True, text=True, check=True)
                 output = result.stdout
             except subprocess.CalledProcessError as e:
-                print(f"Error running 'net use': {e}")
-                return None
+                log.error(f'Failed to get mapped drives: {e}')
+                return path
 
             # Look for the line that corresponds to the drive letter
             for line in output.splitlines():
@@ -404,3 +409,87 @@ class ServerAPI:
         del common.bookmarks[k]
         common.settings.set_bookmarks(common.bookmarks)
         common.signals.bookmarkRemoved.emit(server, job, root)
+
+    @staticmethod
+    def get_env_bookmarks():
+        """Check the current environment for any predefined bookmark items.
+
+        If the environment contains any Bookmarks_ENV_ITEM# variables, they will be
+        parsed and returned as a dictionary.
+
+        The format of the variables should be set as follows using either a comma or
+        semicolon as a delimiter:
+
+        - "Bookmarks_ENV_ITEM0=server;job;root"
+        - "Bookmarks_ENV_ITEM1=server,job,root"
+
+        Don't use spaces as delimiters, this won't be parsed correctly:
+        - "Bookmarks_ENV_ITEM2=server job root"
+
+        Only the first three items are considered, so
+        - "Bookmarks_ENV_ITEM3=server;job;root;asset;asset_path"
+        is valid, but `asset` and `asset_path` are ignored.
+
+        Returns:
+            dict: The parsed data.
+
+        """
+        delims = [';', ',']
+        bookmark_items = {}
+
+        for i in range(99):
+            env_var = f'Bookmarks_ENV_ITEM{i}'
+            if env_var not in os.environ:
+                continue
+
+            v = os.environ[env_var]
+            if not v:
+                continue
+
+            for delim in delims:
+                _v = v.split(delim)
+                if len(_v) >= 3:
+                    _v = [x.strip() for x in _v]
+                    bookmark_items[f'{_v[0]}/{_v[1]}/{_v[2]}'] = {
+                        'server': _v[0],
+                        'job': _v[1],
+                        'root': _v[2]
+                    }
+
+    @classmethod
+    def load_bookmarks(cls):
+        """Loads all available bookmarks into memory.
+
+        The bookmark items are made up of root items saved by the user to the user settings and
+        items defined in the current environment. The environment bookmarks
+        are "static", and can't be removed.
+
+        """
+        _static = cls.get_env_bookmarks()
+        _static = _static if _static else {}
+
+        # Save default items to cache
+        common.env_bookmark_items = _static
+
+        _user = common.settings.value(cls.bookmark_settings_key)
+        _user = _user if _user else {}
+
+        # Merge the static and custom bookmarks
+        v = _static.copy()
+        v.update(_user)
+
+        # Remove invalid values before adding
+        for k in list(v.keys()):
+            if (
+                    'server' not in v[k]
+                    or 'job' not in v[k]
+                    or 'root' not in v[k]
+            ):
+                del v[k]
+                continue
+
+            # Add servers defined in the bookmark items:
+            common.servers[v[k]['server']] = v[k]['server']
+
+        common.bookmarks = v
+        common.signals.bookmarksChanged.emit()

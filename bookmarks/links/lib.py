@@ -1,7 +1,7 @@
 import os
 import re
 
-from .. import common
+from .. import common, log
 from .. import database
 
 
@@ -121,13 +121,15 @@ class LinksAPI:
         """
         if not os.path.exists(self.links_file):
             return []
+
         try:
             with open(self.links_file, 'r') as f:
                 lines = f.readlines()
             links = [self._normalize_link(line.strip()) for line in lines if line.strip()]
             return sorted(set(links), key=str.lower)
         except IOError as e:
-            raise RuntimeError(f'Failed to read from {self.links_file}: {e}')
+            log.error(f'Failed to read from {self.links_file}: {e}')
+            return []
 
     def _write_links_to_file(self, links):
         """
@@ -136,6 +138,8 @@ class LinksAPI:
         Args:
             links (list): The list of links to write to the file.
         """
+        links = links if isinstance(links, (list, tuple)) else []
+
         try:
             with open(self.links_file, 'w') as f:
                 for link in sorted(set(links), key=str.lower):
@@ -187,12 +191,11 @@ class LinksAPI:
         Returns:
             list: A list of file paths.
         """
-        if self._cache is not None and not force:
+        if not force and self._cache is not None:
             return self._cache
 
-        links = []
-        if self._cache is None:
-            links = self._read_links_from_file()
+        # Always read from the file if force is True or cache is empty
+        links = self._read_links_from_file()
 
         _links = []
         for l in links:
@@ -275,7 +278,7 @@ class LinksAPI:
         Returns:
             bool: True after clearing the links.
         """
-        self._cache = []
+        self._cache = None
         self._write_links_to_file(self._cache)
         return True
 
@@ -297,6 +300,19 @@ class LinksAPI:
         self._write_links_to_file(valid_links)
         self._cache = valid_links
         return sorted(set(links) - set(valid_links))
+
+    def has_links(self):
+        """
+        Check if the .links file has any links.
+
+        Returns:
+            bool: True if the file has links, False otherwise.
+        """
+        if not os.path.exists(self.links_file):
+            return False
+        if self._cache is None:
+            self.get(force=True)
+        return bool(self._cache)
 
     @staticmethod
     def presets():
@@ -463,6 +479,7 @@ class LinksAPI:
         """
         if links is None:
             v = self.get(force=True)
+            print(v)
         elif links and isinstance(links, (list, tuple)):
             v = links
         else:

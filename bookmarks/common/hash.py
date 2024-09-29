@@ -21,7 +21,7 @@ def get_hash(key):
         str: MD5 hexadecimal digest of the key.
 
     """
-    # Path must not contain backslashes
+    # Path mustn't contain backslashes
     if '\\' in key:
         key = key.replace('\\', '/')
 

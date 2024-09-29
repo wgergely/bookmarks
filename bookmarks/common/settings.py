@@ -166,43 +166,8 @@ def init_settings():
 
     common.signals.favouritesChanged.emit()
 
-    _init_bookmarks()
-
-
-def _init_bookmarks():
-    """Loads all previously saved bookmarks to memory.
-
-    The list of bookmark items is made up of a list of default items, defined in
-    `common.default_bookmarks_template`, and bookmarks added by the user, stored in
-    the user setting.
-
-    """
-    _static = get_default_bookmarks()
-    _static = _static if _static else {}
-
-    # Save default items to cache
-    common.default_bookmarks = _static
-
-    _custom = common.settings.value('user/bookmarks')
-    _custom = _custom if _custom else {}
-
-    # Merge static and custom bookmarks
-    v = _static.copy()
-    v.update(_custom)
-
-    # Remove invalid values before adding
-    for k in list(v.keys()):
-        if (
-                'server' not in v[k]
-                or 'job' not in v[k]
-                or 'root' not in v[k]
-        ):
-            del v[k]
-            continue
-        # Add servers defined in the bookmark items:
-        common.servers[v[k]['server']] = v[k]['server']
-
-    common.bookmarks = v
+    from bookmarks.server.lib import ServerAPI
+    ServerAPI.load_bookmarks()
 
 
 def active(k, path=False, args=False):
@@ -252,33 +217,6 @@ def get_user_settings_path():
         QtCore.QStandardPaths.GenericDataLocation
     )
     return f'{v}/{common.product}/{common.user_settings}'
-
-
-def get_default_bookmarks():
-    """Loads any preconfigured bookmark items from the json config file.
-
-    Returns:
-        dict: The parsed data.
-
-    """
-    source = common.rsc(
-        f'{common.TemplateResource}/{common.default_bookmarks_template}'
-    )
-
-    data = {}
-    try:
-        with open(source, 'r', encoding='utf8') as f:
-            data = json.loads(
-                f.read(),
-                parse_int=int,
-                parse_float=float,
-                object_hook=common.int_key
-            )
-    except (ValueError, TypeError):
-        log.error(f'Could not decode `{source}`')
-    except RuntimeError:
-        log.error(f'Error opening `{source}`')
-    return data
 
 
 def strip(s):
@@ -436,6 +374,8 @@ class UserSettings(QtCore.QSettings):
                 v = int(v)
             elif t == 'float' and not isinstance(v, float):
                 v = float(v)
+            elif t == 'dict' and not isinstance(v, dict):
+                v = json.loads(v)
         except:
             log.error(f'Could not convert {type(v)} to {t}')
 
@@ -460,6 +400,8 @@ class UserSettings(QtCore.QSettings):
             common.signals.generateThumbnailsChanged.emit(v)
         if key == 'settings/paint_thumbnail_bg':
             common.signals.paintThumbnailBGChanged.emit(v)
+        if key == 'user/servers':
+            common.signals.serversChanged.emit()
 
         super().setValue(key, v)
         super().setValue(f'{key}_type', type(v).__name__)

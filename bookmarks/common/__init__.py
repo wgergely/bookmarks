@@ -52,7 +52,7 @@ cursor = None
 font_db = None
 
 servers = None
-default_bookmarks = {}
+env_bookmark_items = {}
 bookmarks = {}
 favourites = {}
 timers = {}

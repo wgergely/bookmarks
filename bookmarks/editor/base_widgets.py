@@ -396,18 +396,21 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         """Returns the current thumbnail of the given source.
 
         """
-        if all((self.window().server, self.window().job, self.window().root)):
-            pixmap, color = images.get_thumbnail(
-                self.window().server,
-                self.window().job,
-                self.window().root,
-                self.window().db_source(),
-                self.rect().height(),
-                fallback_thumb=self.fallback_thumb
-            )
-            if not color or not isinstance(color, QtGui.QColor):
-                color = common.Color.VeryDarkBackground()
-            return pixmap, color
+        try:
+            if all((self.window().server, self.window().job, self.window().root)):
+                pixmap, color = images.get_thumbnail(
+                    self.window().server,
+                    self.window().job,
+                    self.window().root,
+                    self.window().db_source(),
+                    self.rect().height(),
+                    fallback_thumb=self.fallback_thumb
+                )
+                if not color or not isinstance(color, QtGui.QColor):
+                    color = common.Color.VeryDarkBackground()
+                return pixmap, color
+        except:
+            pass
 
         pixmap = images.rsc_pixmap(
             self.fallback_thumb, None, self.rect().height()

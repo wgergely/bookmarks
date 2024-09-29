@@ -1,10 +1,11 @@
 import enum
 import os
 
-from PySide2 import QtCore
+from PySide2 import QtCore, QtGui
 
 from .lib import ServerAPI, JobStyle
-from .. import common, ui
+from .. import common, ui, log, images
+from ..links.lib import LinksAPI
 
 
 class NodeType(enum.IntEnum):
@@ -21,10 +22,24 @@ class Node:
         self._job = job
         self._root = root
 
+        self._job_candidate = False
+
         self._parent = parent
         self._children = []
+        self._children_fetched = False
 
-        self._job_candidate = False
+        self._exists = None
+
+    def insert_child(self, row, child):
+        """
+        Insert a child node at the specified row.
+
+        Args:
+            row (int): The row index.
+            child (Node): The child node to insert.
+
+        """
+        self._children.insert(row, child)
 
     def append_child(self, child):
         """
@@ -79,6 +94,11 @@ class Node:
         """
         return self._parent
 
+    def exists(self):
+        if self._exists is None:
+            self._exists = os.path.exists(self.path())
+        return self._exists
+
     @property
     def server(self):
         return self._server
@@ -103,12 +123,20 @@ class Node:
             return NodeType.BookmarkNode
 
     @property
+    def children_fetched(self):
+        return self._children_fetched
+
+    @property
     def job_candidate(self):
         return self._job_candidate
 
     @job_candidate.setter
     def job_candidate(self, value):
         self._job_candidate = value
+
+    @children_fetched.setter
+    def children_fetched(self, value):
+        self._children_fetched = value
 
     def path(self):
         if all([self._server, self._job, self._root]):
@@ -126,7 +154,7 @@ class Node:
 
 
 class ServerModel(QtCore.QAbstractItemModel):
-    row_size = QtCore.QSize(1, common.Size.RowHeight())
+    row_size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -139,8 +167,10 @@ class ServerModel(QtCore.QAbstractItemModel):
     def _init_job_style(self):
         v = common.settings.value(ServerAPI.job_style_settings_key)
         if isinstance(v, int):
-            self._job_style = JobStyle(v)
-        self._job_style = JobStyle.NoSubdirectories
+            e = JobStyle(v)
+        else:
+            e = JobStyle.NoSubdirectories
+        self._job_style = int(e)
 
     def _connect_signals(self):
         common.signals.serversChanged.connect(self.init_data)
@@ -235,7 +265,7 @@ class ServerModel(QtCore.QAbstractItemModel):
             if node.type == NodeType.ServerNode:
                 return node.server
             elif node.type == NodeType.JobNode:
-                return node.job
+                return ' | '.join(node.job.split('/'))
             elif node.type == NodeType.BookmarkNode:
                 return node.root
         if role == QtCore.Qt.UserRole:
@@ -245,23 +275,59 @@ class ServerModel(QtCore.QAbstractItemModel):
                 return f'{node.server}/{node.job}'
             elif node.type == NodeType.BookmarkNode:
                 return f'{node.server}/{node.job}/{node.root}'
+        if role == QtCore.Qt.ToolTipRole:
+            return node.path()
+        if role == QtCore.Qt.StatusTipRole:
+            return node.path()
+        if role == QtCore.Qt.WhatsThisRole:
+            return node.path()
+        if role == QtCore.Qt.FontRole:
+            if node.type == NodeType.ServerNode and node.server in {v['server'] for v in common.bookmarks.values()}:
+                font, _ = common.Font.BlackFont(common.Size.MediumText())
+                # set underline
+                font.setUnderline(True)
+
+                return font
+            if node.type == NodeType.JobNode and node.job in {v['job'] for v in common.bookmarks.values()}:
+                font, _ = common.Font.BlackFont(common.Size.MediumText())
+                font.setUnderline(True)
+                return font
+            if node.type == NodeType.RootNode and node.root in {v['root'] for v in common.bookmarks.values()}:
+                font, _ = common.Font.BlackFont(common.Size.MediumText())
+                font.setUnderline(True)
+                return font
+            font, _ = common.Font.LightFont(common.Size.MediumText())
+            return font
         if role == QtCore.Qt.DecorationRole:
             if node.type == NodeType.ServerNode:
+                if node.server in {v['server'] for v in common.bookmarks.values()}:
+                    return ui.get_icon('bookmark', color=common.Color.Green())
                 return ui.get_icon('server')
             elif node.type == NodeType.JobNode:
-                return None
+                thumb_path = f'{node.server}/{node.job}/thumbnail.{common.thumbnail_format}'
+                pixmap = images.ImageCache.get_pixmap(thumb_path, self.row_size.height())
+                if pixmap and not pixmap.isNull():
+                    icon = QtGui.QIcon()
+                    icon.addPixmap(pixmap)
+                    return icon
+                if node.job in {v['job'] for v in common.bookmarks.values()}:
+                    return ui.get_icon('bookmark', color=common.Color.Green())
             elif node.type == NodeType.BookmarkNode:
+                if node.root in {v['root'] for v in common.bookmarks.values()}:
+                    return ui.get_icon('bookmark', color=common.Color.Green())
+                if not node.exists():
+                    return ui.get_icon('alert', color=common.Color.Red())
                 return ui.get_icon('bookmark')
         if role == QtCore.Qt.SizeHintRole:
-            if node.type == NodeType.ServerNode:
-                return self.row_size
-            elif node.type == NodeType.JobNode:
-                return self.row_size
-            elif node.type == NodeType.BookmarkNode:
-                return QtCore.QSize(1, common.Size.RowHeight(0.66))
+            if node.type == NodeType.JobNode:
+                return QtCore.QSize(self.row_size.width(), common.Size.RowHeight(1))
+            return self.row_size
 
     def canFetchMore(self, parent):
         """The model fetches data on demand when a given node has subfolders."""
+        if not parent.isValid():
+            return True
+
         node = parent.internalPointer()
         if not node:
             return False
@@ -269,10 +335,19 @@ class ServerModel(QtCore.QAbstractItemModel):
         if node.type == NodeType.RootNode:
             return node.has_children()
 
-        if node.type == NodeType.ServerNode or node.type == NodeType.JobNode:
+        if node.type == NodeType.ServerNode:
             for entry in os.scandir(node.path()):
                 if entry.is_dir():
                     return True
+        if node.type == NodeType.JobNode:
+            # Check if the job has a .links file
+            api = LinksAPI(node.path())
+            if api.has_links():
+                return True
+            node.job_candidate = False
+
+        if node.type == NodeType.BookmarkNode:
+            return False
 
         return False
 
@@ -280,12 +355,78 @@ class ServerModel(QtCore.QAbstractItemModel):
         node = parent.internalPointer()
         if not node:
             return
+        if node.children_fetched:
+            return
+
+        if not self.canFetchMore(parent):
+            return
 
         if node.type == NodeType.RootNode:
             return  # data should have been fetched already
 
         if node.type == NodeType.ServerNode:  # fetch jobs
-            pass
+            root_path = node.path()
+
+            # recursively iterate through all folders up until the job style level
+            def _it(path, depth):
+                depth += 1
+
+                if depth > self._job_style:
+                    return
+
+                for entry in os.scandir(path):
+                    if not entry.is_dir():
+                        continue
+                    if entry.name.startswith('.'):
+                        continue
+                    if not os.access(entry.path, os.R_OK | os.W_OK):
+                        log.error(f'No access to {entry.path}')
+                        continue
+                    p = entry.path.replace('\\', '/')
+                    rel_path = p[len(root_path) + 1:].strip('/')
+
+                    if depth == self._job_style:
+                        yield rel_path
+                    abs_path = entry.path.replace('\\', '/')
+                    images.ImageCache.flush(abs_path)
+                    yield from _it(entry.path, depth)
+
+            current_job_names = [child.job for child in node.children()]
+            new_job_names = sorted([job_path for job_path in _it(root_path, -1)], key=str.lower)
+            missing_job_names = set(new_job_names) - set(current_job_names)
+
+            for job_path in missing_job_names:
+                current_job_names.append(job_path)
+                current_job_names = sorted(current_job_names, key=str.lower)
+                idx = current_job_names.index(job_path)
+
+                self.beginInsertRows(parent, idx, idx)
+                job_node = Node(server=node.server, job=job_path, parent=node)
+                node.insert_child(idx, job_node)
+
+                if os.path.exists(f'{node.server}/{job_path}/.links'):
+                    job_node.job_candidate = True
+
+                self.endInsertRows()
+
+        if node.type == NodeType.JobNode:  # fetch links
+            if node.job_candidate:
+                api = LinksAPI(node.path())
+                links = api.get(force=True)
+
+                self.beginInsertRows(parent, 0, len(links) - 1)
+                for link in links:
+                    link_node = Node(server=node.server, job=node.job, root=link, parent=node)
+                    link_node.exists()
+                    node.append_child(link_node)
+                self.endInsertRows()
+
+        node.children_fetched = True
+
+    def hasChildren(self, parent):
+        if not parent.isValid():
+            return True
+        return self.canFetchMore(parent)
 
     def set_job_style(self, v):
         """Set the job style.
@@ -304,14 +445,19 @@ class ServerModel(QtCore.QAbstractItemModel):
         """
         if v not in JobStyle:
             raise ValueError(f'Invalid job style: {v}. Expected one of {JobStyle}.')
-        self._job_style = v
+
+        common.settings.setValue(ServerAPI.job_style_settings_key, v.value)
+        self._job_style = v.value
+
+        # Reset the model
+        self.init_data()
 
     @QtCore.Slot()
     def init_data(self, *args, **kwargs):
+
         self.beginResetModel()
 
         self._root_node = Node(None)
-
         servers = ServerAPI.get_servers()
         for server in servers:
             node = Node(server=server, parent=self._root_node)

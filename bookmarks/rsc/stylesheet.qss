@@ -218,13 +218,15 @@ QLineEdit {
 }
 
 QScrollBar {
-    background: <VeryDarkBackground>;
+    background: <Transparent>;
     width: <Indicator@2.0>px;
     height: <Indicator@2.0>px;
 }
 
 QScrollBar::handle {
-    background: <Background>;
+    background: <DarkBackground>;
+    border: <Separator@1.0>px solid <Opaque>;
+    border-radius: <Indicator@1.5>px;
     padding: 0;
     margin: 0;
     min-height: <Margin@4.0>px;
@@ -487,6 +489,11 @@ QTableView {
     gridline-color: <VeryDarkBackground>;
 }
 
+QTabWidget {
+    background-color: <Transparent>;
+    background: <Transparent>;
+}
+
 QTabWidget::pane {
     border: none;
     background-color: <Transparent>;
@@ -501,9 +508,29 @@ QTabWidget::tab-bar {
     top: 0;
 }
 
+QTabWidget > QFrame {
+    background-color: <DarkBackground>;
+    border: <Separator@1.0>px solid <DarkBackground>;
+    border-radius: <Indicator@1.5>px;
+    padding: <Indicator@1.0>px;
+    margin: 0;
+}
 QTabBar {
     font-family: "<BoldFont>";
     font-size: <MediumText@1.1>px;
+}
+
+QSplitter::handle {
+    background-color: <Transparent>;
+    border-left: <Separator@1.0>px solid <Opaque>;
+    padding: 0;
+    margin: 0 <Indicator@1.0>px;
+}
+QSplitter::handle:horizontal {
+    width: <Separator@1.0>px;
+}
+QSplitter::handle:vertical {
+    height: <Separator@1.0>px;
 }
 
 QTabBar:focus {
@@ -529,6 +556,7 @@ QTabBar::tab:!selected {
     color: <SecondaryText>;
     border-bottom: <Separator@4.0>px solid <DarkBackground>;
 }
+
 
 CheckBoxButton,
 DragIndicatorButton {

@@ -1,4 +1,3 @@
-
 import collections
 import functools
 import os
@@ -8,11 +7,12 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from . import lib
 from .lib import LinksAPI
 from .model import AssetLinksModel
-from .. import actions, images
+from .. import actions, log
 from .. import common
 from .. import contextmenu
 from .. import shortcuts
 from .. import ui
+from ..templates.lib import TemplateType, TemplateItem
 
 
 class LinksContextMenu(contextmenu.BaseContextMenu):
@@ -282,25 +282,8 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
 
 
 class PresetNameDialog(QtWidgets.QDialog):
-    """
-    PresetNameDialog is a custom QDialog that allows the user to input or select a preset name from a combobox.
+    """PresetNameDialog is a custom QDialog that allows the user to input or select a preset name from a combobox."""
 
-    __init__(parent=None)
-        Initializes the PresetNameDialog with default settings. Takes an optional parent widget.
-
-    _create_ui()
-        Constructs the user interface, laying out the editor, combo box, and buttons.
-
-    _connect_signals()
-        Connects the interactive elements (buttons, combo box) to their respective event handlers.
-
-    _init_data()
-        Initializes the data for the combo box, retrieving preset names and setting up initial state.
-
-    _on_preset_selected(index)
-        Slot function for handling changes in the combo box selection.
-
-    paintEvent(event"""
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('Enter Preset Name')
@@ -458,41 +441,10 @@ class PresetNameDialog(QtWidgets.QDialog):
 
 
 class LinksView(QtWidgets.QTreeView):
-    """
-     linksFileChanged = QtCore.Signal(str)
-         Signal emitted when the links file changes.
-
-     def __init__(self, parent=None):
-         Initialize the LinksView.
-
-     def _init_shortcuts(self):
-         Initializes shortcuts.
-
-     def _init_model(self):
-         Initializes the model for the tree view.
-
-     def _connect_signals(self):
-         Connects the necessary signals for the view.
-
-     @QtCore.Slot()
-     def emit_links_file_changed(self, *args, **kwargs):
-         Emit the linksFileChanged signal.
-
-     def contextMenuEvent(self, event):
-         Context menu event.
-
-     def sizeHint(self):
-         Return the recommended size for the view.
-
-    """
-
+    """Links data viewer."""
     linksFileChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
-        """
-        Initialize the LinksView.
-
-        """
         super().__init__(parent=parent)
         self.setWindowTitle('Asset Links')
 
@@ -510,9 +462,6 @@ class LinksView(QtWidgets.QTreeView):
         self._connect_signals()
 
     def _init_shortcuts(self):
-        """Initializes shortcuts.
-
-        """
         shortcuts.add_shortcuts(self, shortcuts.LinksViewShortcuts)
         connect = functools.partial(
             shortcuts.connect, shortcuts.LinksViewShortcuts
@@ -550,8 +499,7 @@ class LinksView(QtWidgets.QTreeView):
 
     @QtCore.Slot()
     def emit_links_file_changed(self, *args, **kwargs):
-        """
-        Emit the linksFileChanged signal.
+        """Emit the linksFileChanged signal.
 
         """
         if not self.selectionModel().hasSelection():
@@ -763,6 +711,8 @@ class LinksView(QtWidgets.QTreeView):
             if entry.name.startswith('.'):
                 continue
             self.model().add_path(entry.path.replace('\\', '/'))
+
+        self.expandAll()
 
     @common.error
     @common.debug
@@ -1084,6 +1034,7 @@ class NumberBar(QtWidgets.QWidget):
 
         update_width(self):
             Updates"""
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -1202,6 +1153,7 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
             Handles the resize event and adjusts the number bar's geometry.
             Parameters:
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -1239,31 +1191,7 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
 
 
 class LinksTextEditor(QtWidgets.QWidget):
-    """
-    Class representing a text editor for handling links files with PyQt5.
-
-    class LinksTextEditor(QtWidgets.QWidget):
-
-        Signal emitted when the links file is edited.
-        linksFileEdited = QtCore.Signal(str)
-
-        Initialize the LinksTextEditor instance.
-
-        Args:
-            parent (QtWidgets.QWidget, optional): The parent widget. Defaults to None.
-
-        Create the user interface components for the text editor.
-
-        Connect signals to the appropriate slots.
-
-        Slot called when the .links file changed in the view.
-
-        Args:
-            path (str): The path to the links file.
-
-        Emit a signal indicating the links file has changed, and update the links file content.
-
-    """
+    """Editor used to edit modify the contents of link files."""
     linksFileEdited = QtCore.Signal(str)
 
     def __init__(self, parent=None):
@@ -1361,18 +1289,8 @@ class LinksTextEditor(QtWidgets.QWidget):
 
 
 class AssetTemplatesComboBox(QtWidgets.QComboBox):
-    """
-    AssetTemplatesComboBox is a custom combo box widget for selecting asset templates.
+    """Custom combo box widget for selecting asset templates."""
 
-    Methods:
-        __init__(parent=None)
-            Initializes the combo box with a custom QListView for better item display.
-
-        init_data(force=False)
-            Initializes the data in the combo box by loading asset templates.
-            Parameters:
-                force (bool): If True, forces re-initialization even if already initialized.
-    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         view = QtWidgets.QListView(parent=self)
@@ -1401,24 +1319,8 @@ class AssetTemplatesComboBox(QtWidgets.QComboBox):
 
 
 class LinksEditor(QtWidgets.QWidget):
-    """
-    LinksEditor is a custom QWidget for editing asset links.
+    """Main link editor widget."""
 
-    Attributes:
-        _links_view_widget: A widget that displays the links.
-        _links_editor_widget: A text editor for modifying the links.
-        _create_folders_button: A button to initiate the creation of missing folders.
-        _asset_templates_widget: A combo box containing asset templates.
-
-    Methods:
-        __init__(parent):
-            Initializes the LinksEditor widget with provided parent.
-        _create_ui():
-            Sets up the user interface components of the widget.
-        _connect_signals():
-            Connects the signals between the links view and links editor components.
-        showEvent(event):
-            Sets focus to the links view widget when the event is triggered"""
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -1432,22 +1334,31 @@ class LinksEditor(QtWidgets.QWidget):
         self._create_folders_button = None
         self._asset_templates_widget = None
 
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
         self._create_ui()
         self._connect_signals()
 
         self.setFocusProxy(self._links_view_widget)
 
     def _create_ui(self):
-        self.setContentsMargins(0, 0, 0, 0)
         QtWidgets.QVBoxLayout(self)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         # Add splitter
         splitter = QtWidgets.QSplitter(parent=self)
+        splitter.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        splitter.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
         splitter.setOrientation(QtCore.Qt.Horizontal)
         splitter.setChildrenCollapsible(True)
         self.layout().addWidget(splitter)
 
         widget = QtWidgets.QWidget(parent=self)
+        widget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
         QtWidgets.QVBoxLayout(widget)
 
         widget.layout().setContentsMargins(0, 0, 0, 0)
@@ -1455,37 +1366,10 @@ class LinksEditor(QtWidgets.QWidget):
 
         splitter.addWidget(widget)
 
-        # Add title row
-        row = ui.add_row(None, height=None, parent=widget)
-        row.layout().setAlignment(QtCore.Qt.AlignLeft)
-
-        thumbnail_label = QtWidgets.QLabel(parent=self)
-        thumbnail_label.setScaledContents(True)
-        thumbnail_label.setFixedHeight(common.Size.RowHeight(0.8))
-        thumbnail_label.setFixedWidth(common.Size.RowHeight(0.8))
-        thumbnail_label.setAlignment(QtCore.Qt.AlignCenter)
-        pixmap, _ = images.get_thumbnail(
-            common.active('server'),
-            common.active('job'),
-            common.active('root'),
-            common.active('root', path=True),
-            size=common.Size.RowHeight(),
-            fallback_thumb='asset'
-        )
-        thumbnail_label.setPixmap(pixmap)
-
-        row.layout().addWidget(thumbnail_label, 0)
-
-        title_label = ui.PaintedLabel(
-            '  |  '.join(common.active('root', args=True)[1:]),
-            size=common.Size.MediumText(1.0),
-            color=common.Color.Text(),
-            font=common.Font.BoldFont,
-            parent=self
-        )
-        row.layout().addWidget(title_label, 1)
-
         self._links_view_widget = LinksView(parent=self)
+        self._links_view_widget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self._links_view_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
         widget.layout().addWidget(self._links_view_widget)
 
         bottom_row = ui.get_group(parent=widget)
@@ -1505,7 +1389,8 @@ class LinksEditor(QtWidgets.QWidget):
         bottom_row.layout().addWidget(self._asset_templates_widget, 1)
 
         bottom_row.layout().addWidget(self._create_folders_button, 1)
-        bottom_row.layout().addStretch(1.5)
+
+        bottom_row.layout().addStretch(10)
 
         self._links_editor_widget = LinksTextEditor(parent=self)
         self._links_editor_widget.setDisabled(True)
@@ -1517,5 +1402,89 @@ class LinksEditor(QtWidgets.QWidget):
         self._links_view_widget.model().modelAboutToBeReset.connect(lambda: self._links_editor_widget.link_changed(''))
         self._links_editor_widget.linksFileEdited.connect(self._links_view_widget.reload_path)
 
+        self._create_folders_button.clicked.connect(self.create_missing_folders)
+
     def showEvent(self, event):
         self._links_view_widget.setFocus(QtCore.Qt.OtherFocusReason)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def create_missing_folders(self):
+        """
+        Create missing folders from the selected asset template.
+        """
+        if not self._asset_templates_widget.currentText():
+            raise ValueError('No asset template selected.')
+
+        template_name = self._asset_templates_widget.currentData()
+        if not template_name:
+            raise ValueError('No asset template selected.')
+
+        if common.show_message(
+                'Create Missing Folders',
+                body='Are you sure you want to create the missing link folders?\n\n'
+                     'The selected asset template will be extracted into each missing link folder. Make sure you'
+                     ' selected the intended template. This action is not undoable.',
+                buttons=[common.YesButton, common.NoButton], modal=True
+        ) == QtWidgets.QDialog.Rejected:
+            return
+
+        templates = TemplateItem.get_saved_templates(TemplateType.DatabaseTemplate)
+        if not templates:
+            raise ValueError('No asset templates found.')
+        template = next((f for f in templates if f['name'] == template_name), None)
+        if not template:
+            raise ValueError(f'Asset template not found: {template_name}')
+
+        # Iterate over all the indexes
+        view = self._links_view_widget
+        model = view.model()
+
+        success = []
+        skipped = []
+        failed = []
+
+        for i in range(model.rowCount(parent=view.rootIndex())):
+            index = model.index(i, 0, view.rootIndex())
+            if not index.isValid():
+                continue
+
+            node = index.internalPointer()
+            if not node:
+                continue
+
+            links = node.api().get()
+            if not links:
+                continue
+
+            for link in links:
+                abs_path = f'{node.path()}/{link}'
+
+                if os.path.exists(abs_path):
+                    skipped.append(abs_path)
+                    continue
+
+                os.makedirs(abs_path, exist_ok=True)
+
+                try:
+                    template.extract_template(
+                        abs_path,
+                        extract_contents_to_links=False,
+                        ignore_existing_folders=True,
+                        ignore_links=True
+                    )
+                    success.append(abs_path)
+                except Exception as e:
+                    log.error(f'Failed to create missing folders: {abs_path} - {e}')
+                    failed.append(abs_path)
+                    continue
+
+        view.add_paths_from_active()
+        view.expandAll()
+
+        result = f'Success: {len(success)}\nFailed: {len(failed)}\nSkipped: {len(skipped)}'
+        common.show_message(
+            'Done.',
+            body=result,
+        )

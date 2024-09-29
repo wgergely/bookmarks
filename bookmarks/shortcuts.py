@@ -82,6 +82,7 @@ ReloadTemplates = common.idx()
 AddServer = common.idx()
 RemoveServer = common.idx()
 RemoveAllServers = common.idx()
+AddJob = common.idx()
 AddBookmark = common.idx()
 RemoveBookmark = common.idx()
 RemoveAllBookmarks = common.idx()
@@ -223,6 +224,13 @@ ServerViewShortcuts = {
         'default': 'Ctrl+Shift+Del',
         'repeat': False,
         'description': 'Remove server',
+        'shortcut': None,
+    },
+    AddJob: {
+        'value': 'Ctrl+J',
+        'default': 'Ctrl+J',
+        'repeat': False,
+        'description': 'Add job',
         'shortcut': None,
     },
     AddBookmark: {

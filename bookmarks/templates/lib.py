@@ -308,8 +308,9 @@ class TemplateItem(object):
         if not os.path.exists(self.default_user_folder):
             os.makedirs(self.default_user_folder, exist_ok=True)
 
+        _chars = ''.join(filename_char_blacklist)
         sanitized_name = re.sub(
-            fr'[{"".join(filename_char_blacklist)}]',
+            fr'[{_chars}]',
             '_', self._metadata['name']
         )
         current_name = self._metadata['name']
@@ -750,7 +751,13 @@ class TemplateItem(object):
 
         return link_paths
 
-    def extract_template(self, root_path, extract_contents_to_links=True, ignore_existing_folders=False):
+    def extract_template(
+            self,
+            root_path,
+            extract_contents_to_links=True,
+            ignore_existing_folders=False,
+            ignore_links=False
+    ):
         """
         Extracts the template to the specified destination directory.
 
@@ -766,6 +773,9 @@ class TemplateItem(object):
             ignore_existing_folders (bool): Raise an error if a destination folder already exists when False.
 
         """
+        if extract_contents_to_links and ignore_links:
+            raise RuntimeError('Cannot specify both `extract_contents_to_links` and `ignore_links`')
+
         if not os.path.exists(root_path):
             parent_dir = os.path.dirname(root_path)
             if not os.path.exists(parent_dir):
@@ -836,8 +846,8 @@ class TemplateItem(object):
                 with open(file_path, 'wb') as f:
                     f.write(data)
 
-        # Write the .links file to the root of the destination directory
-        if links_data:
+        # Write the .links file to the root of the destination directory if skip_links hasn't been set
+        if links_data and not ignore_links:
             with open(f'{root_path}/.links', 'wb') as f:
                 f.write(links_data)
 

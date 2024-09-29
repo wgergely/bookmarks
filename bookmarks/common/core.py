@@ -24,7 +24,6 @@ bookmark_item_database = 'bookmark.db'
 favorite_file_ext = 'bfav'
 user_settings = 'user_settings.ini'
 stylesheet_file = 'stylesheet.qss'
-default_bookmarks_template = 'default_bookmark_items.json'
 max_list_items = 999999
 
 ui_scale_factors = [

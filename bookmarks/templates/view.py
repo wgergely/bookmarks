@@ -32,6 +32,7 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
         self.new_template_menu()
         self.separator()
         self.extract_template_menu()
+        self.rename_template_menu()
         self.separator()
         self.thumbnail_menu()
         self.separator()
@@ -72,7 +73,7 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
         # Add default template menu
         self.menu[contextmenu.key()] = {
             'text': 'Import Default Template',
-            'icon': ui.get_icon('add', color=common.Color.Yellow()),
+            'icon': ui.get_icon('arrow_right', color=common.Color.Yellow()),
             'action': self.parent().add_default_template,
             'shortcut': shortcuts.get(
                 shortcuts.TemplatesViewShortcuts,
@@ -224,9 +225,30 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Extract Template...',
-            'icon': ui.get_icon('arrow_right', color=common.Color.Green()),
+            'icon': ui.get_icon('add_folder', color=common.Color.Green()),
             'action': self.parent().extract_template,
             'help': 'Extract the template contents to a folder.',
+        }
+
+    def rename_template_menu(self):
+        """Add the rename template menu.
+
+        """
+        if not self.index.isValid():
+            return
+
+        node = self.index.internalPointer()
+        if not node:
+            return
+
+        if not node.is_leaf():
+            return
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Rename',
+            'icon': ui.get_icon('todo'),
+            'action': self.parent().rename_template,
+            'description': 'Rename the template.',
         }
 
     def add_view_menu(self):
@@ -425,6 +447,8 @@ class AddTemplateDialog(QtWidgets.QDialog):
         main_row = ui.add_row(None, vertical=True, height=None, parent=self)
         main_row.layout().setAlignment(QtCore.Qt.AlignCenter)
 
+        main_row.layout().addStretch(10)
+
         grp = ui.get_group(parent=main_row)
         row = ui.add_row('Name', height=None, parent=grp)
 
@@ -484,7 +508,7 @@ class AddTemplateDialog(QtWidgets.QDialog):
         )
         row.layout().addWidget(self.type_editor, 1)
 
-        main_row.layout().addStretch(1)
+        main_row.layout().addStretch(10)
 
         row = ui.add_row(None, height=None, parent=main_row)
         self.ok_button = ui.PaintedButton('Save', parent=row)
@@ -501,7 +525,7 @@ class AddTemplateDialog(QtWidgets.QDialog):
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.Size.DefaultWidth(1.5),
+            common.Size.DefaultWidth(1.1),
             common.Size.DefaultHeight(0.1)
         )
 
@@ -672,6 +696,64 @@ class ExtractTemplateDialog(QtWidgets.QDialog):
         if not os.path.exists(path):
             raise ValueError(f'Path "{path}" does not exist.')
         self.folder_editor.setText(path)
+
+
+class RenameTemplateDialog(QtWidgets.QDialog):
+
+    def __init__(self, name, parent=None):
+        super().__init__(parent=parent)
+
+        self._current_name = name
+
+        self.name_editor = None
+        self.ok_button = None
+        self.cancel_button = None
+
+        self.setWindowTitle('Rename Template')
+
+        self._create_ui()
+        self._connect_signals()
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def done(self, r):
+        if r == QtWidgets.QDialog.Rejected:
+            return super().done(r)
+
+        if not self.name_editor.text():
+            raise ValueError('Name is required.')
+
+        return super().done(r)
+
+    def _create_ui(self):
+        QtWidgets.QVBoxLayout(self)
+        o = common.Size.Margin(0.66)
+        self.layout().setSpacing(o)
+        self.layout().setContentsMargins(o, o, o, o)
+
+        grp = ui.get_group(parent=self)
+
+        row = ui.add_row('Name', height=None, parent=grp)
+        self.name_editor = ui.LineEdit(required=True, parent=grp)
+        self.name_editor.setPlaceholderText('Enter a new name...')
+        self.name_editor.setValidator(base.name_validator)
+        self.name_editor.setText(self._current_name)
+        row.layout().addWidget(self.name_editor)
+
+        row = ui.add_row(None, height=None, parent=self)
+        self.ok_button = ui.PaintedButton('Rename', parent=row)
+        row.layout().addWidget(self.ok_button, 1)
+
+        self.cancel_button = ui.PaintedButton('Cancel', parent=row)
+        row.layout().addWidget(self.cancel_button, 0)
+
+    def _connect_signals(self):
+        self.ok_button.clicked.connect(self.accept)
+        self.cancel_button.clicked.connect(self.reject)
+
+    def get_data(self):
+        return self.name_editor.text()
 
 
 class TemplatesViewDelegate(QtWidgets.QStyledItemDelegate):
@@ -1610,6 +1692,29 @@ class TemplatesView(QtWidgets.QTreeView):
         node.api.extract_template(data['path'], data['extract_to_links'])
         actions.reveal(data['path'])
 
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def rename_template(self):
+        """Rename the selected template."""
+        node = self.get_node_from_selection()
+        if not node:
+            return
+
+        if not node.is_leaf():
+            return
+
+        if node.api['name'] == node.api.default_template_name:
+            raise ValueError('Cannot rename the default template.')
+
+        dialog = RenameTemplateDialog(node.api['name'], parent=self)
+        if dialog.exec_() == QtWidgets.QDialog.Rejected:
+            return
+
+        name = dialog.get_data()
+        node.api.rename(name)
+        self.init_data()
+
 
 class TemplatesEditor(QtWidgets.QSplitter):
     """The widget containing :class:`TemplatesView` and :class:`TemplatePreviewView`."""
@@ -1625,14 +1730,18 @@ class TemplatesEditor(QtWidgets.QSplitter):
         self._templates_view_widget = None
         self._templates_editor_widget = None
 
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
         self._create_ui()
         self._connect_signals()
 
     def _create_ui(self):
-        o = 0
-        self.setContentsMargins(o, o, o, o)
+        self.setContentsMargins(0, 0, 0, 0)
 
         widget = QtWidgets.QWidget(parent=self)
+        widget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         QtWidgets.QVBoxLayout(widget)
 
         widget.layout().setContentsMargins(0, 0, 0, 0)
@@ -1697,9 +1806,13 @@ class TemplatesMainWidget(QtWidgets.QDialog):
         self._asset_templates_widget = TemplatesEditor(parent=self)
         self._tabs_widget.addTab(self._asset_templates_widget, 'Asset Templates')
 
+        self.layout().addStretch(1)
+
         row = ui.add_row(None, height=None, parent=self)
+        row.layout().setAlignment(QtCore.Qt.AlignCenter)
         self._done_button = ui.PaintedButton('Done', parent=row)
-        row.layout().addWidget(self._done_button, 0)
+        self._done_button.setMaximumWidth(common.Size.Margin(30))
+        row.layout().addWidget(self._done_button, 1)
 
     def _connect_signals(self):
         self._asset_templates_widget._templates_view_widget.model().modelReset.connect(

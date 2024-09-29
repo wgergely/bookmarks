@@ -56,18 +56,6 @@ def toggle_debug(state):
     common.debug_on = state
 
 
-@common.error
-@common.debug
-def reveal_default_bookmarks_json():
-    """Reveals :attr:`common.default_bookmarks_template` in the file explorer.
-
-    """
-    reveal(
-        common.rsc(
-            f'{common.TemplateResource}/{common.default_bookmarks_template}'
-        )
-    )
-
 
 def add_favourite(source_paths, source):
     """Add and save a favourite item.

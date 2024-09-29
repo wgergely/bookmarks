@@ -1125,7 +1125,7 @@ class JobsModel(QtCore.QAbstractItemModel):
 
         self.layoutAboutToBeChanged.emit()
 
-        recursion = common.settings.value('jobs/scandepth')
+        # recursion = common.settings.value('jobs/scandepth')
         recursion = int(recursion) if recursion is not None else 2
 
         for path in self.bookmark_item_generator(node.name, max_recursion=recursion):

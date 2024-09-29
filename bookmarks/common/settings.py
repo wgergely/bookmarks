@@ -42,8 +42,8 @@ SECTIONS = {
         'settings/bin_rvpush',
         'settings/bin_oiiotool',
     ),
-    'jobs': (
-        'jobs/scandepth',
+    'servers': (
+        'servers/job_style',
     ),
     'filters': (
         'filters/active',
@@ -393,30 +393,6 @@ class UserSettings(QtCore.QSettings):
                 if active_mode == SynchronisedActivePaths:
                     self.setValue(f'active/{k}', None)
             p += '/'
-
-    def set_servers(self, v):
-        """Set and save the given server values.
-
-        Args:
-            v (dict):
-
-        """
-        common.check_type(v, dict)
-        common.servers = v.copy()
-        self.setValue('user/servers', v)
-        common.signals.serversChanged.emit()
-
-    def set_bookmarks(self, v):
-        """Set and save the given bookmark item values.
-
-        Args:
-            v (dict): The bookmark item values.
-
-        """
-        common.check_type(v, dict)
-        common.bookmarks = v
-        self.setValue('user/bookmarks', v)
-        common.signals.bookmarksChanged.emit()
 
     def set_favourites(self, v):
         """Set and save the given favourite item values.

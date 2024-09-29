@@ -51,7 +51,7 @@ stylesheet = None
 cursor = None
 font_db = None
 
-servers = {}
+servers = None
 default_bookmarks = {}
 bookmarks = {}
 favourites = {}

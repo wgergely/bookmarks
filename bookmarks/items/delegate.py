@@ -2404,9 +2404,13 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         description = (index.data(common.DescriptionRole)
                        if not common.settings.value('settings/hide_item_descriptions') else '')
 
-        if description and not description_rect.contains(cursor_position):
-            _font, _metrics = common.Font.LightFont(common.Size.MediumText(1.0))
-            painter.setOpacity(1.0)
+        if description:
+            if description_rect.contains(cursor_position):
+                painter.setOpacity(0.5)
+            else:
+                painter.setOpacity(1.0)
+
+            _font, _metrics = common.Font.BoldFont(common.Size.MediumText(0.9))
             painter.setBrush(common.Color.Text())
             text = elided_text(
                 _metrics,

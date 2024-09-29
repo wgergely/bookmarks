@@ -2,7 +2,7 @@
 :func:`.shutdown()`.
 
 """
-import json
+import io
 import os
 import sys
 import time
@@ -20,7 +20,28 @@ dependencies = (
 )
 
 
-def initialize(mode):
+class initialize:
+
+    def __new__(cls, mode, *args, **kwargs):
+        print('[Bookmarks] Initializing...')
+        initialize_func(mode)
+        return super().__new__(cls)
+
+    def __init__(self, mode):
+        self.mode = mode
+
+    def __enter__(self):
+        return QtWidgets.QApplication.instance()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.mode == common.StandaloneMode:
+            QtWidgets.QApplication.instance().exec_()
+        print('[Bookmarks] Shutting down...')
+        shutdown()
+        return False
+
+
+def initialize_func(mode):
     """Initializes the components required to run Bookmarks.
 
     It's important to call this function before running the app as it's responsible
@@ -52,107 +73,106 @@ def initialize(mode):
             :attr:`~bookmarks.common.core.EmbeddedMode`, or :attr:`~bookmarks.common.core.CoreMode`.
 
     """
+    try:
+        if common.init_mode is not None:
+            raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
+        if mode not in (common.StandaloneMode, common.EmbeddedMode, common.CoreMode):
+            raise ValueError(
+                f'Invalid initialization mode. Got "{mode}", expected '
+                f'`StandaloneMode` or `EmbeddedMode` or `CoreMode`.'
+            )
 
-    if common.init_mode is not None:
-        raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
-    if mode not in (common.StandaloneMode, common.EmbeddedMode, common.CoreMode):
-        raise ValueError(
-            f'Invalid initialization mode. Got "{mode}", expected '
-            f'`StandaloneMode` or `EmbeddedMode` or `CoreMode`.'
-        )
+        common.init_mode = mode
+        common.item_data = common.DataDict()
 
-    print('[Bookmarks] Initializing...')
-    common.init_mode = mode
+        if not os.path.isdir(common.temp_path()):
+            os.makedirs(os.path.normpath(common.temp_path()))
 
-    common.item_data = common.DataDict()
+        common.init_signals(connect_signals=mode != common.CoreMode)
+        common.init_active_mode()
+        common.init_settings()
 
-    if not os.path.isdir(common.temp_path()):
-        os.makedirs(os.path.normpath(common.temp_path()))
+        if mode == common.CoreMode:
+            return
 
-    common.init_signals(connect_signals=mode != common.CoreMode)
-    common.init_active_mode()
-    common.init_settings()
+        common.cursor = QtGui.QCursor()
 
-    if mode == common.CoreMode:
-        return
+        from . import ui
+        ui._init_ui_scale()
+        ui._init_dpi()
 
-    common.cursor = QtGui.QCursor()
+        from .. import images
+        images.init_image_cache()
+        images.init_resources()
 
-    from . import ui
-    ui._init_ui_scale()
-    ui._init_dpi()
+        if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
+            from .. import standalone
+            standalone.set_application_properties()
 
-    from .. import images
-    images.init_image_cache()
-    images.init_resources()
+            app = QtWidgets.QApplication(sys.argv)
 
-    if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
-        from .. import standalone
-        standalone.set_application_properties()
+            standalone.set_application_properties(app=app)
 
-        app = QtWidgets.QApplication(sys.argv)
+            app.setApplicationName(common.product.title())
 
-        standalone.set_application_properties(app=app)
+            app.setOrganizationName(common.organization)
 
-        app.setApplicationName(common.product.title())
+            app.setOrganizationDomain(common.organization_domain)
+            app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-        app.setOrganizationName(common.organization)
+            app.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
+            app.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
+            app.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
 
-        app.setOrganizationDomain(common.organization_domain)
-        app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+            standalone.set_model_id()
+            standalone.set_window_icon(app)
 
-        app.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
-        app.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
-        app.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
+            app.eventFilter = standalone.global_event_filter
+            app.installEventFilter(app)
 
-        standalone.set_model_id()
-        standalone.set_window_icon(app)
+        elif not QtWidgets.QApplication.instance():
+            raise RuntimeError('No QApplication instance found.')
 
-        app.eventFilter = standalone.global_event_filter
-        app.installEventFilter(app)
+        images.init_pixel_ratio()
 
-    elif not QtWidgets.QApplication.instance():
-        raise RuntimeError('No QApplication instance found.')
+        from . import font
+        font._init_font_db()
+        ui._init_stylesheet()
 
-    images.init_pixel_ratio()
+        if mode == common.StandaloneMode:
+            standalone.init()
+        elif mode == common.EmbeddedMode:
+            from .. import main
+            main.init()
 
-    from . import font
-    font._init_font_db()
-    ui._init_stylesheet()
+        # Start non-model linked worker threads
+        _threads = []
+        from ..threads import threads
+        thread = threads.get_thread(threads.QueuedDatabaseTransaction)
+        thread.start()
+        _threads.append(thread)
+        thread = threads.get_thread(threads.QueuedSGQuery)
+        thread.start()
+        _threads.append(thread)
 
-    if mode == common.StandaloneMode:
-        standalone.init()
-    elif mode == common.EmbeddedMode:
-        from .. import main
-        main.init()
-
-    # Start non-model linked worker threads
-    _threads = []
-    from ..threads import threads
-    thread = threads.get_thread(threads.QueuedDatabaseTransaction)
-    thread.start()
-    _threads.append(thread)
-    thread = threads.get_thread(threads.QueuedSGQuery)
-    thread.start()
-    _threads.append(thread)
-
-    # Wait for all threads to spin up before continuing
-    n = 0.0
-    i = 0.01
-    now = time.time()
-    timeout = now + 10.0
-    while not all(f.isRunning() for f in _threads):
-        n += i
-        time.sleep(i)
-        if n >= timeout:
-            break
+        # Wait for all threads to spin up before continuing
+        n = 0.0
+        i = 0.01
+        now = time.time()
+        timeout = now + 10.0
+        while not all(f.isRunning() for f in _threads):
+            n += i
+            time.sleep(i)
+            if n >= timeout:
+                break
+    finally:
+        return io.BytesIO()
 
 
 def shutdown():
     """Un-initializes all app components.
 
     """
-    print('[Bookmarks] Shutting down...')
     try:
         common.settings.sync()
 
@@ -182,8 +202,14 @@ def shutdown():
     except Exception as e:
         print(f'Error during shutdown: {e}')
     finally:
-        QtWidgets.QApplication.instance().exit(0)
-
+        if common.init_mode == common.CoreMode:
+            common.init_mode = None
+            return
+        if common.init_mode == common.EmbeddedMode:
+            common.init_mode = None
+            return
+        if common.init_mode == common.StandaloneMode and QtWidgets.QApplication.instance():
+            QtWidgets.QApplication.instance().exit(0)
 
 
 def _add_path_to_path(v, p):

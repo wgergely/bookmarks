@@ -78,6 +78,15 @@ RemoveTemplate = common.idx()
 RemoveAllTemplates = common.idx()
 ReloadTemplates = common.idx()
 
+# Server editor shortcuts
+AddServer = common.idx()
+RemoveServer = common.idx()
+RemoveAllServers = common.idx()
+AddBookmark = common.idx()
+RemoveBookmark = common.idx()
+RemoveAllBookmarks = common.idx()
+ReloadServers = common.idx()
+RevealServer = common.idx()
 
 JobEditorShortcuts = {
     AddItem: {
@@ -192,6 +201,51 @@ TemplatesViewShortcuts = {
         'shortcut': None,
     },
 
+}
+
+ServerViewShortcuts = {
+    AddServer: {
+        'value': QtGui.QKeySequence.New,
+        'default': QtGui.QKeySequence.New,
+        'repeat': False,
+        'description': 'Add server',
+        'shortcut': None,
+    },
+    RemoveServer: {
+        'value': QtGui.QKeySequence.Delete,
+        'default': QtGui.QKeySequence.Delete,
+        'repeat': False,
+        'description': 'Remove item',
+        'shortcut': None,
+    },
+    RemoveAllServers: {
+        'value': 'Ctrl+Shift+Del',
+        'default': 'Ctrl+Shift+Del',
+        'repeat': False,
+        'description': 'Remove server',
+        'shortcut': None,
+    },
+    AddBookmark: {
+        'value': 'Ctrl+B',
+        'default': 'Ctrl+B',
+        'repeat': False,
+        'description': 'Add bookmark',
+        'shortcut': None,
+    },
+    ReloadServers: {
+        'value': 'Ctrl+R',
+        'default': 'Ctrl+R',
+        'repeat': False,
+        'description': 'Refresh data',
+        'shortcut': None,
+    },
+    RevealServer: {
+        'value': 'Ctrl+O',
+        'default': 'Ctrl+O',
+        'repeat': False,
+        'description': 'Reveal in the file explorer...',
+        'shortcut': None,
+    },
 }
 
 MainWidgetShortcuts = {
@@ -468,7 +522,7 @@ def _verify_shortuts(shortcuts):
     values = []
     for v in shortcuts.values():
         if v['value'] in values:
-            raise ValueError('{} is used more than once'.format(v['value']))
+            raise ValueError(f'{v["value"]} is used more than once')
         values.append(v['value'])
 
 

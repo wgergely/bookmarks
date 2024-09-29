@@ -1135,18 +1135,6 @@ def add_row(
     return w
 
 
-def add_line_edit(label, parent=None):
-    """Utility method for adding a line editor.
-
-    Returns:
-        QLineEdit: line editor widget.
-
-    """
-    w = LineEdit(parent=parent)
-    w.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
-    w.setPlaceholderText(label)
-    parent.layout().addWidget(w, 1)
-    return w
 
 
 def add_description(

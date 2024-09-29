@@ -235,16 +235,6 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
                 parent_node.append_child(child_node)
             self.endResetModel()
 
-    def root_node(self):
-        """
-        Get the root node.
-
-        Returns:
-            Node: The root node.
-
-        """
-        return self._root_node
-
     def clear(self):
         """
         Clear all children of the root node.
@@ -256,6 +246,16 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         self.beginResetModel()
         self.root_node().children().clear()
         self.endResetModel()
+
+    def root_node(self):
+        """
+        Get the root node.
+
+        Returns:
+            Node: The root node.
+
+        """
+        return self._root_node
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         if self.root_node() is None:
@@ -278,7 +278,6 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
         node = index.internalPointer()
         if not node:
             return None
-
 
         if role == QtCore.Qt.DisplayRole:
             root_path = common.active('root', path=True)

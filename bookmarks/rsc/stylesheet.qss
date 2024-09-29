@@ -8,7 +8,7 @@ QWidget {
     outline: 0;
     selection-color: white;
     selection-background-color: rgba(250,250,255,50);
-    border: <Separator@2.0>px solid transparent;
+    border: <Separator@2.0>px solid <Transparent>;
 }
 
 QWidget:disabled {
@@ -89,7 +89,7 @@ QCheckBox:checked {
 
 QRadioButton {
     color: <SecondaryText>;
-    background-color: transparent;
+    background-color: <Transparent>;
     margin: 0;
     padding: <Indicator@1.5>px;
 }
@@ -196,7 +196,7 @@ QTextEdit,
 QPlainTextEdit,
 QTextBrowser {
     background-color: <DarkBackground>;
-    border: <Separator@1.0>px solid transparent;
+    border: <Separator@1.0>px solid <Transparent>;
     border-radius: <Indicator@1.5>px;
     padding: <Indicator@1.0>px;
     margin: 0;
@@ -208,7 +208,7 @@ QTextEdit:disabled,
 QPlainTextEdit:disabled,
 QTextBrowser:disabled {
     color: <DisabledText>;
-    background-color: transparent;
+    background-color: <Transparent>;
 }
 
 QLineEdit {
@@ -247,7 +247,7 @@ QListWidget,
 QListView {
     border-radius: <Indicator@1.5>px;
     padding: <Separator@1.0>px;
-    background: <Opaque>;
+    background: <DarkBackground>;
     border: <Separator@1.0>px solid <Opaque>;
 }
 
@@ -289,7 +289,7 @@ QTreeView::item:disabled,
 QListWidget::item:disabled,
 QListView::item:disabled {
     color: <DisabledText>;
-    background: transparent;
+    background: <Transparent>;
 }
 
 QTableWidget::indicator,
@@ -362,8 +362,8 @@ QTreeView::branch:open:has-children:has-siblings {
 }
 
 TableWidget {
-    background: transparent;
-    selection-background-color: transparent;
+    background: <Transparent>;
+    selection-background-color: <Transparent>;
 }
 
 TableWidget::item,
@@ -371,24 +371,24 @@ TableWidget::item:selected,
 TableWidget::item:hover,
 TableWidget::item:disabled {
     padding: <Indicator@1.0>px;
-    background: transparent;
+    background: <Transparent>;
 }
 
 QHeaderView {
     font-family: "<BoldFont>";
     font-size: <SmallText@1.0>px;
     border: none;
-    background-color: transparent;
+    background-color: <Transparent>;
     border-top-left-radius: <Indicator@1.0>px;
     border-top-right-radius: <Indicator@1.0>px;
 }
 
 QHeaderView::section {
     padding-left: <Margin@1.0>px;
-    background-color: transparent;
+    background-color: <Transparent>;
     color: <Background>;
     border: none;
-    border-right: <Separator@1.0>px solid transparent;
+    border-right: <Separator@1.0>px solid <Transparent>;
 }
 
 QHeaderView::section:down-arrow,
@@ -398,11 +398,11 @@ QHeaderView::section:up-arrow {
 
 QLabel {
     font-size: <MediumText@1.0>px;
-    background-color: transparent;
+    background-color: <Transparent>;
 }
 
 QLabel:disabled {
-    background-color: transparent;
+    background-color: <Transparent>;
     color: <DisabledText>;
 }
 
@@ -422,7 +422,7 @@ QMenu::separator {
     margin-top: <Indicator@2.0>px;
     margin-bottom: <Indicator@2.0>px;
     background-color: <Opaque>;
-    color: transparent;
+    color: <Transparent>;
     min-width: 1000px;
 }
 
@@ -487,14 +487,6 @@ QTableView {
     gridline-color: <VeryDarkBackground>;
 }
 
-QTabWidget,
-QTabWidget > QFrame {
-    background-color: <Transparent>;
-    border: <Separator@1.0>px solid <Opaque>;
-    padding: <Indicator@1.0>px;
-    border-radius: <Indicator@2.0>px;
-}
-
 QTabWidget::pane {
     border: none;
     background-color: <Transparent>;
@@ -548,7 +540,7 @@ DragIndicatorButton {
 
 CheckBoxButton:disabled,
 DragIndicatorButton:disabled {
-    background-color: transparent;
+    background-color: <Transparent>;
 }
 
 NoteContainerWidget,
@@ -557,9 +549,9 @@ NoteTextEditor {
     color: <DarkBackground>;
     selection-color: <Blue>;
     selection-background-color: <Blue>;
-    background-color: transparent;
+    background-color: <Transparent>;
     border-radius: <Indicator@1.5>px;
-    border: <Separator@1.0>px solid transparent;
+    border: <Separator@1.0>px solid <Transparent>;
 }
 
 NoteContainerWidget:disabled,
@@ -569,11 +561,11 @@ NoteTextEditor:disabled {
 }
 
 NoteItemWidget:focus {
-    border: <Separator@1.0>px solid transparent;
+    border: <Separator@1.0>px solid <Transparent>;
 }
 
 NoteEditor QScrollBar {
-    background: transparent;
+    background: <Transparent>;
     border: none;
     width: <Indicator@1.5>px;
     height: <Indicator@1.5>px;
@@ -641,7 +633,7 @@ QWidget#infoBox QLabel#bodyLabel {
 }
 
 QWidget#infoBox QWidget {
-    background-color: transparent;
+    background-color: <Transparent>;
 }
 
 QWidget#infoBox QPushButton {
@@ -667,7 +659,7 @@ QWidget#errorBox QLabel#bodyLabel {
 }
 
 QWidget#errorBox QWidget {
-    background-color: transparent;
+    background-color: <Transparent>;
 }
 
 QWidget#errorBox QPushButton {
@@ -693,7 +685,7 @@ QWidget#successBox QLabel#bodyLabel {
 }
 
 QWidget#successBox QWidget {
-    background-color: transparent;
+    background-color: <Transparent>;
 }
 
 QWidget#successBox QPushButton {

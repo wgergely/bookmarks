@@ -1,3 +1,4 @@
+
 import collections
 import functools
 import os
@@ -281,7 +282,25 @@ class LinksContextMenu(contextmenu.BaseContextMenu):
 
 
 class PresetNameDialog(QtWidgets.QDialog):
+    """
+    PresetNameDialog is a custom QDialog that allows the user to input or select a preset name from a combobox.
 
+    __init__(parent=None)
+        Initializes the PresetNameDialog with default settings. Takes an optional parent widget.
+
+    _create_ui()
+        Constructs the user interface, laying out the editor, combo box, and buttons.
+
+    _connect_signals()
+        Connects the interactive elements (buttons, combo box) to their respective event handlers.
+
+    _init_data()
+        Initializes the data for the combo box, retrieving preset names and setting up initial state.
+
+    _on_preset_selected(index)
+        Slot function for handling changes in the combo box selection.
+
+    paintEvent(event"""
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('Enter Preset Name')
@@ -440,7 +459,31 @@ class PresetNameDialog(QtWidgets.QDialog):
 
 class LinksView(QtWidgets.QTreeView):
     """
-    A view class for displaying and interacting with asset links.
+     linksFileChanged = QtCore.Signal(str)
+         Signal emitted when the links file changes.
+
+     def __init__(self, parent=None):
+         Initialize the LinksView.
+
+     def _init_shortcuts(self):
+         Initializes shortcuts.
+
+     def _init_model(self):
+         Initializes the model for the tree view.
+
+     def _connect_signals(self):
+         Connects the necessary signals for the view.
+
+     @QtCore.Slot()
+     def emit_links_file_changed(self, *args, **kwargs):
+         Emit the linksFileChanged signal.
+
+     def contextMenuEvent(self, event):
+         Context menu event.
+
+     def sizeHint(self):
+         Return the recommended size for the view.
+
     """
 
     linksFileChanged = QtCore.Signal(str)
@@ -1017,7 +1060,30 @@ class LinksView(QtWidgets.QTreeView):
 
 
 class NumberBar(QtWidgets.QWidget):
+    """
+    class NumberBar(QtWidgets.QWidget):
+        A custom widget that displays line numbers for a QTextEdit instance.
 
+        __init__(self, parent=None):
+            Initializes the NumberBar widget and connects signals to update its contents.
+
+            Parameters:
+            parent (QWidget): The parent widget, typically a QTextEdit instance.
+
+        paintEvent(self, event):
+            Handles the paint event to draw the line numbers bar.
+
+            Parameters:
+            event (QPaintEvent): The paint event object.
+
+        get_width(self):
+            Calculates the necessary width of the NumberBar based on the number of lines.
+
+            Returns:
+            int: The width required to display the line numbers.
+
+        update_width(self):
+            Updates"""
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -1112,7 +1178,30 @@ class NumberBar(QtWidgets.QWidget):
 
 
 class PlainTextEdit(QtWidgets.QPlainTextEdit):
+    """
+    Custom QPlainTextEdit class with a number bar for line numbers
 
+    class PlainTextEdit(QtWidgets.QPlainTextEdit):
+
+        def __init__(self, parent=None):
+            Initializes the PlainTextEdit widget.
+            Parameters:
+            - parent: The parent widget.
+
+        def sizeHint(self):
+            Returns the recommended size for the widget.
+            Returns:
+            - QSize: The size hint.
+
+        def minimumSizeHint(self):
+            Returns the minimum size hint for the widget.
+            Returns:
+            - QSize: The minimum size hint.
+
+        def resizeEvent(self, event):
+            Handles the resize event and adjusts the number bar's geometry.
+            Parameters:
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -1150,7 +1239,31 @@ class PlainTextEdit(QtWidgets.QPlainTextEdit):
 
 
 class LinksTextEditor(QtWidgets.QWidget):
-    """The text editor widget for editing the contents of the current .links file."""
+    """
+    Class representing a text editor for handling links files with PyQt5.
+
+    class LinksTextEditor(QtWidgets.QWidget):
+
+        Signal emitted when the links file is edited.
+        linksFileEdited = QtCore.Signal(str)
+
+        Initialize the LinksTextEditor instance.
+
+        Args:
+            parent (QtWidgets.QWidget, optional): The parent widget. Defaults to None.
+
+        Create the user interface components for the text editor.
+
+        Connect signals to the appropriate slots.
+
+        Slot called when the .links file changed in the view.
+
+        Args:
+            path (str): The path to the links file.
+
+        Emit a signal indicating the links file has changed, and update the links file content.
+
+    """
     linksFileEdited = QtCore.Signal(str)
 
     def __init__(self, parent=None):
@@ -1248,7 +1361,18 @@ class LinksTextEditor(QtWidgets.QWidget):
 
 
 class AssetTemplatesComboBox(QtWidgets.QComboBox):
+    """
+    AssetTemplatesComboBox is a custom combo box widget for selecting asset templates.
 
+    Methods:
+        __init__(parent=None)
+            Initializes the combo box with a custom QListView for better item display.
+
+        init_data(force=False)
+            Initializes the data in the combo box by loading asset templates.
+            Parameters:
+                force (bool): If True, forces re-initialization even if already initialized.
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         view = QtWidgets.QListView(parent=self)
@@ -1277,7 +1401,24 @@ class AssetTemplatesComboBox(QtWidgets.QComboBox):
 
 
 class LinksEditor(QtWidgets.QWidget):
+    """
+    LinksEditor is a custom QWidget for editing asset links.
 
+    Attributes:
+        _links_view_widget: A widget that displays the links.
+        _links_editor_widget: A text editor for modifying the links.
+        _create_folders_button: A button to initiate the creation of missing folders.
+        _asset_templates_widget: A combo box containing asset templates.
+
+    Methods:
+        __init__(parent):
+            Initializes the LinksEditor widget with provided parent.
+        _create_ui():
+            Sets up the user interface components of the widget.
+        _connect_signals():
+            Connects the signals between the links view and links editor components.
+        showEvent(event):
+            Sets focus to the links view widget when the event is triggered"""
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 

@@ -444,7 +444,6 @@ class AddTemplateDialog(QtWidgets.QDialog):
         self.folder_editor = ui.LineEdit(required=True, parent=grp)
         self.folder_editor.setPlaceholderText('Enter a folder path, or click to browse...')
         action = QtWidgets.QAction(self.folder_editor)
-        action.setText('...')
         action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
         self.folder_editor.addAction(action, QtWidgets.QLineEdit.TrailingPosition)
 

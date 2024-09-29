@@ -104,19 +104,6 @@ class JobsEditor(base.BasePropertyEditor):
                         'description': 'The list of jobs in the current server',
                     },
                 },
-                2: {
-                    0: {
-                        'name': 'Bookmark item search depth',
-                        'key': 'jobs/scandepth',
-                        'validator': None,
-                        'widget': jobs_widgets.ScanDepthComboBox,
-                        'placeholder': None,
-                        'description': 'Set the maximum folder depth to parse. Parsing large '
-                                       'project folders will take a long time. This setting '
-                                       'will limit the number of sub-directories the editor '
-                                       'parses when looking for bookmark items.',
-                    },
-                }
             }
         }
     }

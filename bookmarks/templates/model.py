@@ -1,7 +1,7 @@
 from PySide2 import QtCore
 
 from . import lib
-from .. import common
+from .. import common, log
 
 
 class Node:
@@ -102,7 +102,6 @@ class Node:
         if self._parent:
             return self._parent._children.index(self)
         return 0  # Root node
-
 
 class TemplatesModel(QtCore.QAbstractItemModel):
 
@@ -289,19 +288,25 @@ class TemplatesModel(QtCore.QAbstractItemModel):
         node1 = Node(None, parent=self._root_node)
         self._root_node.append_child(node1)
 
-        templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.DatabaseTemplate)
-        templates = sorted(templates, key=lambda x: x['name'].lower())
-        for template in templates:
-            node = Node(template, parent=node1)
-            node1.append_child(node)
+        try:
+            templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.DatabaseTemplate)
+            templates = sorted(templates, key=lambda x: x['name'].lower())
+            for template in templates:
+                node = Node(template, parent=node1)
+                node1.append_child(node)
+        except Exception as e:
+            log.error(f'Error loading database templates: {e}')
 
         node2 = Node(None, parent=self._root_node)
         self._root_node.append_child(node2)
 
-        templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.UserTemplate)
-        templates = sorted(templates, key=lambda x: x['name'].lower())
-        for template in templates:
-            node = Node(template, parent=node2)
-            node2.append_child(node)
+        try:
+            templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.UserTemplate)
+            templates = sorted(templates, key=lambda x: x['name'].lower())
+            for template in templates:
+                node = Node(template, parent=node2)
+                node2.append_child(node)
+        except Exception as e:
+            log.error(f'Error loading user templates: {e}')
 
         self.endResetModel()

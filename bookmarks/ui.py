@@ -1030,24 +1030,53 @@ def get_icon(
 
     icon = QtGui.QIcon()
 
+    # Normal
+    pixmap = images.rsc_pixmap(
+        name, common.Color.SelectedText(), size, opacity=opacity, resource=resource
+    )
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal, state=QtGui.QIcon.On)
+
+    # Active
+    _c = common.Color.Text() if color else None
+    pixmap = images.rsc_pixmap(
+        name, _c, size, opacity=opacity, resource=resource
+    )
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Active, state=QtGui.QIcon.On)
+
+    # Selected
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected, state=QtGui.QIcon.On)
+
+    # Disabled
+    _c = common.Color.DisabledText() if color else None
+    pixmap = images.rsc_pixmap(
+        'close', _c, size, opacity=0.5, resource=common.GuiResource
+    )
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled, state=QtGui.QIcon.On)
+
+
+    # Normal
     pixmap = images.rsc_pixmap(
         name, color, size, opacity=opacity, resource=resource
     )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal, state=QtGui.QIcon.Off)
 
+    # Active
     _c = common.Color.SelectedText() if color else None
     pixmap = images.rsc_pixmap(
         name, _c, size, opacity=opacity, resource=resource
     )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Active)
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected)
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Active, state=QtGui.QIcon.Off)
 
+    # Selected
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected, state=QtGui.QIcon.Off)
+
+    # Disabled
     _c = common.Color.VeryDarkBackground() if color else None
     pixmap = images.rsc_pixmap(
         'close', _c, size, opacity=0.5, resource=common.GuiResource
     )
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled, state=QtGui.QIcon.Off)
 
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 
     common.image_cache[images.IconType][k] = icon
     return common.image_cache[images.IconType][k]
@@ -1133,8 +1162,6 @@ def add_row(
         parent.layout().addWidget(w, 1)
 
     return w
-
-
 
 
 def add_description(

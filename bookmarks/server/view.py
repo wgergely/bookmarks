@@ -6,11 +6,14 @@ import re
 from PySide2 import QtWidgets, QtCore
 
 from .lib import ServerAPI, JobStyle
-from .model import ServerModel, NodeType
+from .model import ServerModel, NodeType, Node, ServerFilterProxyModel
+from .preview import DictionaryViewer
 from .. import contextmenu, common, shortcuts, ui, actions
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
+from ..links.lib import LinksAPI
 from ..templates.lib import TemplateItem, TemplateType
+from ..templates.view import TemplatesEditor
 
 
 class ServerContextMenu(contextmenu.BaseContextMenu):
@@ -21,14 +24,19 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-        self.add_server_menu()
+
+        self.add_root_folder_menu()
+        self.remove_root_folder_menu()
+        self.separator()
         self.add_job_menu()
+        self.separator()
+        self.add_server_menu()
+        self.remove_server_menu()
         self.separator()
         self.set_job_style_menu()
         self.separator()
         self.add_reveal_menu()
         self.separator()
-        self.remove_server_menu()
         self.separator()
         self.add_view_menu()
 
@@ -61,19 +69,58 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         if not node:
             return
 
-        self.menu[contextmenu.key()] = {
-            'text': 'Add Job...',
-            'icon': ui.get_icon('add_folder', color=common.Color.Green()),
-            'action': self.parent().add_job,
-            'shortcut': shortcuts.get(
-                shortcuts.ServerViewShortcuts,
-                shortcuts.AddJob
-            ).key(),
-            'description': shortcuts.hint(
-                shortcuts.ServerViewShortcuts,
-                shortcuts.AddJob
-            )
-        }
+        if node.type == NodeType.ServerNode:
+            self.menu[contextmenu.key()] = {
+                'text': 'Add Job...',
+                'icon': ui.get_icon('add_folder', color=common.Color.Green()),
+                'action': self.parent().add_job,
+                'shortcut': shortcuts.get(
+                    shortcuts.ServerViewShortcuts,
+                    shortcuts.AddJob
+                ).key(),
+                'description': shortcuts.hint(
+                    shortcuts.ServerViewShortcuts,
+                    shortcuts.AddJob
+                )
+            }
+
+    def add_root_folder_menu(self):
+        """Add the root folder menu.
+
+        """
+        if not self.index.isValid():
+            return
+
+        node = self.index.internalPointer()
+        if not node:
+            return
+
+        if node.type == NodeType.JobNode:
+            self.menu[contextmenu.key()] = {
+                'text': 'Add Bookmark Folder...',
+                'icon': ui.get_icon('add_link', color=common.Color.Green()),
+                'action': self.parent().add_root_folder,
+                'description': 'Add a root folder to the job folder\'s link file.'
+            }
+
+    def remove_root_folder_menu(self):
+        """Remove the root folder menu.
+
+        """
+        if not self.index.isValid():
+            return
+
+        node = self.index.internalPointer()
+        if not node:
+            return
+
+        if node.type == NodeType.BookmarkNode:
+            self.menu[contextmenu.key()] = {
+                'text': 'Remove Bookmark Folder...',
+                'icon': ui.get_icon('remove_link', color=common.Color.Red()),
+                'action': self.parent().remove_root_folder,
+                'description': 'Remove a root folder from the job folder\'s link file.'
+            }
 
     def set_job_style_menu(self):
         """Set the job style menu.
@@ -217,6 +264,8 @@ class AddServerDialog(QtWidgets.QDialog):
         self.ok_button = None
         self.cancel_button = None
 
+        self._value = None
+
         self._init_ui()
         self._init_completer()
         self._connect_signals()
@@ -272,8 +321,12 @@ class AddServerDialog(QtWidgets.QDialog):
         if not os.path.exists(v):
             raise ValueError(f'Path "{v}" does not exist.')
 
-        ServerAPI.add_server(v)
+        self._value = v
+
         super().done(r)
+
+    def get_data(self):
+        return self._value
 
     @common.error
     @common.debug
@@ -321,6 +374,43 @@ class AddServerDialog(QtWidgets.QDialog):
         )
 
 
+class EditAssetTemplatesDialog(QtWidgets.QDialog):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle('Edit Asset Templates')
+
+        self._templates_editor = None
+        self.ok_button = None
+        self.cancel_button = None
+
+        self._create_ui()
+        self._connect_signals()
+
+        QtCore.QTimer.singleShot(100, self._templates_editor.init_data)
+
+    def _create_ui(self):
+        QtWidgets.QVBoxLayout(self)
+        o = common.Size.Indicator(6.0)
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(o * 0.5)
+
+        self._templates_editor = TemplatesEditor(parent=self)
+        self.layout().addWidget(self._templates_editor)
+
+        row = ui.add_row(None, height=None, parent=self)
+
+        self.ok_button = ui.PaintedButton('Save', parent=self)
+        row.layout().addWidget(self.ok_button, 1)
+
+        self.cancel_button = ui.PaintedButton('Cancel', parent=self)
+        row.layout().addWidget(self.cancel_button)
+
+    def _connect_signals(self):
+        self.ok_button.clicked.connect(self.accept)
+        self.cancel_button.clicked.connect(self.reject)
+
+
 class AddJobDialog(QtWidgets.QDialog):
 
     def __init__(self, root_path, parent=None):
@@ -339,6 +429,7 @@ class AddJobDialog(QtWidgets.QDialog):
         self._thumbnail_editor = None
 
         self.asset_template_combobox = None
+        self.edit_asset_templates_button = None
 
         self.summary_label = None
 
@@ -428,7 +519,10 @@ class AddJobDialog(QtWidgets.QDialog):
         self.asset_template_combobox.setView(QtWidgets.QListView(parent=self.asset_template_combobox))
         row.layout().addWidget(self.asset_template_combobox, 1)
 
-        widget.layout().addStretch(100)
+        self.edit_asset_templates_button = ui.PaintedButton('Edit Templates', parent=self)
+        row.layout().addWidget(self.edit_asset_templates_button)
+
+        widget.layout().addStretch(10)
 
         row = ui.add_row(None, height=None, parent=widget)
         self.ok_button = ui.PaintedButton('Add', parent=self)
@@ -534,6 +628,8 @@ class AddJobDialog(QtWidgets.QDialog):
         self.ok_button.clicked.connect(self.accept)
         self.cancel_button.clicked.connect(self.reject)
 
+        self.edit_asset_templates_button.clicked.connect(self.edit_asset_templates)
+
     @QtCore.Slot()
     def update_summary(self):
         summary = f'The job will be created at <span style="color: {common.Color.Green(qss=True)}">{self._root_path}'
@@ -577,7 +673,10 @@ class AddJobDialog(QtWidgets.QDialog):
     @common.error
     @common.debug
     @QtCore.Slot(int)
-    def done(self):
+    def done(self, r):
+        if r == QtWidgets.QDialog.Rejected:
+            return super().done(r)
+
         jt = self.job_editor.text()
 
         if self.job_style == JobStyle.NoSubdirectories:
@@ -598,11 +697,19 @@ class AddJobDialog(QtWidgets.QDialog):
                     ignore_existing_folders=False
                 )
 
-            return super().done(QtWidgets.QDialog.Accepted)
+            return super().done(r)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def edit_asset_templates(self):
+        dialog = EditAssetTemplatesDialog(parent=self)
+        dialog.open()
 
 
 class ServerView(QtWidgets.QTreeView):
     jobStyleChanged = QtCore.Signal(int)
+    bookmarkNodeSelected = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -616,7 +723,6 @@ class ServerView(QtWidgets.QTreeView):
             common.set_stylesheet(self)
 
         self.setHeaderHidden(True)
-        self.setIndentation(common.Size.Margin(1.0))
         self._expanded_nodes = []
         self._selected_node = None
 
@@ -640,7 +746,7 @@ class ServerView(QtWidgets.QTreeView):
         connect(shortcuts.ReloadServers, self.init_data)
 
     def _init_model(self):
-        proxy = QtCore.QSortFilterProxyModel(parent=self)
+        proxy = ServerFilterProxyModel(parent=self)
         proxy.setSourceModel(ServerModel(parent=self))
         self.setModel(proxy)
 
@@ -656,9 +762,26 @@ class ServerView(QtWidgets.QTreeView):
         self.model().modelAboutToBeReset.connect(self.save_selected_node)
         self.model().layoutAboutToBeChanged.connect(self.save_selected_node)
 
+        self.selectionModel().selectionChanged.connect(self.emit_root_folder_selected)
+        self.model().modelAboutToBeReset.connect(self.emit_root_folder_selected)
+        self.model().layoutAboutToBeChanged.connect(self.emit_root_folder_selected)
+
         self.expanded.connect(self.restore_selected_node)
         self.model().modelReset.connect(self.restore_selected_node)
         self.model().layoutChanged.connect(self.restore_selected_node)
+
+    @QtCore.Slot()
+    def emit_root_folder_selected(self, *args, **kwargs):
+        node = self.get_node_from_selection()
+        if not node:
+            self.bookmarkNodeSelected.emit('')
+            return
+
+        if node.type != NodeType.BookmarkNode:
+            self.bookmarkNodeSelected.emit('')
+            return
+
+        self.bookmarkNodeSelected.emit(node.path())
 
     def contextMenuEvent(self, event):
         """Context menu event.
@@ -792,7 +915,10 @@ class ServerView(QtWidgets.QTreeView):
 
         """
         dialog = AddServerDialog(parent=self)
-        dialog.open()
+        dialog.exec_()
+
+        v = dialog.get_data()
+        self.model().sourceModel().add_server(v)
 
     @common.error
     @common.debug
@@ -804,11 +930,12 @@ class ServerView(QtWidgets.QTreeView):
         node = self.get_node_from_selection()
         if not node:
             return
-
         if node.type != NodeType.ServerNode:
             return
 
-        ServerAPI.remove_server(node.server)
+        if node.is_bookmarked():
+            raise ValueError('Cannot remove a bookmarked server. Remove all the bookmark items first.')
+        self.model().sourceModel().remove_server(node.server)
 
     @common.error
     @common.debug
@@ -907,16 +1034,216 @@ class ServerView(QtWidgets.QTreeView):
         dialog = AddJobDialog(node.server, parent=self)
         dialog.open()
 
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def add_root_folder(self):
+        """
+        Add a root folder to a job folder's link file.
 
-class ServerEditor(QtWidgets.QDialog):
+        """
+        node = self.get_node_from_selection()
+        if not node:
+            return
+
+        if node.type != NodeType.JobNode:
+            return
+
+        abs_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a root folder', node.path())
+        if not abs_path:
+            return
+        if not os.path.exists(abs_path):
+            raise ValueError(f'Path "{abs_path}" does not exist.')
+
+        api = LinksAPI(node.path())
+        rel_path = api.to_relative(abs_path)
+
+        index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
+        if not index.isValid():
+            return
+
+        source_index = self.model().mapToSource(index)
+
+        # Calculate row idx
+        current_roots = [f.root for f in node.children()]
+        all_roots = sorted(current_roots + [rel_path], key=str.lower)
+        idx = all_roots.index(rel_path)
+
+        self.model().sourceModel().beginInsertRows(source_index, idx, idx)
+        api.add(rel_path)
+        child_node = Node(node.server, job=node.job, root=rel_path, parent=node)
+        node.insert_child(idx, child_node)
+        self.model().sourceModel().endInsertRows()
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def remove_root_folder(self):
+        node = self.get_node_from_selection()
+        if not node:
+            return
+
+        if node.type != NodeType.BookmarkNode:
+            return
+
+        if node.is_bookmarked:
+            print(node.root)
+            raise ValueError('Cannot remove a bookmarked root folder. Remove the bookmark first.')
+
+        rel_path = node.root
+
+        index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
+        if not index.isValid():
+            return
+        source_index = self.model().mapToSource(index)
+
+        api = LinksAPI(node.parent().path())
+        api.remove(rel_path)
+
+        idx = node.parent().children().index(node)
+        self.model().sourceModel().beginRemoveRows(source_index.parent(), idx, idx)
+        node.parent().remove_child(idx)
+        self.model().sourceModel().endRemoveRows()
+
+
+class ServerEditor(QtWidgets.QSplitter):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
+        if not self.parent():
+            common.set_stylesheet(self)
+
+        self.filter_toolbar = None
+        self.text_filter_editor = None
         self.server_view = None
+
+        self.preview_widget = None
+
+        self.ok_button = None
+
+        self.setWindowTitle('Manage Servers and bookmarks')
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        widget = QtWidgets.QWidget(parent=self)
+        widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        widget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        QtWidgets.QVBoxLayout(widget)
+        widget.layout().setContentsMargins(0, 0, 0, 0)
+
+        self.filter_toolbar = QtWidgets.QToolBar('Filters', parent=self)
+        self.filter_toolbar.setIconSize(QtCore.QSize(
+            common.Size.Margin(1.0),
+            common.Size.Margin(1.0)
+        ))
+
+        self.server_view = ServerView(parent=self)
+
+        # Add action
+        action = QtWidgets.QAction('Add', parent=self)
+        action.setIcon(ui.get_icon('add', color=common.Color.Green()))
+        action.setToolTip('Add a server, job, or bookmark folder.')
+        action.triggered.connect(self.add)
+        self.filter_toolbar.addAction(action)
+
+        self.filter_toolbar.addSeparator()
+
+        # Filters
+        action_grp = QtWidgets.QActionGroup(self)
+        action_grp.setExclusive(True)
+
+        action = QtWidgets.QAction('Show All', parent=self)
+        icon = ui.get_icon('archivedVisible')
+        action.setIcon(icon)
+        action.setCheckable(True)
+        action.setChecked(True)
+        action_grp.addAction(action)
+        action.triggered.connect(self.server_view.model().reset_filters)
+        self.filter_toolbar.addAction(action)
+
+        action = QtWidgets.QAction('Show Bookmarked', parent=self)
+        icon = ui.get_icon('bookmark')
+        action.setIcon(icon)
+        action.setToolTip('Show only bookmarked items.')
+        action.setCheckable(True)
+        action_grp.addAction(action)
+        action.triggered.connect(self.server_view.model().set_show_bookmarked)
+        self.filter_toolbar.addAction(action)
+
+        action = QtWidgets.QAction('Hide Invalid', parent=self)
+        icon = ui.get_icon('archivedHidden')
+        action.setIcon(icon)
+        action.setToolTip('Hide folders without any links or bookmark items')
+        action.setCheckable(True)
+        action_grp.addAction(action)
+        action.triggered.connect(self.server_view.model().set_hide_non_candidates)
+        self.filter_toolbar.addAction(action)
+
+        button = QtWidgets.QToolButton(parent=self)
+        button.setText('Job Style')
+        icon = ui.get_icon('sort', color=common.Color.Yellow())
+        button.setIcon(icon)
+        button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+        menu = QtWidgets.QMenu(button)
+        action_grp = QtWidgets.QActionGroup(self)
+        action_grp.setExclusive(True)
+        for style in JobStyle:
+            name = style.name
+            # split name by capital letters
+            name_split = re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', name)
+            display_name = ' '.join(name_split)
+
+            action = menu.addAction(display_name)
+            action_grp.addAction(action)
+            action.setCheckable(True)
+            action.setChecked(common.settings.value(ServerAPI.job_style_settings_key) == style.value)
+            action.triggered.connect(functools.partial(self.server_view.set_job_style, style))
+        button.setMenu(menu)
+        self.filter_toolbar.addWidget(button)
+
+        self.text_filter_editor = ui.LineEdit(parent=self)
+        self.text_filter_editor.setPlaceholderText('Search jobs...')
+        self.text_filter_editor.textChanged.connect(self.server_view.model().set_text_filter)
+        action = QtWidgets.QAction(self.text_filter_editor)
+        icon = ui.get_icon('filter', color=common.Color.DisabledText())
+        action.setIcon(icon)
+        self.text_filter_editor.addAction(action, QtWidgets.QLineEdit.LeadingPosition)
+
+        widget.layout().addWidget(self.filter_toolbar, 0)
+        widget.layout().addWidget(self.text_filter_editor, 0)
+        widget.layout().addWidget(self.server_view, 100)
+        self.addWidget(widget)
+
+        self.preview_widget = DictionaryViewer(parent=self)
+        self.addWidget(self.preview_widget)
+
+        self.setStretchFactor(0, 0.5)
+        self.setStretchFactor(1, 0.5)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def add(self):
+        """Add a server.
+
+        """
+        node = self.server_view.get_node_from_selection()
+        if not node:
+            self.server_view.add_server()
+            return
+        elif node.type == NodeType.ServerNode:
+            self.server_view.add_job()
+        elif node.type == NodeType.JobNode:
+            self.server_view.add_root_folder()
+
+    def _connect_signals(self):
+        self.server_view.bookmarkNodeSelected.connect(self.preview_widget.bookmark_node_changed)
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.Size.DefaultWidth(),
-            common.Size.DefaultHeight()
+            common.Size.DefaultWidth(2.0),
+            common.Size.DefaultHeight(1.5)
         )

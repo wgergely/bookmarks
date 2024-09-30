@@ -34,10 +34,16 @@ class initialize:
         return QtWidgets.QApplication.instance()
 
     def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type:
+            shutdown()
+            return False
+
         if self.mode == common.StandaloneMode:
             QtWidgets.QApplication.instance().exec_()
+
         print('[Bookmarks] Shutting down...')
         shutdown()
+
         return False
 
 

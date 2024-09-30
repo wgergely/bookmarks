@@ -71,19 +71,20 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
             return
 
         # Add default template menu
-        self.menu[contextmenu.key()] = {
-            'text': 'Import Default Template',
-            'icon': ui.get_icon('arrow_right', color=common.Color.Yellow()),
-            'action': self.parent().add_default_template,
-            'shortcut': shortcuts.get(
-                shortcuts.TemplatesViewShortcuts,
-                shortcuts.AddDefaultTemplate
-            ).key(),
-            'description': shortcuts.hint(
-                shortcuts.TemplatesViewShortcuts,
-                shortcuts.AddDefaultTemplate
-            )
-        }
+        if common.active('root'):
+            self.menu[contextmenu.key()] = {
+                'text': 'Import Default Template',
+                'icon': ui.get_icon('arrow_right', color=common.Color.Yellow()),
+                'action': self.parent().add_default_template,
+                'shortcut': shortcuts.get(
+                    shortcuts.TemplatesViewShortcuts,
+                    shortcuts.AddDefaultTemplate
+                ).key(),
+                'description': shortcuts.hint(
+                    shortcuts.TemplatesViewShortcuts,
+                    shortcuts.AddDefaultTemplate
+                )
+            }
 
     def remove_template_menu(self):
         """Add remove template menu.
@@ -174,6 +175,9 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
             return
 
         if not node.is_leaf():
+            return
+
+        if not common.active('root'):
             return
 
         k = 'Set Link Preset'
@@ -525,7 +529,7 @@ class AddTemplateDialog(QtWidgets.QDialog):
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.Size.DefaultWidth(1.1),
+            common.Size.DefaultWidth(1.4),
             common.Size.DefaultHeight(0.1)
         )
 

@@ -341,6 +341,20 @@ class ServerAPI:
         return root_path
 
     @classmethod
+    def clear_root_folders_from_saved_bookmarks(cls):
+        """Clear all root folders from the user settings file.
+
+        This method will remove all root folder items from the user settings file.
+
+        """
+        if common.settings is None:
+            raise ValueError('The user settings object is not initialized.')
+
+        common.settings.setValue(cls.bookmark_settings_key, {})
+        common.bookmarks = {}
+        common.signals.bookmarksChanged.emit()
+
+    @classmethod
     def add_root_folder_to_saved_bookmarks(cls, server, job, root):
         """Add the given bookmark item and save it in the user settings file.
 
@@ -368,7 +382,7 @@ class ServerAPI:
             'job': job,
             'root': root
         }
-        common.settings.set_bookmarks(common.bookmarks)
+        common.settings.value(cls.bookmark_settings_key, common.bookmarks)
         common.signals.bookmarkAdded.emit(server, job, root)
 
     @classmethod
@@ -407,8 +421,32 @@ class ServerAPI:
             actions.change_tab(common.BookmarkTab)
 
         del common.bookmarks[k]
-        common.settings.set_bookmarks(common.bookmarks)
+
+        common.settings.value(cls.bookmark_settings_key, common.bookmarks)
         common.signals.bookmarkRemoved.emit(server, job, root)
+        common.signals.bookmarksChanged.emit()
+
+    @classmethod
+    def set_saved_bookmarks(cls, data):
+        """Set the saved bookmarks to the user settings file.
+
+        Args:
+            data (dict): A dictionary of bookmark items.
+
+        """
+        if not isinstance(data, dict):
+            raise TypeError('Expected a dictionary')
+
+        if common.settings is None:
+            raise ValueError('The user settings object is not initialized.')
+
+        for v in data.values():
+            if not all(k in v for k in ['server', 'job', 'root']):
+                raise ValueError('Invalid bookmark item')
+
+        common.settings.setValue(cls.bookmark_settings_key, data)
+        common.bookmarks = data.copy()
+        common.signals.bookmarksChanged.emit()
 
     @staticmethod
     def get_env_bookmarks():

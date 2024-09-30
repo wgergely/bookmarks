@@ -21,9 +21,12 @@ BOLD = rf'{ESC}[1m'
 UNDERLINE = rf'{ESC}[4m'
 
 
-def _log(message):
+def _log(message, error=False):
     mutex.lock()
-    print(message)
+    if error:
+        print(message, file=sys.stderr)
+    else:
+        print(message)
     mutex.unlock()
 
 

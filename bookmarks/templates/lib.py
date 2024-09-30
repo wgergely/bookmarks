@@ -947,14 +947,18 @@ class TemplateItem(object):
         p = images.rsc_pixmap('icon_bw_sm', None, None, get_path=True)
         self.set_thumbnail(p)
 
-        config = tokens.get(*common.active('root', args=True))
-        if not config:
-            raise RuntimeError('A root item must be active to get the default template!')
+        # Get the current token config
+        args = common.active('root', args=True)
+        if args:
+            config = tokens.get(*args).data(force=True)
+        else:
+            log.error('No active root item found, using the default token config')
+            config = tokens.DEFAULT_TOKEN_CONFIG.copy()
 
         # Populate template with the default token config
         zp = io.BytesIO()
         with zipfile.ZipFile(zp, 'w', compression=self.compression) as zf:
-            for v in config.data(force=True)[tokens.AssetFolderConfig].values():
+            for v in config[tokens.AssetFolderConfig].values():
                 p = f'{v["value"]}/'
                 if p not in zf.namelist():
                     zf.writestr(p, '')

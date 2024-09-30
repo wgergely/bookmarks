@@ -460,6 +460,29 @@ QMenu::right-arrow {
     width: <Margin@1.0>px;
 }
 
+QMenu::indicator:exclusive:checked {
+    position: absolute;
+    image: none;
+    background-color: <Green>;
+    size: <Indicator@2.0>px;
+    width: <Indicator@2.0>px;
+    height: <Indicator@2.0>px;
+    margin-left: <Margin@0.5>px;
+    border-radius: <Indicator@1.0>px;
+    border: <Separator@1.0>px solid <VeryDarkBackground>;
+}
+QMenu::indicator:exclusive:unchecked {
+    position: absolute;
+    image: none;
+    background-color: <Opaque>;
+    size: <Indicator@2.0>px;
+    width: <Indicator@2.0>px;
+    height: <Indicator@2.0>px;
+    margin-left: <Margin@0.5>px;
+    border-radius: <Indicator@1.0>px;
+    border: <Separator@1.0>px solid <Transparent>;
+}
+
 QToolTip {
     font-family: "<MediumFont>";
     font-size: <MediumText@1.0>px;

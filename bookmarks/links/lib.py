@@ -1,5 +1,7 @@
 import os
 import re
+import shutil
+import tempfile
 
 from .. import common, log
 from .. import database
@@ -36,12 +38,13 @@ class LinksAPI:
             path (str): Path to the folder where the .links file resides.
 
         """
-        if not os.path.exists(path):
-            raise RuntimeError(f'Path "{path}" does not exist')
 
         self.path = path.replace('\\', '/')
         self.links_file = os.path.join(self.path, '.links').replace('\\', '/')
         self._cache = None
+
+        if not os.path.exists(path):
+            raise RuntimeError(f'Path "{path}" does not exist')
 
     @classmethod
     def update_cached_data(cls):
@@ -140,12 +143,33 @@ class LinksAPI:
         """
         links = links if isinstance(links, (list, tuple)) else []
 
+        if not os.access(self.links_file, os.W_OK):
+            raise RuntimeError(f'Path "{self.path}" is not writable')
+        if not os.access(self.links_file, os.R_OK):
+            raise RuntimeError(f'File "{self.links_file}" is not readable')
+        if not os.access(self.links_file, os.X_OK):
+            raise RuntimeError(f'File "{self.links_file}" is not executable')
+
+        _links = links
         try:
+            _links = sorted(set(links), key=str.lower)
             with open(self.links_file, 'w') as f:
-                for link in sorted(set(links), key=str.lower):
-                    f.write(f'{link}\n')
-        except IOError as e:
-            raise RuntimeError(f'Failed to write to {self.links_file}: {e}')
+                f.writelines(_links)
+        except IOError:
+            # Create a temp named file and then rename it to the original file
+            _tmp = tempfile.NamedTemporaryFile(mode='w', delete=False)
+            with _tmp:
+                _tmp.writelines(_links)
+
+            try:
+                if common.get_platform() == common.PlatformWindows:
+                    os.system(f'attrib -h "{self.links_file}"')
+                os.remove(self.links_file)
+                shutil.copy(_tmp.name, self.links_file)
+            finally:
+                if common.get_platform() == common.PlatformWindows:
+                    os.system(f'attrib +h "{self.links_file}"')
+                os.remove(_tmp.name)
 
     def to_absolute(self, link):
         """
@@ -325,7 +349,7 @@ class LinksAPI:
         """
         args = common.active('root', args=True)
         if not args:
-            raise RuntimeError('Getting presets requires a root item to be active')
+            return {}
 
         db = database.get(*args)
         v = db.value(db.source(), 'asset_link_presets', database.BookmarkTable)

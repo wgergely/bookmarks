@@ -156,8 +156,8 @@ class MainWidget(QtWidgets.QWidget):
         idx = common.BookmarkTab if idx is None or idx is False else idx
         idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
 
-        root = common.active_paths[common.SynchronisedActivePaths]['root']
-        asset = common.active_paths[common.SynchronisedActivePaths]['asset']
+        root = common.active_paths[common.SynchronizedActivePaths]['root']
+        asset = common.active_paths[common.SynchronizedActivePaths]['asset']
 
         if (
                 not root
@@ -192,7 +192,7 @@ class MainWidget(QtWidgets.QWidget):
         l = self.task_switch_widget
 
         # Make sure the active values are correctly set
-        self.aboutToInitialize.connect(common.settings.load_active_values)
+        self.aboutToInitialize.connect(common.init_active)
 
         # Bookmark -> Asset
         b.model().sourceModel().activeChanged.connect(

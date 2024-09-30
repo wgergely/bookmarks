@@ -65,6 +65,7 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import database
+from ..server.lib import ServerAPI
 from ..threads import threads
 from ..tokens import tokens
 
@@ -285,6 +286,8 @@ class BookmarkItemModel(models.ItemModel):
         """Returns the items to be processed by :meth:`init_data`.
 
         """
+        # Force re-fetch bookmarks
+        ServerAPI.load_bookmarks()
         for item in common.bookmarks.items():
             yield item
 

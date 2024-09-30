@@ -503,6 +503,8 @@ class ServerAPI:
         are "static", and can't be removed.
 
         """
+        _current = common.bookmarks.copy()
+
         _static = cls.get_env_bookmarks()
         _static = _static if _static else {}
 
@@ -530,4 +532,6 @@ class ServerAPI:
             common.servers[v[k]['server']] = v[k]['server']
 
         common.bookmarks = v
-        common.signals.bookmarksChanged.emit()
+
+        if _current != common.bookmarks:
+            common.signals.bookmarksChanged.emit()

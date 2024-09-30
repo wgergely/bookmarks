@@ -4,9 +4,7 @@ The user settings are stored in an ini file stored at :func:`.get_user_settings_
 The current ui state, current active paths, and app settings are all stored in here.
 
 """
-import collections
 import json
-import os
 import re
 
 from PySide2 import QtCore
@@ -125,90 +123,35 @@ SECTIONS = {
     ),
 }
 
+#: all keys
 KEYS = set()
 for __k in SECTIONS:
     KEYS.update({f for f in SECTIONS[__k]})
 del __k
-
-SynchronisedActivePaths = 0
-PrivateActivePaths = 1
 
 
 def init_settings():
     """Initializes the :class:`UserSettings` instance.
 
     """
-    # Initialize the active_paths object
-    common.active_paths = {
-        SynchronisedActivePaths: collections.OrderedDict(),
-        PrivateActivePaths: collections.OrderedDict(),
-    }
-    for mode in common.active_paths:
-        for key in SECTIONS['active']:
-            common.active_paths[mode][key] = None
 
     # Initialize the user settings instance
     common.settings = UserSettings()
-
-    # Load values from the user settings file
-    common.settings.load_active_values()
-    common.update_private_values()
 
     v = common.settings.value('user/servers')
     if not isinstance(v, dict):
         v = {}
     common.servers = v
+    common.signals.serversChanged.emit()
 
     v = common.settings.value('user/favourites')
     if not v or not isinstance(v, dict):
         v = {}
     common.favourites = v
-
     common.signals.favouritesChanged.emit()
 
     from bookmarks.server.lib import ServerAPI
     ServerAPI.load_bookmarks()
-
-
-def active(k, path=False, args=False):
-    """Get an active path segment stored in the user settings.
-
-    Args:
-        k (str): One of the following segment names: `'server', 'job', 'root', 'asset', 'task', 'file'`
-        path (bool, optional): If True, will return a path to the active item.
-        args (bool, optional): If `True`, will return all components that make up the active path.
-
-    Returns:
-        * str: The name of the active item.
-        * str (when path=True): Path to the active item.
-        * tuple (when args=True): Active path elements.
-
-    """
-    if k not in SECTIONS['active']:
-        raise KeyError('Invalid key')
-
-    if path or args:
-        _path = None
-        _args = None
-        idx = SECTIONS['active'].index(k)
-        v = tuple(
-            common.active_paths[common.active_mode][k]
-            for k in SECTIONS['active'][:idx + 1]
-        )
-
-        if path:
-            _path = '/'.join(v) if all(v) else None
-            if args:
-                return _path, _args
-            return _path
-
-        if args:
-            _args = v if all(v) else None
-            if path:
-                return _path, _args
-            return _args
-
-    return common.active_paths[common.active_mode][k]
 
 
 def get_user_settings_path():
@@ -252,29 +195,6 @@ def bookmark_key(server, job, root):
     return k
 
 
-def update_private_values():
-    """Copy the controlling values to ``PrivateActivePaths``.
-
-    The source of the value is determined by the active mode and the current environment.
-
-    """
-    _env_active_server = os.environ.get('BOOKMARKS_ACTIVE_SERVER', None)
-    _env_active_job = os.environ.get('BOOKMARKS_ACTIVE_JOB', None)
-    _env_active_root = os.environ.get('BOOKMARKS_ACTIVE_ROOT', None)
-    _env_active_asset = os.environ.get('BOOKMARKS_ACTIVE_ASSET', None)
-    _env_active_task = os.environ.get('BOOKMARKS_ACTIVE_TASK', None)
-
-    if any((_env_active_server, _env_active_job, _env_active_root, _env_active_asset, _env_active_task)):
-        for k in SECTIONS['active']:
-            common.active_paths[PrivateActivePaths][k] = os.environ.get(f'BOOKMARKS_ACTIVE_{k.upper()}', None)
-
-    for k in SECTIONS['active']:
-        common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronisedActivePaths][k]
-
-    # Verify the values
-    common.settings.verify_active(PrivateActivePaths)
-
-
 _true = {'True', 'true', '1', True}
 _false = {'False', 'false', 'None', 'none', '0', '', False, None}
 
@@ -290,47 +210,6 @@ class UserSettings(QtCore.QSettings):
             QtCore.QSettings.IniFormat,
             parent=parent
         )
-
-        # Simple timer to verify active paths every 30 seconds
-        self.verify_timer = common.Timer(parent=self)
-        self.verify_timer.setInterval(30000)
-        self.verify_timer.setSingleShot(False)
-        self.verify_timer.setTimerType(QtCore.Qt.CoarseTimer)
-        self.verify_timer.timeout.connect(self.load_active_values)
-        self.verify_timer.start()
-
-    def load_active_values(self):
-        """Load active path elements from the settings file.
-
-        Whilst the function will load the current values from the settings file,
-        it doesn't guarantee the values will actually be used. App will only use
-        these values if the active mode is set to `SynchronisedActivePaths`.
-
-        """
-        self.sync()
-        for k in SECTIONS['active']:
-            v = self.value(f'active/{k}')
-            if not isinstance(v, str) or not v:
-                v = None
-            common.active_paths[SynchronisedActivePaths][k] = v
-        self.verify_active(SynchronisedActivePaths)
-
-    def verify_active(self, active_mode):
-        """Verify the active path values and unset any item, that refers to an invalid path.
-
-        Args:
-            active_mode (int): One of ``SynchronisedActivePaths`` or ``Pr.
-
-        """
-        p = str()
-        for k in SECTIONS['active']:
-            if common.active_paths[active_mode][k]:
-                p += common.active_paths[active_mode][k]
-            if not os.path.exists(p):
-                common.active_paths[active_mode][k] = None
-                if active_mode == SynchronisedActivePaths:
-                    self.setValue(f'active/{k}', None)
-            p += '/'
 
     def set_favourites(self, v):
         """Set and save the given favourite item values.
@@ -392,8 +271,8 @@ class UserSettings(QtCore.QSettings):
             v (object): The value to save.
 
         """
-        # We don't want to save private active values to the user settings
-        if common.active_mode == PrivateActivePaths and key in SECTIONS['active']:
+        # Skip saving private active values
+        if common.active_mode == common.PrivateActivePaths and key in common.ActivePathSegmentTypes:
             return
 
         if key == 'settings/disable_oiio':

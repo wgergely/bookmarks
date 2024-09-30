@@ -60,7 +60,7 @@ class StatusBarWidget(QtWidgets.QStatusBar):
 
 class ToggleSessionModeButton(ui.ClickableIconButton):
     """Button used to toggle between the active path mode between
-    ``common.SynchronisedActivePaths`` and ``common.PrivateActivePaths``.
+    ``common.SynchronizedActivePaths`` and ``common.PrivateActivePaths``.
 
     """
     ContextMenu = None
@@ -81,7 +81,7 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
         """Get pixmap based on the current status.
 
         """
-        if common.active_mode == common.SynchronisedActivePaths:
+        if common.active_mode == common.SynchronizedActivePaths:
             return images.rsc_pixmap(
                 'check',
                 common.Color.Green(),
@@ -103,7 +103,7 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
         """Status tip message.
 
         """
-        if common.active_mode == common.SynchronisedActivePaths:
+        if common.active_mode == common.SynchronizedActivePaths:
             return 'This session sets active paths. Click to toggle.'
 
         if common.active_mode == common.PrivateActivePaths:

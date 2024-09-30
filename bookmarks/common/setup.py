@@ -97,6 +97,7 @@ def initialize_func(mode):
         common.init_signals(connect_signals=mode != common.CoreMode)
         common.init_active_mode()
         common.init_settings()
+        common.init_active()
 
         if mode == common.CoreMode:
             return

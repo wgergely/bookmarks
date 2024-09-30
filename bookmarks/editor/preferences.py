@@ -150,21 +150,6 @@ class PreferenceEditor(base.BasePropertyEditor):
                                 'selected folder) when the active asset changes.',
                     },
                 },
-                2: {
-                    0: {
-                        'name': 'Bookmark item search depth',
-                        'key': 'settings/job_scan_depth',
-                        'validator': base.int_validator,
-                        'widget': ui.LineEdit,
-                        'placeholder': '3',
-                        'description': 'Set the maximum folder depth to parse. Parsing large '
-                                       'project folders will take a long time. This setting '
-                                       'will limit the number of sub-directories the editor '
-                                       'parses when looking for bookmark items.',
-                        'help': 'This setting will limit the number of sub-directories the '
-                                'editor will look into when looking for bookmark items.',
-                    },
-                },
             },
         },
         2: {

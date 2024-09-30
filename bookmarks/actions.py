@@ -296,25 +296,6 @@ def import_favourites(*args, source=None):
     common.signals.favouritesChanged.emit()
 
 
-@common.error
-@common.debug
-def prune_bookmarks():
-    """Removes invalid bookmark items from the current set.
-
-    """
-    if not common.bookmarks:
-        return
-    n = 0
-    for k in list(common.bookmarks.keys()):
-        if not QtCore.QFileInfo(k).exists():
-            n += 1
-            remove_bookmark(
-                common.bookmarks[k]['server'], common.bookmarks[k]['job'], common.bookmarks[k]['root']
-            )
-
-    common.show_message(f'{n} items pruned.')
-
-
 def set_active(k, v):
     """Sets the given path as the active path segment for the given key.
 
@@ -333,7 +314,7 @@ def set_active(k, v):
         )
 
     common.active_paths[common.active_mode][k] = v
-    if common.active_mode == common.SynchronisedActivePaths:
+    if common.active_mode == common.SynchronizedActivePaths:
         common.settings.setValue(f'active/{k}', v)
 
 

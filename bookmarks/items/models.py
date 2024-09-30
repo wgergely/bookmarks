@@ -71,7 +71,12 @@ def initdata(func):
         """Func wrapper.
 
         """
-        common.settings.load_active_values()
+        common.init_active(
+            load_settings=True,
+            clear_all=False,
+            load_env=False,
+            load_private=False,
+        )
 
         self._interrupt_requested = False
         self._load_in_progress = True

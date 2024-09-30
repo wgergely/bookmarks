@@ -285,13 +285,19 @@ class FileItemModel(models.ItemModel):
         Additional information, like description, item flags or thumbnails are
         fetched by thread workers.
 
-        The method iterate the items returned by
+        The method iterates the items returned by
         :meth:`item_generator` and gathers information for both individual
         ``FileItems`` and collapsed ``SequenceItems``, excluding items the current
         token filters exclude.
 
         """
-        common.settings.load_active_values()
+        # For good measure - let's initialize the active settings from disk
+        common.init_active(
+            load_settings=True,
+            clear_all=False,
+            load_env=False,
+            load_private=False,
+        )
 
         p = self.source_path()
         k = self.task()

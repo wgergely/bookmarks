@@ -129,6 +129,7 @@ from .sequence import *
 from .active_mode import *
 from .clipboard import *
 from .settings import *
+from .active import *
 from .setup import *
 from .signals import *
 from .ui import *

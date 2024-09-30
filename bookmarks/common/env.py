@@ -94,7 +94,7 @@ def get_binary(binary_name):
         return QtCore.QFileInfo(v).filePath()
 
     # Check the PATH environment for possible values
-    v = _parse_path_env(binary_name)
+    v = shutil.which(binary_name)
     return v
 
 
@@ -121,10 +121,6 @@ def get_user_setting(binary_name):
     if isinstance(v, str) and v and file_info.exists():
         return file_info.filePath()
     return None
-
-
-def _parse_path_env(binary_name):
-    return shutil.which(binary_name)
 
 
 class EnvPathEditor(QtWidgets.QWidget):

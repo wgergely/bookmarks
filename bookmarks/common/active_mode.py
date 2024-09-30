@@ -1,7 +1,7 @@
 """Defines active path reading mode.
 
 The app has two session modes. When `common.active_mode` is
-`common.SynchronisedActivePaths`, the app will save active paths in the user settings
+`common.SynchronizedActivePaths`, the app will save active paths in the user settings
 file. However, when multiple app instances are running, this poses a problem,
 because instances will mutually overwrite each other's active paths.
 
@@ -73,7 +73,7 @@ def prune_lock():
 def init_active_mode():
     """Initialises the Bookmark's active path reading mode.
 
-    We define two modes, ``SynchronisedActivePaths`` (when Bookmarks is in sync with the user settings) and
+    We define two modes, ``SynchronizedActivePaths`` (when Bookmarks is in sync with the user settings) and
     ``PrivateActivePaths`` when the Bookmarks sessions set the active paths values internally without changing the user
     settings.
 
@@ -83,11 +83,11 @@ def init_active_mode():
         `BOOKMARKS_ACTIVE_ASSET` and `BOOKMARKS_ACTIVE_TASK` environment values have valid values, the session will
         automatically be marked ``PrivateActivePaths``.
 
-        If the environment has not been set but there's already an active ``SynchronisedActivePaths`` session
+        If the environment has not been set but there's already an active ``SynchronizedActivePaths`` session
         running, the current session will be set to ``PrivateActivePaths``.
 
         Any sessions that doesn't have environment values set and does not find synchronized session lock files will
-        be marked ``SynchronisedActivePaths``.
+        be marked ``SynchronizedActivePaths``.
 
 
     """
@@ -128,15 +128,15 @@ def init_active_mode():
                 data = common.PrivateActivePaths
 
             # If we encounter any session locks that are currently
-            # set to `SynchronisedActivePaths`, we'll set this session to be
+            # set to `SynchronizedActivePaths`, we'll set this session to be
             # in PrivateActivePaths as we don't want sessions to be able
             # to set their environment independently:
-            if data == common.SynchronisedActivePaths:
+            if data == common.SynchronizedActivePaths:
                 common.active_mode = common.PrivateActivePaths
                 return write_current_mode_to_lock()
 
     # Otherwise, set the default value
-    common.active_mode = common.SynchronisedActivePaths
+    common.active_mode = common.SynchronizedActivePaths
     return write_current_mode_to_lock()
 
 

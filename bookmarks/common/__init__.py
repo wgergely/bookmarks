@@ -89,6 +89,8 @@ image_cache = {}
 
 token_configs = {}
 
+parser = None
+
 # Widget instance bindings
 main_widget = None
 tray_widget = None

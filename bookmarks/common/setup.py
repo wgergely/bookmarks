@@ -91,6 +91,10 @@ def initialize_func(mode):
         common.init_mode = mode
         common.item_data = common.DataDict()
 
+        from . import parser
+        common.parser = parser.Parser()
+
+
         if not os.path.isdir(common.temp_path()):
             os.makedirs(os.path.normpath(common.temp_path()))
 

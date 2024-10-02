@@ -1,5 +1,6 @@
-"""
-This module provides the :class:`StringParser` class, which is used to parse strings containing tokens and replace them with values from a given environment. The parser supports features such as simple token replacement, modifiers, slicing, and generator tokens.
+"""This module provides the :class:`StringParser` class, which is used to parse strings containing tokens and replace
+them with values from a given environment. The parser supports features such as simple token replacement, modifiers,
+slicing, and generator tokens.
 
 Features:
     - **Simple Token Replacement**: Replaces tokens with their corresponding values from the environment.

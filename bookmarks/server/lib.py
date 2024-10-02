@@ -422,7 +422,7 @@ class ServerAPI:
                 common.active('job') == job and
                 common.active('root') == root
         ):
-            actions.set_active('server', None)
+            common.set_active('server', None)
             actions.change_tab(common.BookmarkTab)
 
         del data[k]

@@ -308,9 +308,9 @@ class BookmarkItemModel(models.ItemModel):
             return
 
         server, job, root = index.data(common.ParentPathRole)
-        actions.set_active('server', server)
-        actions.set_active('job', job)
-        actions.set_active('root', root)
+        common.set_active('server', server)
+        common.set_active('job', job)
+        common.set_active('root', root)
 
     def source_path(self):
         """The bookmark list's source paths.

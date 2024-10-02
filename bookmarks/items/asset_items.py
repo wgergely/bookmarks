@@ -361,7 +361,7 @@ class AssetItemModel(models.ItemModel):
         if not index.data(common.ParentPathRole):
             return
 
-        actions.set_active(
+        common.set_active(
             'asset',
             index.data(common.ParentPathRole)[-1]
         )

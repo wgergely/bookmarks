@@ -99,6 +99,7 @@ launcher_widget = None
 message_widget = None
 preference_editor_widget = None
 server_editor = None
+templates_editor = None
 bookmark_property_editor = None
 asset_property_editor = None
 clipboard_editor = None

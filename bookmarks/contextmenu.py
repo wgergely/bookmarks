@@ -408,10 +408,18 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         """
         if not self.index.isValid() or not self.index.data(common.PathRole):
-            model = common.source_model(common.current_tab())
-            p = '/'.join(model.source_path())
+            if common.current_tab() == common.BookmarkTab:
+                return
+            elif common.current_tab() == common.AssetTab:
+                p = common.active('root', path=True)
+            elif common.current_tab() == common.FileTab:
+                p = common.active('asset', path=True)
+            else:
+                return
         else:
             p = self.index.data(common.PathRole)
+
+        # if not p:
 
         path = common.get_sequence_start_path(p)
 

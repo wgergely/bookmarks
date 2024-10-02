@@ -56,7 +56,6 @@ def toggle_debug(state):
     common.debug_on = state
 
 
-
 def add_favourite(source_paths, source):
     """Add and save a favourite item.
 
@@ -294,28 +293,6 @@ def import_favourites(*args, source=None):
 
     common.settings.set_favourites(data)
     common.signals.favouritesChanged.emit()
-
-
-def set_active(k, v):
-    """Sets the given path as the active path segment for the given key.
-
-    Args:
-        k (str): An active key, for example, `'server'`.
-        v (str or None): A path segment, for example, '//myserver/jobs'.
-
-    """
-    common.check_type(k, str)
-    common.check_type(k, (str, None))
-
-    if k not in common.SECTIONS['active']:
-        keys = '", "'.join(common.SECTIONS['active'])
-        raise ValueError(
-            f'Invalid active key. Key must be the one of "{keys}"'
-        )
-
-    common.active_paths[common.active_mode][k] = v
-    if common.active_mode == common.SynchronizedActivePaths:
-        common.settings.setValue(f'active/{k}', v)
 
 
 @QtCore.Slot(QtCore.QModelIndex)
@@ -640,9 +617,8 @@ def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from .editor import asset_properties as editor
-    widget = editor.show(server, job, root)
-    return widget
+    from .templates import view as editor
+    editor.show()
 
 
 @common.error
@@ -1389,6 +1365,7 @@ def execute(index, first=False):
 
     url = QtCore.QUrl.fromLocalFile(path)
     QtGui.QDesktopServices.openUrl(url)
+
 
 @common.debug
 @common.error

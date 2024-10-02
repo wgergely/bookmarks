@@ -780,6 +780,8 @@ class TemplateItem(object):
             parent_dir = os.path.dirname(root_path)
             if not os.path.exists(parent_dir):
                 raise FileNotFoundError(f'Parent directory does not exist: {parent_dir}')
+            else:
+                os.makedirs(root_path, exist_ok=True)
 
         root_path = os.path.normpath(root_path).replace('\\', '/')
 
@@ -791,9 +793,7 @@ class TemplateItem(object):
 
         abs_paths = []
 
-        if not self._has_links and extract_contents_to_links:
-            raise TemplateError('Cannot extract contents to links without a .links file!')
-        elif extract_contents_to_links:
+        if self._has_links and extract_contents_to_links and not ignore_links:
             # Get the links embedded in the template
             links = self.get_links()
             if not links:
@@ -818,6 +818,8 @@ class TemplateItem(object):
         skipped_files = []
 
         for abs_path in abs_paths:
+            os.makedirs(abs_path, exist_ok=True)
+
             for rel_path, data in extracted_files:
                 is_dir = rel_path.endswith('/')
 

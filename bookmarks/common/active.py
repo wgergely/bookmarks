@@ -1,7 +1,7 @@
 import collections
 import os
 
-from .. import common, log
+from .. import common
 
 ActivePathSegmentTypes = (
     'server',
@@ -44,7 +44,6 @@ def init_active(clear_all=True, load_settings=True, load_env=True, load_private=
             common.active_paths[common.SynchronizedActivePaths][k] = v
         verify_path(common.SynchronizedActivePaths)
 
-
     if load_env:
         # Get the values from the environment
         for k in ActivePathSegmentTypes:
@@ -72,25 +71,21 @@ def verify_path(active_mode):
     """Verify the active path values and unset any item, that refers to an invalid path.
 
     Args:
-        active_mode (int): One of ``SynchronizedActivePaths`` or ``PrivateActivePaths``.
+        active_mode (int): One of ``SynchronisedActivePaths`` or ``Pr.
 
     """
-    p = []
+    p = str()
     for k in ActivePathSegmentTypes:
         if common.active_paths[active_mode][k]:
-            p.append(common.active_paths[active_mode][k])
-
-        # Check if the path exists
-        _p = '/'.join(p)
-        if not os.path.exists(_p) or _p not in common.bookmarks:
+            p += common.active_paths[active_mode][k]
+        if not os.path.exists(p):
             common.active_paths[active_mode][k] = None
-
-            # Unset all items that depend on the current path segment
-            if active_mode == common.SynchronizedActivePaths:
+            if active_mode == SynchronizedActivePaths:
                 common.settings.setValue(f'active/{k}', None)
+        p += '/'
 
 
-
+@common.debug
 def active(k, path=False, args=False, mode=None):
     """Get an active path segment stored in the user settings.
 
@@ -134,3 +129,26 @@ def active(k, path=False, args=False, mode=None):
     if mode is None:
         mode = common.active_mode
     return common.active_paths[mode][k]
+
+
+@common.debug
+def set_active(k, v):
+    """Sets the given path as the active path segment for the given key.
+
+    Args:
+        k (str): An active key, for example, `'server'`.
+        v (str or None): A path segment, for example, '//myserver/jobs'.
+
+    """
+    common.check_type(k, str)
+    common.check_type(k, (str, None))
+
+    if k not in common.SECTIONS['active']:
+        keys = '", "'.join(common.SECTIONS['active'])
+        raise ValueError(
+            f'Invalid active key. Key must be the one of "{keys}"'
+        )
+
+    common.active_paths[common.active_mode][k] = v
+    if common.active_mode == common.SynchronizedActivePaths:
+        common.settings.setValue(f'active/{k}', v)

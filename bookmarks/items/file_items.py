@@ -619,7 +619,7 @@ class FileItemModel(models.ItemModel):
         filepath = parent_role[5] + '/' + \
                    common.get_sequence_end_path(file_info.fileName())
 
-        actions.set_active('file', filepath)
+        common.set_active('file', filepath)
 
     def task(self):
         """The model's associated task.

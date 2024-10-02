@@ -202,13 +202,15 @@ class SyntaxFilter:
         Returns:
             True if the term matches, False otherwise.
         """
+        is_strict = f'"{term}"' in filter_string
+
         # First, check for exact folder name matches
         if term in segments:
             return True
 
         # Then, check segment matches
         for segment in segments:
-            if f'"{term}"' in filter_string:
+            if is_strict:
                 # check for equality if the term is quoted
                 if term == segment:
                     return True
@@ -216,6 +218,20 @@ class SyntaxFilter:
                 # check for substring match if the term isn't quoted
                 if term in segment:
                     return True
+
+        # Then check if the term is a substring of the full path
+        if not is_strict:
+            if term in path_str:
+                return True
+
+        # Finally, check if the term spans multiple segments
+        _terms = term.split('/')
+        if len(_terms) > 1:
+            _s_terms = set(_terms)
+            _s_segments = set(segments)
+
+            if _s_terms.issubset(_s_segments):
+                return True
 
         return False
 
@@ -325,9 +341,6 @@ class SyntaxFilter:
 
         self._filter_string = self._filter_string.replace(string, '').strip()
 
-    # def has_filter(self, string):
-    #     return string in self._filter_string
-
     def has_string(
             self,
             string,
@@ -393,6 +406,28 @@ class TestSyntaxFilter(unittest.TestCase):
         self.assertTrue(filter.match_string('/path/to/folder'))
         self.assertTrue(filter.match_string('/folder/subfolder/to'))
         self.assertFalse(filter.match_string('/path/to/another'))
+
+    def test_plain_positive_nested_folder(self):
+        """Test matching with a nested folder structure."""
+        filter_string = 'to/include'
+        filter = SyntaxFilter(filter_string)
+        self.assertFalse(filter.match_string('/path/to/exclude'))
+        self.assertTrue(filter.match_string('/path/to/include'))
+
+        filter_string = 'to/include'
+        filter = SyntaxFilter(filter_string)
+        self.assertFalse(filter.match_string('/path/into/exclude'))
+        self.assertTrue(filter.match_string('/path/into/include'))
+
+        filter_string = '"to/include"'
+        filter = SyntaxFilter(filter_string)
+        self.assertFalse(filter.match_string('/path/to/exclude'))
+        self.assertTrue(filter.match_string('/path/to/include'))
+
+        filter_string = '"to/include"'
+        filter = SyntaxFilter(filter_string)
+        self.assertFalse(filter.match_string('/path/into/exclude'))
+        self.assertFalse(filter.match_string('/path/into/include'))
 
     def test_plain_negative_term(self):
         """Test matching with a single negative plain term."""

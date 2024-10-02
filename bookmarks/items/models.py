@@ -983,21 +983,21 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
                 return False
 
             pp = ref()[idx][common.ParentPathRole]
-            root_path = '/'.join(pp[:-1]).strip('/')
             if len(pp) > 4:  # file items
                 root_path = '/'.join(pp[4:])
             elif len(pp) == 4:  # asset items
                 root_path = '/'.join(pp[:-1])
             elif len(pp) == 3: # bookmark items
                 root_path = '/'.join(pp[:-2])
+            else:
+                root_path = '/'.join(pp[:-1]).strip('/')
 
             path = ref()[idx][common.PathRole]
             rel_path = path.replace(root_path, '').strip('/')
 
             search_str = f'{root_path} {path}'
-            raise NotImplementedError(search_str)
-            print(search_str)
-            return self._filter.match_string(path)
+            print(path)
+            return self._filter.match_string(rel_path)
 
         # Item flag filters
         flags = ref()[idx][common.FlagsRole]

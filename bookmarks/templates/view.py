@@ -21,6 +21,24 @@ from ..links.lib import LinksAPI
 from ..links.view import PlainTextEdit, LinksEditor
 
 
+def show():
+    close()
+
+    if common.templates_editor is None:
+        common.templates_editor = TemplatesMainWidget()
+    common.templates_editor.open()
+
+def close():
+    if common.templates_editor is None:
+        return
+
+    try:
+        common.templates_editor.close()
+        common.templates_editor.deleteLater()
+        common.templates_editor = None
+    except Exception as e:
+        log.error(e)
+
 class TemplatesContextMenu(contextmenu.BaseContextMenu):
 
     @common.error

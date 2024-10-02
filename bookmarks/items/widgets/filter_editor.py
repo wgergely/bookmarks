@@ -148,7 +148,6 @@ class TextFilterEditor(QtWidgets.QWidget):
         """
         proxy = common.model()
         text = proxy.filter_text()
-        text = text.lower() if text else ''
         text = '' if text == '/' else text
         self.editor.setText(text)
 

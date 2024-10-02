@@ -691,7 +691,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
             count = parent.count()
         elif hasattr(parent, 'model'):
             model = parent.model()
-            if hasattr(model, 'sourceModel'):
+            if hasattr(model, 'mapFromSource'):
                 count = parent.model().sourceModel().rowCount()
             else:
                 count = parent.model().rowCount()

@@ -112,8 +112,8 @@ def initialize_func(mode):
         images.init_image_cache()
         images.init_resources()
 
+        from .. import standalone
         if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
-            from .. import standalone
             standalone.set_application_properties()
 
             app = QtWidgets.QApplication(sys.argv)
@@ -172,6 +172,9 @@ def initialize_func(mode):
             time.sleep(i)
             if n >= timeout:
                 break
+    except Exception as e:
+        from bookmarks import log
+        log.error(f'Error during initialization: {e}')
     finally:
         return io.BytesIO()
 
@@ -180,9 +183,8 @@ def shutdown():
     """Un-initializes all app components.
 
     """
+    _init_mode = common.init_mode
     try:
-        common.settings.sync()
-
         from ..threads import threads
         threads.quit_threads()
 
@@ -200,23 +202,21 @@ def shutdown():
             common.tray_widget = None
 
         common.Timer.delete_timers()
+        common.remove_lock()
+
 
         # This should reset all the object caches to their initial values
         for k, v in common.__initial_values__.items():
             setattr(common, k, v)
 
-        common.remove_lock()
     except Exception as e:
-        print(f'Error during shutdown: {e}')
+        from . import log
+        log.error(f'Error during shutdown: {e}')
     finally:
-        if common.init_mode == common.CoreMode:
-            common.init_mode = None
-            return
-        if common.init_mode == common.EmbeddedMode:
-            common.init_mode = None
-            return
-        if common.init_mode == common.StandaloneMode and QtWidgets.QApplication.instance():
+        if _init_mode == common.StandaloneMode and QtWidgets.QApplication.instance():
             QtWidgets.QApplication.instance().exit(0)
+
+
 
 
 def _add_path_to_path(v, p):

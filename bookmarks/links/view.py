@@ -1276,7 +1276,7 @@ class LinksTextEditor(QtWidgets.QWidget):
         v = self._text_editor.toPlainText()
         links = sorted(
             {f.replace('\\', '/').strip(' .-_/') for f in v.split('\n') if f.rstrip()},
-            key=str.lower
+            key=lambda s: s.lower()
         )
 
         api = lib.LinksAPI(self._current_path)

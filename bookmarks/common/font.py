@@ -69,7 +69,7 @@ class FontDatabase(QtGui.QFontDatabase):
             raise ValueError(f'Invalid font role, expected one of {[f for f in Font]}')
 
         if size in common.font_cache[role] and size in common.metrics_cache[role]:
-            return common.font_cache[role][size], common.metrics_cache[role][size]
+            return QtGui.QFont(common.font_cache[role][size]), QtGui.QFontMetricsF(common.metrics_cache[role][size])
 
         if role == Font.BlackFont:
             style = 'Black'

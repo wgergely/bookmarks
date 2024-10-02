@@ -125,10 +125,13 @@ class BookmarkItemModel(models.ItemModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         common.signals.bookmarkAdded.connect(
-            lambda _: self.reset_data(force=True, emit_active=False)
+            lambda *a, **kw: self.reset_data(force=True, emit_active=False)
         )
         common.signals.bookmarkRemoved.connect(
-            lambda _: self.reset_data(force=True, emit_active=False)
+            lambda *a, **kw: self.reset_data(force=True, emit_active=False)
+        )
+        common.signals.bookmarksChanged.connect(
+            lambda *a, **kw: self.reset_data(force=True, emit_active=True)
         )
 
     @common.status_bar_message('Loading Bookmarks...')

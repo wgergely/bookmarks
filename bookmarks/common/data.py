@@ -335,7 +335,7 @@ def get_ref_from_source_index(index):
     """
     if not index.isValid():
         return
-    if not hasattr(index.model(), 'sourceModel'):
+    if not hasattr(index.model(), 'mapFromSource'):
         return None
 
     model = index.model()

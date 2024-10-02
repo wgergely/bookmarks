@@ -128,8 +128,8 @@ class LinksAPI:
         try:
             with open(self.links_file, 'r') as f:
                 lines = f.readlines()
-            links = [self._normalize_link(line.strip()) for line in lines if line.strip()]
-            return sorted(set(links), key=str.lower)
+                links = [self._normalize_link(line.strip()) for line in lines if line.strip()]
+                return sorted(set(links), key=lambda s: s.lower())
         except IOError as e:
             log.error(f'Failed to read from {self.links_file}: {e}')
             return []
@@ -140,26 +140,31 @@ class LinksAPI:
 
         Args:
             links (list): The list of links to write to the file.
+
         """
-        links = links if isinstance(links, (list, tuple)) else []
+        if not isinstance(links, (list, tuple)):
+            raise TypeError('Links must be a list or tuple of strings')
 
-        if not os.access(self.links_file, os.W_OK):
+
+        if not os.access(self.path, os.W_OK):
             raise RuntimeError(f'Path "{self.path}" is not writable')
-        if not os.access(self.links_file, os.R_OK):
-            raise RuntimeError(f'File "{self.links_file}" is not readable')
-        if not os.access(self.links_file, os.X_OK):
-            raise RuntimeError(f'File "{self.links_file}" is not executable')
+        if not os.access(self.path, os.R_OK):
+            raise RuntimeError(f'File "{self.path}" is not readable')
+        if not os.access(self.path, os.X_OK):
+            raise RuntimeError(f'File "{self.path}" is not executable')
 
-        _links = links
+        links = sorted(set(links), key=lambda s: s.lower()) if links else []
+        links_str = '\n'.join(links)
+        links_str += '\n'
+
         try:
-            _links = sorted(set(links), key=str.lower)
             with open(self.links_file, 'w') as f:
-                f.writelines(_links)
+                f.write(links_str)
         except IOError:
             # Create a temp named file and then rename it to the original file
             _tmp = tempfile.NamedTemporaryFile(mode='w', delete=False)
             with _tmp:
-                _tmp.writelines(_links)
+                _tmp.write(links_str)
 
             try:
                 if common.get_platform() == common.PlatformWindows:
@@ -234,8 +239,11 @@ class LinksAPI:
 
             _links.append(l)
 
-        v = sorted(_links, key=str.lower)
+        v = sorted(_links, key=lambda s: s.lower())
         self._cache = v
+
+        if not isinstance(v, list):
+            raise RuntimeError('Links must be a list of strings')
 
         return v
 
@@ -263,13 +271,13 @@ class LinksAPI:
         if not force and not os.path.exists(full_link_path):
             raise RuntimeError(f'Link "{full_link_path}" does not exist')
 
-        links = self.get(force=True)
+        links = self.get()
 
         if link in links:
             raise RuntimeError(f'Link "{link}" already exists')
 
         links.append(link)
-        self._write_links_to_file(sorted(set(links), key=str.lower))
+        self._write_links_to_file(sorted(set(links), key=lambda s: s.lower()))
         self.get(force=True)
 
     def remove(self, link):
@@ -289,7 +297,7 @@ class LinksAPI:
         links = self.get(force=True)
         if link in links:
             links.remove(link)
-            self._cache = sorted(set(links), key=str.lower)
+            self._cache = sorted(set(links), key=lambda s: s.lower())
             self._write_links_to_file(self._cache)
             return True
         else:
@@ -320,7 +328,7 @@ class LinksAPI:
             if os.path.exists(full_link_path):
                 valid_links.append(link)
 
-        valid_links = sorted(set(valid_links), key=str.lower)
+        valid_links = sorted(set(valid_links), key=lambda s: s.lower())
         self._write_links_to_file(valid_links)
         self._cache = valid_links
         return sorted(set(links) - set(valid_links))
@@ -357,7 +365,7 @@ class LinksAPI:
         if not v:
             return {}
 
-        return {k: v[k] for k in sorted(v.keys(), key=str.lower)}
+        return {k: v[k] for k in sorted(v.keys(), key=lambda s: s.lower())}
 
     @staticmethod
     def clear_preset(preset):

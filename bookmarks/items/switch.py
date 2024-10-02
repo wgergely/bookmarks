@@ -353,7 +353,7 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
         if not index.data(QtCore.Qt.DisplayRole):
             return
 
-        if hasattr(index.model(), 'sourceModel'):
+        if hasattr(index.model(), 'mapFromSource'):
             tab_idx = index.model().sourceModel().tab_idx
         else:
             tab_idx = index.model().tab_idx

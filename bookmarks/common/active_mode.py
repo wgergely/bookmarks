@@ -147,7 +147,8 @@ def remove_lock():
     f = QtCore.QFile(get_lock_path())
     if f.exists():
         if not f.remove():
-            print('Failed to remove lock file')
+            from . import log
+            log.error('Failed to remove lock file')
 
 
 @QtCore.Slot()

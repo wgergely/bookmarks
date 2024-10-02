@@ -503,7 +503,7 @@ def get_folder(token, server=None, job=None, root=None, force=False):
 
 
 def get_subfolder(token, name):
-    """Find the value an asset sub-folder based on the bookmark item's token
+    """Find the value an asset subfolder based on the bookmark item's token
     configuration.
 
     Args:
@@ -511,7 +511,7 @@ def get_subfolder(token, name):
         name (str): Sub-folder token.
 
     Returns:
-        str: The value of the current asset sub-folder.
+        str: The value of the current asset subfolder.
 
     """
     server = common.active('server')
@@ -527,13 +527,13 @@ def get_subfolder(token, name):
 
 
 def get_subfolders(token):
-    """Find all asset sub-folder values based on the bookmark item's token configuration.
+    """Find all asset subfolder values based on the bookmark item's token configuration.
 
     Args:
         token (str): Asset folder token, for example, `tokens.CacheFolder`.
 
     Returns:
-        list: A list of current asset sub-folder values.
+        list: A list of current asset subfolder values.
 
     """
     server = common.active('server')
@@ -919,7 +919,7 @@ class TokenConfig(QtCore.QObject):
         return None
 
     def get_asset_subfolder(self, token, folder, force=False):
-        """Returns the value of an asset sub-folder based on the current token config
+        """Returns the value of an asset subfolder based on the current token config
         values.
 
         Args:
@@ -947,7 +947,7 @@ class TokenConfig(QtCore.QObject):
         return None
 
     def get_asset_subfolders(self, token, force=False):
-        """Returns the value of an asset sub-folder based on the current token config
+        """Returns the value of an asset subfolder based on the current token config
         values.
 
         Args:

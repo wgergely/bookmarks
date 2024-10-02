@@ -25,7 +25,7 @@ def build_tree_from_zip(data):
 
         root = Node('root', is_dir=True)
         nl = zf.namelist()
-        nl = sorted(nl, key=str.lower)
+        nl = sorted(nl, key=lambda s: s.lower())
 
         # Build the tree from zip entries, including the .links file
         for path in nl:

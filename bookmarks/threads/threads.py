@@ -34,7 +34,6 @@ FavouriteInfo = 'FavouriteInfo'
 AssetInfo = 'AssetInfo'
 BookmarkInfo = 'BookmarkInfo'
 QueuedDatabaseTransaction = 'QueuedDatabaseTransaction'
-QueuedSettingsTransaction = 'QueuedSettingsTransaction'
 QueuedSGQuery = 'QueuedSGQuery'
 
 controllers = {}
@@ -171,27 +170,28 @@ def queue_sg_query(*args):
 
 
 def quit_threads():
-    """Terminate all running threads.
+    """Terminate all running threads."""
 
-    """
+    # First, attempt to quit all threads
     for k in THREADS:
         thread = get_thread(k)
         if thread.isRunning():
             THREADS[k]['queue'].clear()
             thread.quit()
-            thread.wait()
+            # thread.wait(5000)  # Wait up to 5 seconds for the thread to quit.
 
-    n = 0
-    i = 0.01
-    now = time.time()
-    timeout = now + 10.0
+    # Now, wait for all threads to finish, up to a maximum of 10 seconds
+    timeout = time.time() + 10.0
     while any(get_thread(k).isRunning() for k in THREADS):
-        n += i
-        time.sleep(i)
-        if n >= timeout:
-            for thread in THREADS.values():
-                thread.terminate()
-            return
+        time.sleep(0.01)
+        if time.time() >= timeout:
+            # Forcefully terminate any threads still running
+            for k in THREADS:
+                thread = get_thread(k)
+                if thread.isRunning():
+                    thread.terminate()
+            break
+
 
 
 def get_thread(k):

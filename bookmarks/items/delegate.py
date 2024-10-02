@@ -457,7 +457,7 @@ def draw_file_text_segments(it, font, metrics, offset, *args):
 
 
 def get_subdir_cache_key(index, rect):
-    """Returns the cache key used to store sub-folder rectangles.
+    """Returns the cache key used to store subfolder rectangles.
 
     Returns:
         str: The cache key.
@@ -467,7 +467,7 @@ def get_subdir_cache_key(index, rect):
 
 
 def get_subdir_bg_cache_key(index, rect, text_edge=None):
-    """Returns the cache key used to store sub-folder background rectangles.
+    """Returns the cache key used to store subfolder background rectangles.
 
     Returns:
         str: The cache key.
@@ -479,7 +479,7 @@ def get_subdir_bg_cache_key(index, rect, text_edge=None):
 
 
 def get_clickable_cache_key(index, rect):
-    """Returns the cache key used to store sub-folder background rectangles.
+    """Returns the cache key used to store subfolder background rectangles.
 
     Args:
         index (QModelIndex): Item index.
@@ -496,7 +496,7 @@ def get_clickable_cache_key(index, rect):
 
 
 def get_description_cache_key(index, rect, button):
-    """Returns the cache key used to store sub-folder background rectangles.
+    """Returns the cache key used to store subfolder background rectangles.
 
     Args:
         index (QModelIndex): Item index.
@@ -514,7 +514,7 @@ def get_description_cache_key(index, rect, button):
 
 
 def get_subdir_rectangles(option, index, rectangles, metrics):
-    """Returns the rectangles used to render sub-folder item labels.
+    """Returns the rectangles used to render subfolder item labels.
 
     """
     k = get_subdir_cache_key(index, option.rect)
@@ -564,7 +564,7 @@ def get_subdir_rectangles(option, index, rectangles, metrics):
 
 
 def subdir_text_it(pp):
-    """Yields text elements to be rendered as sub-folder item labels.
+    """Yields text elements to be rendered as subfolder item labels.
 
     """
     if len(pp) == 3:  # Bookmark items
@@ -939,14 +939,15 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         return common.delegate_description_rectangles[k]
 
-    def get_paint_arguments(self, painter, option, index, antialiasing=False):
+    def get_paint_arguments(self, painter, option, index, track_cursor=True, antialiasing=False):
         """A utility class for gathering all the arguments needed to paint
         the individual list elements.
 
         """
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=antialiasing)
-        painter.setRenderHint(QtGui.QPainter.TextAntialiasing, on=antialiasing)
-        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, on=antialiasing)
+        if antialiasing:
+            painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+            painter.setRenderHint(QtGui.QPainter.TextAntialiasing, True)
+            painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
 
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(QtCore.Qt.NoBrush)
@@ -967,7 +968,10 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             font, metrics = common.Font.BoldFont(common.Size.MediumText())
         painter.setFont(font)
 
-        cursor_position = self.parent().viewport().mapFromGlobal(common.cursor.pos())
+        if track_cursor:
+            cursor_position = self.parent().viewport().mapFromGlobal(common.cursor.pos())
+        else:
+            cursor_position = None
 
         args = (
             rectangles,
@@ -1012,10 +1016,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         font, metrics = common.Font.MediumFont(common.Size.SmallText())
 
-        filter_text = self.parent().model().filter_text()
-        filter_text = filter_text.lower().strip('\\/-_\'" ') if filter_text else ''
-
-        # Paint the background rectangle of the sub-folder
+        # Paint the background rectangle of the subfolder
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
         alt_modifier = modifiers & QtCore.Qt.AltModifier
         shift_modifier = modifiers & QtCore.Qt.ShiftModifier
@@ -1045,8 +1046,8 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             o = 0.6 if hover else 0.5
             color = common.Color.DarkBackground()
 
-            # Green the sub-folder is set as a text filter
-            if text.lower() in filter_text.lower():
+            # Green highlight for matching subfolders
+            if index.model().filter.has_string(text, positive_terms=True):
                 color = common.Color.Green()
 
             if rect.contains(cursor_position):
@@ -1197,12 +1198,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         label_bg_color = common.Color.Blue()
         label_text_color = common.Color.Text()
 
-        filter_text = self.parent().model().filter_text()
-        filter_text = filter_text.lower().strip('\\/-_\'" ') if filter_text else ''
-
-        filter_texts = re.split(r'\s', filter_text, flags=re.IGNORECASE)
-        filter_texts = {f.lower().strip('\\/-_\'" ') for f in filter_texts}
-
         for s in reversed(it):
             width = metrics.horizontalAdvance(s)
 
@@ -1223,7 +1218,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
                 painter.setBrush(label_bg_color)
 
-                if s.lower() in filter_texts:
+                if index.model().filter.has_string(s, positive_terms=True):
                     painter.setBrush(common.Color.Green())
                 if rect.contains(cursor_position):
                     painter.setBrush(common.Color.LightBackground())
@@ -1483,7 +1478,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             return
 
         rect = QtCore.QRect(rectangles[BackgroundRect])
-        if index.row() == (self.parent().model().rowCount() - 1):
+        if index.row() == (index.model().rowCount() - 1):
             rect.setHeight(rect.height() + common.Size.Separator())
 
         op = 0.5 if selected else 0.2
@@ -1604,7 +1599,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             return
 
         rect = QtCore.QRect(rectangles[BackgroundRect])
-        if index.row() == (self.parent().model().rowCount() - 1):
+        if index.row() == (index.model().rowCount() - 1):
             rect.setHeight(rect.height() + common.Size.Separator())
 
         color = common.Color.LightBackground()
@@ -1643,7 +1638,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             return
 
         rect = QtCore.QRect(rectangles[BackgroundRect])
-        if index.row() == (self.parent().model().rowCount() - 1):
+        if index.row() == (index.model().rowCount() - 1):
             rect.setHeight(rect.height() + common.Size.Separator())
 
         color = common.Color.LightBackground()
@@ -1680,7 +1675,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         if rectangles[InlineBackgroundRect].left() < rectangles[ThumbnailRect].right():
             return
 
-        if index.row() == (self.parent().model().rowCount() - 1):
+        if index.row() == (index.model().rowCount() - 1):
             rect = QtCore.QRect(rectangles[InlineBackgroundRect])
             rect.setHeight(rect.height() + common.Size.Separator())
         else:
@@ -2468,15 +2463,12 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         o = common.Size.Indicator()
         painter.setPen(QtCore.Qt.NoPen)
 
-        filter_text = self.parent().model().filter_text()
-        filter_text = filter_text.lower().strip('\\/-_\'" ') if filter_text else ''
-
         overlay_rect_left_edge = None
 
         for segment in text_segments.values():
             text, _color = segment
 
-            if text.lower() in filter_text.lower():
+            if index.model().filter.has_string(text, positive_terms=True):
                 font.setUnderline(True)
                 if hover or active or selected:
                     _color = common.Color.SelectedText()
@@ -2540,7 +2532,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
     @save_painter
     def paint_file_name(self, *args):
-        """Paints the clickable sub-folders and the filename of file items.
+        """Paints the clickable subfolders and the filename of file items.
 
         """
         (
@@ -2753,7 +2745,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
         """Returns the item's size hint.
 
         """
-        return self.parent().model().sourceModel().row_size
+        return index.model().sourceModel().row_size
 
 
 class AssetItemViewDelegate(ItemDelegate):
@@ -2799,7 +2791,7 @@ class AssetItemViewDelegate(ItemDelegate):
         """Returns the item's size hint.
 
         """
-        return self.parent().model().sourceModel().row_size
+        return index.model().sourceModel().row_size
 
 
 class FileItemViewDelegate(ItemDelegate):
@@ -2850,7 +2842,7 @@ class FileItemViewDelegate(ItemDelegate):
         """Returns the item's size hint.
 
         """
-        return self.parent().model().sourceModel().row_size
+        return index.model().sourceModel().row_size
 
 
 class FavouriteItemViewDelegate(FileItemViewDelegate):

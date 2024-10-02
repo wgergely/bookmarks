@@ -1,4 +1,5 @@
 import enum
+import json
 import os
 
 from PySide2 import QtCore, QtGui
@@ -6,6 +7,7 @@ from PySide2 import QtCore, QtGui
 from .lib import ServerAPI, JobStyle
 from .. import common, ui, log, images
 from ..links.lib import LinksAPI
+from ..templates import lib as templates_lib
 
 
 class NodeType(enum.IntEnum):
@@ -58,6 +60,9 @@ class Node:
             row (int): The row index.
 
         """
+        if len(self._children) - 1 < row:
+            return
+
         del self._children[row]
 
     def children(self):
@@ -119,6 +124,9 @@ class Node:
         """
 
         paths = common.bookmarks.keys()
+        if not paths:
+            return False
+
         if self.type == NodeType.BookmarkNode:
             if self.path() in paths:
                 return True
@@ -154,6 +162,10 @@ class Node:
     def children_fetched(self):
         return self._children_fetched
 
+    @children_fetched.setter
+    def children_fetched(self, value):
+        self._children_fetched = value
+
     @property
     def job_candidate(self):
         return self._job_candidate
@@ -161,10 +173,6 @@ class Node:
     @job_candidate.setter
     def job_candidate(self, value):
         self._job_candidate = value
-
-    @children_fetched.setter
-    def children_fetched(self, value):
-        self._children_fetched = value
 
     def path(self):
         if all([self._server, self._job, self._root]):
@@ -253,11 +261,10 @@ class ServerModel(QtCore.QAbstractItemModel):
         if isinstance(v, int):
             e = JobStyle(v)
         else:
-            e = JobStyle.NoSubdirectories
+            e = JobStyle.DefaultJobFolders
         self._job_style = int(e)
 
     def _connect_signals(self):
-        common.signals.serversChanged.connect(self.init_data)
         common.signals.bookmarksChanged.connect(self.init_data)
 
     def clear(self):
@@ -456,13 +463,16 @@ class ServerModel(QtCore.QAbstractItemModel):
                 for entry in os.scandir(path):
                     if not entry.is_dir():
                         continue
-                    if entry.name.startswith('.'):
+                    if entry.name[0] in {'.', '$'}:
+                        continue
+                    if entry.name in templates_lib.template_blacklist:
                         continue
                     if not os.access(entry.path, os.R_OK | os.W_OK):
                         log.error(f'No access to {entry.path}')
                         continue
                     p = entry.path.replace('\\', '/')
-                    rel_path = p[len(root_path) + 1:].strip('/')
+
+                    rel_path = p.replace(root_path, '').strip('/')
 
                     if depth == self._job_style:
                         yield rel_path
@@ -471,22 +481,24 @@ class ServerModel(QtCore.QAbstractItemModel):
                     yield from _it(entry.path, depth)
 
             current_job_names = [child.job for child in node.children()]
-            new_job_names = sorted([job_path for job_path in _it(root_path, -1)], key=str.lower)
+            new_job_names = sorted([job_path for job_path in _it(root_path, -1)], key=lambda s: s.lower())
             missing_job_names = set(new_job_names) - set(current_job_names)
 
             for job_path in missing_job_names:
+                if job_path in [f.job for f in node.children()]:
+                    continue
+
                 current_job_names.append(job_path)
-                current_job_names = sorted(current_job_names, key=str.lower)
+                current_job_names = sorted(current_job_names, key=lambda s: s.lower())
                 idx = current_job_names.index(job_path)
 
                 self.beginInsertRows(parent, idx, idx)
                 job_node = Node(server=node.server, job=job_path, parent=node)
                 node.insert_child(idx, job_node)
+                self.endInsertRows()
 
                 if os.path.exists(f'{node.server}/{job_path}/.links'):
                     job_node.job_candidate = True
-
-                self.endInsertRows()
 
         if node.type == NodeType.JobNode:  # fetch links
             if node.job_candidate:
@@ -497,7 +509,7 @@ class ServerModel(QtCore.QAbstractItemModel):
                 bookmarks = [v['root'] for v in common.bookmarks.values() if
                              v['server'] == node.server and v['job'] == node.job]
                 links += bookmarks
-                links = sorted(set(links), key=str.lower)
+                links = sorted(set(links), key=lambda s: s.lower())
 
                 if node.children():
                     self.beginRemoveRows(parent, 0, len(node.children()) - 1)
@@ -506,6 +518,8 @@ class ServerModel(QtCore.QAbstractItemModel):
 
                 self.beginInsertRows(parent, 0, len(links) - 1)
                 for link in links:
+                    if link in [f.root for f in node.children()]:
+                        continue
                     link_node = Node(server=node.server, job=node.job, root=link, parent=node)
                     link_node.exists()
                     node.append_child(link_node)
@@ -517,6 +531,60 @@ class ServerModel(QtCore.QAbstractItemModel):
         if not parent.isValid():
             return True
         return self.canFetchMore(parent)
+
+    def flags(self, index):
+        if not index.isValid():
+            return QtCore.Qt.NoItemFlags
+
+        node = index.internalPointer()
+        if not node:
+            return QtCore.Qt.NoItemFlags
+
+        if node.type == NodeType.ServerNode:
+            return super().flags(index)
+        if node.type == NodeType.JobNode:
+            return super().flags(index)
+        if node.type == NodeType.BookmarkNode:
+            return super().flags(index) | QtCore.Qt.ItemIsDragEnabled
+
+        return super().flags(index)
+
+    def supportedDropActions(self):
+        return QtCore.Qt.NoDropAction
+
+    def supportedDragActions(self):
+        return QtCore.Qt.CopyAction
+
+    def mimeTypes(self):
+        return ['text/plain']
+
+    def mimeData(self, indexes):
+        if not indexes:
+            return None
+        index = next((f for f in indexes), QtCore.QModelIndex())
+        if not index.isValid():
+            return None
+        node = index.internalPointer()
+        if not node:
+            return None
+
+        server = node.server
+        job = node.job
+        root = node.root
+
+        data = {
+            f'{server}/{job}/{root}': {
+                'server': server,
+                'job': job,
+                'root': root
+            }
+        }
+
+        json_data = json.dumps(data)
+
+        mime_data = QtCore.QMimeData()
+        mime_data.setData('text/plain', json_data.encode())
+        return mime_data
 
     def set_job_style(self, v):
         """Set the job style.
@@ -544,28 +612,33 @@ class ServerModel(QtCore.QAbstractItemModel):
 
     @QtCore.Slot()
     def init_data(self, *args, **kwargs):
-
         self.beginResetModel()
-
         self._root_node = Node(None)
-        servers = ServerAPI.get_servers()
+
+        servers = ServerAPI.get_servers(force=True)
+        self.beginInsertRows(QtCore.QModelIndex(), 0, len(servers) - 1)
         for server in servers:
+            if server in [f.server for f in self._root_node.children()]:
+                continue
             node = Node(server=server, parent=self._root_node)
             self._root_node.append_child(node)
-
+        self.endInsertRows()
         self.endResetModel()
 
     @QtCore.Slot(str)
     def add_server(self, server):
-        current_servers = ServerAPI.get_servers()
+        current_servers = ServerAPI.get_servers(force=True)
         current_servers = current_servers if current_servers else {}
         current_servers = list(current_servers.keys())
-        all_servers = sorted(current_servers + [server, ], key=str.lower)
+        all_servers = sorted(current_servers + [server, ], key=lambda s: s.lower())
 
         idx = all_servers.index(server)
 
-        ServerAPI.add_server(server)
+        if server in [f.server for f in self._root_node.children()]:
+            return
+
         self.beginInsertRows(QtCore.QModelIndex(), idx, idx)
+        ServerAPI.add_server(server)
         node = Node(server=server, parent=self._root_node)
         self._root_node.insert_child(idx, node)
         self.endInsertRows()
@@ -575,7 +648,7 @@ class ServerModel(QtCore.QAbstractItemModel):
         current_servers = ServerAPI.get_servers()
         current_servers = current_servers if current_servers else {}
         current_servers = list(current_servers.keys())
-        current_servers = sorted(current_servers, key=str.lower)
+        current_servers = sorted(current_servers, key=lambda s: s.lower())
 
         idx = current_servers.index(server)
 
@@ -584,3 +657,22 @@ class ServerModel(QtCore.QAbstractItemModel):
         self.beginRemoveRows(QtCore.QModelIndex(), idx, idx)
         self._root_node.remove_child(idx)
         self.endRemoveRows()
+
+    @QtCore.Slot()
+    def remove_servers(self):
+        servers = ServerAPI.get_servers()
+        for server in servers:
+            self.remove_server(server)
+
+    @QtCore.Slot()
+    def reset_children_fetched(self):
+        def _it(parent_index):
+            for i in range(self.rowCount(parent_index)):
+                child_index = self.index(i, 0, parent_index)
+                node = child_index.internalPointer()
+                if node.children_fetched:
+                    node.children_fetched = False
+                _it(child_index)
+
+        index = self.index(0, 0, QtCore.QModelIndex())
+        _it(index)

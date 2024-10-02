@@ -98,7 +98,7 @@ gallery_widget = None
 launcher_widget = None
 message_widget = None
 preference_editor_widget = None
-job_editor = None
+server_editor = None
 bookmark_property_editor = None
 asset_property_editor = None
 clipboard_editor = None
@@ -132,4 +132,5 @@ from .settings import *
 from .active import *
 from .setup import *
 from .signals import *
+from .filter import *
 from .ui import *

@@ -9,13 +9,13 @@ from ..templates.lib import TemplateItem, TemplateType
 
 
 class JobStyle(enum.IntEnum):
-    NoSubdirectories = 0  # no subdirectories
+    DefaultJobFolders = 0  # 0 subdirectories
     JobsHaveClient = 1  # 1 subdirectory
     JobsHaveClientAndDepartment = 2  # 2 subdirectories
 
 
 class ServerAPI:
-    server_settings_key = 'user/servers'
+    server_settings_key = 'servers/value'
     job_style_settings_key = 'servers/jobstyle'
     bookmark_settings_key = 'user/bookmarks'
 
@@ -37,14 +37,16 @@ class ServerAPI:
         if common.settings is None:
             raise ValueError('The user settings object is not initialized.')
 
+        path = path.replace('\\', '/')
+        if ':' in path and len(path) <= 4 and not path.endswith('/'):
+            raise ValueError('Windows drive letters must end with a trailing slash')
+
         if not cls.check_permissions(path):
             raise PermissionError(f'Access denied to {path}')
 
-        path = path.replace('\\', '/')
-
         values = common.settings.value(cls.server_settings_key)
         values = values if values else {}
-        values = {k.rstrip('/'): v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
+        values = {k: v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
 
         if path in values:
             raise ValueError('Server already exists in the list of user specified servers.')
@@ -82,8 +84,8 @@ class ServerAPI:
         if path not in values:
             raise ValueError('Server does not exist in the list of user specified servers.')
 
-        values = {k.rstrip('/'): v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
         del values[path]
+        values = {k: v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
 
         common.settings.setValue(cls.server_settings_key, values)
         common.servers = values
@@ -127,7 +129,7 @@ class ServerAPI:
 
         values = common.settings.value(cls.server_settings_key)
         values = values if values else {}
-        values = {k.rstrip('/'): v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
+        values = {k: v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
 
         common.servers = values
         return values.copy()
@@ -161,10 +163,12 @@ class ServerAPI:
             import string
 
             for drive_letter in string.ascii_uppercase:
-                drive = f'{drive_letter}:'
+                drive = f'{drive_letter}:/'
                 if os.path.exists(drive):
                     try:
                         unc_path = cls.drive_to_unc(drive)
+                        if ':' in unc_path:
+                            unc_path = f'{unc_path}/'
                         mapped_drives[drive] = unc_path
                     except:
                         log.error(f'Failed to convert drive letter {drive} to UNC path')
@@ -271,7 +275,7 @@ class ServerAPI:
         )
 
     @classmethod
-    def add_root_item_to_job(cls, server, job, root):
+    def add_link(cls, server, job, root):
         """Add a relative path to the given job.
 
         The `root` path segment is to be stored in a .links file in the root of the job folder.
@@ -307,7 +311,7 @@ class ServerAPI:
         return root_path
 
     @classmethod
-    def remove_root_item_from_job(cls, server, job, root):
+    def remove_link(cls, server, job, root):
         """Remove the given root item from the job.
 
         Args:
@@ -325,15 +329,11 @@ class ServerAPI:
         if common.settings is None:
             raise ValueError('The user settings object is not initialized.')
 
-        job_path = os.path.join(server, job)
+        job_path = f'{server}/{job}'
         if not os.path.exists(job_path):
             raise FileNotFoundError(f'Job path {job_path} does not exist')
 
-        root_path = os.path.join(job, root)
-        if not os.path.exists(root_path):
-            raise FileNotFoundError(f'Root path {root_path} does not exist')
-
-        job_path = job_path.replace('\\', '/')
+        root_path = f'{server}/{job}/{root}'
 
         api = LinksAPI(job_path)
         api.remove(root)
@@ -341,10 +341,10 @@ class ServerAPI:
         return root_path
 
     @classmethod
-    def clear_root_folders_from_saved_bookmarks(cls):
+    def clear_bookmarks(cls):
         """Clear all root folders from the user settings file.
 
-        This method will remove all root folder items from the user settings file.
+        This method removes all bookmarked job folders from the user settings file.
 
         """
         if common.settings is None:
@@ -355,7 +355,7 @@ class ServerAPI:
         common.signals.bookmarksChanged.emit()
 
     @classmethod
-    def add_root_folder_to_saved_bookmarks(cls, server, job, root):
+    def bookmark_job_folder(cls, server, job, root):
         """Add the given bookmark item and save it in the user settings file.
 
         Args:
@@ -375,18 +375,21 @@ class ServerAPI:
 
         k = common.bookmark_key(server, job, root)
         if k in common.bookmarks:
-            raise FileExistsError('Bookmark item already exists')
+            raise FileExistsError('Folder has already been bookmarked!')
 
-        common.bookmarks[k] = {
+        data = common.bookmarks.copy()
+
+        data[k] = {
             'server': server,
             'job': job,
             'root': root
         }
-        common.settings.value(cls.bookmark_settings_key, common.bookmarks)
+        common.bookmarks = data
+        common.settings.setValue(cls.bookmark_settings_key, data)
         common.signals.bookmarkAdded.emit(server, job, root)
 
     @classmethod
-    def remove_root_folder_from_saved_bookmarks(cls, server, job, root):
+    def unbookmark_job_folder(cls, server, job, root):
         """Remove the given bookmark from the user settings file.
 
         Removing a bookmark item will close and delete the item's database controller
@@ -411,6 +414,8 @@ class ServerAPI:
         if k not in common.bookmarks:
             raise FileNotFoundError('Bookmark item does not exist')
 
+        data = common.bookmarks.copy()
+
         # If the bookmark removed is currently active, reset the active
         if (
                 common.active('server') == server and
@@ -420,14 +425,13 @@ class ServerAPI:
             actions.set_active('server', None)
             actions.change_tab(common.BookmarkTab)
 
-        del common.bookmarks[k]
+        del data[k]
 
-        common.settings.value(cls.bookmark_settings_key, common.bookmarks)
+        common.settings.setValue(cls.bookmark_settings_key, data)
         common.signals.bookmarkRemoved.emit(server, job, root)
-        common.signals.bookmarksChanged.emit()
 
     @classmethod
-    def set_saved_bookmarks(cls, data):
+    def save_bookmarks(cls, data):
         """Set the saved bookmarks to the user settings file.
 
         Args:
@@ -444,7 +448,7 @@ class ServerAPI:
             if not all(k in v for k in ['server', 'job', 'root']):
                 raise ValueError('Invalid bookmark item')
 
-        common.settings.setValue(cls.bookmark_settings_key, data)
+        common.settings.setValue(cls.bookmark_settings_key, data.copy())
         common.bookmarks = data.copy()
         common.signals.bookmarksChanged.emit()
 

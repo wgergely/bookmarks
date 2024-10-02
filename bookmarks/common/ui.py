@@ -94,6 +94,7 @@ def _init_stylesheet():
                 raise KeyError(f'Key {key} already set!')
             kwargs[key] = round(enum() * i)
 
+    # Gui resource paths
     for entry in os.scandir(common.rsc('gui')):
         if not entry.name.endswith('png'):
             continue
@@ -101,7 +102,27 @@ def _init_stylesheet():
         if key in kwargs:
             raise KeyError(f'Key {key} already set!')
 
+        # Image path
         kwargs[key] = images.rsc_pixmap(key, None, None, get_path=True)
+
+    # Custom Image Data
+    pixmap = images.rsc_pixmap(
+        'server',
+        QtGui.QColor(0,0,0,255),
+        common.Size.RowHeight(3.0),
+        opacity=0.2
+    )
+    pixmap.save(f'{common.temp_path()}/ServerViewBackground.png')
+    kwargs[f'ServerViewBackground'] = f'{common.temp_path()}/ServerViewBackground.png'
+
+    pixmap = images.rsc_pixmap(
+        'bookmark',
+        QtGui.QColor(0,0,0,255),
+        common.Size.RowHeight(3.0),
+        opacity=0.2
+    )
+    pixmap.save(f'{common.temp_path()}/BookmarkItemView.png')
+    kwargs[f'BookmarkItemView'] = f'{common.temp_path()}/BookmarkItemView.png'
 
     # Tokens are defined as "<token>" in the stylesheet file
     for match in re.finditer(r'<(.*?)>', qss):

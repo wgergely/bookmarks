@@ -612,13 +612,12 @@ def reset_row_size():
 
 @common.error
 @common.debug
-def show_job_editor():
+def show_servers_editor():
     """Shows :class:`~bookmarks.editor.jobs.JobsEditor` widget.
 
     """
-    from .editor import jobs as editor
-    widget = editor.show()
-    return widget
+    from .server import view as editor
+    editor.show()
 
 
 @common.error
@@ -752,7 +751,7 @@ def add_item():
     """
     idx = common.current_tab()
     if idx == common.BookmarkTab:
-        show_job_editor()
+        show_servers_editor()
     elif idx == common.AssetTab:
         show_add_asset()
     elif idx == common.FileTab:

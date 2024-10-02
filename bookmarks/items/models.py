@@ -27,7 +27,6 @@ is implemented separately to run directly over the source data.
 
 """
 import functools
-import re
 import uuid
 import weakref
 
@@ -51,12 +50,6 @@ DEFAULT_ITEM_FLAGS = (
 
 #: A default container used to sort items by name
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
-
-# Filter expressions used by the filter proxy model
-re_negative = re.compile(r'--([^\"\'\[\]\*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
-re_quoted_negative = re.compile(r'--"(.*?)"', flags=re.IGNORECASE | re.MULTILINE)
-re_positive = re.compile(r'(--[^\"\'\[\]*\s]+)', flags=re.IGNORECASE | re.MULTILINE)
-re_quoted_positive = re.compile(r'(--".*?")', flags=re.IGNORECASE | re.MULTILINE)
 
 
 def initdata(func):
@@ -103,49 +96,6 @@ def initdata(func):
             )
 
     return func_wrapper
-
-
-@functools.lru_cache(maxsize=4194304)
-def filter_includes_row(filter_text, searchable):
-    """Checks if the filter string contains any double dashes (--) and if the filter
-    text is found in the searchable string.
-
-    If both true, the row will be hidden.
-
-    """
-    _filter_text = filter_text
-
-    for match in re_positive.finditer(filter_text):
-        _filter_text = re.sub(match.group(1), '', _filter_text)
-    for match in re_quoted_positive.finditer(filter_text):
-        _filter_text = re.sub(match.group(1), '', _filter_text)
-
-    for text in _filter_text.split():
-        text = text.strip('"')
-        if text not in searchable:
-            return False
-    return True
-
-
-@functools.lru_cache(maxsize=4194304)
-def filter_excludes_row(filter_text, searchable_text):
-    """Checks whether the given filter text matches the given searchable text.
-
-    Args:
-        filter_text (str): The filter text.
-        searchable_text (str): The searchable text.
-
-    Returns:
-        bool: True if the filter text matches the searchable text, False otherwise.
-
-    """
-    for match in re_negative.finditer(filter_text):
-        if match.group(1).lower() in searchable_text:
-            return True
-    for match in re_quoted_negative.finditer(filter_text):
-        if match.group(1).lower() in searchable_text:
-            return True
-    return False
 
 
 class ItemModel(QtCore.QAbstractTableModel):
@@ -554,7 +504,8 @@ class ItemModel(QtCore.QAbstractTableModel):
         h = self.default_row_size().height()
         val = h if val is None else val
         val = h if val < h else val
-        val = int(common.Size.Thumbnail(apply_scale=False)) if val >= int(common.Size.Thumbnail(apply_scale=False)) else val
+        val = int(common.Size.Thumbnail(apply_scale=False)) if val >= int(
+            common.Size.Thumbnail(apply_scale=False)) else val
         self.row_size.setHeight(int(val))
         self.rowHeightChanged.emit(self.row_size.height())
 
@@ -824,7 +775,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.queued_invalidate_timer.setSingleShot(True)
         self.queued_invalidate_timer.setInterval(100)
 
-        self._filter_text = None
+        self._filter = common.SyntaxFilter('')
         self._filter_flags = {
             common.MarkedAsActive: None,
             common.MarkedAsArchived: None,
@@ -850,6 +801,10 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         # Notify the outside world that the filter text has changed
         self.filterTextChanged.connect(common.signals.filterTextChanged)
+
+    @property
+    def filter(self):
+        return self._filter
 
     def verify(self):
         """Verify the filter model contents to make sure archived items
@@ -921,9 +876,11 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         model = self.sourceModel()
-        self._filter_text = model.get_filter_setting('filters/text')
-        if self._filter_text is None:
-            self._filter_text = ''
+
+        # Filter text
+        v = model.get_filter_setting('filters/text')
+        v = v if v is not None else ''
+        self._filter.set_filter_string(v)
 
         v = model.get_filter_setting('filters/active')
         self._filter_flags[common.MarkedAsActive] = v if v is not None else False
@@ -934,9 +891,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
     def filter_text(self):
         """Filters the list of items containing this path segment."""
-        if self._filter_text is None:
-            return ''
-        return self._filter_text
+        return self._filter.filter_string or ''
 
     @QtCore.Slot(str)
     def set_filter_text(self, v):
@@ -945,10 +900,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         v = v if v is not None else ''
-        v = str(v).strip()
 
         # Save the set text in the model
-        self._filter_text = v
+        self.filter.set_filter_string(v)
 
         # Save the text in the user settings file
         self.sourceModel().set_filter_setting('filters/text', v)
@@ -1014,55 +968,44 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         if not ref or not ref() or idx not in ref():
             return False
 
+        filter_text = self._filter.filter_string
+
+        # Apply text filter
+        if filter_text:
+            if not ref():
+                return False
+            description = ref()[idx][common.DescriptionRole]
+            description = description.strip().lower() if description else ''
+            for s in self._filter.syntax_markers:
+                description = description.replace(s, '')
+
+            if not ref():
+                return False
+
+            pp = ref()[idx][common.ParentPathRole]
+            root_path = '/'.join(pp[:-1]).strip('/')
+            if len(pp) > 4:  # file items
+                root_path = '/'.join(pp[4:])
+            elif len(pp) == 4:  # asset items
+                root_path = '/'.join(pp[:-1])
+            elif len(pp) == 3: # bookmark items
+                root_path = '/'.join(pp[:-2])
+
+            path = ref()[idx][common.PathRole]
+            rel_path = path.replace(root_path, '').strip('/')
+
+            search_str = f'{root_path} {path}'
+            raise NotImplementedError(search_str)
+            print(search_str)
+            return self._filter.match_string(path)
+
+        # Item flag filters
         flags = ref()[idx][common.FlagsRole]
         if not isinstance(flags, QtCore.Qt.ItemFlags):
             return False
         archived = flags & common.MarkedAsArchived
-        if not ref():
-            return False
         favourite = flags & common.MarkedAsFavourite
-        if not ref():
-            return False
         active = flags & common.MarkedAsActive
-        if not ref():
-            return False
-
-        filter_text = self.filter_text()
-        if filter_text:
-            filter_text = filter_text.strip().lower()
-            if not ref():
-                return False
-            d = ref()[idx][common.DescriptionRole]
-            d = d.strip().lower() if d else ''
-
-            if not ref():
-                return False
-            f = ref()[idx][common.FileDetailsRole]
-            f = f.strip().lower() if f else ''
-
-            if not ref():
-                return False
-
-            # Let's construct the string to be filtered. This will include
-            # the path, display name and label text
-            pp = ref()[idx][common.ParentPathRole]
-            if len(pp) > 4:  # files
-                p = '/'.join(pp[4:])
-            elif len(pp) == 4:  # assets
-                p = '/'.join(pp[3:])
-            else:  # bookmarks
-                p = '/'.join(pp[1:])
-
-            searchable = (
-                f'{ref()[idx][QtCore.Qt.DisplayRole].lower()}\n'
-                f'{p.strip().lower()}\n'
-                f'{d.strip().lower()}\n{f.strip().lower()}'
-            )
-
-            if not filter_includes_row(filter_text, searchable):
-                return False
-            if filter_excludes_row(filter_text, searchable):
-                return False
 
         if self.filter_flag(common.MarkedAsActive) and active:
             return True

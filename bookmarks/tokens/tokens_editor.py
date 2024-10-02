@@ -186,7 +186,7 @@ class FormatEditor(QtWidgets.QDialog):
 
 
 class SubfolderEditor(QtWidgets.QDialog):
-    """A popup editor used to edit the sub-folders of a task folder.
+    """A popup editor used to edit the subfolders of a task folder.
 
     """
 

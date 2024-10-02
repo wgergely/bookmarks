@@ -23,7 +23,6 @@ SECTIONS = {
         'file',
     ),
     'user': (
-        'user/servers',
         'user/bookmarks',
         'user/favourites',
     ),
@@ -42,6 +41,7 @@ SECTIONS = {
     ),
     'servers': (
         'servers/job_style',
+        'value'
     ),
     'filters': (
         'filters/active',
@@ -138,7 +138,7 @@ def init_settings():
     # Initialize the user settings instance
     common.settings = UserSettings()
 
-    v = common.settings.value('user/servers')
+    v = common.settings.value('servers/value')
     if not isinstance(v, dict):
         v = {}
     common.servers = v
@@ -237,7 +237,14 @@ class UserSettings(QtCore.QSettings):
             The value stored in settings or `None` if not found.
 
         """
-        v = super().value(key, devault=default)
+        try:
+            v = super().value(key, default)
+        except:
+            log.error(f'Could not get value for {key}: {self.status()}')
+            super().setValue(key, default)
+            super().setValue(f'{key}_type', default)
+            return default
+
         t = super().value(f'{key}_type')
         if v is None:
             return None
@@ -279,7 +286,7 @@ class UserSettings(QtCore.QSettings):
             common.signals.generateThumbnailsChanged.emit(v)
         if key == 'settings/paint_thumbnail_bg':
             common.signals.paintThumbnailBGChanged.emit(v)
-        if key == 'user/servers':
+        if key == 'servers/value':
             common.signals.serversChanged.emit()
 
         super().setValue(key, v)

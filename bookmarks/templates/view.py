@@ -493,7 +493,7 @@ class AddTemplateDialog(QtWidgets.QDialog):
             'Links are relative folder paths '
             f'stored in a <span style="color: {common.Color.Blue(qss=True)};">.links</span> file. '
             'They allow you to set asset paths for placeholder folders, '
-            'which is useful when an asset contains multiple task folders, for instance.',
+            'which is useful when an asset contains multiple task folders.',
             parent=grp
         )
 

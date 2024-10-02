@@ -1,7 +1,7 @@
 import collections
 import os
 
-from .. import common
+from .. import common, log
 
 ActivePathSegmentTypes = (
     'server',
@@ -38,7 +38,7 @@ def init_active(clear_all=True, load_settings=True, load_env=True, load_private=
             raise ValueError('User settings not initialized')
 
         common.settings.sync()
-        for k in _ActivePathSegmentTypes:
+        for k in ActivePathSegmentTypes:
             v = common.settings.value(f'active/{k}')
             v = v if isinstance(v, str) and v else None
             common.active_paths[common.SynchronizedActivePaths][k] = v
@@ -47,7 +47,7 @@ def init_active(clear_all=True, load_settings=True, load_env=True, load_private=
 
     if load_env:
         # Get the values from the environment
-        for k in _ActivePathSegmentTypes:
+        for k in ActivePathSegmentTypes:
             v = os.environ.get(f'Bookmarks_ACTIVE_{k.upper()}', None)
             common.active_paths[EnvActivePaths][k] = v
         verify_path(common.EnvActivePaths)
@@ -63,7 +63,7 @@ def init_active(clear_all=True, load_settings=True, load_env=True, load_private=
 
     if load_private:
         # Copy values from the synchronized paths to the private paths
-        for k in _ActivePathSegmentTypes:
+        for k in ActivePathSegmentTypes:
             common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronizedActivePaths][k]
         verify_path(PrivateActivePaths)
 
@@ -72,23 +72,23 @@ def verify_path(active_mode):
     """Verify the active path values and unset any item, that refers to an invalid path.
 
     Args:
-        active_mode (int): One of ``SynchronizedActivePaths`` or ``Pr.
+        active_mode (int): One of ``SynchronizedActivePaths`` or ``PrivateActivePaths``.
 
     """
-    p = ''
-    for k in _ActivePathSegmentTypes:
+    p = []
+    for k in ActivePathSegmentTypes:
         if common.active_paths[active_mode][k]:
-            p += common.active_paths[active_mode][k]
+            p.append(common.active_paths[active_mode][k])
 
         # Check if the path exists
-        if not os.path.exists(p):
+        _p = '/'.join(p)
+        if not os.path.exists(_p) or _p not in common.bookmarks:
             common.active_paths[active_mode][k] = None
 
             # Unset all items that depend on the current path segment
             if active_mode == common.SynchronizedActivePaths:
                 common.settings.setValue(f'active/{k}', None)
 
-        p += '/'
 
 
 def active(k, path=False, args=False, mode=None):

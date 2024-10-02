@@ -145,13 +145,10 @@ def exec_(print_info=True):
     """Initializes all required submodules and data and launches shows the app's main window.
 
     """
-    if print_info:
-        print(info())
-
     from . import common
-    common.initialize(common.StandaloneMode)
+    with common.initialize(common.StandaloneMode) as app:
+        if print_info:
+            print(info())
 
-    from . import standalone
-    standalone.show()
-
-    QtWidgets.QApplication.instance().exec_()
+        from . import standalone
+        standalone.show()

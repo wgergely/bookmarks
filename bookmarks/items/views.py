@@ -732,7 +732,10 @@ class BaseItemView(QtWidgets.QTableView):
         """
         if not index.isValid():
             return
-        if not hasattr(index.model(), 'sourceModel'):
+
+        # If a source model index has been passed here, map it to the
+        # proxy model index. This shouldn't be happening, but...
+        if hasattr(index.model(), 'mapFromSource'):
             index = self.model().mapFromSource(index)
         super().update(index)
 
@@ -1026,7 +1029,7 @@ class BaseItemView(QtWidgets.QTableView):
         if not index.isValid():
             return False
 
-        if hasattr(index.model(), 'sourceModel'):
+        if hasattr(index.model(), 'mapToSource'):
             source_index = self.model().mapToSource(index)
         else:
             source_index = index
@@ -1984,69 +1987,26 @@ class InlineIconView(BaseItemView):
             rect, text = item
             if not text:
                 continue
-
-            _text = text.lower().strip('\\/-_\'" ')
-
             if not rect.contains(cursor_position):
                 continue
 
-            filter_text = self.model().filter_text()
-            filter_text = filter_text if filter_text else ''
-
-            filter_texts = filter_text.split(' ') if filter_text else []
-            _filter_texts = [
-                ('--' + f.lower().strip('\\/-_\'" ') if f.startswith('--') else f.lower().strip('\\/-_\'" '))
-                for f in filter_texts
-            ]
-            filter_texts_ = [f.lower().strip('\\/-_\'" ') for f in filter_texts]
+            text = f'"{text}"'
 
             # Shift modifier toggles a text filter
             if shift_modifier:
-                # If the filter is empty we'll add a positive filter
-                if not filter_texts:
-                    if '#' not in _text:
-                        _text = f'"/{_text}"'
-                    self.model().set_filter_text(_text)
-                    self.repaint(self.rect())
-                    return
-
-                # If the clicked item is already in the filter, we'll remove it
-                for idx, filter_text_element in enumerate(_filter_texts):
-                    if _text in filter_text_element:
-                        del filter_texts[idx]
-                        self.model().set_filter_text(' '.join(filter_texts))
-                        self.repaint(self.rect())
-                        return
-                # If the filter has items we'll append
-                if '#' not in _text:
-                    _text = f'"/{_text}"'
-                self.model().set_filter_text(f'{filter_text} {_text}')
-
-                self.repaint(self.rect())
+                if self.model().filter.has_string(text, positive_terms=True):
+                    self.model().filter.remove_filter(text)
+                else:
+                    self.model().filter.add_filter(text)
+                self.model().set_filter_text(self.model().filter.filter_string)
+                self.update(index)
                 return
 
             # Alt or control modifiers toggle a negative filter
             if alt_modifier or control_modifier:
-                # If the filter is empty we'll add a negative filter
-                if not filter_texts:
-                    if '#' not in _text:
-                        _text = f'"/{_text}"'
-                    self.model().set_filter_text(f'--{_text}')
-                    self.repaint(self.rect())
-                    return
-
-                # If the clicked item is already in the filter, we'll remove it
-                for idx, filter_text_element in enumerate(filter_texts_):
-                    if _text in filter_text_element:
-                        del filter_texts[idx]
-
-                if '#' not in _text:
-                    _text = f'"/{_text}"'
-                filter_texts.append(f'--{_text}')
-
-                # add negative filter
-                self.model().set_filter_text(' '.join(filter_texts))
-                self.repaint(self.rect())
+                self.model().filter.remove_filter(text)
+                self.model().set_filter_text(self.model().filter.filter_string)
+                self.update(index)
                 return
 
     def mousePressEvent(self, event):

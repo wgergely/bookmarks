@@ -50,7 +50,7 @@ class CoreSignals(QtCore.QObject):
     serverRemoved = QtCore.Signal(str)
 
     #: Signal emitted when a job was added
-    jobAdded = QtCore.Signal(str, str) # server, job
+    jobAdded = QtCore.Signal(str, str) # root, job
 
     #: Signal emitted when a bookmark item was added
     bookmarksChanged = QtCore.Signal()

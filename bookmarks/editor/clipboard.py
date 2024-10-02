@@ -83,7 +83,7 @@ class CopyClipboardEditor(base.BasePropertyEditor):
             if k == 'id':
                 continue
 
-            user_settings_key = f'copy{db_table}_{k}'
+            user_settings_key = f'properties/copy{db_table}_{k}'
             self.user_settings_keys.append(user_settings_key)
 
             self.sections[0]['groups'][1][idx] = {
@@ -131,7 +131,7 @@ class CopyClipboardEditor(base.BasePropertyEditor):
             if k == 'id':
                 continue
 
-            user_settings_key = f'copy{self._db_table}_{k}'
+            user_settings_key = f'properties/copy{self._db_table}_{k}'
             editor = getattr(self, f'{user_settings_key}_editor')
             if not editor.isChecked():
                 continue

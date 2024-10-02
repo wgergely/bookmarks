@@ -105,7 +105,7 @@ def get_path_elements(p, k, name, path, source_path):
     ext = name.split('.')[-1]
 
     # Getting the file's relative root folder
-    # This data is used to display the clickable sub-folders relative
+    # This data is used to display the clickable subfolders relative
     # to the current task folder
     file_root = path[:path.rfind('/')][len(source_path) + 1:]
 
@@ -116,7 +116,7 @@ def get_path_elements(p, k, name, path, source_path):
         # Save the file's parent folder for the file system watcher
         _dir = source_path + '/' + file_root
         # To sort by folders correctly, we populate a fixed length
-        # list with the sub-folders and file names. Sorting is case-insensitive.
+        # list with the subfolders and file names. Sorting is case-insensitive.
         _file_root = file_root.lower().split('/')
         for idx in range(len(_file_root)):
             _idx = idx + 5
@@ -583,7 +583,7 @@ class FileItemModel(models.ItemModel):
         )
 
     def item_generator(self, path):
-        """Recursive iterator for retrieving files from all task sub-folders.
+        """Recursive iterator for retrieving files from all task subfolders.
 
         """
         try:

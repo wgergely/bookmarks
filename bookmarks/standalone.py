@@ -41,7 +41,7 @@ def init_tray():
 
 @QtCore.Slot()
 def show():
-    """Shows the main application window.
+    """Shows the main app window.
 
     """
     if common.init_mode != common.StandaloneMode or not isinstance(

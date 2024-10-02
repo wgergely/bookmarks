@@ -1,3 +1,6 @@
+import json
+import os
+
 from PySide2 import QtWidgets, QtCore
 
 from .lib import ServerAPI
@@ -45,7 +48,7 @@ class Node:
         return None
 
 
-class DictionaryViewerContextMenu(contextmenu.BaseContextMenu):
+class DictionaryPreviewContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
@@ -75,13 +78,19 @@ class DictionaryViewerContextMenu(contextmenu.BaseContextMenu):
         """Creates the Remove menu.
 
         """
-        if not self.index.isValid():
-            return
+        if self.index.isValid():
+            self.menu[contextmenu.key()] = {
+                'text': 'Remove Bookmark',
+                'icon': ui.get_icon('bookmark', color=common.Color.Red()),
+                'action': self.parent().remove_item,
+            }
+
+            self.separator()
 
         self.menu[contextmenu.key()] = {
-            'text': 'Remove selected item',
-            'icon': ui.get_icon('close', color=common.Color.Red()),
-            'action': self.parent().remove_item,
+            'text': 'Remove All Bookmarks',
+            'icon': ui.get_icon('bookmark', color=common.Color.Red()),
+            'action': self.parent().remove_all_items,
         }
 
     def expand_all_menu(self):
@@ -114,6 +123,7 @@ class DictionaryViewerContextMenu(contextmenu.BaseContextMenu):
             'action': self.parent().init_data,
         }
 
+
 class DictionaryModel(QtCore.QAbstractItemModel):
     #: Custom signal to emit data changes
     dataChangedSignal = QtCore.Signal(dict)
@@ -123,6 +133,14 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         self.root_node = Node()
         self.data_dict = data_dict
         self.init_data()
+
+        common.signals.bookmarkAdded.connect(self.add_item)
+
+    @QtCore.Slot(str, str, str)
+    def on_bookmark_added(self, server, job, root):
+        print(f'Bookmark added: {server}/{job}/{root}')
+
+        print(common.bookmarks)
 
     def init_data(self):
         self.beginResetModel()
@@ -151,6 +169,41 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         node = self.get_node(index)
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             return node.get_data(index.column())
+        if role == QtCore.Qt.DecorationRole:
+            if not index.column() == 0:
+                return None
+            if not node.parent == self.root_node:
+                return None
+
+            if not os.path.exists(node.data[0]):
+                return ui.get_icon('alert', color=common.Color.Red())
+            return ui.get_icon('bookmark', color=common.Color.Green())
+
+        if role == QtCore.Qt.FontRole:
+            if not index.column() == 0:
+                return None
+            if not node.parent == self.root_node:
+                return None
+
+            if not os.path.exists(node.data[0]):
+                font, metrics = common.Font.LightFont(common.Size.MediumText())
+                font.setStrikeOut(True)
+                font.setItalic(True)
+                return font
+            font, metrics = common.Font.LightFont(common.Size.MediumText())
+            return font
+
+        if role == QtCore.Qt.SizeHintRole:
+            if node.parent == self.root_node:
+                height = common.Size.RowHeight()
+            else:
+                height = common.Size.RowHeight(0.66)
+            font, metrics = common.Font.MediumFont(common.Size.MediumText())
+
+            return QtCore.QSize(
+                metrics.width(index.data(QtCore.Qt.DisplayRole)) + common.Size.Margin(),
+                height,
+            )
         return None
 
     def headerData(self, section, orientation, role):
@@ -182,6 +235,9 @@ class DictionaryModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
         child_node = parent_node.child(row)
         return self.createIndex(row, column, child_node)
+
+    def root_index(self):
+        return self.createIndex(0, 0, self.root_node)
 
     def get_node(self, index):
         if index.isValid():
@@ -271,8 +327,39 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         self.dataChangedSignal.emit(self.data_dict.copy())
         return True
 
+    def supportedDropActions(self):
+        return QtCore.Qt.MoveAction | QtCore.Qt.CopyAction
 
-class DictionaryViewer(QtWidgets.QWidget):
+    def canDropMimeData(self, data, action, row, column, parent):
+        if action != QtCore.Qt.CopyAction:
+            return False
+        if not data.hasFormat('text/plain'):
+            return False
+        return True
+
+    def dropMimeData(self, data, action, row, column, parent):
+        if not self.canDropMimeData(data, action, row, column, parent):
+            return False
+        if not data.hasText():
+            return False
+        text = data.text()
+
+        try:
+            data = json.loads(text)
+            for value in data.values():
+                if 'server' not in value or 'job' not in value or 'root' not in value:
+                    return False
+                if not self.add_item(value['server'], value['job'], value['root']):
+                    return False
+        except json.JSONDecodeError:
+            return False
+
+        return True
+
+
+class DictionaryPreview(QtWidgets.QWidget):
+    selectionChanged = QtCore.Signal(str, str, str)
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.data_dict = common.bookmarks.copy()
@@ -285,13 +372,15 @@ class DictionaryViewer(QtWidgets.QWidget):
         # Set up the layout
         self._create_ui()
         self._connect_signals()
+        self.init_data()
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = ui.PaintedLabel(
-            'My Current Bookmarks',
+            'Bookmarked Job Folders',
             color=common.Color.Text(),
             size=common.Size.LargeText(),
             font=common.Font.BlackFont,
@@ -300,6 +389,13 @@ class DictionaryViewer(QtWidgets.QWidget):
 
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
+        self.tree_view.setObjectName('dictionary_preview')
+
+        self.tree_view.setAcceptDrops(True)
+        self.tree_view.viewport().setAcceptDrops(True)
+        self.tree_view.dragEnterEvent = self.dragEnterEvent
+        self.tree_view.dragMoveEvent = self.dragMoveEvent
+
         self.tree_view.setModel(DictionaryModel(self.data_dict, parent=self.tree_view))
         self.tree_view.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
@@ -308,10 +404,55 @@ class DictionaryViewer(QtWidgets.QWidget):
         self.layout().addWidget(self.tree_view, 1)
 
     def _connect_signals(self):
+        common.signals.bookmarksChanged.connect(self.init_data)
+
         self.model().dataChangedSignal.connect(self.on_data_changed)
 
-        common.signals.bookmarksChanged.connect(self.init_data)
-        common.signals.bookmarkAdded.connect(self.init_data)
+        self.model().modelReset.connect(self.set_spanned)
+        self.model().rowsInserted.connect(self.set_spanned)
+        self.model().rowsRemoved.connect(self.set_spanned)
+
+        self.view().selectionModel().selectionChanged.connect(self.emit_selection_changed)
+        self.view().selectionModel().currentChanged.connect(self.emit_selection_changed)
+
+    def dragEnterEvent(self, event):
+        event.accept()
+
+    def dragMoveEvent(self, event):
+        event.accept()
+
+    def contextMenuEvent(self, event):
+        """Context menu event.
+
+        """
+        index = next(iter(self.tree_view.selectedIndexes()), QtCore.QModelIndex())
+        persistent_index = QtCore.QPersistentModelIndex(index)
+
+        menu = DictionaryPreviewContextMenu(persistent_index, parent=self)
+        pos = event.pos()
+        pos = self.mapToGlobal(pos)
+        menu.move(pos)
+        menu.exec_()
+
+    def view(self):
+        return self.tree_view
+
+    def model(self):
+        return self.tree_view.model()
+
+    @QtCore.Slot()
+    def emit_selection_changed(self):
+        if not self.view().selectionModel().hasSelection():
+            return
+
+        index = next(iter(self.view().selectionModel().selectedIndexes()), QtCore.QModelIndex())
+        if not index.isValid():
+            return
+
+        node = self.model().get_node(index)
+        if node.parent == self.model().root_node:
+            v = common.bookmarks[node.data[0]]
+            self.selectionChanged.emit(v['server'], v['job'], v['root'])
 
     @QtCore.Slot(str)
     def bookmark_node_changed(self, path):
@@ -326,24 +467,6 @@ class DictionaryViewer(QtWidgets.QWidget):
                 self.tree_view.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
                 self.tree_view.selectionModel().setCurrentIndex(index, QtCore.QItemSelectionModel.Select)
                 return
-
-
-
-    def contextMenuEvent(self, event):
-        """Context menu event.
-
-        """
-        index = next(iter(self.tree_view.selectedIndexes()), QtCore.QModelIndex())
-        persistent_index = QtCore.QPersistentModelIndex(index)
-
-        menu = DictionaryViewerContextMenu(persistent_index, parent=self)
-        pos = event.pos()
-        pos = self.mapToGlobal(pos)
-        menu.move(pos)
-        menu.exec_()
-
-    def model(self):
-        return self.tree_view.model()
 
     @common.error
     @common.debug
@@ -374,16 +497,23 @@ class DictionaryViewer(QtWidgets.QWidget):
         row = index.row()
         self.model().removeRows(row, 1)
 
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def remove_all_items(self):
+        self.model().removeRows(0, self.model().rowCount(self.model().root_index()))
+
     def init_data(self):
         self.model().init_data()
+        self.set_spanned()
+
+    def set_spanned(self):
+        for i in range(self.model().rowCount(self.model().root_index())):
+            self.tree_view.setFirstColumnSpanned(i, self.model().root_index(), True)
 
     @QtCore.Slot(dict)
     def on_data_changed(self, data):
-        print('!!')
-        ServerAPI.set_saved_bookmarks(data)
-
-    def view(self):
-        return self.tree_view
+        ServerAPI.save_bookmarks(data)
 
     def sizeHint(self):
         return QtCore.QSize(

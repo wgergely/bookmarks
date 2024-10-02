@@ -328,7 +328,7 @@ QTreeView::branch:has-children {
     border-image: none;
     background: <Transparent>;
     color: <Text>;
-    border-bottom: <Separator@1.0>px solid <Opaque>;
+    border-bottom: <Separator@1.0>px solid <Transparent>;
 }
 
 QTreeWidget::branch:hover,
@@ -361,6 +361,12 @@ QTreeWidget::branch:open:has-children:has-siblings,
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings {
     image: url("<branch_open>");
+}
+
+QTreeWidget::item:open,
+QTreeView::item {
+    border: <Separator@1.0>px solid <Opaque>;
+    border-radius: <Indicator@1.0>px;
 }
 
 TableWidget {
@@ -538,10 +544,38 @@ QTabWidget > QFrame {
     padding: <Indicator@1.0>px;
     margin: 0;
 }
+
 QTabBar {
     font-family: "<BoldFont>";
     font-size: <MediumText@1.1>px;
 }
+
+QToolBar {
+    font-family: "<MediumFont>";
+    font-size: <MediumText@1.0>px;
+    background-color: <DarkBackground>;
+    border: <Separator@1.0>px solid <DarkBackground>;
+    border-radius: <Indicator@1.5>px;
+    padding: <Indicator@1.0>px;
+
+    margin: 0;
+}
+QToolBar::separator {
+    margin: 0 <Indicator@8.0>px;
+    padding: 0 <Indicator@8.0>px;
+}
+QToolBar QToolButton {
+    color: <Text>;
+    text-align: center;
+    background-color: <Transparent>;
+    border-radius: <Indicator@1.5>px;
+}
+QToolBar QToolButton::menu-button,
+QToolBar QToolButton::menu-indicator
+{
+    image: none;
+}
+
 
 QSplitter::handle {
     background-color: <Transparent>;
@@ -830,3 +864,21 @@ BaseFilterButton QAbstractItemView::item:hover {
     color: <SelectedText>;
     background-color: <LightBackground>;
 }
+
+
+ServerView {
+    background-image: url(<ServerViewBackground>);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+QTreeView#dictionary_preview {
+    background-image: url(<BookmarkItemView>);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+DictionaryPreview,
+QTreeView#dictionary_preview {
+    background-color: <VeryDarkBackground>;
+}
+

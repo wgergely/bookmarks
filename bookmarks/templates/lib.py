@@ -11,12 +11,11 @@ import bookmarks_openimageio
 from PySide2 import QtGui, QtCore
 
 from .error import *
-from .. import common
+from .. import common, tokens
 from .. import database
 from .. import images
 from .. import log
 from ..links.lib import LinksAPI
-from ..tokens import tokens
 
 
 class TemplateType(Enum):
@@ -96,6 +95,7 @@ class TemplateItem(object):
     )
 
     default_template_name = '!Default Template!'
+    empty_template_name = '!Empty Template!'
 
     #: Default compression method
     compression = zipfile.ZIP_STORED
@@ -109,7 +109,7 @@ class TemplateItem(object):
     def __repr__(self):
         return f'<TemplateItem: {self._metadata["name"]}>'
 
-    def __init__(self, path=None, data=None):
+    def __init__(self, path=None, data=None, empty=False):
         if all([path, data]):
             raise ValueError('Cannot provide both path and data')
 
@@ -125,9 +125,13 @@ class TemplateItem(object):
         self._qimage = None
         self._size = 0
 
-        if not any([path, data]):
+        if not empty and not any([path, data]):
             self._type = TemplateType.DatabaseTemplate
             self.new_template_from_tokens()
+            return
+        if empty:
+            self._type = TemplateType.DatabaseTemplate
+            self.new_empty_template()
             return
 
         if path and not data:
@@ -976,6 +980,31 @@ class TemplateItem(object):
         zp.seek(0)
         self._template = zp.getvalue()
 
+    def new_empty_template(self):
+        """Create a default template based on the current token config.
+
+        Returns:
+            str or bytes: Path to the template file or binary data.
+
+        """
+
+        self.clear_metadata()
+        self._metadata['name'] = self.empty_template_name
+        self._metadata['description'] = 'An empty template without any files or folders.'
+        self._metadata['author'] = common.get_username()
+        self._metadata['date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        p = images.rsc_pixmap('icon_bw_sm', None, None, get_path=True)
+        self.set_thumbnail(p)
+
+        # Populate template with the default token config
+        zp = io.BytesIO()
+        with zipfile.ZipFile(zp, 'w', compression=self.compression) as zf:
+            pass
+
+        zp.seek(0)
+        self._template = zp.getvalue()
+
     @classmethod
     def get_saved_templates(cls, _type):
         """Yields :class:`TemplateItem` instances saved in the database or on disk."""
@@ -1020,8 +1049,9 @@ class TemplateItem(object):
                 raise RuntimeError('A root item must be active to check the database templates')
 
             db = database.get(*args)
-            return common.get_hash(TemplateItem.default_template_name) in db.get_column('id',
-                                                                                        database.TemplateDataTable)
+            return (
+                    common.get_hash(TemplateItem.default_template_name) in
+                    db.get_column('id', database.TemplateDataTable))
 
         if _type == TemplateType.UserTemplate:
             if not os.path.exists(TemplateItem.default_user_folder):

@@ -1231,7 +1231,7 @@ class LinksTextEditor(QtWidgets.QWidget):
         self.layout().addWidget(self._save_button)
 
     def _connect_signals(self):
-        self._save_button.clicked.connect(self.emit_link_file_changed)
+        self._save_button.clicked.connect(self.save_links)
 
     @QtCore.Slot(str)
     def link_changed(self, path):
@@ -1269,15 +1269,18 @@ class LinksTextEditor(QtWidgets.QWidget):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def emit_link_file_changed(self):
+    def save_links(self):
         if not self._current_path:
-            return
+            raise ValueError('No current path set.')
 
         v = self._text_editor.toPlainText()
         links = sorted(
-            {f.replace('\\', '/').strip(' .-_/') for f in v.split('\n') if f.rstrip()},
+            {f.replace('\\', '/').strip('/') for f in v.split('\n') if f.strip()},
             key=lambda s: s.lower()
         )
+        links = links if links else []
+
+        print(links)
 
         api = lib.LinksAPI(self._current_path)
         api.clear()

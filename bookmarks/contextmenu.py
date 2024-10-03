@@ -419,8 +419,6 @@ class BaseContextMenu(QtWidgets.QMenu):
         else:
             p = self.index.data(common.PathRole)
 
-        # if not p:
-
         path = common.get_sequence_start_path(p)
 
         self.menu[key()] = {
@@ -1767,3 +1765,14 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'action': functools.partial(_run, v['module']),
                 'icon': icon,
             }
+
+    def edit_links_menu(self):
+        """Edit links menu actions.
+
+        """
+
+        self.menu[key()] = {
+            'text': 'Edit Asset Links...',
+            'action': actions.edit_asset_links,
+            'icon': ui.get_icon('link', color=common.Color.Blue()),
+        }

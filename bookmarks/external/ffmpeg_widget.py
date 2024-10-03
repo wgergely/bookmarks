@@ -10,14 +10,13 @@ import bookmarks_openimageio
 from PySide2 import QtCore, QtWidgets
 
 from . import ffmpeg
-from .. import common
+from .. import common, tokens
 from .. import database
 from .. import images
 from .. import log
 from .. import ui
 from ..editor import base
 from ..external import rv
-from ..tokens import tokens
 
 
 def close():

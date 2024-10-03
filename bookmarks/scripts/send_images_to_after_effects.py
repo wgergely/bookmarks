@@ -11,10 +11,9 @@ import re
 
 from PySide2 import QtCore
 
-from .. import actions
+from .. import actions, tokens
 from .. import common
 from .. import database
-from ..tokens import tokens
 
 #: The render name template used by Maya
 RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<RenderPass>_<Version>'

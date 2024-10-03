@@ -24,13 +24,12 @@ import os
 from PySide2 import QtWidgets, QtCore
 
 from . import widgets
-from .. import actions
+from .. import actions, tokens
 from .. import common
 from .. import database
 from .. import log
 from .. import ui
 from ..editor import base
-from ..tokens import tokens
 
 
 def close():

@@ -12,10 +12,9 @@ except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
 from . import base as mayabase
-from .. import common
+from .. import common, tokens
 from .. import log
 from ..editor import base
-from ..tokens import tokens
 
 
 def close():

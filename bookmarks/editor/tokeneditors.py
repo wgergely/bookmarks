@@ -5,8 +5,7 @@ import functools
 
 from PySide2 import QtWidgets, QtCore
 
-from bookmarks.tokens import tokens
-from bookmarks import common
+from bookmarks import common, tokens
 from bookmarks import log
 from bookmarks import ui
 from bookmarks.editor import base
@@ -405,6 +404,12 @@ class MovableItemsEditor(BaseEditor):
             }
 
         self.tokens.set_data(data)
+
+class TasksConfigEditor(MovableItemsEditor):
+    """Editor for the TasksConfig section."""
+
+    def __init__(self, parent=None):
+        super().__init__(tokens.TasksConfig, parent=parent)
 
 class FileNameConfigEditor(MovableItemsEditor):
     """Editor for the FileNameConfig section."""

@@ -2,11 +2,7 @@
 values.
 
 """
-import collections
 import json
-import socket
-import string
-from datetime import datetime
 
 try:
     import OpenImageIO
@@ -17,9 +13,9 @@ except ImportError:
 
 from PySide2 import QtCore
 
-from .. import common
-from .. import database
-from .. import log
+from bookmarks import common
+from bookmarks import database
+from bookmarks import log
 
 FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'
@@ -333,7 +329,7 @@ DEFAULT_TOKEN_CONFIG = {
             'description': 'Design task',
             'icon': 'task_design',
         },
-        common.idx(reset=True, start=0): {
+        common.idx(): {
             'name': 'Modeling',
             'value': 'model',
             'description': 'Modeling task',
@@ -705,8 +701,12 @@ class TokenConfig(QtCore.QObject):
 
         extensions = []
         for v in data[FileFormatConfig].values():
+            if v['flag'] == 0:
+                v['flag'] = AllFormat
+
             if not (v['flag'] & flag):
                 continue
+
             if not isinstance(v['value'], str):
                 continue
             extensions += [f.strip() for f in v['value'].split(',')]

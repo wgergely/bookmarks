@@ -29,7 +29,6 @@ from .. import images
 from .. import log
 from .. import ui
 
-
 path_validator = QtGui.QRegExpValidator()
 path_validator.setRegExp(QtCore.QRegExp(r'[^\\<>"|?*]+'))
 float_validator = QtGui.QRegExpValidator()
@@ -326,7 +325,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
         common.signals.assetItemActivated.connect(self.close)
         common.signals.fileItemActivated.connect(self.close)
         common.signals.taskFolderChanged.connect(self.close)
-        common.signals.databaseValueUpdated.connect(self.close)
 
     def _connect_data_changed_signals(self, key, _type, editor):
         """Utility method for connecting an editor's change signal to `data_changed`.

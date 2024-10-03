@@ -23,6 +23,7 @@ database. See :mod:`bookmarks.database` for more details.
 import copy
 import functools
 import os
+import re
 import weakref
 
 from PySide2 import QtCore, QtWidgets
@@ -30,7 +31,7 @@ from PySide2 import QtCore, QtWidgets
 from . import delegate
 from . import models
 from . import views
-from .. import actions
+from .. import actions, tokens
 from .. import common
 from .. import contextmenu
 from .. import database
@@ -38,7 +39,6 @@ from .. import log
 from .. import progress
 from ..links.lib import LinksAPI
 from ..threads import threads
-from ..tokens import tokens
 
 
 class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -54,6 +54,8 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
         self.separator()
         self.show_add_asset_menu()
         self.add_file_to_asset_menu()
+        self.separator()
+        self.edit_links_menu()
         self.separator()
         self.launcher_menu()
         self.separator()
@@ -183,7 +185,6 @@ class AssetItemModel(models.ItemModel):
             'prefix',
             database.BookmarkTable
         )
-        config = tokens.get(*p)
 
         nth = 17
         c = 0
@@ -200,7 +201,12 @@ class AssetItemModel(models.ItemModel):
                 )
                 QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
-            filename = filepath[len(source) + 1:]
+            if '..' in filepath:
+                _filepath = re.sub(r'\.\.[/]?', '', filepath).rstrip('/')
+                dir_name = os.path.abspath(filepath).replace('\\', '/').split('/')[-1]
+                filename = f'{_filepath[len(source) + 1:]}/{dir_name}'
+            else:
+                filename = filepath[len(source) + 1:]
             flags = models.DEFAULT_ITEM_FLAGS
 
             if filepath in common.favourites:
@@ -337,10 +343,10 @@ class AssetItemModel(models.ItemModel):
 
             # Check if the root item has links
             api = LinksAPI(asset_root)
-            links = api.get(force=False)
+            links = api.get(force=True)
 
-            for rel_path in links:  # using cached values here
-                abs_path = api.to_absolute(rel_path)
+            for rel_path in links:
+                abs_path = f'{asset_root}/{rel_path}'.replace('\\', '/')
                 if not os.path.exists(abs_path):
                     continue
                 yield abs_path
@@ -486,7 +492,7 @@ class AssetItemView(views.ThreadedItemView):
         """Action to execute when the add item icon is clicked."""
         self.activate(index)
 
-        from ..tokens import tokens
+        from .. import tokens
         d = tokens.get_folder(tokens.SceneFolder)
         if QtCore.QFileInfo(f'{common.active("asset", path=True)}/{d}').exists():
             common.signals.taskFolderChanged.emit(d)

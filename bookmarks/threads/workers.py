@@ -10,12 +10,11 @@ import weakref
 import bookmarks_openimageio
 from PySide2 import QtCore, QtWidgets
 
-from .. import common
+from .. import common, tokens
 from .. import database
 from .. import images
 from .. import log
 from ..shotgun import shotgun
-from ..tokens import tokens
 
 
 def _widget(q):
@@ -650,7 +649,11 @@ class InfoWorker(BaseWorker):
                 valid_extensions = config.get_extensions(tokens.AllFormat)
 
             def _file_it(path):
-                for entry in os.scandir(path):
+                try:
+                    _it = os.scandir(path)
+                except:
+                    return
+                for entry in _it:
                     if entry.is_symlink():
                         continue
                     if entry.name.startswith('.'):

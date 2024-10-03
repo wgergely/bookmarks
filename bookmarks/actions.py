@@ -13,7 +13,7 @@ import zipfile
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from . import common
+from . import common, tokens
 from . import database
 from . import images
 from . import log
@@ -315,7 +315,6 @@ def apply_default_to_scenes_folder(index):
         return
 
     # Get the current scene folder name from the token configuration.
-    from .tokens import tokens
     set_active('task', tokens.get_folder(tokens.SceneFolder))
 
 
@@ -617,9 +616,6 @@ def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    # from .templates import view as editor
-    # editor.show()
-
     from .editor import addjobeditor as editor
     editor.show()
 
@@ -696,6 +692,18 @@ def edit_asset(asset=None):
     from .editor import asset_properties as editor
     widget = editor.show(server, job, root, asset=asset)
     return widget
+
+
+@common.error
+@common.debug
+def edit_asset_links():
+    """Shows the editor used to edit asset links and template presets."""
+    if not common.active('root'):
+        raise RuntimeError('No active root set.')
+
+    from .templates import view as editor
+    editor.show()
+
 
 
 @common.error

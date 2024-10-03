@@ -61,13 +61,12 @@ from PySide2 import QtCore, QtWidgets
 from . import delegate
 from . import models
 from . import views
-from .. import actions
+from .. import actions, tokens
 from .. import common
 from .. import contextmenu
 from .. import database
 from ..server.lib import ServerAPI
 from ..threads import threads
-from ..tokens import tokens
 
 
 class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):

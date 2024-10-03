@@ -28,6 +28,7 @@ def show():
         common.templates_editor = TemplatesMainWidget()
     common.templates_editor.open()
 
+
 def close():
     if common.templates_editor is None:
         return
@@ -38,6 +39,7 @@ def close():
         common.templates_editor = None
     except Exception as e:
         log.error(e)
+
 
 class TemplatesContextMenu(contextmenu.BaseContextMenu):
 
@@ -938,7 +940,10 @@ class TemplatesViewDelegate(QtWidgets.QStyledItemDelegate):
         if not node.is_leaf():
             return
 
-        is_default = TemplateItem.default_template_name in index.data(QtCore.Qt.DisplayRole)
+        is_default = (
+                TemplateItem.default_template_name in index.data(QtCore.Qt.DisplayRole) or
+                TemplateItem.empty_template_name in index.data(QtCore.Qt.DisplayRole)
+        )
 
         # Paint left gradient
         rect = QtCore.QRect(option.rect)
@@ -1437,7 +1442,7 @@ class TemplatesView(QtWidgets.QTreeView):
             if not node.is_leaf():
                 continue
 
-            if node.api['name'] == node.api.default_template_name:
+            if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
                 if common.show_message(
                         'Default Template Exists',
                         body='The default template already exists. Do you want to update/overwrite it?',
@@ -1446,9 +1451,14 @@ class TemplatesView(QtWidgets.QTreeView):
                 ) == QtWidgets.QDialog.Rejected:
                     return
 
-        item = TemplateItem()
-        item.type = _type
-        item.save(force=True)
+                item = TemplateItem()
+                item.type = _type
+                item.save(force=True)
+
+                item = TemplateItem(empty=True)
+                item.type = _type
+                item.save(force=True)
+                break
 
         self.init_data()
 
@@ -1649,7 +1659,7 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == node.api.default_template_name:
+        if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
             raise ValueError('Cannot add link preset to the default template.')
 
         try:
@@ -1679,7 +1689,7 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == node.api.default_template_name:
+        if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
             raise ValueError('Cannot remove link preset from the default template.')
 
         if common.show_message(
@@ -1726,7 +1736,7 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == node.api.default_template_name:
+        if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
             raise ValueError('Cannot rename the default template.')
 
         dialog = RenameTemplateDialog(node.api['name'], parent=self)
@@ -1854,6 +1864,10 @@ class TemplatesMainWidget(QtWidgets.QDialog):
         # Let's make sure the default database template is created automatically
         if not TemplateItem.is_default_template_created(_type=TemplateType.DatabaseTemplate):
             item = TemplateItem()
+            item.type = TemplateType.DatabaseTemplate
+            item.save(force=True)
+
+            item = TemplateItem(empty=True)
             item.type = TemplateType.DatabaseTemplate
             item.save(force=True)
 

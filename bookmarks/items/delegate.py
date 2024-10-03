@@ -720,6 +720,11 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         self._max = 0
         self._gradient_pixmap = self._create_gradient_pixmap()
 
+    def switcher_visible(self):
+        if self.parent() and hasattr(self.parent(), 'switcher_visible') and self.parent().switcher_visible:
+            return True
+        return False
+
     def _get_largest_screen_width(self):
         # Get all available screens
         screens = QtWidgets.QApplication.screens()
@@ -2717,6 +2722,10 @@ class BookmarkItemViewDelegate(ItemDelegate):
         item.
 
         """
+        if self.switcher_visible():
+            painter.fillRect(option.rect, common.Color.VeryDarkBackground())
+            return
+
         if index.column() == 0:
             args = self.get_paint_arguments(painter, option, index)
             self.paint_background(*args)
@@ -2761,6 +2770,10 @@ class AssetItemViewDelegate(ItemDelegate):
         item.
 
         """
+        if self.switcher_visible():
+            painter.fillRect(option.rect, common.Color.VeryDarkBackground())
+            return
+
         if index.column() == 0:
             if index.data(QtCore.Qt.DisplayRole) is None:
                 return  # The index might still be populated...
@@ -2802,14 +2815,15 @@ class FileItemViewDelegate(ItemDelegate):
     #: The item's default thumbnail image
     fallback_thumb = 'file_item'
 
-    def __init__(self, parent=None):
-        super(FileItemViewDelegate, self).__init__(parent=parent)
-
     def paint(self, painter, option, index):
         """Paints a :class:`bookmarks.items.file_items.FileItemView`
         item.
 
         """
+        if self.switcher_visible():
+            painter.fillRect(option.rect, common.Color.VeryDarkBackground())
+            return
+
         if index.column() == 0:
             args = self.get_paint_arguments(painter, option, index)
             if not index.data(QtCore.Qt.DisplayRole):

@@ -47,12 +47,11 @@ from PySide2 import QtWidgets, QtCore
 from . import delegate
 from . import models
 from . import views
-from .. import actions
+from .. import actions, tokens
 from .. import common
 from .. import contextmenu
 from .. import log
 from ..threads import threads
-from ..tokens import tokens
 
 active_keys = {
     'server',
@@ -291,14 +290,6 @@ class FileItemModel(models.ItemModel):
         token filters exclude.
 
         """
-        # For good measure - let's initialize the active settings from disk
-        common.init_active(
-            load_settings=True,
-            clear_all=False,
-            load_env=False,
-            load_private=False,
-        )
-
         p = self.source_path()
         k = self.task()
         t = common.FileItem
@@ -344,12 +335,12 @@ class FileItemModel(models.ItemModel):
 
             filename = entry.name
 
-            # Skip items without file extension
-            if '.' not in filename:
-                continue
-
             # Skipping common hidden files
             if filename[0] == '.':
+                continue
+
+            # Skip items without file extension
+            if '.' not in filename:
                 continue
 
             if 'thumbs.db' in filename:
@@ -370,6 +361,8 @@ class FileItemModel(models.ItemModel):
             # we'll allow all extensions
             if not disable_filter and ext not in valid_extensions:
                 continue
+            print(entry)
+
 
             if _dir:
                 _watch_paths.append(_dir)

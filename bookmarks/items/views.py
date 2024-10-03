@@ -548,6 +548,8 @@ class BaseItemView(QtWidgets.QTableView):
         self.drag_current_row = -1
         self.drag_source_row = -1
 
+        self.switcher_visible = False
+
         self.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
         self.setDragEnabled(True)
         self.setDropIndicatorShown(False)

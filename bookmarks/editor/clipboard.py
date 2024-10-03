@@ -156,11 +156,11 @@ class CopyClipboardEditor(base.BasePropertyEditor):
     @QtCore.Slot()
     def options_button_clicked(self):
         for k in self.user_settings_keys:
-            editor = getattr(self, f'{k}_editor')
+            editor = getattr(self, f'{k}_editor'.replace('/', '_'))
             editor.setChecked(True)
 
     @QtCore.Slot()
     def options_button2_clicked(self):
         for k in self.user_settings_keys:
-            editor = getattr(self, f'{k}_editor')
+            editor = getattr(self, f'{k}_editor'.replace('/', '_'))
             editor.setChecked(False)

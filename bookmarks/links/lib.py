@@ -77,7 +77,6 @@ class LinksAPI:
             str: The normalized link.
 
         """
-        link = os.path.normpath(link)
         link = link.replace('\\', '/')
         link = link.strip('/')
         link = re.sub(r'[/]+', '/', link)  # Remove multiple slashes
@@ -94,12 +93,6 @@ class LinksAPI:
             raise ValueError('Link must be a string')
 
         link = cls._normalize_link(link)
-
-        invalid_chars = {' ', '.', '-', '_'}
-        if link[-1] in invalid_chars:
-            raise ValueError(f'"{link}" cannot end with these characters: {", ".join(invalid_chars)}')
-        if link[0] in invalid_chars:
-            raise ValueError(f'"{link}" cannot start with these characters: {", ".join(invalid_chars)}')
 
         forbidden_chars = {':', '*', '?', '"', '<', '>', '|'}
         if any(char in link for char in forbidden_chars):
@@ -143,8 +136,10 @@ class LinksAPI:
 
         """
         if not isinstance(links, (list, tuple)):
-            raise TypeError('Links must be a list or tuple of strings')
-
+            if isinstance(links, str):
+                links = [links,]
+            else:
+                raise RuntimeError(f'Links must be a list of strings. Got: {type(links)} {links}')
 
         if not os.access(self.path, os.W_OK):
             raise RuntimeError(f'Path "{self.path}" is not writable')
@@ -310,8 +305,8 @@ class LinksAPI:
         Returns:
             bool: True after clearing the links.
         """
-        self._cache = None
-        self._write_links_to_file(self._cache)
+        self._cache = []
+        self._write_links_to_file([])
         return True
 
     def prune(self):

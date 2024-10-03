@@ -117,20 +117,37 @@ class BaseSwitchView(views.ThreadedItemView):
         """Slot -> Resizes the view to the given rect.
 
         """
-        o = common.Size.Margin()
-        rect = rect.adjusted(o, 0, -o, -o)
-
-        center = rect.center()
-        max_width = common.Size.DefaultWidth()
-        if rect.width() > max_width:
-            rect.setWidth(max_width)
-            rect.moveCenter(center)
-
         self.setGeometry(rect)
 
         top_left = common.widget(self.tab_idx).mapToGlobal(rect.topLeft())
-        top_left.setY(top_left.y() - common.Size.Margin(2.0))
+        top_left.setY(top_left.y() + common.Size.Margin(2.0))
         self.move(top_left)
+
+        min_width = common.Size.DefaultWidth(0.66)
+        min_height = common.Size.DefaultHeight(1.0)
+        max_width = common.Size.DefaultWidth(1.5)
+        max_height = common.Size.DefaultHeight(2.0)
+
+        rect = self.geometry()
+        if rect.width() < min_width:
+            rect.setWidth(min_width)
+
+        if rect.height() < min_height:
+            rect.setHeight(min_height)
+
+        if rect.width() > max_width:
+            rect.setWidth(max_width)
+
+        if rect.height() > max_height:
+            rect.setHeight(max_height)
+
+        rect.moveCenter(self.geometry().center())
+        self.setGeometry(rect)
+        pos = QtCore.QPoint(
+            self.geometry().center().x() - (rect.width() * 0.5),
+            rect.y()
+        )
+        self.move(pos)
 
     def inline_icons_count(self):
         """Inline buttons count.
@@ -150,6 +167,7 @@ class BaseSwitchView(views.ThreadedItemView):
         """
         super().hideEvent(event)
 
+        common.widget(self.tab_idx).switcher_visible = False
         common.widget(self.tab_idx).verticalScrollBar().setHidden(False)
         common.widget(self.tab_idx).setFocus()
         common.signals.switchViewToggled.emit()
@@ -160,6 +178,7 @@ class BaseSwitchView(views.ThreadedItemView):
         """
         super().showEvent(event)
 
+        common.widget(self.tab_idx).switcher_visible = True
         common.widget(self.tab_idx).verticalScrollBar().setHidden(True)
         self.setFocus()
         self.resize_widget(common.widget(self.tab_idx).geometry())
@@ -205,14 +224,16 @@ class BaseSwitchView(views.ThreadedItemView):
         if event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter()
             painter.begin(widget)
+            painter.setOpacity(0.9)
+            rect = widget.rect()
 
-            o = common.Size.Indicator(2.0)
+            o = common.Size.Indicator(1.5)
             painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
 
-            _o = common.Size.Margin(2.0)
-            rect = QtCore.QRect(widget.rect()).adjusted(_o, _o, -_o, -_o)
+            _o = common.Size.Margin(2.5)
+            rect = QtCore.QRect(rect).adjusted(_o, _o, -_o, -_o)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.Color.DarkBackground())
+            painter.setBrush(common.Color.VeryDarkBackground())
             painter.drawRoundedRect(rect, o, o)
 
             pen = QtGui.QPen(common.Color.Blue())
@@ -265,6 +286,15 @@ class BaseSwitchView(views.ThreadedItemView):
             self.hide()
             return
         super().mousePressEvent(event)
+
+    def sizeHint(self):
+        """Size hint.
+
+        """
+        return QtCore.QSize(
+            common.Size.DefaultWidth(1.0),
+            common.Size.DefaultHeight(2.0)
+        )
 
 
 class TaskSwitchViewDelegate(delegate.ItemDelegate):
@@ -400,7 +430,6 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
         items = []
 
         if index.data(common.DescriptionRole):
-
             color = common.Color.Green() if active else common.Color.SecondaryText()
             color = common.Color.Text() if hover else color
             color = common.Color.Text() if selected else color
@@ -435,7 +464,9 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
         """Size hint.
 
         """
-        return QtCore.QSize(0, common.Size.RowHeight())
+        if not index.isValid():
+            return QtCore.QSize(0, 0)
+        return index.data(QtCore.Qt.SizeHintRole)
 
 
 class BaseItemModel(models.ItemModel):
@@ -576,6 +607,8 @@ class TaskItemModel(models.ItemModel):
         self.tab_idx = common.FileTab
         common.signals.taskFolderChanged.connect(self.reset_data)
 
+        self._load_disk_folders = False
+
     def source_path(self):
         """The model's source path.
 
@@ -614,6 +647,97 @@ class TaskItemModel(models.ItemModel):
         """Collects the data needed to populate the task item model.
 
         """
+
+        self._add_config_folders()
+
+        if self._load_disk_folders:
+            self._add_disk_folders()
+
+    def _add_config_folders(self):
+        p = self.source_path()
+        k = self.task()
+        t = self.data_type()
+
+        if not p or not all(p) or not k or t is None:
+            return
+
+        data = common.get_data(p, k, t)
+
+        flags = (
+                QtCore.Qt.ItemIsSelectable |
+                QtCore.Qt.ItemIsEnabled
+        )
+
+        source_path = self.source_path()
+        if not source_path or not all(source_path):
+            return
+        _source_path = '/'.join(source_path)
+
+        from .. import tokens
+        config = tokens.get(*common.active('asset', args=True))
+        config_data = config.data(force=True)
+
+        for value in config_data[tokens.AssetFolderConfig].values():
+            path = f'{_source_path}/{value["value"]}'
+            abs_path = os.path.abspath(path).replace('\\', '/')
+
+            exists = os.path.exists(path)
+
+            if not exists:
+                flags = QtCore.Qt.NoItemFlags
+
+            idx = len(data)
+
+            entry = common.get_entry_from_path(path)
+
+            icon = ui.get_icon('folder', color=common.Color.Green())
+            if not exists:
+                icon = ui.get_icon('alert', color=common.Color.Yellow())
+
+            data[idx] = common.DataDict(
+                {
+                    QtCore.Qt.DisplayRole: value['name'],
+                    QtCore.Qt.EditRole: value['value'],
+                    common.PathRole: abs_path,
+                    QtCore.Qt.SizeHintRole: self.row_size,
+                    QtCore.Qt.DecorationRole: icon,
+                    #
+                    QtCore.Qt.StatusTipRole: abs_path,
+                    QtCore.Qt.AccessibleDescriptionRole: abs_path,
+                    QtCore.Qt.WhatsThisRole: abs_path,
+                    QtCore.Qt.ToolTipRole: abs_path,
+                    #
+                    common.QueueRole: self.queues,
+                    common.DataTypeRole: common.FileItem,
+                    common.DataDictRole: weakref.ref(data),
+                    common.ItemTabRole: common.TaskItemSwitch,
+                    #
+                    common.EntryRole: [entry, ],
+                    common.FlagsRole: flags,
+                    common.ParentPathRole: source_path,
+                    common.DescriptionRole: '',
+                    common.NoteCountRole: 0,
+                    common.FileDetailsRole: '',
+                    common.SequenceRole: None,
+                    common.FramesRole: [],
+                    common.StartPathRole: None,
+                    common.EndPathRole: None,
+                    #
+                    common.FileInfoLoaded: False,
+                    common.ThumbnailLoaded: True,
+                    #
+                    common.SortByNameRole: value['name'],
+                    common.SortByLastModifiedRole: value['name'],
+                    common.SortBySizeRole: value['name'],
+                    common.SortByTypeRole: value['name'],
+                    #
+                    common.IdRole: idx,
+                    #
+                    common.SGLinkedRole: False,
+                }
+            )
+
+    def _add_disk_folders(self):
         p = self.source_path()
         k = self.task()
         t = self.data_type()
@@ -649,7 +773,7 @@ class TaskItemModel(models.ItemModel):
                     QtCore.Qt.EditRole: entry.name,
                     common.PathRole: path,
                     QtCore.Qt.SizeHintRole: self.row_size,
-                    QtCore.Qt.DecorationRole: None,
+                    QtCore.Qt.DecorationRole: ui.get_icon('folder', color=common.Color.Opaque()),
                     #
                     QtCore.Qt.StatusTipRole: path,
                     QtCore.Qt.AccessibleDescriptionRole: path,
@@ -675,18 +799,16 @@ class TaskItemModel(models.ItemModel):
                     common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: True,
                     #
-                    common.SortByNameRole: 'z' + entry.name.lower(),
-                    common.SortByLastModifiedRole: 'z' + entry.name.lower(),
-                    common.SortBySizeRole: 'z' + entry.name.lower(),
-                    common.SortByTypeRole: 'z' + entry.name.lower(),
+                    common.SortByNameRole: 'zzzz' + entry.name.lower(),
+                    common.SortByLastModifiedRole: 'zzzz' + entry.name.lower(),
+                    common.SortBySizeRole: 'zzzz' + entry.name.lower(),
+                    common.SortByTypeRole: 'zzzz' + entry.name.lower(),
                     #
                     common.IdRole: idx,
                     #
                     common.SGLinkedRole: False,
                 }
             )
-
-
 
     @common.error
     @common.debug
@@ -785,6 +907,6 @@ class TaskSwitchView(BaseSwitchView):
             1,
             functools.partial(
                 common.signals.taskFolderChanged.emit,
-                index.data(QtCore.Qt.DisplayRole)
+                index.data(QtCore.Qt.EditRole)
             )
         )

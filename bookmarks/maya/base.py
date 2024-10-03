@@ -16,9 +16,8 @@ except ImportError:
 from PySide2 import QtWidgets, QtCore
 import shiboken2
 
-from .. import common
+from .. import common, tokens
 from .. import database
-from ..tokens import tokens
 
 GEO_SUFFIX = 'export'
 TEMP_NAMESPACE = f'Temp_{uuid.uuid4().hex}'

@@ -4,11 +4,8 @@
 
 from PySide2 import QtCore, QtWidgets
 
-from .. import common
-from .. import database
+from .. import common, tokens
 from .. import ui
-from ..editor import base
-from ..tokens import tokens
 
 NoMode = 'invalid'
 SceneMode = 'scene'

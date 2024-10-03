@@ -5,13 +5,14 @@ from PySide2 import QtCore, QtGui
 
 from . import base
 from . import base_widgets
-from .. import actions
 from .. import application_launcher
 from .. import common
 from .. import database
 from .. import ui
 from ..shotgun import actions as sg_actions
 from ..shotgun import shotgun
+from bookmarks.editor.tokeneditors import FileNameConfigEditor, PublishConfigEditor, FFMpegTCConfigEditor, AssetFolderConfigEditor, \
+    FileFormatConfigEditor
 
 
 def close():
@@ -53,7 +54,7 @@ def show(server, job, root):
 
 class BookmarkPropertyEditor(base.BasePropertyEditor):
     """The widget containing all the UI elements used to edit
-    bookmark item properties (such as frame-rate, resolution, or SG linking).
+    bookmark item properties, like frame-rate, resolution, or SG linking.
 
     """
     #: UI layout definition
@@ -266,6 +267,25 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
             }
         },
         3: {
+            'name': 'Application Launcher',
+            'icon': 'icon',
+            'color': common.Color.DarkBackground(),
+            'groups': {
+                0: {
+                    0: {
+                        'name': 'Applications:',
+                        'key': 'applications',
+                        'validator': None,
+                        'widget': application_launcher.ApplicationLauncherListWidget,
+                        'placeholder': None,
+                        'description': 'Edit the list of applications this bookmark '
+                                       'item uses.',
+                        'button': 'Add Item',
+                    },
+                }
+            }
+        },
+        4: {
             'name': 'Links',
             'icon': 'link',
             'color': common.Color.DarkBackground(),
@@ -294,82 +314,91 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                 }
             }
         },
-        4: {
-            'name': 'Application Launcher',
-            'icon': 'icon',
+        5: {
+            'name': 'Scene Names',
+            'icon': 'file',
+            'color': common.Color.Green(),
+            'groups': {
+                0: {
+                    0: {
+                        'name': None,
+                        'key': 'scene_name_template',
+                        'validator': None,
+                        'widget': FileNameConfigEditor,
+                        'placeholder': '',
+                        'description': 'These presets are used to generate scene files in the current bookmark item.',
+                    }
+                }
+            }
+        },
+        6: {
+            'name': 'Publish Paths',
+            'icon': 'file',
             'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
-                        'name': 'Applications:',
-                        'key': 'applications',
+                        'name': None,
+                        'key': 'publish_paths',
                         'validator': None,
-                        'widget': application_launcher.ApplicationLauncherListWidget,
-                        'placeholder': None,
-                        'description': 'Edit the list of applications this bookmark '
-                                       'item uses.',
-                        'button': 'Add Item',
+                        'widget': PublishConfigEditor,
+                        'placeholder': '',
+                        'description': 'Path presets used to publish items in the current bookmark item.',
                     },
                 }
             }
         },
-        5: {
-            'name': 'Database',
-            'icon': 'bookmark',
+        7: {
+            'name': 'Timecode Presets',
+            'icon': 'uppercase',
             'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
-                        'name': 'Created on:',
-                        'key': 'created',
+                        'name': None,
+                        'key': 'ffmpeg_timecode_presets',
                         'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'The time the database was created',
-                        'description': 'The time the database was created',
-                    },
-                    1: {
-                        'name': 'Created by user:',
-                        'key': 'user',
-                        'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'The user the database was created by',
-                        'description': 'The user the database was created by',
-                    },
-                    2: {
-                        'name': 'Created by host:',
-                        'key': 'host',
-                        'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'The user the database was created by',
-                        'description': 'The user the database was created by',
-                    },
-                    3: {
-                        'name': 'Bookmark Server:',
-                        'key': 'server',
-                        'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'The bookmark\'s original server',
-                        'description': 'The bookmark\'s original server',
-                    },
-                    4: {
-                        'name': 'Bookmark Job:',
-                        'key': 'job',
-                        'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'The bookmark\'s original job',
-                        'description': 'The bookmark\'s original job',
-                    },
-                    5: {
-                        'name': 'Bookmark Root:',
-                        'key': 'root',
-                        'validator': None,
-                        'widget': ui.LineEdit,
-                        'placeholder': 'The bookmark\'s original job',
-                        'description': 'The bookmark\'s original job',
+                        'widget': FFMpegTCConfigEditor,
+                        'placeholder': '',
+                        'description': 'The text overlay presets used in video exports.',
                     },
                 }
             }
-        }
+        },
+        8: {
+            'name': 'Asset Folders',
+            'icon': 'folder',
+            'color': common.Color.DarkBackground(),
+            'groups': {
+                0: {
+                    0: {
+                        'name': None,
+                        'key': 'asset_folders',
+                        'validator': None,
+                        'widget': AssetFolderConfigEditor,
+                        'placeholder': '',
+                        'description': 'The text overlay presets used in video exports.',
+                    },
+                }
+            }
+        },
+        9: {
+            'name': 'Allowed File Formats',
+            'icon': 'file',
+            'color': common.Color.DarkBackground(),
+            'groups': {
+                0: {
+                    0: {
+                        'name': None,
+                        'key': 'file_whitelist',
+                        'validator': None,
+                        'widget': FileFormatConfigEditor,
+                        'placeholder': '',
+                        'description': 'The text overlay presets used in video exports.',
+                    },
+                }
+            }
+        },
     }
 
     def __init__(self, server, job, root, parent=None):
@@ -382,9 +411,6 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
             fallback_thumb='thumb_bookmark0',
             parent=parent
         )
-
-        self.tokens_editor = None
-        self._create_tokens_editor(self.scroll_area.widget())
 
     def _connect_signals(self):
         super()._connect_signals()
@@ -413,7 +439,14 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
         """
         self.save_changed_data_to_db()
-        self.tokens_editor.save_changes()
+
+        self.scene_name_template_editor.save_changes()
+        self.publish_paths_editor.save_changes()
+        self.ffmpeg_timecode_presets_editor.save_changes()
+        self.asset_folders_editor.save_changes()
+        self.file_whitelist_editor.save_changes()
+
+        self.publish_paths_editor.save_changes()
         self.thumbnail_editor.save_image()
         self.thumbnailUpdated.emit(self.db_source())
         return True
@@ -437,18 +470,6 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         sg_properties.bookmark_name = self.sg_name_editor.text()
 
         return sg_properties
-
-    def _create_tokens_editor(self, parent):
-        from ..tokens import tokens_editor
-        self.tokens_editor = tokens_editor.TokenConfigEditor(
-            self.server,
-            self.job,
-            self.root,
-            parent=parent
-        )
-        parent.layout().addWidget(self.tokens_editor, 1)
-        for name, widget in self.tokens_editor.header_buttons:
-            self.add_section_header_button(name, widget)
 
     def _get_name(self):
         return self.job
@@ -478,7 +499,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def applications_button_clicked(self):
-        """Application Launcher add action.
+        """Application Launcher button click action.
 
         """
         self.applications_editor.add_new_item()
@@ -489,9 +510,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         if not hasattr(self, f'{k}_editor'):
             raise RuntimeError(f'{k}_editor not found')
 
-        from ..tokens import tokens_editor
+        from bookmarks.editor.tokeneditors import TokenEditor
         editor = getattr(self, f'{k}_editor')
-        w = tokens_editor.TokenEditor(self.server, self.job, self.root, parent=editor)
+        w = TokenEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
         w.exec_()
 
@@ -501,8 +522,8 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         if not hasattr(self, f'{k}_editor'):
             raise RuntimeError(f'{k}_editor not found')
 
-        from ..tokens import tokens_editor
+        from bookmarks.editor.tokeneditors import TokenEditor
         editor = getattr(self, f'{k}_editor')
-        w = tokens_editor.TokenEditor(self.server, self.job, self.root, parent=editor)
+        w = TokenEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
         w.exec_()

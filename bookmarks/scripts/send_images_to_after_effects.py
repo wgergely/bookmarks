@@ -117,7 +117,7 @@ def generate_jsx_script(footage_sources):
 
     # TODO: 'asset1' is hardcoded here, but it should correspond to the asset name
     #  ({asset1} in the Studio Aka SG pipeline, for example)
-    comp_name = config.expand_tokens('{asset1}_comp', asset=common.active('asset'))
+    comp_name = common.parser.format('{asset}_comp')
 
     jsx_script = ""
 

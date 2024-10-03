@@ -1,30 +1,5 @@
-"""The module contains interface used to get and modify a bookmark item's token
+"""The module contains the interface used to get and modify a bookmark item's token
 values.
-
-The default values are stored in :attr:`.DEFAULT_TOKEN_CONFIG` but each
-bookmark item can be configured independently using the
-:mod:`tokens.tokens_editor` widget. The custom configuration values are
-stored in the bookmark's database using `TOKENS_DB_KEY` column as encoded JSON
-data. 
-
-Use :func:`.get` to retrieve token config controller instances.
-
-.. code-block:: python
-    :linenos:
-
-    from bookmarks.tokens import tokens
-
-    tokens_config = tokens.get(server, job, root)
-    data = tokens_config.data()
-
-    # Try to find a description for an item named 'geo'
-    v = tokens_config.get_description('geo')
-
-    # Expands all tokens using values set in the bookmark database
-    s = tokens_config.expand_tokens(
-        '{asset_root}/{scene}/{prefix}_{asset}_{task}_{user}_{version}.{ext}',
-        ext='exr'
-    )
 
 """
 import collections
@@ -76,7 +51,7 @@ AllFormat = (
 #: Invalid token marker string
 invalid_token = '{invalid_token}'
 
-#: Principal default asset folders
+#: Principal asset folders
 SceneFolder = 'scenes'
 CacheFolder = 'caches'
 CaptureFolder = 'captures'
@@ -712,136 +687,6 @@ class TokenConfig(QtCore.QObject):
                     if token.lower() == _v['value'].lower():
                         return _v['description']
         return ''
-
-    def expand_tokens(
-            self, s, use_database=True, user=common.get_username(), version='v001',
-            host=socket.gethostname(), task='main',
-            ext=None, prefix=None, **_kwargs
-    ):
-        """Expands all valid tokens of the given string, based on the current
-        database values.
-
-        Invalid tokens will be marked :attr:`.invalid_token`.
-
-        Args:
-            s (str): The string containing tokens to be expanded.
-            use_database (bool, optional): Use values stored in the database.
-            _kwargs (dict, optional): Optional token/value pairs.
-
-        Returns:
-            str: The expanded string. It might contain :attr:`.invalid_token` markers
-            if a token does not have a corresponding value.
-
-        """
-        kwargs = self.get_tokens(
-            use_database=use_database,
-            user=user,
-            version=version,
-            ver=version,
-            host=host,
-            workstation=host,
-            task=task,
-            mode=task,
-            ext=ext,
-            extension=ext,
-            format=ext,
-            prefix=prefix,
-            date=datetime.now().strftime('%a %d/%m/%Y %H:%M'),
-            now=datetime.now().strftime('%a %d/%m/%Y %H:%M'),
-            timestamp=datetime.now().strftime('%a %d/%m/%Y %H:%M'),
-            **_kwargs
-        )
-
-        for k in [f for f in kwargs if kwargs[f] is None]:
-            del kwargs[k]
-
-        # To avoid KeyErrors when invalid tokens are passed we will replace
-        # these with a custom marker, for example, {invalid_token}
-        # via https://stackoverflow.com/questions/17215400/format-string-unused
-        # -named-arguments
-        return string.Formatter().vformat(
-            s,
-            (),
-            collections.defaultdict(lambda: invalid_token, **kwargs)
-        )
-
-    def get_tokens(self, force=False, use_database=True, **kwargs):
-        """Get all available tokens.
-
-        Args:
-            force (bool, optional): Force retrieve defined tokens from the database.
-
-        Returns:
-            dict: A dictionary of token/value pairs.
-
-        """
-        data = self.data(force=force)
-
-        if not data:
-            return kwargs
-        if AssetFolderConfig not in data:
-            return kwargs
-
-        tokens = {}
-
-        # Populate tokens with the database values
-        for k, v in data[AssetFolderConfig].items():
-            tokens[v['name']] = v['value']
-
-        # Populate tokens with the environment values
-        tokens['server'] = self.server
-        tokens['job'] = self.job
-        tokens['root'] = self.root
-
-        tokens['project'] = self.job
-        tokens['bookmark'] = f'{self.server}/{self.job}/{self.root}'
-
-        for k, v in kwargs.items():
-            tokens[k] = v
-
-        # We can also use bookmark item properties as tokens
-        if use_database:
-            db = database.get(self.server, self.job, self.root)
-
-            for _k in database.TABLES[database.BookmarkTable]:
-                if _k == 'id':
-                    continue
-                if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
-                    continue
-                if _k not in kwargs or not kwargs[_k]:
-                    _v = db.value(db.source(), _k, database.BookmarkTable)
-                    _v = _v if _v else invalid_token
-                    tokens[_k] = _v
-
-        # The asset root token will only be available when the asset is manually
-        # specified
-        if 'asset' in kwargs and kwargs['asset']:
-            source = f'{self.server}/{self.job}/{self.root}/{kwargs["asset"]}'
-
-            if use_database:
-                for _k in database.TABLES[database.AssetTable]:
-                    if _k == 'id':
-                        continue
-                    if database.TABLES[database.AssetTable][_k]['type'] == dict:
-                        continue
-                    if _k not in kwargs or not kwargs[_k]:
-                        _v = db.value(source, _k, database.AssetTable)
-                        _v = _v if _v else invalid_token
-                        tokens[_k] = _v
-
-                        # Let's also override width, height and fps tokens
-                        tokens[_k.replace('asset_', '')] = _v
-
-        # We also want to use the path elements as tokens.
-        for k in ('server', 'job', 'root', 'asset', 'task'):
-            if k not in tokens:
-                continue
-            s = tokens[k].replace('//', '').strip('/')
-            if '/' in s:
-                for n, s in enumerate(s.split('/')):
-                    tokens[f'{k}{n}'] = s
-
-        return tokens
 
     def get_extensions(self, flag, force=False):
         """Returns a list of extensions associated with the given flag.

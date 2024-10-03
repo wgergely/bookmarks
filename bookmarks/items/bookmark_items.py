@@ -182,8 +182,7 @@ class BookmarkItemModel(models.ItemModel):
 
             # If a token is set, expand it
             if display_name_token:
-                config = tokens.get(server, job, root)
-                _display_name = config.expand_tokens(
+                _display_name = common.parser.format(
                     display_name_token,
                     server=server,
                     job=job,

@@ -12,10 +12,10 @@ import subprocess
 
 from PySide2 import QtCore, QtWidgets
 
+from .. import actions
 from .. import common
 from .. import database
 from .. import images
-from .. import actions
 
 
 class SafeDict(dict):
@@ -298,20 +298,16 @@ def _get_info_label(timecode_preset, output_path, in_frame, out_frame):
 
     ext = QtCore.QFileInfo(output_path).suffix()
 
-    from ..tokens import tokens
-    config = tokens.get(*common.active('root', args=True))
-
-    v = config.expand_tokens(
+    v = common.parser.format(
         timecode_preset,
-        asset=common.active('asset'),
         version=version,
-        task=common.active('task'),
         sh=shot,
         shot=shot,
         sq=sequence,
         seq=sequence,
         sequence=sequence,
         ext=ext,
+        extension=ext,
         in_frame=in_frame,
         out_frame=out_frame,
     )

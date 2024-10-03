@@ -429,9 +429,8 @@ class FileSaverWidget(base.BasePropertyEditor):
         if '/' in task:
             task = task.split('/')[-1]
 
-        v = config.expand_tokens(
+        v = common.parser.format(
             template,
-            asset=common.active('asset'),
             user=_get('file_saver_user'),
             version=_get('version').lower(),
             task=task,
@@ -452,9 +451,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         v = v.replace(
             '###',
-            '<span style="color:{}">###</span>'.format(
-                common.Color.Red(qss=True)
-            )
+            f'<span style="color:{common.Color.Red(qss=True)}">###</span>'
         )
 
         self.filename_editor.setText(v)

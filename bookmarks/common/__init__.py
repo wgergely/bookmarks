@@ -113,6 +113,7 @@ akaconvert_widget = None
 screen_capture_widget = None
 pick_thumbnail_widget = None
 notes_widget = None
+add_job_widget = None
 
 
 # Save the initial module values for later use

@@ -216,15 +216,16 @@ class AssetItemModel(models.ItemModel):
             # Set the display name based on the bookmark item's configuration value
             if display_token:
                 seq, shot = common.get_sequence_and_shot(filepath)
-                _display_name = config.expand_tokens(
+                _display_name = common.parser.format(
                     display_token,
-                    use_database=False,
                     server=p[0],
                     job=p[1],
                     root=p[2],
                     asset=filename,
+                    sq=seq,
                     seq=seq,
                     sequence=seq if seq else '',
+                    sh=shot if shot else '',
                     shot=shot if shot else '',
                     prefix=prefix
                 )

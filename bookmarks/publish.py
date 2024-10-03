@@ -426,8 +426,7 @@ class PublishWidget(base.BasePropertyEditor):
         if not kwargs['publish_template']:
             return tokens.invalid_token
 
-        config = tokens.get(kwargs['server'], kwargs['job'], kwargs['root'])
-        v = config.expand_tokens(
+        v = common.parser.format(
             kwargs['publish_template'], **kwargs
         )
 

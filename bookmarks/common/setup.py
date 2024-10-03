@@ -91,9 +91,7 @@ def initialize_func(mode):
         common.init_mode = mode
         common.item_data = common.DataDict()
 
-        from . import parser
-        common.parser = parser.Parser()
-
+        from .parser import StringParser
 
         if not os.path.isdir(common.temp_path()):
             os.makedirs(os.path.normpath(common.temp_path()))
@@ -102,6 +100,7 @@ def initialize_func(mode):
         common.init_active_mode()
         common.init_settings()
         common.init_active()
+        common.parser = StringParser()
 
         if mode == common.CoreMode:
             return
@@ -208,7 +207,6 @@ def shutdown():
         common.Timer.delete_timers()
         common.remove_lock()
 
-
         # This should reset all the object caches to their initial values
         for k, v in common.__initial_values__.items():
             setattr(common, k, v)
@@ -219,8 +217,6 @@ def shutdown():
     finally:
         if _init_mode == common.StandaloneMode and QtWidgets.QApplication.instance():
             QtWidgets.QApplication.instance().exit(0)
-
-
 
 
 def _add_path_to_path(v, p):

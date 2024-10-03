@@ -328,7 +328,7 @@ def set_task_folder(v):
         v (str): A `task` path segment, for example, 'scenes'.
 
     """
-    set_active('task', v)
+    common.set_active('task', v)
     common.source_model(common.FileTab).reset_data()
     common.widget(common.FileTab).model().invalidateFilter()
 
@@ -600,7 +600,7 @@ def show_servers_editor():
 @common.error
 @common.debug
 def show_add_asset(server=None, job=None, root=None):
-    """Shows :class:`~bookmarks.editor.asset_properties.AssetPropertyEditor` to create
+    """Shows the dialog used to create
     a new asset item.
 
     Args:
@@ -617,7 +617,10 @@ def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from .templates import view as editor
+    # from .templates import view as editor
+    # editor.show()
+
+    from .editor import addjobeditor as editor
     editor.show()
 
 

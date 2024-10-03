@@ -23,25 +23,25 @@ Example:
         }
 
         # Simple replacement
-        print(parser.parse('Welcome, {name}!'))
+        print(parser.format('Welcome, {name}!'))
         # Output: Welcome, Alice!
 
         # Using modifiers
-        print(parser.parse('Name in uppercase: {name.upper}'))
+        print(parser.format('Name in uppercase: {name.upper}'))
         # Output: Name in uppercase: ALICE
 
         # Using slicing
-        print(parser.parse('First directory: {path[0]}'))
+        print(parser.format('First directory: {path[0]}'))
         # Output: First directory: home
 
         # Using generator tokens
-        print(parser.parse('{greeting*}, {name}!'))
+        print(parser.format('{greeting*}, {name}!'))
         # Output:
         # Hello, Alice!
         # Hi, Alice!
 
         # Combining slicing and modifiers with generators
-        print(parser.parse('Options:\n{options*.upper}'))
+        print(parser.format('Options:\n{options*.upper}'))
         # Output:
         # OPT1
         # OPT2
@@ -54,12 +54,97 @@ import unittest
 
 __all__ = ['StringParser']
 
+from datetime import datetime
 
-class StringParser:
+from PySide2 import QtCore
+
+from .. import common
+
+
+class StringParser(QtCore.QObject):
     token_pattern = re.compile(r'\{([^{}]+?)\}')
+    _env = {}
 
-    def __init__(self):
-        self._env = {}
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self._connect_signals()
+
+    def _connect_signals(self):
+        common.signals.databaseValueUpdated.connect(self.update_env)
+        common.signals.bookmarkItemActivated.connect(self.update_env)
+        common.signals.assetItemActivated.connect(self.update_env)
+        common.signals.fileItemActivated.connect(self.update_env)
+        common.signals.taskFolderChanged.connect(self.update_env)
+        common.signals.databaseValueUpdated.connect(self.update_env)
+
+    @QtCore.Slot()
+    def update_env(self, *args, **kwargs):
+        env = {}
+
+        # Active values
+        env['server'] = common.active('server')
+        env['job'] = common.active('job')
+        env['root'] = common.active('root')
+        env['asset'] = common.active('asset')
+        env['task'] = common.active('task')
+
+        # Bookmark values
+        env['bookmark'] = common.active('root', path=True)
+
+        # Properties
+        from .. import database
+        if common.active('root', args=True):
+            db = database.get(*common.active('root', args=True))
+            for _k in database.TABLES[database.BookmarkTable]:
+                if _k == 'id':
+                    continue
+                if database.TABLES[database.BookmarkTable][_k]['type'] == dict:
+                    continue
+                _v = db.value(db.source(), _k, database.BookmarkTable)
+                if not _v:
+                    continue
+                _k = _k.replace('bookmark_', '')
+                _k = f'bookmark_{_k}'
+                env[_k] = _v
+
+        if common.active('asset', args=True):
+            db = database.get(*common.active('root', args=True))
+            for _k in database.TABLES[database.AssetTable]:
+                if _k == 'id':
+                    continue
+                if database.TABLES[database.AssetTable][_k]['type'] == dict:
+                    continue
+                _v = db.value(common.active('asset', path=True), _k, database.AssetTable)
+                if not _v:
+                    continue
+                _k = _k.replace('asset_', '')
+                _k = f'asset_{_k}'
+                env[_k] = _v
+
+        # Misc values
+        env['year'] = datetime.now().year
+        env['month'] = datetime.now().month
+        env['day'] = datetime.now().day
+        env['hour'] = datetime.now().hour
+        env['minute'] = datetime.now().minute
+        env['second'] = datetime.now().second
+
+        env['date'] = datetime.now().strftime('%Y%m%d')
+
+        env['user'] = common.get_username()
+        env['platform'] = common.get_platform()
+
+        env['#'] = '0'
+        env['##'] = '00'
+        env['###'] = '000'
+        env['####'] = '0000'
+        env['#####'] = '00000'
+        env['%01d'] = '0'
+        env['%01d'] = '00'
+        env['%02d'] = '000'
+        env['%03d'] = '0000'
+        env['%04d'] = '00000'
+        env['%05d'] = '000000'
 
     @property
     def env(self):
@@ -71,7 +156,16 @@ class StringParser:
             raise ValueError('Environment must be a dictionary')
         self._env.update(value)
 
-    def parse(self, text):
+    def format(self, text, **kwargs):
+        env = self.env.copy()
+        env.update(kwargs)
+
+        for k, v in env.items():
+            if v is None:
+                env[k] = ''
+            else:
+                env[k] = str(v)
+
         # Find all tokens in the text
         tokens = []
         for match in self.token_pattern.finditer(text):
@@ -97,7 +191,7 @@ class StringParser:
         # Get possible values for each generator token name
         generator_token_values = {}
         for name in generator_token_names:
-            value = self.env.get(name, '')
+            value = env.get(name, '')
             values = value.split(',') if value else ['']
             generator_token_values[name] = values
 
@@ -127,7 +221,7 @@ class StringParser:
                 if token['is_generator']:
                     val = token_assignments[token['name']]
                 else:
-                    val = self.env.get(token['name'], '')
+                    val = env.get(token['name'], '')
 
                 # Apply slicing and modifiers
                 if token['slicing']:
@@ -231,46 +325,46 @@ class TestStringParser(unittest.TestCase):
     def test_no_tokens(self):
         input_text = 'This is a test string with no tokens.'
         expected = 'This is a test string with no tokens.'
-        self.assertEqual(self._parser.parse(input_text), expected)
+        self.assertEqual(self._parser.format(input_text), expected)
 
     def test_simple_token(self):
-        self.assertEqual(self._parser.parse('{token}'), 'my/test/path')
+        self.assertEqual(self._parser.format('{token}'), 'my/test/path')
 
     def test_multiple_tokens(self):
         input_text = 'Name: {name}, Age: {age}'
         expected = 'Name: Alice, Age: 30'
-        self.assertEqual(self._parser.parse(input_text), expected)
+        self.assertEqual(self._parser.format(input_text), expected)
 
     def test_index_zero(self):
-        self.assertEqual(self._parser.parse('{token[0]}'), 'my')
+        self.assertEqual(self._parser.format('{token[0]}'), 'my')
 
     def test_index_negative_one(self):
-        self.assertEqual(self._parser.parse('{token[-1]}'), 'path')
+        self.assertEqual(self._parser.format('{token[-1]}'), 'path')
 
     def test_slice_zero_to_one(self):
-        self.assertEqual(self._parser.parse('{token[0-1]}'), 'my/test')
+        self.assertEqual(self._parser.format('{token[0-1]}'), 'my/test')
 
     def test_slice_negative_indices(self):
-        self.assertEqual(self._parser.parse('{token[-2--1]}'), 'test/path')
+        self.assertEqual(self._parser.format('{token[-2--1]}'), 'test/path')
 
     def test_lower_modifier(self):
-        self.assertEqual(self._parser.parse('{token.lower}'), 'my/test/path')
+        self.assertEqual(self._parser.format('{token.lower}'), 'my/test/path')
 
     def test_upper_modifier(self):
-        self.assertEqual(self._parser.parse('{token.upper}'), 'MY/TEST/PATH')
+        self.assertEqual(self._parser.format('{token.upper}'), 'MY/TEST/PATH')
 
     def test_title_modifier(self):
-        self.assertEqual(self._parser.parse('{token.title}'), 'My/Test/Path')
+        self.assertEqual(self._parser.format('{token.title}'), 'My/Test/Path')
 
     def test_combined_slice_and_modifier(self):
-        self.assertEqual(self._parser.parse('{token[0].upper}'), 'MY')
+        self.assertEqual(self._parser.format('{token[0].upper}'), 'MY')
 
     def test_generator_token_single_value(self):
-        self.assertEqual(self._parser.parse('my/{token3*}/path'), 'my/base/path')
+        self.assertEqual(self._parser.format('my/{token3*}/path'), 'my/base/path')
 
     def test_generator_token_multiple_values(self):
         expected = 'my/base1/path\nmy/base2/path\nmy/base3/path'
-        self.assertEqual(self._parser.parse('my/{token4*}/path'), expected)
+        self.assertEqual(self._parser.format('my/{token4*}/path'), expected)
 
     def test_multiple_generator_tokens(self):
         expected = (
@@ -279,37 +373,37 @@ class TestStringParser(unittest.TestCase):
             'my/base2/path1\n'
             'my/base2/path2'
         )
-        self.assertEqual(self._parser.parse('my/{token1*}/{token2*}'), expected)
+        self.assertEqual(self._parser.format('my/{token1*}/{token2*}'), expected)
 
     def test_generator_and_non_generator_tokens(self):
         expected = 'my/base1/base\nmy/base2/base'
-        self.assertEqual(self._parser.parse('my/{token1*}/{token3}'), expected)
+        self.assertEqual(self._parser.format('my/{token1*}/{token3}'), expected)
 
     def test_generator_with_modifiers(self):
         expected = 'my/BASE1/path\nmy/BASE2/path'
-        self.assertEqual(self._parser.parse('my/{token1*.upper}/path'), expected)
+        self.assertEqual(self._parser.format('my/{token1*.upper}/path'), expected)
 
     def test_invalid_syntax(self):
         with self.assertRaises(ValueError):
-            self._parser.parse('my/{token[}/path')
+            self._parser.format('my/{token[}/path')
 
     def test_empty_generator_token(self):
-        self.assertEqual(self._parser.parse('value/{empty_token*}/test'), 'value//test')
+        self.assertEqual(self._parser.format('value/{empty_token*}/test'), 'value//test')
 
     def test_slicing_out_of_range(self):
-        self.assertEqual(self._parser.parse('{token[10]}'), '')
+        self.assertEqual(self._parser.format('{token[10]}'), '')
 
     def test_modifier_on_empty_value(self):
-        self.assertEqual(self._parser.parse('{empty_token.upper}'), '')
+        self.assertEqual(self._parser.format('{empty_token.upper}'), '')
 
     def test_nested_modifiers_and_slicing(self):
-        self.assertEqual(self._parser.parse('{token[0].title}'), 'My')
+        self.assertEqual(self._parser.format('{token[0].title}'), 'My')
 
     def test_generator_token_with_slicing_and_modifier(self):
         self._parser.env['token1'] = 'base1/path1,base2/path2'
         expected = 'my/BASE1/path1\nmy/BASE2/path2'
         self.assertEqual(
-            self._parser.parse('my/{token1*[0].upper}/{token1*[1]}'),
+            self._parser.format('my/{token1*[0].upper}/{token1*[1]}'),
             expected
         )
 
@@ -317,24 +411,24 @@ class TestStringParser(unittest.TestCase):
         self._parser.env['a'] = 'X,Y'
         self._parser.env['b'] = '1,2'
         expected = 'XX1\nXX2\nYY1\nYY2'  # Updated expected output
-        self.assertEqual(self._parser.parse('{a*}{a*}{b*}'), expected)
+        self.assertEqual(self._parser.format('{a*}{a*}{b*}'), expected)
 
     def test_tokens_with_no_generator(self):
         self.assertEqual(
-            self._parser.parse('Hello {name}, you are {age} years old.'),
+            self._parser.format('Hello {name}, you are {age} years old.'),
             'Hello Alice, you are 30 years old.'
         )
 
     def test_tokens_with_mixed_generators(self):
         self._parser.env['greeting'] = 'Hi,Hello'
         expected = 'Hi Alice\nHello Alice'
-        self.assertEqual(self._parser.parse('{greeting*} {name}'), expected)
+        self.assertEqual(self._parser.format('{greeting*} {name}'), expected)
 
     def test_token_with_no_value(self):
         self._parser.env['undefined_token'] = ''
-        self.assertEqual(self._parser.parse('Value: {undefined_token}'), 'Value: ')
+        self.assertEqual(self._parser.format('Value: {undefined_token}'), 'Value: ')
 
     def test_multiple_tokens_no_generators(self):
         input_text = 'Name: {name}, Age: {age}, Location: {undefined_token}'
         expected = 'Name: Alice, Age: 30, Location: '
-        self.assertEqual(self._parser.parse(input_text), expected)
+        self.assertEqual(self._parser.format(input_text), expected)

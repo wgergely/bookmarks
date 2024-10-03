@@ -370,7 +370,7 @@ class TemplateItem(object):
     @staticmethod
     def _sanitize_filename(filename):
         """
-        Sanitize a filename to prevent directory traversal attacks.
+        Sanitize a filename.
 
         Args:
             filename (str): The original filename from the zip archive.
@@ -382,9 +382,6 @@ class TemplateItem(object):
         is_dir = filename.endswith('/')
         filename = filename.lstrip('/\\').split(':')[-1]
         filename = os.path.normpath(filename).replace('\\', '/')
-        if '..' in filename.split('/'):
-            log.error(f'Skipping potentially unsafe file: {filename}')
-            return None
 
         if is_dir:
             filename = f'{filename}/'

@@ -68,7 +68,7 @@ item_data = {}
 watchers = {}
 
 delegate_paths = {}
-delegate_rectangles = {}
+inline_icon_rectangles = {}
 delegate_text_segments = {}
 delegate_subdir_rectangles = {}
 delegate_bg_subdir_rectangles = {}

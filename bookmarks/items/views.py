@@ -537,11 +537,6 @@ class BaseItemView(QtWidgets.QTableView):
         self.setGraphicsEffect(QtWidgets.QGraphicsOpacityEffect(self))
         self.graphicsEffect().setOpacity(1.0)
 
-        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        self.verticalHeader().setHidden(True)
-        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-        self.horizontalHeader().setHidden(True)
-
         self.drop_indicator_widget = DropIndicatorWidget(parent=self)
         self.drop_indicator_widget.hide()
 
@@ -1839,8 +1834,7 @@ class BaseItemView(QtWidgets.QTableView):
         if not self.ContextMenu:
             return
 
-        rectangles = self.itemDelegate().get_rectangles(index)
-        if index.isValid() and rectangles[delegate.ThumbnailRect].contains(event.pos()):
+        if index.isValid() and index.column() == 1:
             widget = self.ThumbnailContextMenu(index, parent=self)
         else:
             widget = self.ContextMenu(index, parent=self)
@@ -1889,27 +1883,15 @@ class BaseItemView(QtWidgets.QTableView):
         if index.flags() & common.MarkedAsArchived:
             return
 
-        if index.column() == 0:
-            rectangles = self.itemDelegate().get_rectangles(index)
-
-            _rect = self.visualRect(index)
-            rect = delegate.get_description_rectangle(index, _rect, self.buttons_hidden())
+        if index.column() == 2:
+            rect = delegate.get_description_rectangle(index, self.visualRect(index), self.buttons_hidden())
 
             if rect and rect.contains(cursor_position):
                 self.edit(index)
                 return
-
-            if rectangles[delegate.ThumbnailRect].contains(cursor_position):
-                actions.pick_thumbnail_from_file()
-                return
-
-            if rectangles[delegate.DataRect].contains(cursor_position):
-                index = common.get_selected_index(self)
-                if not index.isValid():
-                    return
-                self.activate(index)
-        else:
-            super().mouseDoubleClickEvent(event)
+            self.activate(index)
+            return
+        super().mouseDoubleClickEvent(event)
 
 
 class InlineIconView(BaseItemView):
@@ -1927,6 +1909,53 @@ class InlineIconView(BaseItemView):
         self.multi_toggle_flag = None
         self.multi_toggle_item = None
         self.multi_toggle_items = {}
+
+    @QtCore.Slot()
+    def update_headers(self, *args, **kwargs):
+        if not self.model():
+            return
+        if not self.model().sourceModel():
+            return
+        if not self.model().sourceModel().model_data():
+            return
+
+        self.verticalHeader().setHidden(True)
+        self.horizontalHeader().setHidden(True)
+
+        self.horizontalHeader().setMinimumSectionSize(0)
+
+        # Indicator
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(0, common.Size.Indicator())
+
+        # Thumbnail - always the same width as the current row height
+        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(1, self.model().sourceModel().row_size.height())
+
+        # Name, description, etc column
+        self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+
+        # Control buttons calculated based on the inline_icons_count
+        self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
+        icon_width = common.Size.Margin()
+        spacing = common.Size.Indicator(2.5)
+        count = self.inline_icons_count()
+        inline_buttons_column_width = (icon_width + spacing) * count + spacing
+        self.setColumnWidth(3, inline_buttons_column_width)
+        self.setColumnHidden(3, self.inline_icons_count() == 0)
+
+    def _connect_signals(self):
+        super()._connect_signals()
+        self.delayed_layout_timer.timeout.connect(self.update_headers)
+        self.resized.connect(self.update_headers)
+
+    def init_model(self):
+        super().init_model()
+
+        self.model().sourceModel().modelReset.connect(self.update_headers)
+        self.model().sourceModel().modelReset.connect(self.update_headers)
+
+        self.update_headers()
 
     def inline_icons_count(self):
         """Inline buttons count.
@@ -1992,10 +2021,9 @@ class InlineIconView(BaseItemView):
             if not rect.contains(cursor_position):
                 continue
 
-            text = f'"{text}"'
-
             # Shift modifier toggles a text filter
             if shift_modifier:
+                text = f'"{text}"'
                 if self.model().filter.has_string(text, positive_terms=True):
                     self.model().filter.remove_filter(text)
                 else:
@@ -2007,6 +2035,11 @@ class InlineIconView(BaseItemView):
             # Alt or control modifiers toggle a negative filter
             if alt_modifier or control_modifier:
                 self.model().filter.remove_filter(text)
+                text = f'"{text}"'
+                self.model().filter.remove_filter(text)
+
+                text = f'--"{text}"'
+                self.model().filter.add_filter(text)
                 self.model().set_filter_text(self.model().filter.filter_string)
                 self.update(index)
                 return
@@ -2028,7 +2061,7 @@ class InlineIconView(BaseItemView):
         cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
-        if index.column() == 0:
+        if index.column() == 3:
             if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
                 super().mousePressEvent(event)
                 self._clicked_rect = QtCore.QRect()
@@ -2037,26 +2070,19 @@ class InlineIconView(BaseItemView):
 
             self.reset_multi_toggle()
 
-            rectangles = self.itemDelegate().get_rectangles(index)
+            rects = delegate.get_rectangles(self.visualRect(index), index, self.inline_icons_count())
 
             self._clicked_rect = next(
-                (rectangles[f] for f in (
-                    delegate.AddItemRect,
-                    delegate.TodoRect,
-                    delegate.RevealRect,
-                    delegate.PropertiesRect,
-                    delegate.ArchiveRect,
-                    delegate.FavouriteRect,
-                ) if rectangles[f].contains(cursor_position)),
+                (rects[f] for f in delegate.clickable_rectangles if rects[f].contains(cursor_position)),
                 QtCore.QRect()
             )
 
-            if rectangles[delegate.FavouriteRect].contains(cursor_position):
+            if rects[delegate.FavouriteRect].contains(cursor_position):
                 self.multi_toggle_pos = QtCore.QPoint(0, cursor_position.y())
                 self.multi_toggle_state = not index.flags() & common.MarkedAsFavourite
                 self.multi_toggle_flag = delegate.FavouriteRect
 
-            if rectangles[delegate.ArchiveRect].contains(cursor_position):
+            if rects[delegate.ArchiveRect].contains(cursor_position):
                 self.multi_toggle_pos = cursor_position
                 self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
                 self.multi_toggle_flag = delegate.ArchiveRect
@@ -2100,7 +2126,7 @@ class InlineIconView(BaseItemView):
         if not index.isValid():
             return
 
-        if index.column() == 0:
+        if index.column() == 3:
             if not index.data(common.FlagsRole):
                 return
             archived = index.data(common.FlagsRole) & common.MarkedAsArchived
@@ -2121,7 +2147,7 @@ class InlineIconView(BaseItemView):
                 return
 
             # Responding the click-events based on the position:
-            rectangles = self.itemDelegate().get_rectangles(index)
+            rectangles = delegate.get_rectangles(self.visualRect(index), index, self.inline_icons_count())
             cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
 
             self.reset_multi_toggle()
@@ -2195,131 +2221,132 @@ class InlineIconView(BaseItemView):
             app.restoreOverrideCursor()
             return
 
-        if not index.column() == 0:
+        if not index.column() == 3:
             app.restoreOverrideCursor()
             return
 
-        modifiers = app.keyboardModifiers()
-        alt_modifier = modifiers & QtCore.Qt.AltModifier
-        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-        control_modifier = modifiers & QtCore.Qt.ControlModifier
+        if index.column() == 2: # update for filter intent
+            modifiers = app.keyboardModifiers()
+            alt_modifier = modifiers & QtCore.Qt.AltModifier
+            shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+            control_modifier = modifiers & QtCore.Qt.ControlModifier
 
-        if alt_modifier or shift_modifier or control_modifier:
-            self.update(index)
-
-        rectangles = self.itemDelegate().get_rectangles(index)
-
-        # Status messages
-        if self.multi_toggle_pos is None:
-
-            if event.buttons() == QtCore.Qt.NoButton:
-                if rectangles[delegate.PropertiesRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Edit item properties...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.AddItemRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Add New Item...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.TodoRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Edit Notes...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.RevealRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Show item in File Explorer...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.ArchiveRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Archive item...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.FavouriteRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Star item...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.ThumbnailRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        'Drag and drop an image, or right-click to edit the thumbnail...'
-                    )
-                    self.update(index)
-                elif rectangles[delegate.InlineBackgroundRect].contains(cursor_position):
-                    common.signals.clearStatusBarMessage.emit()
-                    self.update(index)
-                elif rectangles[delegate.DataRect].contains(cursor_position):
-                    common.signals.showStatusTipMessage.emit(
-                        index.data(common.PathRole)
-                    )
-                else:
-                    common.signals.clearStatusBarMessage.emit()
-                    self.update(index)
-
-            if not index.isValid():
-                app.restoreOverrideCursor()
-                return
-
-            rect = delegate.get_description_rectangle(
-                index, self.visualRect(index), self.buttons_hidden()
-            )
-
-            if rect and rect.contains(cursor_position):
+            if alt_modifier or shift_modifier or control_modifier:
                 self.update(index)
-                if app.overrideCursor():
-                    app.changeOverrideCursor(
-                        QtGui.QCursor(QtCore.Qt.IBeamCursor)
-                    )
+
+        rectangles = delegate.get_rectangles(self.visualRect(index), index, self.inline_icons_count())
+
+        if index.column() == 3: # Inline icons and multitoggle
+            if self.multi_toggle_pos is None:
+
+                if event.buttons() == QtCore.Qt.NoButton:
+                    if rectangles[delegate.PropertiesRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Edit item properties...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.AddItemRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Add New Item...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.TodoRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Edit Notes...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.RevealRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Show item in File Explorer...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.ArchiveRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Archive item...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.FavouriteRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Star item...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.ThumbnailRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            'Drag and drop an image, or right-click to edit the thumbnail...'
+                        )
+                        self.update(index)
+                    elif rectangles[delegate.InlineBackgroundRect].contains(cursor_position):
+                        common.signals.clearStatusBarMessage.emit()
+                        self.update(index)
+                    elif rectangles[delegate.DataRect].contains(cursor_position):
+                        common.signals.showStatusTipMessage.emit(
+                            index.data(common.PathRole)
+                        )
+                    else:
+                        common.signals.clearStatusBarMessage.emit()
+                        self.update(index)
+
+                if not index.isValid():
+                    app.restoreOverrideCursor()
+                    return
+
+                rect = delegate.get_description_rectangle(
+                    index, self.visualRect(index), self.buttons_hidden()
+                )
+
+                if rect and rect.contains(cursor_position):
+                    self.update(index)
+                    if app.overrideCursor():
+                        app.changeOverrideCursor(
+                            QtGui.QCursor(QtCore.Qt.IBeamCursor)
+                        )
+                    else:
+                        app.restoreOverrideCursor()
+                        app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
                 else:
                     app.restoreOverrideCursor()
-                    app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
-            else:
-                app.restoreOverrideCursor()
-            super().mouseMoveEvent(event)
-            return
-
-        if event.buttons() == QtCore.Qt.NoButton:
-            return
-
-        initial_index = self.indexAt(self.multi_toggle_pos)
-        idx = index.row()
-
-        # Exclude the current item
-        if index == self.multi_toggle_item:
-            return
-
-        self.multi_toggle_item = index
-
-        favourite = index.flags() & common.MarkedAsFavourite
-        archived = index.flags() & common.MarkedAsArchived
-
-        if idx not in self.multi_toggle_items:
-
-            if self.multi_toggle_flag == delegate.FavouriteRect:
-                self.multi_toggle_items[idx] = favourite
-                self.toggle_item_flag(
-                    index,
-                    common.MarkedAsFavourite,
-                    state=self.multi_toggle_state,
-                    commit_now=False,
-                )
+                super().mouseMoveEvent(event)
                 return
 
-            if self.multi_toggle_flag == delegate.ArchiveRect:
-                self.multi_toggle_items[idx] = archived
-                self.toggle_item_flag(
-                    index,
-                    common.MarkedAsArchived,
-                    state=self.multi_toggle_state,
-                    commit_now=False,
-                )
+            if event.buttons() == QtCore.Qt.NoButton:
                 return
 
-        if index == initial_index:
-            return
+            initial_index = self.indexAt(self.multi_toggle_pos)
+            idx = index.row()
+
+            # Exclude the current item
+            if index == self.multi_toggle_item:
+                return
+
+            self.multi_toggle_item = index
+
+            favourite = index.flags() & common.MarkedAsFavourite
+            archived = index.flags() & common.MarkedAsArchived
+
+            if idx not in self.multi_toggle_items:
+
+                if self.multi_toggle_flag == delegate.FavouriteRect:
+                    self.multi_toggle_items[idx] = favourite
+                    self.toggle_item_flag(
+                        index,
+                        common.MarkedAsFavourite,
+                        state=self.multi_toggle_state,
+                        commit_now=False,
+                    )
+                    return
+
+                if self.multi_toggle_flag == delegate.ArchiveRect:
+                    self.multi_toggle_items[idx] = archived
+                    self.toggle_item_flag(
+                        index,
+                        common.MarkedAsArchived,
+                        state=self.multi_toggle_state,
+                        commit_now=False,
+                    )
+                    return
+
+            if index == initial_index:
+                return
 
 
 class ThreadedItemView(InlineIconView):

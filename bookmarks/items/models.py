@@ -172,7 +172,7 @@ class ItemModel(QtCore.QAbstractTableModel):
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         """Number of columns the model has."""
-        return 1
+        return 4
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """Returns and item data associated with the given index.
@@ -181,11 +181,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         if not index.isValid():
             return None
         data = self.model_data()
-        if index.column() == 0:
-            if index.row() not in data:
-                return None
-            if role in data[index.row()]:
-                return data[index.row()][role]
 
         # Return the column 0 flags for all columns
         if role == common.FlagsRole:
@@ -194,6 +189,17 @@ class ItemModel(QtCore.QAbstractTableModel):
 
         if role == QtCore.Qt.SizeHintRole:
             return self.row_size
+
+        if index.column() == 0:
+            return None
+        elif index.column() in {1, 2}:
+            if index.row() not in data:
+                return None
+            if role in data[index.row()]:
+                return data[index.row()][role]
+        elif index.column() == 3:
+            return None
+
         return None
 
     def setData(self, index, v, role=QtCore.Qt.DisplayRole):

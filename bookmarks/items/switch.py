@@ -306,9 +306,9 @@ class TaskSwitchViewDelegate(delegate.ItemDelegate):
         """The main paint method.
 
         """
-        args = self.get_paint_arguments(painter, option, index)
-        self.paint_background(*args)
-        self.paint_name(*args)
+        context = self.get_paint_context(painter, option, index)
+        self.paint_background(context)
+        self.paint_name(context)
 
     def get_description_rect(self, *args, **kwargs):
         """Get description rectangle.

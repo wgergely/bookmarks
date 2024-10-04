@@ -120,7 +120,7 @@ class BaseSwitchView(views.ThreadedItemView):
         self.setGeometry(rect)
 
         top_left = common.widget(self.tab_idx).mapToGlobal(rect.topLeft())
-        top_left.setY(top_left.y() + common.Size.Margin(2.0))
+        top_left.setY(top_left.y() - common.Size.Margin(2.0))
         self.move(top_left)
 
         min_width = common.Size.DefaultWidth(0.66)
@@ -681,11 +681,7 @@ class TaskItemModel(models.ItemModel):
             path = f'{_source_path}/{value["value"]}'
             abs_path = os.path.abspath(path).replace('\\', '/')
 
-            exists = os.path.exists(path)
-
-            if not exists:
-                flags = QtCore.Qt.NoItemFlags
-
+            exists = os.path.exists(abs_path)
             idx = len(data)
 
             entry = common.get_entry_from_path(path)

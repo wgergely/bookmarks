@@ -132,7 +132,7 @@ class CopyClipboardEditor(base.BasePropertyEditor):
                 continue
 
             user_settings_key = f'properties/copy{self._db_table}_{k}'
-            editor = getattr(self, f'{user_settings_key}_editor')
+            editor = getattr(self, f'{user_settings_key}_editor'.replace('/', '_'))
             if not editor.isChecked():
                 continue
             if self.asset:

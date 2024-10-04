@@ -1108,7 +1108,7 @@ class BaseItemView(QtWidgets.QTableView):
         """
         model = self.selectionModel()
         if model.hasSelection():
-            current_index = next(f for f in model.selectedIndexes())
+            current_index = next((f for f in model.selectedIndexes()), QtCore.QModelIndex())
         else:
             current_index = QtCore.QModelIndex()
 
@@ -1167,7 +1167,7 @@ class BaseItemView(QtWidgets.QTableView):
 
         model = self.selectionModel()
         if model.hasSelection():
-            current_index = next(f for f in model.selectedIndexes())
+            current_index = next((f for f in model.selectedIndexes()), QtCore.QModelIndex())
         else:
             current_index = QtCore.QModelIndex()
 

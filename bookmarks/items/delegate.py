@@ -305,7 +305,7 @@ def get_file_text_segments(s, k, f):
     if match:
         # Suffix + extension
         s = match.group(3).split('.')
-        s = '.'.join(s[:-1]).upper() + '.' + s[-1].lower()
+        s = '.'.join(s[:-1]) + '.' + s[-1].lower()
         d[len(d)] = (s, common.Color.Text())
 
         # Frame-range without the "[]" characters
@@ -320,7 +320,7 @@ def get_file_text_segments(s, k, f):
 
         # Filename
         d[len(d)] = (
-            match.group(1).upper(), common.Color.SelectedText())
+            match.group(1), common.Color.SelectedText())
         common.delegate_text_segments[k] = d
         return d
 
@@ -329,28 +329,28 @@ def get_file_text_segments(s, k, f):
     if match:
         # The extension and the suffix
         if match.group(4):
-            s = match.group(3).upper() + '.' + match.group(4).lower()
+            s = match.group(3) + '.' + match.group(4).lower()
         else:
-            s = match.group(3).upper()
+            s = match.group(3)
         d[len(d)] = (s, common.Color.SelectedText())
 
         # Sequence
         d[len(d)] = (match.group(
             2
-        ).upper(), common.Color.SecondaryText())
+        ), common.Color.SecondaryText())
 
         # Prefix
         d[len(d)] = (
-            match.group(1).upper(), common.Color.SelectedText())
+            match.group(1), common.Color.SelectedText())
         common.delegate_text_segments[k] = d
         return d
 
     # Item is not collapsed, and isn't a sequence either
     s = s.split('.')
     if len(s) > 1:
-        s = '.'.join(s[:-1]).upper() + '.' + s[-1].lower()
+        s = '.'.join(s[:-1]) + '.' + s[-1].lower()
     else:
-        s = s[0].upper()
+        s = s[0]
     d[len(d)] = (s, common.Color.SelectedText())
     common.delegate_text_segments[k] = d
     return d
@@ -568,13 +568,13 @@ def subdir_text_it(pp):
 
     """
     if len(pp) == 3:  # Bookmark items
-        yield pp[1].upper()  # job name
+        yield pp[1]  # job name
         return
     elif len(pp) == 4:  # Asset items
         yield
         return
     elif len(pp) > 5:  # File items
-        for s in pp[5].upper().split('/'):
+        for s in pp[5].split('/'):
             yield s
 
 

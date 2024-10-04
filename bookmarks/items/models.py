@@ -27,6 +27,7 @@ is implemented separately to run directly over the source data.
 
 """
 import functools
+import os.path
 import uuid
 import weakref
 
@@ -222,8 +223,11 @@ class ItemModel(QtCore.QAbstractTableModel):
         """Returns the item's flags.
 
         """
+        if not index.isValid():
+            return QtCore.Qt.NoItemFlags
+
         v = self.data(index, role=common.FlagsRole)
-        if not isinstance(v, QtCore.Qt.ItemFlags) or not v:
+        if not isinstance(v, QtCore.Qt.ItemFlags):
             return QtCore.Qt.NoItemFlags
         return v
 
@@ -984,19 +988,17 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
             pp = ref()[idx][common.ParentPathRole]
             if len(pp) > 4:  # file items
-                root_path = '/'.join(pp[4:])
+                root_path = '/'.join(pp[4:]).rstrip('/')
             elif len(pp) == 4:  # asset items
-                root_path = '/'.join(pp[:-1])
+                root_path = '/'.join(pp[:-1]).rstrip('/')
             elif len(pp) == 3: # bookmark items
-                root_path = '/'.join(pp[:-2])
+                root_path = '/'.join(pp[:-2]).rstrip('/')
             else:
-                root_path = '/'.join(pp[:-1]).strip('/')
+                root_path = '/'.join(pp[:-1]).rstrip('/')
 
             path = ref()[idx][common.PathRole]
-            rel_path = path.replace(root_path, '').strip('/')
-
-            search_str = f'{root_path} {path}'
-            print(path)
+            rel_path = path.replace(root_path, '').rstrip('/')
+            abs_path = os.path.abspath(rel_path).replace('\\', '/')
             return self._filter.match_string(rel_path)
 
         # Item flag filters

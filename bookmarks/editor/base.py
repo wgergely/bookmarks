@@ -132,7 +132,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             root,
             asset=None,
             db_table=None,
-            buttons=('Save', 'Cancel'),
+            buttons=('Done', 'Cancel'),
             alignment=QtCore.Qt.AlignRight,
             fallback_thumb='placeholder',
             hide_thumbnail_editor=False,

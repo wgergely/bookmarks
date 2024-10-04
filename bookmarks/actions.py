@@ -1483,12 +1483,14 @@ def execute_detached(path, args=None):
 
         # But we do want to pass on the currently active items. This information can be used in an
         # unsupported DCC to manipulate context
-        env.insert('Bookmarks_ROOT', os.environ['Bookmarks_ROOT'])
-        env.insert('BOOKMARKS_ACTIVE_SERVER', common.active('server'))
-        env.insert('BOOKMARKS_ACTIVE_JOB', common.active('job'))
-        env.insert('BOOKMARKS_ACTIVE_ROOT', common.active('root'))
-        env.insert('BOOKMARKS_ACTIVE_ASSET', common.active('asset'))
-        env.insert('BOOKMARKS_ACTIVE_TASK', common.active('task'))
+        if 'Bookmarks_ROOT' in os.environ:
+            env.insert('Bookmarks_ROOT', os.environ['Bookmarks_ROOT'])
+
+        env.insert('B_SERVER', common.active('server'))
+        env.insert('B_JOB', common.active('job'))
+        env.insert('B_ROOT', common.active('root'))
+        env.insert('B_ASSET', common.active('asset'))
+        env.insert('B_TASK', common.active('task'))
 
         proc.setProcessEnvironment(env)
         proc.startDetached()

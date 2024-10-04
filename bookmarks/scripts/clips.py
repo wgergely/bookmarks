@@ -532,33 +532,20 @@ class EdlWidget(base.BasePropertyEditor):
         """
         selected_sources = self.get_selected_sources()
         if not selected_sources:
-            common.show_message(
-                'No Sources Selected',
-                body='Please select at least one source to generate an EDL.',
-                message_type='error'
-            )
-            return False
+            raise ValueError('No sources selected.')
 
         # Get oito timeline
         selected_sources = self.get_selected_sources()
         if not selected_sources:
-            common.show_message(
-                'Make sure to select at least one source to continue',
-                message_type='error'
-            )
-            return False
+            raise ValueError('No sources selected.')
 
         timeline = self.get_otio_timeline(selected_sources)
         if not timeline:
-            return False
+            raise ValueError('Could not create timeline.')
 
         # Get the selected adapter
         if not self.edl_adapter_editor.currentData():
-            common.show_message(
-                'Select an output format before continuing.',
-                message_type='error'
-            )
-            return False
+            raise ValueError('No adapter selected.')
 
         adapter = self.edl_adapter_editor.currentData()
         if adapter not in OTIO_ADAPTERS:
@@ -567,8 +554,12 @@ class EdlWidget(base.BasePropertyEditor):
         # Check that the required environment values are set
         if adapter == 'rv_session':
             if 'OTIO_RV_PYTHON_BIN' not in os.environ or 'OTIO_RV_PYTHON_LIB' not in os.environ:
+                log.error('RV environment variables not set.')
+
                 bin_path = common.get_binary('rv')
                 if not bin_path:
+                    raise RuntimeError('RV not found.')
+                if not QtCore.QFileInfo(bin_path).exists():
                     raise RuntimeError('RV not found.')
 
                 rv_bin_dir = QtCore.QFileInfo(bin_path).dir().path()

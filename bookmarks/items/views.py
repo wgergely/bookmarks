@@ -427,6 +427,7 @@ class ProgressWidget(QtWidgets.QWidget):
         """
         if not isinstance(event, QtGui.QMouseEvent):
             return
+        event.accept()
         self.hide()
 
 
@@ -927,12 +928,6 @@ class BaseItemView(QtWidgets.QTableView):
             return
         server, job, root = index.data(common.ParentPathRole)[0:3]
 
-        # Ignore default items
-        if flag == common.MarkedAsArchived and index.data(
-                common.FlagsRole
-        ) & common.MarkedAsDefault:
-            common.show_message('Default bookmark items cannot be archived.', message_type='error')
-            return
         # Ignore active items
         if flag == common.MarkedAsArchived and index.data(
                 common.FlagsRole
@@ -1125,6 +1120,7 @@ class BaseItemView(QtWidgets.QTableView):
                 QtCore.QItemSelectionModel.ClearAndSelect |
                 QtCore.QItemSelectionModel.Rows
             )
+            self.setCurrentIndex(first_index)
             return
 
         if current_index == last_index:  # Last item is selected
@@ -1138,6 +1134,7 @@ class BaseItemView(QtWidgets.QTableView):
                 QtCore.QItemSelectionModel.ClearAndSelect |
                 QtCore.QItemSelectionModel.Rows
             )
+            self.setCurrentIndex(first_index)
             return
 
         model.select(
@@ -1150,6 +1147,7 @@ class BaseItemView(QtWidgets.QTableView):
             QtCore.QItemSelectionModel.ClearAndSelect |
             QtCore.QItemSelectionModel.Rows
         )
+        self.setCurrentIndex(self.model().index(current_index.row() + 1, 0))
 
     def key_up(self):
         """Custom action to perform when the `up` arrow is pressed
@@ -1217,8 +1215,11 @@ class BaseItemView(QtWidgets.QTableView):
         if not self.selectionModel().hasSelection():
             return
         index = next(f for f in self.selectionModel().selectedIndexes())
-        if index.column() == 0:
-            self.edit(index)
+
+        # Map to column 2
+        sibling = index.sibling(index.row(), 2)
+        self.setCurrentIndex(sibling)
+        self.edit(sibling)
 
     def key_enter(self):
         """Custom key action
@@ -1344,7 +1345,11 @@ class BaseItemView(QtWidgets.QTableView):
 
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(color)
-        delegate.draw_painter_path(painter, x, y, font, text)
+
+        _painter_path = QtGui.QPainterPath()
+        _painter_path.addText(x, y, font, text)
+        painter.drawPath(_painter_path.simplified())
+
         painter.end()
 
     @QtCore.Slot()
@@ -1509,7 +1514,6 @@ class BaseItemView(QtWidgets.QTableView):
         index = self.indexAt(pos)
 
         if not index.isValid():
-            event.ignore()
             self.viewport().update()
             return
 
@@ -1576,7 +1580,6 @@ class BaseItemView(QtWidgets.QTableView):
 
         index = self.indexAt(pos)
         if not index.isValid():
-            event.ignore()
             self._reset_drag_indicators()
             return
 
@@ -1595,7 +1598,6 @@ class BaseItemView(QtWidgets.QTableView):
             self._reset_drag_indicators()
             return
 
-        event.ignore()
         self._reset_drag_indicators()
 
     def showEvent(self, event):
@@ -1608,8 +1610,9 @@ class BaseItemView(QtWidgets.QTableView):
         """Event handler.
         
         """
-        super().mouseReleaseEvent(event)
+        event.ignore()
         self.delay_save_selection()
+        super().mouseReleaseEvent(event)
 
     def eventFilter(self, widget, event):
         """Event filter handler.
@@ -1689,7 +1692,7 @@ class BaseItemView(QtWidgets.QTableView):
                 self.delay_save_selection()
                 return
             if event.key() == QtCore.Qt.Key_Tab:
-                if not self.state() == QtWidgets.QAbstractItemView.EditingState:
+                if self.state() != QtWidgets.QAbstractItemView.EditingState:
                     self.key_tab()
                     self.delay_save_selection()
                     return
@@ -1790,7 +1793,6 @@ class BaseItemView(QtWidgets.QTableView):
         """Custom wheel event responsible for scrolling the list.
 
         """
-        event.ignore()
         control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
 
         if not control_modifier:
@@ -1820,7 +1822,7 @@ class BaseItemView(QtWidgets.QTableView):
     def contextMenuEvent(self, event):
         """Custom context menu event."""
         index = self.indexAt(event.pos())
-        if index.isValid() and index.column() != 0:
+        if not index.isValid():
             return
 
         shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
@@ -1839,7 +1841,7 @@ class BaseItemView(QtWidgets.QTableView):
         else:
             widget = self.ContextMenu(index, parent=self)
 
-        widget.move(common.cursor.pos())
+        widget.move(event.globalPos())
         common.move_widget_to_available_geo(widget)
         widget.exec_()
 
@@ -1850,6 +1852,7 @@ class BaseItemView(QtWidgets.QTableView):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
+        event.accept()
         cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid():
@@ -1876,6 +1879,8 @@ class BaseItemView(QtWidgets.QTableView):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
+        event.accept()
+
         cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid():
@@ -1884,7 +1889,7 @@ class BaseItemView(QtWidgets.QTableView):
             return
 
         if index.column() == 2:
-            rect = delegate.get_description_rectangle(index, self.visualRect(index), self.buttons_hidden())
+            rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
 
             if rect and rect.contains(cursor_position):
                 self.edit(index)
@@ -1909,6 +1914,10 @@ class InlineIconView(BaseItemView):
         self.multi_toggle_flag = None
         self.multi_toggle_item = None
         self.multi_toggle_items = {}
+
+    def set_row_size(self, v):
+        super().set_row_size(v)
+        self.update_headers()
 
     @QtCore.Slot()
     def update_headers(self, *args, **kwargs):
@@ -1947,6 +1956,7 @@ class InlineIconView(BaseItemView):
     def _connect_signals(self):
         super()._connect_signals()
         self.delayed_layout_timer.timeout.connect(self.update_headers)
+        self.delayed_reset_row_layout_timer.timeout.connect(self.update_headers)
         self.resized.connect(self.update_headers)
 
     def init_model(self):
@@ -1973,77 +1983,6 @@ class InlineIconView(BaseItemView):
         self.multi_toggle_item = None
         self.multi_toggle_items = {}
 
-    def clickable_rectangle_event(self, event):
-        """Handle mouse press & release events on an item's interactive rectangle.
-
-        The clickable rectangles are defined by and stored by the item delegate. See
-        :meth:`~bookmarks.items.ItemDelegate.get_clickable_rectangles`.
-
-        We're implementing filtering by reacting to clicks on item labels:
-        ``shift`` modifier will add a _positive_ filter and hide all items not
-        containing the clicked rectangle's text content.
-
-        The ``alt`` and ``control`` modifiers will add a negative filter and hide all
-        items containing the clicked rectangle's text content.
-
-        """
-        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
-        index = self.indexAt(cursor_position)
-
-        if not index.isValid():
-            return
-        if not index.flags() & QtCore.Qt.ItemIsEnabled:
-            return
-        if not index.column() == 0:
-            return
-
-        # Get pressed keyboard modifiers
-        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
-        alt_modifier = modifiers & QtCore.Qt.AltModifier
-        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-        control_modifier = modifiers & QtCore.Qt.ControlModifier
-
-        # Get clickable rectangles from the delegate
-        rect = self.visualRect(index)
-        clickable_rectangles = delegate.get_clickable_rectangles(index, rect)
-        if not clickable_rectangles:
-            return
-
-        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
-
-        for item in clickable_rectangles:
-            if not item:
-                continue
-
-            rect, text = item
-            if not text:
-                continue
-            if not rect.contains(cursor_position):
-                continue
-
-            # Shift modifier toggles a text filter
-            if shift_modifier:
-                text = f'"{text}"'
-                if self.model().filter.has_string(text, positive_terms=True):
-                    self.model().filter.remove_filter(text)
-                else:
-                    self.model().filter.add_filter(text)
-                self.model().set_filter_text(self.model().filter.filter_string)
-                self.update(index)
-                return
-
-            # Alt or control modifiers toggle a negative filter
-            if alt_modifier or control_modifier:
-                self.model().filter.remove_filter(text)
-                text = f'"{text}"'
-                self.model().filter.remove_filter(text)
-
-                text = f'--"{text}"'
-                self.model().filter.add_filter(text)
-                self.model().set_filter_text(self.model().filter.filter_string)
-                self.update(index)
-                return
-
     def mousePressEvent(self, event):
         """The `InlineIconView`'s mousePressEvent initiates multi-row
         flag toggling.
@@ -2062,12 +2001,15 @@ class InlineIconView(BaseItemView):
         index = self.indexAt(cursor_position)
 
         if index.column() == 3:
+            event.accept()
+
             if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
                 super().mousePressEvent(event)
                 self._clicked_rect = QtCore.QRect()
                 self.reset_multi_toggle()
                 return
 
+            event.accept()
             self.reset_multi_toggle()
 
             rects = delegate.get_rectangles(self.visualRect(index), index, self.inline_icons_count())
@@ -2086,6 +2028,10 @@ class InlineIconView(BaseItemView):
                 self.multi_toggle_pos = cursor_position
                 self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
                 self.multi_toggle_flag = delegate.ArchiveRect
+
+            return
+
+        event.ignore()
 
         super().mousePressEvent(event)
 
@@ -2124,23 +2070,20 @@ class InlineIconView(BaseItemView):
         index = self.indexAt(event.pos())
 
         if not index.isValid():
+            self.reset_multi_toggle()
+            super().mouseReleaseEvent(event)
+            return
+
+        if not index.data(common.FlagsRole):
+            self.reset_multi_toggle()
+            super().mouseReleaseEvent(event)
             return
 
         if index.column() == 3:
-            if not index.data(common.FlagsRole):
-                return
             archived = index.data(common.FlagsRole) & common.MarkedAsArchived
 
-            # Let's handle the clickable rectangle event first
-            if not archived:
-                self.clickable_rectangle_event(event)
-
-            if not index.isValid():
-                self.reset_multi_toggle()
-                super().mouseReleaseEvent(event)
-                return
-
             if self.multi_toggle_items:
+                event.ignore()
                 self.reset_multi_toggle()
                 super().mouseReleaseEvent(event)
                 self.model().invalidateFilter()
@@ -2148,14 +2091,9 @@ class InlineIconView(BaseItemView):
 
             # Responding the click-events based on the position:
             rectangles = delegate.get_rectangles(self.visualRect(index), index, self.inline_icons_count())
-            cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
 
+            event.accept()
             self.reset_multi_toggle()
-
-            def _check_rect(f):
-                r = rectangles[f]
-                p = cursor_position
-                return r.contains(p) and r == self._clicked_rect
 
             if _check_rect(delegate.FavouriteRect) and not archived:
                 actions.toggle_favourite()
@@ -2205,106 +2143,85 @@ class InlineIconView(BaseItemView):
         """
         if not isinstance(event, QtGui.QMouseEvent):
             return
+
         if self.verticalScrollBar().isSliderDown():
+            event.ignore()
             return
 
         app = QtWidgets.QApplication.instance()
-        if not app:
-            return
 
-        if not common.cursor:
-            return
-        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
-
-        index = self.indexAt(cursor_position)
+        index = self.indexAt(event.pos())
         if not index.isValid():
+            event.accept()
             app.restoreOverrideCursor()
             return
 
-        if not index.column() == 3:
-            app.restoreOverrideCursor()
-            return
-
-        if index.column() == 2: # update for filter intent
-            modifiers = app.keyboardModifiers()
-            alt_modifier = modifiers & QtCore.Qt.AltModifier
-            shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-            control_modifier = modifiers & QtCore.Qt.ControlModifier
-
-            if alt_modifier or shift_modifier or control_modifier:
-                self.update(index)
-
-        rectangles = delegate.get_rectangles(self.visualRect(index), index, self.inline_icons_count())
-
-        if index.column() == 3: # Inline icons and multitoggle
+        if index.column() == 3:  # Inline icons and multitoggle
             if self.multi_toggle_pos is None:
 
                 if event.buttons() == QtCore.Qt.NoButton:
-                    if rectangles[delegate.PropertiesRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Edit item properties...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.AddItemRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Add New Item...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.TodoRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Edit Notes...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.RevealRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Show item in File Explorer...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.ArchiveRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Archive item...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.FavouriteRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Star item...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.ThumbnailRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            'Drag and drop an image, or right-click to edit the thumbnail...'
-                        )
-                        self.update(index)
-                    elif rectangles[delegate.InlineBackgroundRect].contains(cursor_position):
-                        common.signals.clearStatusBarMessage.emit()
-                        self.update(index)
-                    elif rectangles[delegate.DataRect].contains(cursor_position):
-                        common.signals.showStatusTipMessage.emit(
-                            index.data(common.PathRole)
-                        )
-                    else:
-                        common.signals.clearStatusBarMessage.emit()
-                        self.update(index)
+                    pass
+                    # if rectangles[delegate.PropertiesRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Edit item properties...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.AddItemRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Add New Item...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.TodoRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Edit Notes...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.RevealRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Show item in File Explorer...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.ArchiveRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Archive item...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.FavouriteRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Star item...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.ThumbnailRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         'Drag and drop an image, or right-click to edit the thumbnail...'
+                    #     )
+                    #     self.update(index)
+                    # elif rectangles[delegate.DataRect].contains(cursor_position):
+                    #     common.signals.showStatusTipMessage.emit(
+                    #         index.data(common.PathRole)
+                    #     )
+                    # else:
+                    #     common.signals.clearStatusBarMessage.emit()
+                    #     self.update(index)
 
-                if not index.isValid():
-                    app.restoreOverrideCursor()
-                    return
+                # rect = delegate.get_description_rectangle(
+                #     index, self.visualRect(index), self.buttons_hidden()
+                # )
 
-                rect = delegate.get_description_rectangle(
-                    index, self.visualRect(index), self.buttons_hidden()
-                )
+                # if rect and rect.contains(event.pos()):
+                #     event.accept()
+                #
+                #     self.update(index)
+                #     if app.overrideCursor():
+                #         app.changeOverrideCursor(
+                #             QtGui.QCursor(QtCore.Qt.IBeamCursor)
+                #         )
+                #     else:
+                #         app.restoreOverrideCursor()
+                #         app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+                # else:
+                #     app.restoreOverrideCursor()
 
-                if rect and rect.contains(cursor_position):
-                    self.update(index)
-                    if app.overrideCursor():
-                        app.changeOverrideCursor(
-                            QtGui.QCursor(QtCore.Qt.IBeamCursor)
-                        )
-                    else:
-                        app.restoreOverrideCursor()
-                        app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
-                else:
-                    app.restoreOverrideCursor()
                 super().mouseMoveEvent(event)
                 return
 
@@ -2324,6 +2241,7 @@ class InlineIconView(BaseItemView):
             archived = index.flags() & common.MarkedAsArchived
 
             if idx not in self.multi_toggle_items:
+                event.accept()
 
                 if self.multi_toggle_flag == delegate.FavouriteRect:
                     self.multi_toggle_items[idx] = favourite
@@ -2348,8 +2266,171 @@ class InlineIconView(BaseItemView):
             if index == initial_index:
                 return
 
+        app.restoreOverrideCursor()
 
-class ThreadedItemView(InlineIconView):
+
+class ClickableFilterView(InlineIconView):
+    filterRectangleEntered = QtCore.Signal(QtCore.QRect)
+    filterRectangleLeft = QtCore.Signal()
+
+    inlineButtonEntered = QtCore.Signal(QtCore.QRect)
+    inlineButtonLeft = QtCore.Signal()
+
+    def _connect_signals(self):
+        super()._connect_signals()
+        self.filterRectangleEntered.connect(self.itemDelegate().set_filter_candidate_rectangle)
+        self.filterRectangleLeft.connect(self.itemDelegate().clear_filter_candidate_rectangle)
+        self.filterRectangleLeft.connect(common.signals.clearStatusBarMessage)
+
+    def mouseMoveEvent(self, event):
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+
+        super().mouseMoveEvent(event)
+
+        index = self.indexAt(event.pos())
+        if not index.isValid():
+            return
+
+        if index.column() != 2:
+            common.signals.clearStatusBarMessage.emit()
+            return
+
+        rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
+        if not text:
+            self.filterRectangleLeft.emit()
+        else:
+
+            self.filterRectangleEntered.emit(rect)
+            common.signals.showStatusTipMessage.emit(
+                f'Shift-click to filter by "{text}"  |  Alt-click to exclude "{text}"')
+
+        self.repaint(self.visualRect(index))
+
+    def mouseReleaseEvent(self, event):
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+
+        index = self.indexAt(event.pos())
+        if not index.isValid():
+            super().mouseReleaseEvent(event)
+            return
+
+        if index.column() != 2:
+            super().mouseReleaseEvent(event)
+            return
+
+        rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
+        if not text:
+            super().mouseReleaseEvent(event)
+            return
+
+        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+        no_modifier = modifiers == QtCore.Qt.NoModifier
+        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+
+        if modifiers == QtCore.Qt.NoModifier:
+            super().mouseReleaseEvent(event)
+            return
+
+        event.accept()
+
+        negative_filter_text = f'--"{text}"'
+        positive_filter_text = f'"{text}"'
+
+        if shift_modifier:  # positive filter intent
+            # Remove negative filter
+            if self.model().filter.has_string(negative_filter_text, negative_terms=True):
+                self.model().filter.remove_filter(negative_filter_text)
+
+            if self.model().filter.has_string(positive_filter_text, positive_terms=True):
+                self.model().filter.remove_filter(positive_filter_text)
+            else:
+                self.model().filter.add_filter(positive_filter_text)
+        elif alt_modifier:  # negative filter intent
+            # Remove positive filter
+            if self.model().filter.has_string(positive_filter_text, positive_terms=True):
+                self.model().filter.remove_filter(positive_filter_text)
+            self.model().filter.add_filter(negative_filter_text)
+
+
+        self.model().set_filter_text(self.model().filter.filter_string)
+        self.update(index)
+
+        super().mouseReleaseEvent(event)
+        self.filterRectangleLeft.emit()
+
+    # def clickable_rectangle_event(self, event):
+    #     """Handle mouse press & release events on an item's interactive rectangle.
+    #
+    #     The clickable rectangles are defined by and stored by the item delegate. See
+    #     :meth:`~bookmarks.items.ItemDelegate.get_clickable_rectangles`.
+    #
+    #     We're implementing filtering by reacting to clicks on item labels:
+    #     ``shift`` modifier will add a _positive_ filter and hide all items not
+    #     containing the clicked rectangle's text content.
+    #
+    #     The ``alt`` and ``control`` modifiers will add a negative filter and hide all
+    #     items containing the clicked rectangle's text content.
+    #
+    #     """
+    #     index = self.indexAt(event.pos())
+    #
+    #     if not index.isValid():
+    #         return
+    #     if not index.flags() & QtCore.Qt.ItemIsEnabled:
+    #         return
+
+    # # Get pressed keyboard modifiers
+    # modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+    # alt_modifier = modifiers & QtCore.Qt.AltModifier
+    # shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+    # control_modifier = modifiers & QtCore.Qt.ControlModifier
+    #
+    # # Get clickable rectangles from the delegate
+    # rect = self.visualRect(index)
+    # clickable_rectangles = delegate.get_clickable_rectangles(index, rect)
+    # if not clickable_rectangles:
+    #     return
+    #
+    # cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
+
+    # for item in clickable_rectangles:
+    #     if not item:
+    #         continue
+    #
+    #     rect, text = item
+    #     if not text:
+    #         continue
+    #     if not rect.contains(cursor_position):
+    #         continue
+    #
+    #     # Shift modifier toggles a text filter
+    #     if shift_modifier:
+    #         text = f'"{text}"'
+    #         if self.model().filter.has_string(text, positive_terms=True):
+    #             self.model().filter.remove_filter(text)
+    #         else:
+    #             self.model().filter.add_filter(text)
+    #         self.model().set_filter_text(self.model().filter.filter_string)
+    #         self.update(index)
+    #         return
+    #
+    #     # Alt or control modifiers toggle a negative filter
+    #     if alt_modifier or control_modifier:
+    #         self.model().filter.remove_filter(text)
+    #         text = f'"{text}"'
+    #         self.model().filter.remove_filter(text)
+    #
+    #         text = f'--"{text}"'
+    #         self.model().filter.add_filter(text)
+    #         self.model().set_filter_text(self.model().filter.filter_string)
+    #         self.update(index)
+    #         return
+
+
+class ThreadedItemView(ClickableFilterView):
     """Extends the :class:`InlineIconView` with the methods used to interface with
     threads.
 

@@ -130,7 +130,7 @@ class BaseFilterButton(QtWidgets.QComboBox):
         if text == show_all_label:
             text = ''
         else:
-            text = f'"{text.lower().strip()}"'
+            text = f'"{text.strip()}"'
 
         common.model(self.tab_index).set_filter_text(text)
 

@@ -361,8 +361,6 @@ class FileItemModel(models.ItemModel):
             # we'll allow all extensions
             if not disable_filter and ext not in valid_extensions:
                 continue
-            print(entry)
-
 
             if _dir:
                 _watch_paths.append(_dir)
@@ -396,6 +394,7 @@ class FileItemModel(models.ItemModel):
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: filename,
+                    common.FilterTextRole: filename,
                     QtCore.Qt.EditRole: filename,
                     common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,

@@ -58,6 +58,7 @@ class TextFilterEditor(QtWidgets.QWidget):
                 self.close()
                 return True
             if event.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:
+                event.accept()
                 self.finished.emit(self.editor.text())
                 self.close()
                 return True

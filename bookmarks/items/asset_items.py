@@ -254,6 +254,7 @@ class AssetItemModel(models.ItemModel):
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: display_name,
+                    common.FilterTextRole: display_name,
                     QtCore.Qt.EditRole: filename,
                     common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,
@@ -273,6 +274,7 @@ class AssetItemModel(models.ItemModel):
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
                     common.NoteCountRole: 0,
+                    common.AssetCountRole: 0,
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,
                     common.FramesRole: [],

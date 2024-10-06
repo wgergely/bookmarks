@@ -4,7 +4,11 @@ import shlex
 import unittest
 from types import NoneType
 
-__all__ = ['SyntaxFilter']
+__all__ = [
+    'SyntaxFilter', 'FilterSyntaxHighlighter'
+]
+
+from PySide2 import QtGui
 
 
 class SyntaxFilter:
@@ -17,6 +21,10 @@ class SyntaxFilter:
         ')"',
         ")'",
     )
+
+    # re.split to split by spaces but keep quoted strings intact
+    regex_split = re.compile(r'(?<!\\)"[^"]*"|\S+')
+
 
     def __init__(self, filter_string='', case_sensitive=True):
         """
@@ -32,14 +40,14 @@ class SyntaxFilter:
         if not isinstance(case_sensitive, bool):
             raise TypeError('case_sensitive must be a boolean')
 
-        self.negative_regex_patterns = None
-        self.positive_regex_patterns = None
-        self.invalid_regex_patterns = None
+        self.negative_regex_patterns = []
+        self.positive_regex_patterns = []
+        self.invalid_regex_patterns = []
 
-        self.negative_terms = None
-        self.positive_terms = None
+        self.negative_terms = []
+        self.positive_terms = []
 
-        self._filter_string = None
+        self._filter_string = ''
         self.case_sensitive = case_sensitive
 
         self.set_filter_string(filter_string)
@@ -278,6 +286,8 @@ class SyntaxFilter:
         ) = self.parse_filter_string(filter_string, self.case_sensitive)
 
     def match_string(self, full_path):
+        if not self._filter_string:
+            return True
         key = f'{self._filter_string}:{self.case_sensitive}'
         return self._match_string(key, full_path)
 
@@ -291,10 +301,10 @@ class SyntaxFilter:
         if not isinstance(string, str):
             raise TypeError('Filter must be a string')
 
-        if string in self._filter_string:
-            return
+        # Temporarily append new filter string to existing filter string
+        self._filter_string += ' ' + string
 
-        # Parse new filter string
+        # Include list
         (
             positive_terms,
             negative_terms,
@@ -303,43 +313,71 @@ class SyntaxFilter:
             invalid_regex_patterns
         ) = self.parse_filter_string(string, self.case_sensitive)
 
+        tokens = self.regex_split.findall(self._filter_string)
+
         # Update existing filter
         if positive_terms:
-            self.positive_terms.extend(positive_terms)
+            self.positive_terms = sorted(set(self.positive_terms + positive_terms))
         if negative_terms:
-            self.negative_terms.extend(negative_terms)
+            self.negative_terms = sorted(set(self.negative_terms + negative_terms))
         if positive_regex_patterns:
-            self.positive_regex_patterns.extend(positive_regex_patterns)
+            self.positive_regex_patterns = sorted(set(self.positive_regex_patterns + positive_regex_patterns))
         if negative_regex_patterns:
-            self.negative_regex_patterns.extend(negative_regex_patterns)
+            self.negative_regex_patterns = sorted(set(self.negative_regex_patterns + negative_regex_patterns))
 
-        self._filter_string += f' {string}'
-        self._filter_string = self._filter_string.strip()
+        all_terms = (
+                sorted([f'"{f}"' if f'"{f}"' in tokens else f for f in self.positive_terms]) +
+                sorted([f'--"{f}"' if f'--"{f}"' in tokens else f for f in self.negative_terms]) +
+                sorted([f'"({f})"' for f in self.positive_regex_patterns]) +
+                sorted([f'--"({f})"' for f in self.negative_regex_patterns]) +
+                sorted([f'"({f})"' for f in self.invalid_regex_patterns])
+        )
+        all_terms = set(all_terms)
+        self._filter_string = ' '.join(all_terms)
 
     def remove_filter(self, string):
+        string = string.replace("'", '"')
         if string not in self._filter_string:
             return
 
-        # Parse new filter string
+        tokens = self.regex_split.findall(self._filter_string)
+
+        _f = lambda f: f'"{f}"' if f'"{f}"' in tokens else f
+        __f = lambda f: True if f'"{f}"' in tokens else False
+
+        _f_ = lambda f: f'--"{f}"' if f'--"{f}"' in tokens else f
+        __f_ = lambda f: True if f'--"{f}"' in tokens else False
+
+        _positive_terms = sorted([_f(f) for f in self.positive_terms if __f(f)])
+        _negative_terms = sorted([_f_(f) for f in self.negative_terms if __f_(f)])
+        _positive_regex_patterns = sorted([f'"({f})"' for f in self.positive_regex_patterns])
+        _negative_regex_patterns = sorted([f'--"({f})"' for f in self.negative_regex_patterns])
+        _invalid_regex_patterns = sorted([f'"({f})"' for f in self.invalid_regex_patterns])
+
+        tokens = self.regex_split.findall(self._filter_string)
+        if string in tokens:
+            tokens.remove(string)
+        else:
+            if string in _positive_terms:
+                tokens.remove(string)
+            if string in _negative_terms:
+                tokens.remove(string)
+            if string in _positive_regex_patterns:
+                tokens.remove(string)
+            if string in _negative_regex_patterns:
+                tokens.remove(string)
+            if string in _invalid_regex_patterns:
+                tokens.remove(string)
+
+        _filter_string = ' '.join(set(tokens))
+        self._filter_string = _filter_string
         (
-            positive_terms,
-            negative_terms,
-            positive_regex_patterns,
-            negative_regex_patterns,
-            invalid_regex_patterns
-        ) = self.parse_filter_string(string, self.case_sensitive)
-
-        # Update existing filter
-        if positive_terms:
-            self.positive_terms = [t for t in self.positive_terms if t not in positive_terms]
-        if negative_terms:
-            self.negative_terms = [t for t in self.negative_terms if t not in negative_terms]
-        if positive_regex_patterns:
-            self.positive_regex_patterns = [p for p in self.positive_regex_patterns if p not in positive_regex_patterns]
-        if negative_regex_patterns:
-            self.negative_regex_patterns = [p for p in self.negative_regex_patterns if p not in negative_regex_patterns]
-
-        self._filter_string = self._filter_string.replace(string, '').strip()
+            self.positive_terms,
+            self.negative_terms,
+            self.positive_regex_patterns,
+            self.negative_regex_patterns,
+            self.invalid_regex_patterns
+        ) = self.parse_filter_string(_filter_string, self.case_sensitive)
 
     def has_string(
             self,
@@ -353,31 +391,161 @@ class SyntaxFilter:
         if not self._filter_string:
             return False
 
-        def _check(arg, arr, s):
-            if arg and arr and s in ' '.join(arr):
-                return True
-            return False
+        tokens = self.regex_split.findall(self._filter_string)
 
-        if _check(positive_terms, self.positive_terms, string):
-            return True
-        if _check(negative_terms, self.negative_terms, string):
-            return True
-        if _check(positive_regex_patterns, self.positive_regex_patterns, string):
-            return True
-        if _check(negative_regex_patterns, self.negative_regex_patterns, string):
-            return True
-        if _check(invalid_regex_patterns, self.invalid_regex_patterns, string):
-            return True
+        all_terms = []
+        if positive_terms:
+            all_terms += sorted([f'"{f}"' if f'"{f}"' in tokens else f for f in self.positive_terms])
+        if negative_terms:
+            all_terms += sorted(
+                [f'--"{f}"' if f'--"{f}"' in tokens else f'--{f}' for f in self.negative_terms])
+        if positive_regex_patterns:
+            all_terms += sorted([f'"({f})"' for f in self.positive_regex_patterns])
+        if negative_regex_patterns:
+            all_terms += sorted([f'--"({f})"' for f in self.negative_regex_patterns])
+        if invalid_regex_patterns:
+            all_terms += sorted([f'"({f})"' for f in self.invalid_regex_patterns])
 
-        return False
+        all_terms = set(all_terms)
+        string = string.replace("'", '"')
+        return string in all_terms
+
+
+
+class FilterSyntaxHighlighter(QtGui.QSyntaxHighlighter):
+    def __init__(self, parent=None):
+        super(FilterSyntaxHighlighter, self).__init__(parent)
+        self.initializeFormats()
+
+    def initializeFormats(self):
+        # Define formats for different term types
+        self.formats = {}
+
+        # Positive partial term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setForeground(QtGui.QColor("#A8FF60"))  # Greenish
+        self.formats['positive_partial'] = fmt
+
+        # Positive exact term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setForeground(QtGui.QColor("#B5FFD1"))  # Lighter green
+        self.formats['positive_exact'] = fmt
+
+        # Positive regex term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setForeground(QtGui.QColor("#99FF99"))  # Another shade of green
+        self.formats['positive_regex'] = fmt
+
+        # Negative partial term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setForeground(QtGui.QColor("#FF6E64"))  # Reddish
+        self.formats['negative_partial'] = fmt
+
+        # Negative exact term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setForeground(QtGui.QColor("#FFAFAF"))  # Lighter red
+        self.formats['negative_exact'] = fmt
+
+        # Negative regex term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setForeground(QtGui.QColor("#FF9999"))  # Another shade of red
+        self.formats['negative_regex'] = fmt
+
+        # Invalid term
+        fmt = QtGui.QTextCharFormat()
+        fmt.setUnderlineColor(QtGui.QColor("#FFA500"))  # Orange
+        fmt.setUnderlineStyle(QtGui.QTextCharFormat.SpellCheckUnderline)
+        self.formats['invalid'] = fmt
+
+    def highlightBlock(self, text):
+        length = len(text)
+        i = 0
+        while i < length:
+            if text[i:].startswith('--'):
+                # Negative term
+                start = i
+                i += 2
+                if i < length:
+                    if text[i] == '"':
+                        # Negative quoted term
+                        i += 1
+                        start_quote = i
+                        while i < length and text[i] != '"':
+                            i += 1
+                        if i < length and text[i] == '"':
+                            # Found closing quote
+                            i += 1
+                            self.setFormat(start, i - start, self.formats['negative_exact'])
+                        else:
+                            # Unterminated quote
+                            i = length
+                            self.setFormat(start, i - start, self.formats['invalid'])
+                    elif text[i] == '(':
+                        # Negative regex term
+                        i += 1
+                        start_paren = i
+                        while i < length and text[i] != ')':
+                            i += 1
+                        if i < length and text[i] == ')':
+                            # Found closing parenthesis
+                            i += 1
+                            self.setFormat(start, i - start, self.formats['negative_regex'])
+                        else:
+                            # Unterminated parenthesis
+                            i = length
+                            self.setFormat(start, i - start, self.formats['invalid'])
+                    else:
+                        # Negative partial term
+                        start_term = i
+                        while i < length and not text[i].isspace():
+                            i += 1
+                        self.setFormat(start, i - start, self.formats['negative_partial'])
+                else:
+                    # Just '--' at end of text
+                    self.setFormat(start, i - start, self.formats['invalid'])
+            elif text[i] == '"':
+                # Positive quoted term
+                start = i
+                i += 1
+                while i < length and text[i] != '"':
+                    i += 1
+                if i < length and text[i] == '"':
+                    # Found closing quote
+                    i += 1
+                    self.setFormat(start, i - start, self.formats['positive_exact'])
+                else:
+                    # Unterminated quote
+                    i = length
+                    self.setFormat(start, i - start, self.formats['invalid'])
+            elif text[i] == '(':
+                # Positive regex term
+                start = i
+                i += 1
+                while i < length and text[i] != ')':
+                    i += 1
+                if i < length and text[i] == ')':
+                    # Found closing parenthesis
+                    i += 1
+                    self.setFormat(start, i - start, self.formats['positive_regex'])
+                else:
+                    # Unterminated parenthesis
+                    i = length
+                    self.setFormat(start, i - start, self.formats['invalid'])
+            elif text[i].isspace():
+                # Skip whitespace
+                i += 1
+            else:
+                # Positive partial term
+                start = i
+                while i < length and not text[i].isspace():
+                    if text[i] in '"()':
+                        break
+                    i += 1
+                self.setFormat(start, i - start, self.formats['positive_partial'])
+
 
 
 class TestSyntaxFilter(unittest.TestCase):
-    def test_plain_positive_term(self):
-        """Test matching with a single positive plain term."""
-        filter_string = "'asset'"
-        filter = SyntaxFilter(filter_string)
-        self.assertTrue(filter.match_string('//gw-server.local/jobs/AKA_ChiefOfWar/data/asset'))
 
     def test_plain_positive_term(self):
         """Test matching with a single positive plain term."""
@@ -386,6 +554,14 @@ class TestSyntaxFilter(unittest.TestCase):
         self.assertTrue(filter.match_string('/path/to/folder'))
         self.assertTrue(filter.match_string('/folder/subfolder'))
         self.assertFalse(filter.match_string('/path/to/another'))
+
+        filter_string = 'TestAsset3'
+        filter = SyntaxFilter(filter_string)
+        self.assertTrue(filter.match_string('TestClient/TestJob/data/asset/TestAsset3'))
+
+        filter_string = '"TestAsset3"'
+        filter = SyntaxFilter(filter_string)
+        self.assertTrue(filter.match_string('TestClient/TestJob/data/asset/TestAsset3'))
 
     def test_plain_positive_terms(self):
         """Test matching with a multiple positive plain term."""

@@ -67,17 +67,6 @@ active_paths = None
 item_data = {}
 watchers = {}
 
-delegate_paths = {}
-inline_icon_rectangles = {}
-delegate_text_segments = {}
-delegate_subdir_rectangles = {}
-delegate_bg_subdir_rectangles = {}
-delegate_bg_brushes = {}
-delegate_clickable_rectangles = {}
-delegate_description_rectangles = {}
-
-elided_text = {}
-
 viewer_widgets = {}
 
 pixel_ratio = None

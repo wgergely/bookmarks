@@ -182,23 +182,13 @@ class ItemModel(QtCore.QAbstractTableModel):
             return None
         data = self.model_data()
 
-        # Return the column 0 flags for all columns
-        if role == common.FlagsRole:
-            if role in data[index.row()]:
-                return data[index.row()][role]
-
         if role == QtCore.Qt.SizeHintRole:
             return self.row_size
 
-        if index.column() == 0:
+        if index.row() not in data:
             return None
-        elif index.column() in {1, 2}:
-            if index.row() not in data:
-                return None
-            if role in data[index.row()]:
-                return data[index.row()][role]
-        elif index.column() == 3:
-            return None
+        if role in data[index.row()]:
+            return data[index.row()][role]
 
         return None
 
@@ -231,7 +221,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         """
         if not index.isValid():
             return QtCore.Qt.NoItemFlags
-
         v = self.data(index, role=common.FlagsRole)
         if not isinstance(v, QtCore.Qt.ItemFlags):
             return QtCore.Qt.NoItemFlags
@@ -978,35 +967,6 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         if not ref or not ref() or idx not in ref():
             return False
 
-        filter_text = self._filter.filter_string
-
-        # Apply text filter
-        if filter_text:
-            if not ref():
-                return False
-            description = ref()[idx][common.DescriptionRole]
-            description = description.strip().lower() if description else ''
-            for s in self._filter.syntax_markers:
-                description = description.replace(s, '')
-
-            if not ref():
-                return False
-
-            pp = ref()[idx][common.ParentPathRole]
-            if len(pp) > 4:  # file items
-                root_path = '/'.join(pp[4:]).rstrip('/')
-            elif len(pp) == 4:  # asset items
-                root_path = '/'.join(pp[:-1]).rstrip('/')
-            elif len(pp) == 3: # bookmark items
-                root_path = '/'.join(pp[:-2]).rstrip('/')
-            else:
-                root_path = '/'.join(pp[:-1]).rstrip('/')
-
-            path = ref()[idx][common.PathRole]
-            rel_path = path.replace(root_path, '').rstrip('/')
-            abs_path = os.path.abspath(rel_path).replace('\\', '/')
-            return self._filter.match_string(rel_path)
-
         # Item flag filters
         flags = ref()[idx][common.FlagsRole]
         if not isinstance(flags, QtCore.Qt.ItemFlags):
@@ -1023,4 +983,11 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             return False
         if not favourite and self.filter_flag(common.MarkedAsFavourite):
             return False
-        return True
+
+        # Apply text filter
+        r = []
+        for line in ref()[idx][common.FilterTextRole].split('\n'):
+            r.append(self._filter.match_string(line.strip()))
+        return any(r)
+
+

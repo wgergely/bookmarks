@@ -112,7 +112,10 @@ class BaseTabButton(QtWidgets.QLabel):
             width = metrics.horizontalAdvance(self.text())
             x = (self.width() / 2.0) - (width / 2.0)
             y = self.rect().center().y() + (metrics.ascent() * 0.5)
-            delegate.draw_painter_path(painter, x, y, font, self.text())
+
+            _painter_path = QtGui.QPainterPath()
+            _painter_path.addText(x, y, font, self.text())
+            painter.drawPath(_painter_path.simplified())
         else:
             # Draw icon
             pixmap = images.rsc_pixmap(

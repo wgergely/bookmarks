@@ -434,7 +434,7 @@ def get_bookmark_description(bookmark_row_data):
         str:    The description of the bookmark.
 
     """
-    sep = '  •  '
+    sep = '/'
     try:
         v = {}
         for k in ('description', 'width', 'height', 'framerate', 'prefix'):
@@ -444,8 +444,8 @@ def get_bookmark_description(bookmark_row_data):
 
         description = f'{sep}{v["description"]}' if v['description'] else ''
         width = v['width'] if (v['width'] and v['height']) else ''
-        height = f'*{v["height"]}px' if (v['width'] and v['height']) else ''
-        framerate = f', {v["framerate"]}fps' if v['framerate'] else ''
+        height = f'*{v["height"]}' if (v['width'] and v['height']) else ''
+        framerate = f'{sep}{v["framerate"]}fps' if v['framerate'] else ''
 
         s = f'{description}{sep}{width}{height}{framerate}'
         s = s.replace(sep + sep, sep)
@@ -581,7 +581,9 @@ class InfoWorker(BaseWorker):
         # Description
         if len(pp) > 3:
             if asset_row_data:
-                ref()[common.DescriptionRole] = common.sanitize_hashtags(asset_row_data['description'])
+                _h = common.sanitize_hashtags(asset_row_data['description'])
+                ref()[common.DescriptionRole] = _h
+                ref()[common.FilterTextRole] += '\n' + _h
         # Asset Progress Data
         if len(pp) == 4 and asset_row_data['progress']:
             ref()[common.AssetProgressRole] = asset_row_data['progress']
@@ -641,6 +643,7 @@ class InfoWorker(BaseWorker):
 
             description = config.get_description(pp[-1])
             ref()[common.DescriptionRole] = description
+            ref()[common.FilterTextRole] += '\n' + description
 
             is_valid_task = config.check_task(pp[-1])
             if is_valid_task:
@@ -704,7 +707,9 @@ class InfoWorker(BaseWorker):
         if item_type == common.FileItem and len(pp) > 4 and common.get_sequence(st):
             _, h = common.split_text_and_hashtags(db.value(proxy_k, 'description', database.AssetTable))
             _v = ref()[common.DescriptionRole]
-            ref()[common.DescriptionRole] = common.sanitize_hashtags(f'{_v if _v else ""}  {h if h else ""}').strip()
+            __h = common.sanitize_hashtags(f'{_v if _v else ""}  {h if h else ""}').strip()
+            ref()[common.DescriptionRole] = __h
+            ref()[common.FilterTextRole] += '\n' + __h
 
     def _process_bookmark_item(self, ref, source, bookmark_row_data, pp):
         if not self.is_valid(ref):
@@ -720,6 +725,7 @@ class InfoWorker(BaseWorker):
             return False
         ref()[common.AssetCountRole] = count
         ref()[common.DescriptionRole] = description
+        ref()[common.FilterTextRole] += '\n' + description
         ref()[QtCore.Qt.ToolTipRole] = description
 
     def _process_sequence_item(self, ref, item_type):

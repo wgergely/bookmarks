@@ -416,7 +416,7 @@ QLabel:disabled {
 
 QMenu {
     font-family: "<MediumFont>";
-    color: <Text>;
+    color: <SecondaryText>;
     background-color: <DarkBackground>;
     menu-scrollable: 1;
     icon-size: <Margin@2.0>px;
@@ -435,7 +435,7 @@ QMenu::separator {
 }
 
 QMenu::item {
-    height: <Margin@2.0>px;
+    height: <Margin@1.5>px;
     margin: 0;
     padding: 0 <Margin@1.0>px;
 }

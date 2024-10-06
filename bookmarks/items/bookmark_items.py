@@ -177,7 +177,7 @@ class BookmarkItemModel(models.ItemModel):
             display_name_token = db.value(db.source(), 'bookmark_display_token', database.BookmarkTable)
 
             # Default display name
-            display_name = root
+            display_name = f'{job}/{root}'
 
             # If a token is set, expand it
             if display_name_token:
@@ -201,9 +201,6 @@ class BookmarkItemModel(models.ItemModel):
                 flags = models.DEFAULT_ITEM_FLAGS
             else:
                 flags = models.DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
-
-            if k in common.env_bookmark_items:
-                flags = flags | common.MarkedAsDefault
 
             filepath = file_info.filePath()
 
@@ -239,6 +236,7 @@ class BookmarkItemModel(models.ItemModel):
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: display_name,
+                    common.FilterTextRole: display_name,
                     QtCore.Qt.EditRole: display_name,
                     common.PathRole: filepath,
                     QtCore.Qt.ToolTipRole: filepath,
@@ -249,18 +247,19 @@ class BookmarkItemModel(models.ItemModel):
                     common.DataDictRole: weakref.ref(data),
                     common.ItemTabRole: common.BookmarkTab,
                     #
+                    common.EntryRole: [entry, ],
                     common.FlagsRole: flags,
                     common.ParentPathRole: parent_path_role,
                     common.DescriptionRole: '',
                     common.NoteCountRole: 0,
                     common.AssetCountRole: 0,
-                    common.FileDetailsRole: None,
+                    common.FileDetailsRole: '',
                     common.SequenceRole: None,
-                    common.EntryRole: [entry, ],
-                    common.FileInfoLoaded: False,
+                    common.FramesRole: [],
                     common.StartPathRole: None,
                     common.EndPathRole: None,
                     #
+                    common.FileInfoLoaded: False,
                     common.ThumbnailLoaded: False,
                     #
                     common.SortByNameRole: sort_by_name_role,

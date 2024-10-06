@@ -353,8 +353,9 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     painter.setBrush(color)
     painter.setPen(QtCore.Qt.NoPen)
 
-    from ..items import delegate
-    delegate.draw_painter_path(painter, x, y, font, text)
+    _painter_path = QtGui.QPainterPath()
+    _painter_path.addText(x, y, font, text)
+    painter.drawPath(_painter_path.simplified())
 
     painter.restore()
     return width

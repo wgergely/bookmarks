@@ -66,10 +66,9 @@ WindowsPath = 0
 MacOSPath = 1
 UnixPath = 2
 
-MarkedAsArchived = 0b1000000000
+MarkedAsArchived =  0b1000000000
 MarkedAsFavourite = 0b10000000000
-MarkedAsActive = 0b100000000000
-MarkedAsDefault = 0b1000000000000
+MarkedAsActive =    0b100000000000
 
 FileItem = 1100
 SequenceItem = 1200
@@ -119,6 +118,8 @@ PathRole = QtCore.Qt.ItemDataRole(idx())
 ParentPathRole = QtCore.Qt.ItemDataRole(idx())
 #: List item role used to store the item's description.
 DescriptionRole = QtCore.Qt.ItemDataRole(idx())
+#: List item role used to filter against
+FilterTextRole = QtCore.Qt.ItemDataRole(idx())
 #: List item role for the number of notes attached to the item.
 NoteCountRole = QtCore.Qt.ItemDataRole(idx())
 #: List item role for the number of assets attached to the item.

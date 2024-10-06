@@ -1152,9 +1152,6 @@ def toggle_archived(index):
         index (QtCore.QModelIndex): The item index.
 
     """
-    if index.data(common.FlagsRole) & common.MarkedAsDefault:
-        common.show_message('Default bookmark items cannot be archived.', message_type='error')
-        return
 
     common.widget().save_selection()
     common.widget().toggle_item_flag(index, common.MarkedAsArchived)

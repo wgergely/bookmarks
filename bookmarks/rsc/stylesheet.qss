@@ -693,6 +693,16 @@ BasePropertyEditor > QScrollArea > QWidget > QWidget {
     background-color: <Background>;
 }
 
+BasePropertyEditor QLineEdit {
+    font-family: <BlackFont>;
+    font-size: <MediumText@1.0>px;
+    color: <Text>;
+    background-color: <Transparent>;
+}
+BasePropertyEditor QLineEdit:focus {
+    background-color: <Opaque>;
+}
+
 MessageBox QLabel#titleLabel {
     font-family: "<BoldFont>";
     font-size: <LargeText@1.0>px;
@@ -882,3 +892,13 @@ QTreeView#dictionary_preview {
     background-color: <VeryDarkBackground>;
 }
 
+TokenLineEdit {
+    font-family: "Consolas", monospace;
+    background-color: <Transparent>;
+    height: <RowHeight@0.8>px;
+    max-height: <RowHeight@0.8>px;
+    min-height: <RowHeight@0.8>px;
+}
+TokenLineEdit:focus {
+    background-color: <Opaque>;
+}

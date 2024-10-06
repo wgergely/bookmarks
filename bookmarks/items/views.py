@@ -1822,8 +1822,6 @@ class BaseItemView(QtWidgets.QTableView):
     def contextMenuEvent(self, event):
         """Custom context menu event."""
         index = self.indexAt(event.pos())
-        if not index.isValid():
-            return
 
         shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
         alt_modifier = event.modifiers() & QtCore.Qt.AltModifier

@@ -139,20 +139,18 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
                     0: {
                         'name': 'Bookmark Display Name',
                         'key': 'bookmark_display_token',
-                        'validator': base.token_validator,
-                        'widget': ui.LineEdit,
+                        'validator': None,
+                        'widget': common.TokenLineEdit,
                         'placeholder': '{server}/{job}/{root}',
                         'description': 'Specify the token used to display bookmark items',
-                        'button': '+'
                     },
                     1: {
                         'name': 'Asset Display Name',
                         'key': 'asset_display_token',
-                        'validator': base.token_validator,
-                        'widget': ui.LineEdit,
+                        'validator': None,
+                        'widget': common.TokenLineEdit,
                         'placeholder': '{asset}',
                         'description': 'Specify the token used to display asset items',
-                        'button': '+'
                     },
                 },
             }
@@ -408,7 +406,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
             root,
             asset=None,
             db_table=database.BookmarkTable,
-            fallback_thumb='thumb_bookmark0',
+            fallback_thumb='icon_bw_sm',
             parent=parent
         )
 

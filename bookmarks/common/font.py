@@ -40,16 +40,17 @@ class FontDatabase(QtGui.QFontDatabase):
         source = common.rsc('fonts')
 
         for entry in os.scandir(source):
-            if not entry.name.endswith('ttf'):
+            if not entry.name.endswith('ttc'):
                 continue
 
             idx = self.addApplicationFont(entry.path)
             if idx < 0:
-                raise RuntimeError('Failed to add required font to the application')
+                raise RuntimeError(f'Could not load font file: {entry.path}')
 
             family = self.applicationFontFamilies(idx)
+            print(family)
             if not family:
-                raise RuntimeError('Failed to add required font to the application')
+                raise RuntimeError(f'Could not find font family in file: {entry.path} ({idx})')
 
     def get(self, size, role):
         """Retrieve the font and metrics for the given font size and
@@ -72,23 +73,19 @@ class FontDatabase(QtGui.QFontDatabase):
             return QtGui.QFont(common.font_cache[role][size]), QtGui.QFontMetricsF(common.metrics_cache[role][size])
 
         if role == Font.BlackFont:
-            style = 'Black'
+            style = 'SemiBold'
         elif role == Font.BoldFont:
             style = 'Bold'
         elif role == Font.MediumFont:
             style = 'Medium'
         elif role == Font.LightFont:
-            style = 'Light'
+            style = 'Regular'
         elif role == Font.ThinFont:
             style = 'Thin'
         else:
             raise ValueError(f'Invalid font role, expected one of {[f for f in Font]}')
 
-        font = super().font(role.value, style, size)
-
-        # Verify family
-        if font.family() != role.value:
-            raise RuntimeError('Failed to add required font to the application')
+        font = super().font('Inter', style, size)
 
         font.setPixelSize(size)
 

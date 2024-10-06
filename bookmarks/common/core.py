@@ -179,11 +179,11 @@ TemplateResource = 'templates'
 
 
 class Font(enum.Enum):
-    BlackFont = 'bmRobotoBlack'
-    BoldFont = 'bmRobotoBold'
-    MediumFont = 'bmRobotoMedium'
-    LightFont = 'bmRobotoRegular'
-    ThinFont = 'bmRobotoThin'
+    BlackFont = 'Inter Display Black'
+    BoldFont = 'Inter Display SemiBold'
+    MediumFont = 'Inter Display'
+    LightFont = 'Inter Display Medium'
+    ThinFont = 'Inter Display Light'
 
     def __call__(self, size):
         from .. import common

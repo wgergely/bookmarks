@@ -119,6 +119,8 @@ class CoreSignals(QtCore.QObject):
     #: Signal a ShotGrid connection closure
     sgConnectionClosed = QtCore.Signal()
 
+    #: Signal emitted when the active value has been changed
+    activeChanged = QtCore.Signal()
     #: Signal emitted when a bookmark item is set active
     bookmarkItemActivated = QtCore.Signal(str, str, str)
     #: Signal emitted when an asset item is set active

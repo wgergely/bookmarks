@@ -8,6 +8,7 @@ from PySide2 import QtWidgets, QtCore
 from bookmarks import common, tokens
 from bookmarks import log
 from bookmarks import ui
+from bookmarks.common import TokenLineEdit
 from bookmarks.editor import base
 
 MoveUp = 0
@@ -263,7 +264,11 @@ class MovableItemsEditor(BaseEditor):
 
         for _k in ('name', 'value', 'description'):
             row = ui.add_row(_k.title(), height=common.Size.RowHeight(), parent=_row1)
-            editor = ui.LineEdit(parent=row)
+
+            if _k == 'value':
+                editor = TokenLineEdit(parent=row)
+            else:
+                editor = ui.LineEdit(parent=row)
             editor.setObjectName(f'section_item_{_k}')
 
             editor.setAlignment(QtCore.Qt.AlignRight)
@@ -291,7 +296,7 @@ class MovableItemsEditor(BaseEditor):
             parent=_row2
         )
         _row2.layout().addWidget(button, 0)
-        value_editor = [x for x in grp.findChildren(QtWidgets.QLineEdit) if x.objectName() == 'section_item_value'][0]
+        value_editor = [x for x in (grp.findChildren(QtWidgets.QLineEdit) + grp.findChildren(TokenLineEdit)) if x.objectName() == 'section_item_value'][0]
         button.clicked.connect(
             functools.partial(self.show_token_editor, value_editor)
         )
@@ -391,7 +396,7 @@ class MovableItemsEditor(BaseEditor):
         items = [f for f in self.findChildren(QtWidgets.QWidget, 'section_item_group') if f.section == self.section]
         for idx, item in enumerate(items):
             name_editor = item.findChildren(QtWidgets.QLineEdit, 'section_item_name')[0]
-            value_editor = item.findChildren(QtWidgets.QLineEdit, 'section_item_value')[0]
+            value_editor = (item.findChildren(QtWidgets.QLineEdit, 'section_item_value') + item.findChildren(TokenLineEdit, 'section_item_value'))[0]
             description_editor = item.findChildren(QtWidgets.QLineEdit, 'section_item_description')[0]
 
             if not all((name_editor.text(), value_editor.text())):
@@ -790,7 +795,7 @@ class FileFormatConfigEditor(BaseEditor):
                  f.section == self.section]
         for idx, item in enumerate(items):
             name_editor = item.findChildren(QtWidgets.QLineEdit, 'section_item_name')[0]
-            value_editor = item.findChildren(QtWidgets.QLineEdit, 'section_item_value')[0]
+            value_editor = (item.findChildren(QtWidgets.QLineEdit, 'section_item_value') + item.findChildren(TokenLineEdit, 'section_item_value'))[0]
             description_editor = item.findChildren(QtWidgets.QLineEdit, 'section_item_description')[0]
 
             if not all((name_editor.text(), value_editor.text())):

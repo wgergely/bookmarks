@@ -150,5 +150,6 @@ def set_active(k, v):
         )
 
     common.active_paths[common.active_mode][k] = v
+    common.signals.activeChanged.emit()
     if common.active_mode == common.SynchronizedActivePaths:
         common.settings.setValue(f'active/{k}', v)

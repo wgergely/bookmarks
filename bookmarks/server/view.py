@@ -1426,7 +1426,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.Size.Indicator(6.0)
+        o = common.Size.Indicator(2.0)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o * 0.5)
 

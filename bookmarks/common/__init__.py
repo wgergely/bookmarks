@@ -115,6 +115,7 @@ __initial_values__ = {
 from .core import *
 from .hash import *
 from .data import *
+from .parser import *
 from .env import *
 from .font import *
 from .monitor import *

@@ -52,11 +52,11 @@ import itertools
 import re
 import unittest
 
-__all__ = ['StringParser']
+__all__ = ['StringParser', 'TokenLineEdit']
 
 from datetime import datetime
 
-from PySide2 import QtCore
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
 
@@ -75,7 +75,8 @@ class StringParser(QtCore.QObject):
         common.signals.assetItemActivated.connect(self.update_env)
         common.signals.fileItemActivated.connect(self.update_env)
         common.signals.taskFolderChanged.connect(self.update_env)
-        common.signals.databaseValueUpdated.connect(self.update_env)
+        common.signals.activeModeChanged.connect(self.update_env)
+        common.signals.activeChanged.connect(self.update_env)
 
     @QtCore.Slot()
     def update_env(self, *args, **kwargs):
@@ -146,15 +147,11 @@ class StringParser(QtCore.QObject):
         env['%04d'] = '00000'
         env['%05d'] = '000000'
 
+        self._env = env
+
     @property
     def env(self):
         return self._env
-
-    @env.setter
-    def env(self, value):
-        if not isinstance(value, dict):
-            raise ValueError('Environment must be a dictionary')
-        self._env.update(value)
 
     def format(self, text, **kwargs):
         env = self.env.copy()
@@ -305,6 +302,334 @@ class StringParser(QtCore.QObject):
 
         sliced = '/'.join(sliced_parts)
         return sliced
+
+
+class TokenSyntaxHighlighter(QtGui.QSyntaxHighlighter):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._init_formats()
+
+    def _init_formats(self):
+        # Initialize the text formats
+        self.formats = {}
+
+        # Base color for tokens
+        base_color = common.Color.Yellow()  # Gold
+
+        # Complete token format (including braces)
+        token_format = QtGui.QTextCharFormat()
+        token_format.setForeground(base_color)
+        token_format.setFontWeight(QtGui.QFont.Bold)
+        self.formats['token'] = token_format
+
+        # Token name format (slightly lighter shade)
+        name_format = QtGui.QTextCharFormat()
+        name_format.setForeground(base_color.lighter(120))  # Light gold
+        name_format.setFontWeight(QtGui.QFont.Bold)
+        self.formats['name'] = name_format
+
+        # Generator marker '*' (slightly darker shade)
+        generator_format = QtGui.QTextCharFormat()
+        generator_format.setForeground(base_color.darker(120))  # Slightly darker gold
+        generator_format.setFontWeight(QtGui.QFont.Bold)
+        self.formats['generator'] = generator_format
+
+        # Slicing '[...]' (lighter shade)
+        slicing_format = QtGui.QTextCharFormat()
+        slicing_format.setForeground(base_color.lighter(150))  # Very light gold
+        self.formats['slicing'] = slicing_format
+
+        # Modifiers '.modifier' (darker shade)
+        modifier_format = QtGui.QTextCharFormat()
+        modifier_format.setForeground(base_color.darker(150))  # Dark gold
+        modifier_format.setFontWeight(QtGui.QFont.Bold)
+        self.formats['modifier'] = modifier_format
+
+    def highlightBlock(self, text):
+        # Regex pattern to find tokens including incomplete ones
+        token_pattern = re.compile(r'\{[^{}]*?(\}|$)')
+
+        for match in token_pattern.finditer(text):
+            start, end = match.span()
+            token_text = match.group()
+
+            # Apply the complete token format
+            self.setFormat(start, end - start, self.formats['token'])
+
+            # Now parse the token expression to highlight internal parts
+            if token_text.endswith('}'):
+                token_expr = token_text[1:-1]  # Remove braces
+            else:
+                token_expr = token_text[1:]  # Remove opening brace only
+
+            # Regex to parse the token expression
+            token_expr_pattern = re.compile(r'''
+                ^([^\[\].*]+)    # Token name
+                (\*)?            # Optional '*'
+                (\[[^\]]*\])?    # Optional slicing
+                (?:\.(.*))?      # Optional modifiers
+                $''', re.VERBOSE)
+            m = token_expr_pattern.match(token_expr)
+            if not m:
+                continue  # Skip if token expression doesn't match
+            name, is_generator, slicing, modifiers = m.groups()
+
+            # Calculate positions relative to the start of the token
+            token_content_start = start + 1  # After '{'
+            current_pos = token_content_start
+
+            # Highlight token name
+            name_len = len(name)
+            self.setFormat(current_pos, name_len, self.formats['name'])
+            current_pos += name_len
+
+            # Highlight generator marker '*'
+            if is_generator:
+                self.setFormat(current_pos, len(is_generator), self.formats['generator'])
+                current_pos += len(is_generator)
+
+            # Highlight slicing '[...]'
+            if slicing:
+                slicing_len = len(slicing)
+                self.setFormat(current_pos, slicing_len, self.formats['slicing'])
+                current_pos += slicing_len
+
+            # Highlight modifiers '.modifier'
+            if modifiers:
+                modifiers_with_dot = '.' + modifiers
+                modifiers_len = len(modifiers_with_dot)
+                self.setFormat(current_pos, modifiers_len, self.formats['modifier'])
+
+
+class TokenLineEdit(QtWidgets.QTextEdit):
+    returnPressed = QtCore.Signal()
+    textChanged = QtCore.Signal(str) # Mimic QLineEdit's textChanged signal with a single string argument
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.highlighter = TokenSyntaxHighlighter(self.document())
+
+        # Mimic QLineEdit methods
+        self.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
+        self.setAcceptRichText(False)
+        self.setAlignment(QtCore.Qt.AlignRight)
+
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+        # Initialize the completer
+        self.completer = QtWidgets.QCompleter(self)
+        common.set_stylesheet(self.completer.popup())
+        self.completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+
+        # Modifiers
+        self.modifiers = [
+            'upper', 'lower', 'title'
+        ]
+
+        self.completer.activated.connect(self.insert_completion)
+        super().textChanged.connect(lambda: self.textChanged.emit(self.toPlainText()))
+
+    @property
+    def tokens(self):
+        return list(common.parser.env.keys())
+
+    def text(self):
+        """Get the text content (mimic QLineEdit's text method)."""
+        return self.toPlainText()
+
+    def set_text(self, text):
+        """Set the text content (mimic QLineEdit's setText method)."""
+        self.setPlainText(text)
+
+    def insert_completion(self, completion):
+        tc = self.textCursor()
+        extra = completion[len(self.completer.completionPrefix()):]
+        tc.insertText(extra)
+        self.setTextCursor(tc)
+        self.completer.popup().hide()
+
+    def focusInEvent(self, event):
+        """Re-implemented to notify the completer of focus."""
+        if self.completer:
+            self.completer.setWidget(self)
+        super().focusInEvent(event)
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Tab:
+            # Tab pressed
+            self.move_to_next_token_or_word()
+            # Prevent default tab behavior
+            event.accept()
+            return
+        elif event.key() == QtCore.Qt.Key_Backtab:
+            # Shift+Tab pressed
+            self.move_to_previous_token_or_word()
+            # Prevent default tab behavior
+            event.accept()
+            return
+
+        if self.completer and self.completer.popup().isVisible():
+            if event.key() in (
+                    QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return,
+                    QtCore.Qt.Key_Escape,
+            ):
+                event.ignore()
+                return
+
+        # Emit returnPressed signal when Enter is pressed
+        if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+            self.returnPressed.emit()
+            # Prevent the default QTextEdit behavior of inserting a newline
+            event.accept()
+            return
+
+        # Automatically insert matching '}' when '{' is typed
+        if event.text() == '{':
+            # Call the original keyPressEvent to insert '{'
+            super().keyPressEvent(event)
+            # Insert matching '}'
+            self.insertPlainText('name}')
+
+            # Move cursor back to between the brackets
+            cursor = self.textCursor()
+            cursor.movePosition(QtGui.QTextCursor.Left)
+            self.setTextCursor(cursor)
+
+            # Move cursor back to the beginning of name
+            cursor = self.textCursor()
+            cursor.movePosition(QtGui.QTextCursor.Left, QtGui.QTextCursor.KeepAnchor, len('name'))
+            self.setTextCursor(cursor)
+
+            #
+            # # Select the 'foobar' inside the brackets
+            # cursor.movePosition(QtGui.QTextCursor.Left, QtGui.QTextCursor.KeepAnchor, 6)
+            # self.setTextCursor(cursor)
+
+            # Show the completer with base tokens
+            self.update_completer_model(self.tokens)
+            self.show_completer()
+        elif event.key() == QtCore.Qt.Key_Period or event.text() == '.' and self.is_inside_token():
+            super().keyPressEvent(event)
+            # Show the completer with modifiers
+            self.update_completer_model(self.modifiers)
+            self.show_completer()
+        elif event.key() == QtCore.Qt.Key_BracketLeft or event.text() == '[' and self.is_inside_token():
+            super().keyPressEvent(event)
+            self.insertPlainText('0]')
+            # Move cursor back to between the brackets
+            cursor = self.textCursor()
+            cursor.movePosition(QtGui.QTextCursor.Left)
+            self.setTextCursor(cursor)
+
+            # Select the '0' inside the brackets
+            cursor.movePosition(QtGui.QTextCursor.Left, QtGui.QTextCursor.KeepAnchor)
+            self.setTextCursor(cursor)
+
+
+        else:
+            super().keyPressEvent(event)
+
+            # Show or update completer if inside a token
+            if self.is_inside_token():
+                self.update_completer()
+            elif self.is_completer_visible():
+                self.completer.popup().hide()
+
+    def move_to_next_token_or_word(self):
+        cursor = self.textCursor()
+        pos = cursor.position()
+        text = self.toPlainText()
+        text_length = len(text)
+
+        # Increment position to avoid finding the same brace again
+        search_pos = pos + 1 if pos + 1 < text_length else pos
+
+        # Find the position of the next '{' after the current cursor position
+        next_brace_pos = text.find('{', search_pos)
+        if next_brace_pos != -1:
+            # Move cursor to the next '{'
+            cursor.setPosition(next_brace_pos)
+        else:
+            # No '{' found, move to the start of the next word
+            pattern = re.compile(r'\b\w', re.UNICODE)
+            match = pattern.search(text, search_pos)
+            if match:
+                cursor.setPosition(match.start())
+            else:
+                # No next word found, move cursor to the end
+                cursor.movePosition(QtGui.QTextCursor.End)
+        self.setTextCursor(cursor)
+
+    def move_to_previous_token_or_word(self):
+        cursor = self.textCursor()
+        pos = cursor.position()
+        text = self.toPlainText()
+
+        # Decrement position to avoid finding the same brace again
+        search_pos = pos - 1 if pos > 0 else pos
+
+        # Find the position of the previous '{' before the current cursor position
+        prev_brace_pos = text.rfind('{', 0, search_pos)
+        if prev_brace_pos != -1:
+            # Move cursor to the previous '{'
+            cursor.setPosition(prev_brace_pos)
+        else:
+            # No '{' found, move to the start of the previous word
+            pattern = re.compile(r'\b\w', re.UNICODE)
+            matches = list(pattern.finditer(text, 0, search_pos))
+            if matches:
+                # Get the last match before the current position
+                cursor.setPosition(matches[-1].start())
+            else:
+                # No previous word found, move cursor to the start
+                cursor.movePosition(QtGui.QTextCursor.Start)
+        self.setTextCursor(cursor)
+
+    def is_completer_visible(self):
+        return self.completer.popup().isVisible()
+
+    def is_inside_token(self):
+        """Check if the cursor is inside a token (between '{' and '}')."""
+        cursor = self.textCursor()
+        pos = cursor.position()
+        text = self.toPlainText()
+
+        # Find the position of the last '{' before the cursor
+        brace_start = text.rfind('{', 0, pos)
+        brace_end = text.find('}', brace_start)
+
+        if brace_start == -1:
+            return False
+        if brace_end != -1 and pos > brace_end:
+            return False
+        return True
+
+    def show_completer(self):
+        self.completer.popup().setCurrentIndex(
+            self.completer.completionModel().index(0, 0)
+        )
+
+        rect = self.cursorRect()
+        rect.setWidth(self.completer.popup().sizeHintForColumn(0)
+                      + self.completer.popup().verticalScrollBar().sizeHint().width())
+        self.completer.complete(rect)
+
+    def update_completer(self):
+        self.completer.popup().setCurrentIndex(
+            self.completer.completionModel().index(0, 0)
+        )
+
+    def update_completer_model(self, suggestions):
+        model = QtCore.QStringListModel(suggestions, parent=self.completer)
+        model.setStringList(suggestions)
+        print(suggestions)
+        self.completer.setModel(model)
+
+    def focusOutEvent(self, event):
+        if self.completer:
+            self.completer.popup().hide()
+        super().focusOutEvent(event)
 
 
 class TestStringParser(unittest.TestCase):

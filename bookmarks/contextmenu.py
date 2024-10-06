@@ -13,6 +13,7 @@ import os
 import uuid
 
 from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2.QtCore import QPersistentModelIndex
 
 from . import actions
 from . import common
@@ -129,7 +130,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
     def __init__(self, index, parent=None):
         super().__init__(parent=parent)
-        self.index = index
+        self.index = QPersistentModelIndex(index)
         self.menu = collections.OrderedDict()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)

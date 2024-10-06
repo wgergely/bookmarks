@@ -379,14 +379,6 @@ class DictionaryPreview(QtWidgets.QWidget):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        label = ui.PaintedLabel(
-            'Bookmarked Job Folders',
-            color=common.Color.Text(),
-            size=common.Size.LargeText(),
-            font=common.Font.BlackFont,
-            parent=self
-        )
-
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
         self.tree_view.setObjectName('dictionary_preview')
@@ -399,8 +391,6 @@ class DictionaryPreview(QtWidgets.QWidget):
         self.tree_view.setModel(DictionaryModel(self.data_dict, parent=self.tree_view))
         self.tree_view.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
-        # Add widgets to the main layout
-        self.layout().addWidget(label, 0)
         self.layout().addWidget(self.tree_view, 1)
 
     def _connect_signals(self):
@@ -517,6 +507,6 @@ class DictionaryPreview(QtWidgets.QWidget):
 
     def sizeHint(self):
         return QtCore.QSize(
-            common.Size.DefaultWidth(),
+            common.Size.DefaultWidth(0.33),
             common.Size.DefaultHeight()
         )

@@ -486,6 +486,7 @@ class DictionaryPreview(QtWidgets.QWidget):
             return
         row = index.row()
         self.model().removeRows(row, 1)
+        self.model().dataChanged.emit(index, index)
 
     @common.error
     @common.debug

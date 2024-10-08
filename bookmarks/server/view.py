@@ -815,15 +815,26 @@ class ServerView(QtWidgets.QTreeView):
         proxy.setSourceModel(ServerModel(parent=self))
         self.setModel(proxy)
 
+        self.header().setStretchLastSection(False)
+        self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+
+        # self.header().resizeSection(1, common.Size.DefaultWidth(0.2))
+
     def _connect_signals(self):
         self.expanded.connect(self.add_expanded)
         self.collapsed.connect(self.remove_expanded)
+        self.expanded.connect(self.model().invalidateFilter)
+        self.model().sourceModel().dataChanged.connect(self.model().invalidateFilter)
+        self.model().dataChanged.connect(lambda x,y: self.expand(x))
 
         self.model().sourceModel().rowsInserted.connect(self.restore_expanded_nodes)
 
         self.selectionModel().selectionChanged.connect(self.save_selected_node)
         self.model().modelAboutToBeReset.connect(self.save_selected_node)
         self.model().sourceModel().rowsAboutToBeInserted.connect(self.save_selected_node)
+
+        self.model().modelAboutToBeReset.connect(self.save_expanded_nodes)
 
         self.model().modelReset.connect(self.restore_expanded_nodes)
         self.model().modelReset.connect(self.restore_selected_node)
@@ -854,12 +865,14 @@ class ServerView(QtWidgets.QTreeView):
                 if node.server == server:
                     node.children_fetched = False
                     model.fetchMore(_index)
-                    self.expand(index)
+                    if model.hasChildren(_index):
+                        self.expand(index)
 
                 if node.server == server and node.job == job:
                     self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
                     self.setCurrentIndex(index)
-                    self.expand(index)
+                    if model.hasChildren(_index):
+                        self.expand(index)
                     return
 
                 _it(_index)
@@ -884,17 +897,20 @@ class ServerView(QtWidgets.QTreeView):
                 if node.server == server:
                     node.children_fetched = False
                     model.fetchMore(_index)
-                    self.expand(index)
+                    if model.hasChildren(_index):
+                        self.expand(index)
 
                 if node.server == server and node.job == job:
                     node.children_fetched = False
                     model.fetchMore(_index)
-                    self.expand(index)
+                    if model.hasChildren(_index):
+                        self.expand(index)
 
                 if node.server == server and node.job == job and node.root == root:
                     self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
                     self.setCurrentIndex(index)
-                    self.expand(index)
+                    if model.hasChildren(_index):
+                        self.expand(index)
                     return
 
                 _it(_index)
@@ -910,9 +926,7 @@ class ServerView(QtWidgets.QTreeView):
         persistent_index = QtCore.QPersistentModelIndex(source_index)
 
         menu = ServerContextMenu(persistent_index, parent=self)
-        pos = event.pos()
-        pos = self.mapToGlobal(pos)
-        menu.move(pos)
+        menu.move(common.cursor.pos())
         menu.exec_()
 
     def sizeHint(self):
@@ -954,6 +968,28 @@ class ServerView(QtWidgets.QTreeView):
         idx = self._expanded_nodes.index(node.path())
         if idx != -1:
             self._expanded_nodes.pop(idx)
+
+    @QtCore.Slot()
+    def save_expanded_nodes(self):
+        """
+        Save the expanded nodes.
+
+        """
+        self._expanded_nodes = []
+
+        def _it(parent_index):
+            model = self.model().sourceModel()
+            for i in range(model.rowCount(parent_index)):
+                index = model.index(i, 0, parent_index)
+                node = index.internalPointer()
+                if not node:
+                    continue
+
+                if self.isExpanded(self.model().mapFromSource(index)):
+                    self._expanded_nodes.append(node.path())
+                _it(index)
+
+        _it(QtCore.QModelIndex())
 
     @QtCore.Slot()
     def emit_root_folder_selected(self, *args, **kwargs):
@@ -1015,7 +1051,8 @@ class ServerView(QtWidgets.QTreeView):
                 continue
 
             if node.path() in self._expanded_nodes:
-                self.expand(index)
+                if model.hasChildren(source_index):
+                    self.expand(index)
 
     @QtCore.Slot()
     def save_selected_node(self, *args, **kwargs):
@@ -1034,34 +1071,39 @@ class ServerView(QtWidgets.QTreeView):
 
     @QtCore.Slot()
     def restore_selected_node(self, *args, **kwargs):
-        """
-        Restore the selected node.
-
-        """
-        model = self.model().sourceModel()
-
-        def _it(parent_index):
-            for i in range(model.rowCount(parent_index)):
-                _index = model.index(i, 0, parent_index)
-                if not _index.isValid():
-                    continue
-                yield _index
-                yield from _it(_index)
-
         if not self._selected_node:
             return
 
-        for index in _it(self.rootIndex()):
-            node = index.internalPointer()
-            if not node:
-                continue
+        # Start from the root and expand nodes recursively to load data
+        def _expand_and_find(parent_index):
+            model = self.model().sourceModel()
+            for i in range(model.rowCount(parent_index)):
+                index = model.index(i, 0, parent_index)
+                node = index.internalPointer()
+                if not node:
+                    continue
 
-            index = self.model().mapFromSource(index)
+                # Expand the node to trigger data loading
+                proxy_index = self.model().mapFromSource(index)
+                if not proxy_index.isValid():
+                    continue
 
-            if node.path() == self._selected_node:
-                self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
-                self.setCurrentIndex(index)
-                break
+                model.fetchMore(index)
+                if model.hasChildren(index):
+                    self.expand(proxy_index)
+
+                if node.path() == self._selected_node:
+                    self.selectionModel().select(proxy_index, QtCore.QItemSelectionModel.ClearAndSelect)
+                    self.setCurrentIndex(proxy_index)
+                    return True
+
+                if _expand_and_find(index):
+                    return True
+
+            return False
+
+        # Start the recursive search from the root index
+        _expand_and_find(QtCore.QModelIndex())
 
     @common.error
     @common.debug
@@ -1328,10 +1370,10 @@ class ServerEditor(QtWidgets.QSplitter):
         action.triggered.connect(self.server_view.expandAll)
         self.filter_toolbar.addAction(action)
 
-        action = QtWidgets.QAction('Hide Invalid', parent=self)
+        action = QtWidgets.QAction('Show Linked Folders', parent=self)
         icon = ui.get_icon('link')
         action.setIcon(icon)
-        action.setToolTip('Hide folders without any links or bookmark items')
+        action.setToolTip('Show Linked Folders')
         action.setCheckable(True)
         action_grp.addAction(action)
         action.triggered.connect(self.server_view.model().set_hide_non_candidates)

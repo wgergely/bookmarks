@@ -127,12 +127,18 @@ class Node:
         if not paths:
             return False
 
+        if self.server not in {f['server'] for f in common.bookmarks.values()}:
+            return False
+        if self.type == NodeType.ServerNode:
+            return True
+        if self.job not in {f['job'] for f in common.bookmarks.values()}:
+            return False
+        if self.type == NodeType.JobNode:
+            return True
+        if self.root not in {f['root'] for f in common.bookmarks.values()}:
+            return False
         if self.type == NodeType.BookmarkNode:
-            if self.path() in paths:
-                return True
-        else:
-            if self.path() in ''.join(paths):
-                return True
+            return True
         return False
 
     @property
@@ -301,7 +307,7 @@ class ServerModel(QtCore.QAbstractItemModel):
         return node.child_count()
 
     def columnCount(self, parent=QtCore.QModelIndex()):
-        return 1
+        return 3
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if not self.hasIndex(row, column, parent):
@@ -352,54 +358,85 @@ class ServerModel(QtCore.QAbstractItemModel):
         if not node:
             return None
 
-        if role == QtCore.Qt.DisplayRole:
-            if node.type == NodeType.ServerNode:
-                v = node.server
-            elif node.type == NodeType.JobNode:
-                v = ' | '.join(node.job.split('/'))
-            elif node.type == NodeType.BookmarkNode:
-                v = node.root
+        if index.column() == 1:
+            if role == QtCore.Qt.DisplayRole:
+                if node.type == NodeType.ServerNode:
+                    return 'Server'
+                elif node.type == NodeType.JobNode:
+                    return 'Job'
+                elif node.type == NodeType.BookmarkNode:
+                    return 'Bookmark'
 
-            if node.is_bookmarked():
-                v = f'{v}  *'
-            return v
-        if role == QtCore.Qt.UserRole:
-            if node.type == NodeType.ServerNode:
-                return node.server
-            elif node.type == NodeType.JobNode:
-                return f'{node.server}/{node.job}'
-            elif node.type == NodeType.BookmarkNode:
-                return f'{node.server}/{node.job}/{node.root}'
-        if role == QtCore.Qt.ToolTipRole:
-            return node.path()
-        if role == QtCore.Qt.StatusTipRole:
-            return node.path()
-        if role == QtCore.Qt.WhatsThisRole:
-            return node.path()
-        if role == QtCore.Qt.FontRole:
-            if node.is_bookmarked():
-                font, _ = common.Font.BlackFont(common.Size.MediumText())
-                return font
-            else:
-                font, _ = common.Font.LightFont(common.Size.MediumText())
-                return font
-        if role == QtCore.Qt.DecorationRole:
-            if node.is_bookmarked():
-                return ui.get_icon('bookmark', color=common.Color.Green())
+        if index.column() == 2:
+            if role == QtCore.Qt.DisplayRole:
+                if not self.canFetchMore(index):
+                    return ''
+                if not node.children_fetched:
+                    return '...'
+                if len(node.children()) == 0:
+                    return ''
+                if len(node.children()) == 1:
+                    return '1 item'
+                return f'{len(node.children())} items'
 
-            if node.type == NodeType.ServerNode:
-                return ui.get_icon('server')
-            elif node.type == NodeType.JobNode:
-                thumb_path = f'{node.server}/{node.job}/thumbnail.{common.thumbnail_format}'
-                pixmap = images.ImageCache.get_pixmap(thumb_path, self.row_size.height())
-                if pixmap and not pixmap.isNull():
-                    icon = QtGui.QIcon()
-                    icon.addPixmap(pixmap)
-                    return icon
-            elif node.type == NodeType.BookmarkNode:
-                if not node.exists():
-                    return ui.get_icon('alert')
-                return ui.get_icon('link', color=common.Color.Blue())
+
+        if index.column() in (1, 2):
+            if role == QtCore.Qt.FontRole:
+                font, _ = common.Font.LightFont(common.Size.MediumText(0.8))
+                return font
+            if role == QtCore.Qt.ForegroundRole:
+                brush = QtGui.QBrush(common.Color.DisabledText())
+                return brush
+            if role == QtCore.Qt.BackgroundRole:
+                brush = QtGui.QBrush(common.Color.Transparent())
+                return brush
+            if role == QtCore.Qt.DecorationRole:
+                return None
+
+        if index.column() == 0:
+            if role == QtCore.Qt.DisplayRole:
+                if node.type == NodeType.ServerNode:
+                    v = node.server
+                elif node.type == NodeType.JobNode:
+                    v = ' | '.join(node.job.split('/'))
+                elif node.type == NodeType.BookmarkNode:
+                    v = node.root
+                return v
+            if role == QtCore.Qt.UserRole:
+                if node.type == NodeType.ServerNode:
+                    return node.server
+                elif node.type == NodeType.JobNode:
+                    return f'{node.server}/{node.job}'
+                elif node.type == NodeType.BookmarkNode:
+                    return f'{node.server}/{node.job}/{node.root}'
+            if role == QtCore.Qt.ToolTipRole:
+                return node.path()
+            if role == QtCore.Qt.StatusTipRole:
+                return node.path()
+            if role == QtCore.Qt.WhatsThisRole:
+                return node.path()
+            if role == QtCore.Qt.FontRole:
+                if node.is_bookmarked():
+                    font, _ = common.Font.BlackFont(common.Size.MediumText())
+                    font.setUnderline(True)
+                    return font
+                else:
+                    font, _ = common.Font.LightFont(common.Size.MediumText())
+                    return font
+            if role == QtCore.Qt.DecorationRole:
+                if node.type == NodeType.ServerNode:
+                    return None
+                elif node.type == NodeType.JobNode:
+                    return None
+                elif node.type == NodeType.BookmarkNode:
+                    if not node.exists():
+                        return ui.get_icon('alert', color=common.Color.Red())
+                    if not node.exists() and node.is_bookmarked():
+                        return ui.get_icon('alert', color=common.Color.Yellow())
+                    if node.is_bookmarked():
+                        return ui.get_icon('bookmark', color=common.Color.Green())
+                    return ui.get_icon('link', color=common.Color.Blue())
+
 
         if role == QtCore.Qt.SizeHintRole:
             if node.type == NodeType.JobNode:
@@ -527,9 +564,15 @@ class ServerModel(QtCore.QAbstractItemModel):
 
         node.children_fetched = True
 
+        # Emit dataChanged signal to update views and filters
+        self.dataChanged.emit(parent, parent)
+
     def hasChildren(self, parent):
         if not parent.isValid():
             return True
+        node = parent.internalPointer()
+        if node.type == NodeType.BookmarkNode:
+            return False
         return self.canFetchMore(parent)
 
     def flags(self, index):
@@ -545,7 +588,7 @@ class ServerModel(QtCore.QAbstractItemModel):
         if node.type == NodeType.JobNode:
             return super().flags(index)
         if node.type == NodeType.BookmarkNode:
-            return super().flags(index) | QtCore.Qt.ItemIsDragEnabled
+            return super().flags(index) | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemNeverHasChildren
 
         return super().flags(index)
 
@@ -614,6 +657,7 @@ class ServerModel(QtCore.QAbstractItemModel):
     def init_data(self, *args, **kwargs):
         self.beginResetModel()
         self._root_node = Node(None)
+        self.endResetModel()
 
         servers = ServerAPI.get_servers(force=True)
         self.beginInsertRows(QtCore.QModelIndex(), 0, len(servers) - 1)
@@ -623,7 +667,6 @@ class ServerModel(QtCore.QAbstractItemModel):
             node = Node(server=server, parent=self._root_node)
             self._root_node.append_child(node)
         self.endInsertRows()
-        self.endResetModel()
 
     @QtCore.Slot(str)
     def add_server(self, server):

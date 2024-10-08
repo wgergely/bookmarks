@@ -1010,75 +1010,52 @@ def get_icon(
         opacity=1.0,
         resource=common.GuiResource
 ):
-    """Utility method for retuning a QIcon to use in the context menu.
+    """
+    Utility method for returning a QIcon to use in a QMenu and toggleable QToolButton.
 
     Args:
         name (str): The name of the icon.
-        color (QColor or None): The color of the icon.
+        color (QColor or None): The base color of the icon.
         size (QtGui.QSize or None): The size of the icon.
         opacity (float): The opacity of the icon.
         resource (str): The resource source for the icon.
 
     Returns:
-        QtGui.QIcon: The QIcon.
-
+        QtGui.QIcon: The constructed QIcon with states for QMenu and QToolButton usage.
     """
     k = f'{name}/{color}/{size}/{opacity}/{resource}'
 
+    # Use cached icon if already created
     if k in common.image_cache[images.IconType]:
         return common.image_cache[images.IconType][k]
 
     icon = QtGui.QIcon()
+    color = QtGui.QColor(color)
+    disabled_color = common.Color.DisabledText()
 
     # Normal
-    pixmap = images.rsc_pixmap(
-        name, common.Color.SelectedText(), size, opacity=opacity, resource=resource
-    )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal, state=QtGui.QIcon.On)
+    icon.addPixmap(
+        images.rsc_pixmap(name, color.lighter(250), size, opacity=opacity, resource=resource),
+        mode=QtGui.QIcon.Normal, state=QtGui.QIcon.On)
+    icon.addPixmap(
+        images.rsc_pixmap(name, color, size, opacity=opacity, resource=resource),
+        mode=QtGui.QIcon.Normal, state=QtGui.QIcon.Off)
 
     # Active
-    _c = common.Color.Text() if color else None
-    pixmap = images.rsc_pixmap(
-        name, _c, size, opacity=opacity, resource=resource
-    )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Active, state=QtGui.QIcon.On)
-
-    # Selected
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected, state=QtGui.QIcon.On)
-
-    # Disabled
-    _c = common.Color.DisabledText() if color else None
-    pixmap = images.rsc_pixmap(
-        'close', _c, size, opacity=0.5, resource=common.GuiResource
-    )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled, state=QtGui.QIcon.On)
+    icon.addPixmap(
+        images.rsc_pixmap(name, color.lighter(200), size, opacity=opacity, resource=resource),
+        mode=QtGui.QIcon.Active, state=QtGui.QIcon.On)
+    icon.addPixmap(
+        images.rsc_pixmap(name, color.lighter(200), size, opacity=opacity, resource=resource),
+        mode=QtGui.QIcon.Active, state=QtGui.QIcon.Off)
 
 
-    # Normal
-    pixmap = images.rsc_pixmap(
-        name, color, size, opacity=opacity, resource=resource
-    )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal, state=QtGui.QIcon.Off)
-
-    # Active
-    _c = common.Color.SelectedText() if color else None
-    pixmap = images.rsc_pixmap(
-        name, _c, size, opacity=opacity, resource=resource
-    )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Active, state=QtGui.QIcon.Off)
-
-    # Selected
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected, state=QtGui.QIcon.Off)
-
-    # Disabled
-    _c = common.Color.VeryDarkBackground() if color else None
-    pixmap = images.rsc_pixmap(
-        'close', _c, size, opacity=0.5, resource=common.GuiResource
-    )
-    icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled, state=QtGui.QIcon.Off)
 
 
+
+    # Cache the created icon for reuse
     common.image_cache[images.IconType][k] = icon
+
     return common.image_cache[images.IconType][k]
 
 

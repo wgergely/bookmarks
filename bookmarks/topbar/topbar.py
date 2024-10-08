@@ -396,3 +396,5 @@ class TopBarWidget(QtWidgets.QWidget):
         if idx not in self._buttons:
             raise ValueError('Button does not exist')
         return self._buttons[idx]
+
+

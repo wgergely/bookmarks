@@ -259,7 +259,6 @@ class ServerModel(QtCore.QAbstractItemModel):
         self._root_node = None
         self._job_style = None
 
-        self._connect_signals()
         self._init_job_style()
 
     def _init_job_style(self):
@@ -269,9 +268,6 @@ class ServerModel(QtCore.QAbstractItemModel):
         else:
             e = JobStyle.DefaultJobFolders
         self._job_style = int(e)
-
-    def _connect_signals(self):
-        common.signals.bookmarksChanged.connect(self.init_data)
 
     def clear(self):
         """
@@ -685,6 +681,10 @@ class ServerModel(QtCore.QAbstractItemModel):
         node = Node(server=server, parent=self._root_node)
         self._root_node.insert_child(idx, node)
         self.endInsertRows()
+        self.dataChanged.emit(
+            self.index(0, 0, QtCore.QModelIndex()),
+            self.index(0, 0, QtCore.QModelIndex())
+        )
 
     @QtCore.Slot(str)
     def remove_server(self, server):
@@ -700,6 +700,10 @@ class ServerModel(QtCore.QAbstractItemModel):
         self.beginRemoveRows(QtCore.QModelIndex(), idx, idx)
         self._root_node.remove_child(idx)
         self.endRemoveRows()
+        self.dataChanged.emit(
+            self.index(0, 0, QtCore.QModelIndex()),
+            self.index(0, 0, QtCore.QModelIndex())
+        )
 
     @QtCore.Slot()
     def remove_servers(self):

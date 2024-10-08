@@ -843,6 +843,8 @@ class ServerView(QtWidgets.QTreeView):
         self.model().modelAboutToBeReset.connect(self.emit_root_folder_selected)
 
         common.signals.jobAdded.connect(self.on_job_added)
+        common.signals.bookmarksChanged.connect(self.init_data)
+
 
     @QtCore.Slot(str, str)
     def on_job_added(self, server, job):
@@ -909,8 +911,7 @@ class ServerView(QtWidgets.QTreeView):
                 if node.server == server and node.job == job and node.root == root:
                     self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
                     self.setCurrentIndex(index)
-                    if model.hasChildren(_index):
-                        self.expand(index)
+                    self.scrollTo(index)
                     return
 
                 _it(_index)

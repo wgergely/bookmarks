@@ -126,7 +126,7 @@ class DictionaryPreviewContextMenu(contextmenu.BaseContextMenu):
 
 class DictionaryModel(QtCore.QAbstractItemModel):
     #: Custom signal to emit data changes
-    dataChangedSignal = QtCore.Signal(dict)
+    dataChangedSignal = QtCore.Signal(dict, dict) # previous, current
 
     def __init__(self, data_dict, parent=None):
         super().__init__(parent)
@@ -259,6 +259,8 @@ class DictionaryModel(QtCore.QAbstractItemModel):
 
     @QtCore.Slot(Node)
     def update_data(self, node):
+        curr_data = self.data_dict.copy()
+
         if node.parent and node.parent.parent == self.root_node:
             key_node = node.parent
             key = key_node.data[0]
@@ -278,7 +280,7 @@ class DictionaryModel(QtCore.QAbstractItemModel):
 
             idx = self.createIndex(key_node.row(), 0, key_node)
             self.dataChanged.emit(idx, idx)
-            self.dataChangedSignal.emit(self.data_dict.copy())
+            self.dataChangedSignal.emit(curr_data, self.data_dict.copy())
         elif node.parent == self.root_node:
             # Do not allow editing of the key column
             pass
@@ -287,6 +289,8 @@ class DictionaryModel(QtCore.QAbstractItemModel):
     @common.debug
     @QtCore.Slot(str, str, str)
     def add_item(self, server, job, root):
+        curr_data = self.data_dict.copy()
+
         if not all([server, job, root]):
             return False  # Do not add if any component is empty
         new_key = f"{server}/{job}/{root}"
@@ -309,10 +313,12 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         self.root_node.sort_children()
         self.endInsertRows()
 
-        self.dataChangedSignal.emit(self.data_dict.copy())
+        self.dataChangedSignal.emit(curr_data, self.data_dict.copy())
         return True
 
     def removeRows(self, row, count, parent=QtCore.QModelIndex()):
+        curr_data = self.data_dict.copy()
+
         parent_node = self.get_node(parent)
         if parent_node != self.root_node:
             return False  # Only allow removal of top-level items
@@ -324,7 +330,7 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         self.endRemoveRows()
 
         # Emit the custom signal
-        self.dataChangedSignal.emit(self.data_dict.copy())
+        self.dataChangedSignal.emit(curr_data, self.data_dict.copy())
         return True
 
     def supportedDropActions(self):
@@ -503,8 +509,11 @@ class DictionaryPreview(QtWidgets.QWidget):
             self.tree_view.setFirstColumnSpanned(i, self.model().root_index(), True)
 
     @QtCore.Slot(dict)
-    def on_data_changed(self, data):
-        ServerAPI.save_bookmarks(data)
+    def on_data_changed(self, previous_data, current_data):
+        if previous_data == current_data:
+            return
+
+        ServerAPI.save_bookmarks(current_data)
 
     def sizeHint(self):
         return QtCore.QSize(

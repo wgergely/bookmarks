@@ -122,6 +122,7 @@ class FavouriteItemModel(file_items.FileItemModel):
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: filename,
+                    common.FilterTextRole: filename,
                     QtCore.Qt.EditRole: filename,
                     common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,

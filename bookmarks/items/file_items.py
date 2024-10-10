@@ -452,6 +452,7 @@ class FileItemModel(models.ItemModel):
                     sequence_data[sequence_path] = common.DataDict(
                         {
                             QtCore.Qt.DisplayRole: sequence_name,
+                            common.FilterTextRole: sequence_name,
                             QtCore.Qt.EditRole: sequence_name,
                             common.PathRole: sequence_path,
                             QtCore.Qt.SizeHintRole: self.row_size,
@@ -519,6 +520,7 @@ class FileItemModel(models.ItemModel):
                 )
                 filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
+                v[common.FilterTextRole] = filename
                 v[QtCore.Qt.EditRole] = filename
                 v[common.PathRole] = filepath
                 v[common.DataTypeRole] = common.FileItem

@@ -1,16 +1,15 @@
 """Application item launcher module.
 
-Each bookmark item can be configured with a list of application items, usually DCCs used
+Each bookmark item can be configured with a list of app items, usually DCCs used
 on the given production.
 
-The default launcher item definition is found at
-:attr:`~bookmarks.application_launcher.DEFAULT_ITEM`. The item launcher values are stored
-in the bookmark item database as an encoded json values.
+The default launcher item definition is found at: attr:`~bookmarks.application_launcher.DEFAULT_ITEM`. The item
+launcher values are stored in the bookmark item database as an encoded JSON values.
 
 :mod:`~bookmarks.application_launcher` contains the editor used to add and editor launcher items
 via :mod:`bookmarks.editors.bookmark_properties`.
 
-:mod:`~bookmarks.launcher.gallery` is the viewer, used to launch saved items. It is
+:mod:`~bookmarks.launcher.gallery` is the viewer, used to launch saved items. It's
 accessible as a context menu in the item tabs.
 
 """

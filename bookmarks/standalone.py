@@ -14,7 +14,6 @@ from . import actions
 from . import common
 from . import contextmenu
 from . import main
-from . import ui
 
 
 def init():
@@ -164,7 +163,6 @@ class Tray(QtWidgets.QSystemTrayIcon):
             return
         if reason == QtWidgets.QSystemTrayIcon.MiddleClick:
             return
-
 
 
 class BookmarksAppWindow(main.MainWidget):

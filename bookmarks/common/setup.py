@@ -102,6 +102,9 @@ def initialize_func(mode):
         common.init_active()
         common.parser = StringParser()
 
+        from . import color
+        common.init_color_manager()
+
         if mode == common.CoreMode:
             return
 

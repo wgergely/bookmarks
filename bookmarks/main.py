@@ -86,16 +86,16 @@ class MainWidget(QtWidgets.QWidget):
         self.stacked_widget = None
         self.topbar_widget = None
         self.statusbar = None
-        
+
         self.bookmarks_widget = None
         self.assets_widget = None
         self.files_widget = None
         self.favourites_widget = None
-        
+
         self.bookmark_switch_widget = None
         self.asset_switch_widget = None
         self.task_switch_widget = None
-        
+
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -113,13 +113,13 @@ class MainWidget(QtWidgets.QWidget):
 
         # Main stacked widget used to navigate items
         self.stacked_widget = views.ListsWidget(parent=self)
-        
+
         # Item views
         self.bookmarks_widget = bookmark_items.BookmarkItemView(parent=self)
         self.assets_widget = asset_items.AssetItemView(parent=self)
         self.files_widget = file_items.FileItemView(parent=self)
         self.favourites_widget = favourite_items.FavouriteItemView(parent=self)
-        
+
         # Switch views
         self.bookmark_switch_widget = switch.BookmarkSwitchView(parent=self.bookmarks_widget)
         self.bookmark_switch_widget.setHidden(True)
@@ -188,7 +188,7 @@ class MainWidget(QtWidgets.QWidget):
         b = self.bookmarks_widget
         a = self.assets_widget
         f = self.files_widget
-        
+
         l = self.task_switch_widget
 
         # Make sure the active values are correctly set
@@ -200,7 +200,7 @@ class MainWidget(QtWidgets.QWidget):
         )
         # Asset -> File
         a.model().sourceModel().activeChanged.connect(
-            actions.apply_default_to_scenes_folder
+            actions.activate_scenes_task_folder
         )
         a.model().sourceModel().activeChanged.connect(
             f.model().sourceModel().reset_data
@@ -343,7 +343,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.PreviousTab, actions.previous_tab)
 
         connect(shortcuts.AddItem, actions.add_item)
-        connect(shortcuts.EditItem, actions.edit_item)
+        connect(shortcuts.EditItemProperties, actions.edit_item_properties)
 
         connect(shortcuts.Refresh, actions.refresh)
         connect(shortcuts.AltRefresh, actions.refresh)

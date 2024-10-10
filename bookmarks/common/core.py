@@ -66,9 +66,9 @@ WindowsPath = 0
 MacOSPath = 1
 UnixPath = 2
 
-MarkedAsArchived =  0b1000000000
+MarkedAsArchived = 0b1000000000
 MarkedAsFavourite = 0b10000000000
-MarkedAsActive =    0b100000000000
+MarkedAsActive = 0b100000000000
 
 FileItem = 1100
 SequenceItem = 1200
@@ -164,6 +164,8 @@ SortByTypeRole = QtCore.Qt.ItemDataRole(idx())
 SGLinkedRole = QtCore.Qt.ItemDataRole(idx())
 #: The progress tracking data linked with the item
 AssetProgressRole = QtCore.Qt.ItemDataRole(idx())
+#: The asset link file path
+AssetLinkRole = QtCore.Qt.ItemDataRole(idx())
 
 DEFAULT_SORT_VALUES = {
     SortByNameRole: 'Name',
@@ -674,6 +676,7 @@ class Timer(QtCore.QTimer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         common.timers[repr(self)] = self
+        self.setObjectName(self.__class__.__name__)
 
     def setObjectName(self, v):
         """Set the instance object name.

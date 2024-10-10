@@ -48,7 +48,6 @@ class FontDatabase(QtGui.QFontDatabase):
                 raise RuntimeError(f'Could not load font file: {entry.path}')
 
             family = self.applicationFontFamilies(idx)
-            print(family)
             if not family:
                 raise RuntimeError(f'Could not find font family in file: {entry.path} ({idx})')
 

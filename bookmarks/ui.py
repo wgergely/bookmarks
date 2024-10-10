@@ -347,60 +347,6 @@ class PaintedButton(QtWidgets.QPushButton):
         if width:
             self.setFixedWidth(width)
 
-    def paintEvent(self, event):
-        """Event handler.
-
-        """
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-
-        option = QtWidgets.QStyleOption()
-        option.initFrom(self)
-
-        hover = option.state & QtWidgets.QStyle.State_MouseOver
-        pressed = option.state & QtWidgets.QStyle.State_Sunken
-        focus = option.state & QtWidgets.QStyle.State_HasFocus
-        disabled = not self.isEnabled()
-
-        o = 1.0 if hover else 0.8
-        o = 0.3 if disabled else o
-        painter.setOpacity(o)
-
-        painter.setBrush(common.Color.DarkBackground())
-
-        if focus:
-            _color = common.Color.Blue()
-        else:
-            _color = common.Color.VeryDarkBackground()
-            _color.setAlpha(150)
-
-        pen = QtGui.QPen(_color)
-        pen.setWidthF(common.Size.Separator(2.0))
-        painter.setPen(pen)
-
-        o = common.Size.Separator()
-        rect = self.rect().adjusted(o, o, -o, -o)
-
-        o = common.Size.Indicator(1.5)
-        painter.drawRoundedRect(rect, o, o)
-
-        rect = QtCore.QRect(self.rect())
-        center = rect.center()
-        rect.setWidth(rect.width() - (common.Size.Indicator(2.0)))
-        rect.moveCenter(center)
-
-        common.draw_aliased_text(
-            painter,
-            common.Font.MediumFont(common.Size.MediumText())[0],
-            rect,
-            self.text(),
-            QtCore.Qt.AlignCenter,
-            common.Color.Text()
-        )
-
-        painter.end()
-
 
 class PaintedLabel(QtWidgets.QLabel):
     """QLabel used for static aliased label.
@@ -1048,10 +994,6 @@ def get_icon(
     icon.addPixmap(
         images.rsc_pixmap(name, color.lighter(200), size, opacity=opacity, resource=resource),
         mode=QtGui.QIcon.Active, state=QtGui.QIcon.Off)
-
-
-
-
 
     # Cache the created icon for reuse
     common.image_cache[images.IconType][k] = icon

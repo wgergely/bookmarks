@@ -24,7 +24,7 @@ NextTab = common.idx()
 PreviousTab = common.idx()
 
 AddItem = common.idx()
-EditItem = common.idx()
+EditItemProperties = common.idx()
 RemoveItem = common.idx()
 
 Refresh = common.idx()
@@ -404,7 +404,7 @@ MainWidgetShortcuts = {
         'description': 'Copy file path',
         'shortcut': None,
     },
-    EditItem: {
+    EditItemProperties: {
         'value': 'Ctrl+E',
         'default': 'Ctrl+E',
         'repeat': False,

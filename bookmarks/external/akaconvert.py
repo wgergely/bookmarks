@@ -129,8 +129,8 @@ def get_oiiotool_path(root):
 
 
 @get_environment
-def get_ocio_colourspaces(root):
-    """Return the list of OCIO colourspaces.
+def get_ocio_colorspaces(root):
+    """Return the list of OCIO colorspaces.
 
     """
     assumed = (
@@ -167,23 +167,23 @@ def get_ocio_colourspaces(root):
             f'Was not able to find OpenColorIO in the output: {output}. Was OpenImageIO compiled with OCIO support?'
         )
 
-    # Find the line starting with "Known color spaces:" and extract the colourspaces
+    # Find the line starting with "Known color spaces:" and extract the colorspaces
     m = re.search(r'Known color spaces:(.*)', output, re.IGNORECASE | re.MULTILINE)
     if not m:
-        raise RuntimeError(f'Was not able to find the colourspaces in the output.')
+        raise RuntimeError(f'Was not able to find the colorspaces in the output.')
 
-    all_colourspaces = [x.strip().strip('"') for x in m.group(1).split(',')]
+    all_colorspaces = [x.strip().strip('"') for x in m.group(1).split(',')]
 
-    # Check if the assumed colourspaces are in the list of all colourspaces
-    good_colourspaces = []
+    # Check if the assumed colorspaces are in the list of all colorspaces
+    good_colorspaces = []
     for c in assumed:
-        if [f for f in all_colourspaces if c.strip().lower() in f.strip().lower()]:
-            good_colourspaces.append(c)
+        if [f for f in all_colorspaces if c.strip().lower() in f.strip().lower()]:
+            good_colorspaces.append(c)
 
-    if not good_colourspaces:
-        raise RuntimeError(f'Was not able to find any of the expected colourspaces. Is the OCIO config correct?')
+    if not good_colorspaces:
+        raise RuntimeError(f'Was not able to find any of the expected colorspaces. Is the OCIO config correct?')
 
-    return sorted(good_colourspaces)
+    return sorted(good_colorspaces)
 
 
 class PresetComboBox(QtWidgets.QComboBox):
@@ -275,7 +275,7 @@ class ColorComboBox(QtWidgets.QComboBox):
 
         """
         self.blockSignals(True)
-        for k in get_ocio_colourspaces():
+        for k in get_ocio_colorspaces():
             self.addItem(k, userData=k)
         self.blockSignals(False)
 
@@ -319,20 +319,20 @@ class AkaConvertWidget(base.BasePropertyEditor):
                 },
                 1: {
                     common.idx(): {
-                        'name': 'Input colour profile',
+                        'name': 'Input color profile',
                         'key': 'akaconvert_inputcolor',
                         'validator': None,
                         'widget': ColorComboBox,
                         'placeholder': None,
-                        'description': 'Select the image source\'s colour profile',
+                        'description': 'Select the image source\'s color profile',
                     },
                     common.idx(): {
-                        'name': 'Output colour profile',
+                        'name': 'Output color profile',
                         'key': 'akaconvert_outputcolor',
                         'validator': None,
                         'widget': ColorComboBox,
                         'placeholder': None,
-                        'description': 'Select the output colour profile',
+                        'description': 'Select the output color profile',
                     },
                 },
                 2: {

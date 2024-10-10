@@ -43,8 +43,8 @@ def resize_event_override(cls, event):
     o = int(common.Size.Indicator(1.5))
     path.addRoundedRect(rect, o, o)
 
-    # QRegion is bitmap based, so the returned QPolygonF (which uses float values must
-    # be transformed to an integer based QPolygon
+    # QRegion is bitmap-based, so the returned QPolygonF (which uses float values must
+    # be transformed to an integer-based QPolygon
     region = QtGui.QRegion(path.toFillPolygon(QtGui.QTransform()).toPolygon())
     cls.setMask(region)
 
@@ -1169,11 +1169,11 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ),
         }
 
@@ -1215,11 +1215,11 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(actions.edit_asset, asset=asset),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ),
         }
 
@@ -1240,11 +1240,11 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.edit_asset,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ),
         }
 
@@ -1269,11 +1269,11 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(actions.edit_file, _file),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem
+                shortcuts.EditItemProperties
             ),
         }
 

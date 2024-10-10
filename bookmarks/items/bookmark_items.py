@@ -324,12 +324,6 @@ class BookmarkItemModel(models.ItemModel):
         """
         return common.FileItem
 
-    def default_row_size(self):
-        """Returns the default item size.
-
-        """
-        return QtCore.QSize(1, common.Size.RowHeight())
-
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings
         file.
@@ -338,7 +332,7 @@ class BookmarkItemModel(models.ItemModel):
         return 'bookmarks'
 
     def flags(self, index):
-        """Overrides the flag behaviour to disable drag if the alt modifier is not pressed.
+        """Overrides the flag behavior to turn off drag if the alt modifier isn't pressed.
 
         """
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
@@ -369,24 +363,6 @@ class BookmarkItemView(views.ThreadedItemView):
             icon='bookmark',
             parent=parent
         )
-
-    def add_item_action(self, index):
-        """Action to execute when the add item icon is clicked."""
-        server, job, root = index.data(common.ParentPathRole)[0:3]
-        actions.show_add_asset(server=server, job=job, root=root)
-
-    def edit_item_action(self, index):
-        """Action to execute when the edit item icon is clicked."""
-        server, job, root = index.data(common.ParentPathRole)[0:3]
-        actions.edit_bookmark(server=server, job=job, root=root)
-
-    def inline_icons_count(self):
-        """Inline buttons count.
-
-        """
-        if self.buttons_hidden():
-            return 0
-        return 6
 
     def get_hint_string(self):
         """Returns an informative hint text.

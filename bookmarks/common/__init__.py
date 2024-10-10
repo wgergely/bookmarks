@@ -128,3 +128,4 @@ from .setup import *
 from .signals import *
 from .filter import *
 from .ui import *
+from .color import *

@@ -107,22 +107,25 @@ class AssetItemModel(models.ItemModel):
         common.signals.sgAssetsLinked.connect(self.sort_data)
 
     def columnCount(self, index):
-        return 1 + len(progress.STAGES)
+        return 4 + len(progress.STAGES)
 
     def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
         if orientation == QtCore.Qt.Vertical:
             return super().headerData(column, orientation, role=role)
 
-        if orientation == QtCore.Qt.Horizontal and column > 0:
+        if orientation == QtCore.Qt.Horizontal and column >= 4:
             if role == QtCore.Qt.DisplayRole:
-                return progress.STAGES[column - 1]['name']
+                return progress.STAGES[column - 4]['name']
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
             return None
-        if index.column() == 0:
+
+        # The first four columns are the default columns
+        if index.column() < 4:
             return super().data(index, role=role)
 
+        # The rest of the columns are the progress tracker columns
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             p = self.source_path()
             k = self.task()
@@ -131,14 +134,16 @@ class AssetItemModel(models.ItemModel):
             v = data[index.row()][common.AssetProgressRole]
             if not v:
                 return None
-            return v[index.column() - 1]['value']
+            return v[index.column() - 4]['value']
 
     def flags(self, index):
-        """Overrides the flag behaviour to disable drag if the alt modifier is not pressed.
+        """Overrides the flag behavior to turn off drag when the alt modifier isn't pressed.
 
         """
-        if index.column() == 0:
+        # The first four columns are the default columns
+        if index.column() < 4:
             flags = super().flags(index)
+        # The rest of the columns are the progress tracker columns
         else:
             flags = (
                     QtCore.Qt.ItemIsEnabled |
@@ -188,8 +193,7 @@ class AssetItemModel(models.ItemModel):
 
         nth = 17
         c = 0
-
-        for filepath in self.item_generator(source):
+        for filepath, links_file in self.item_generator(source):
             if self._interrupt_requested:
                 break
 
@@ -258,6 +262,8 @@ class AssetItemModel(models.ItemModel):
                     QtCore.Qt.EditRole: filename,
                     common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    common.AssetLinkRole: links_file,
                     #
                     QtCore.Qt.StatusTipRole: filename,
                     QtCore.Qt.AccessibleDescriptionRole: filename,
@@ -351,11 +357,11 @@ class AssetItemModel(models.ItemModel):
                 abs_path = f'{asset_root}/{rel_path}'.replace('\\', '/')
                 if not os.path.exists(abs_path):
                     continue
-                yield abs_path
+                yield abs_path, api.links_file
 
             # If no links were found, yield the root item
             if not links:
-                yield entry.path.replace('\\', '/')
+                yield entry.path.replace('\\', '/'), None
 
     def save_active(self):
         """Saves the active item.
@@ -391,12 +397,6 @@ class AssetItemModel(models.ItemModel):
             return None
         return '/'.join(v)
 
-    def default_row_size(self):
-        """Returns the default item size.
-
-        """
-        return QtCore.QSize(1, common.Size.RowHeight())
-
 
 class AssetItemView(views.ThreadedItemView):
     """The view used to display :class:`.AssetItemModel` item.
@@ -412,8 +412,6 @@ class AssetItemView(views.ThreadedItemView):
             icon='asset',
             parent=parent
         )
-
-        self._progress_hidden = False
 
         common.signals.assetAdded.connect(
             functools.partial(
@@ -446,15 +444,11 @@ class AssetItemView(views.ThreadedItemView):
         self.horizontalHeader().setMinimumSectionSize(common.Size.Section())
 
         for idx in range(self.model().columnCount()):
-            if idx == 0:
-                self.horizontalHeader().setSectionResizeMode(
-                    idx, QtWidgets.QHeaderView.Stretch
-                )
-            else:
-                self.horizontalHeader().setSectionResizeMode(
-                    idx, QtWidgets.QHeaderView.Fixed
-                )
-                self.setItemDelegateForColumn(idx, progress.ProgressDelegate(parent=self))
+            if idx < 4:
+                continue
+            self.horizontalHeader().setSectionResizeMode(
+                idx, QtWidgets.QHeaderView.Fixed
+            )
 
     @QtCore.Slot()
     def adapt_horizontal_header(self, *args, **kwargs):
@@ -469,40 +463,15 @@ class AssetItemView(views.ThreadedItemView):
 
         self.horizontalHeader().setHidden(hidden)
         for n in range(self.model().columnCount()):
-            if n == 0:
+            if n < 4:
                 continue
             self.horizontalHeader().setSectionHidden(n, hidden)
-        self.horizontalHeader().resizeSections()
-
-    def inline_icons_count(self):
-        """Inline buttons count.
-
-        """
-        if self.columnWidth(0) < common.Size.DefaultWidth(0.66):
-            return 0
-        if self.buttons_hidden():
-            return 0
-        return 6
 
     def get_hint_string(self):
         """Returns an informative hint text.
 
         """
         return 'Right-click and select \'Add Asset\' to add items'
-
-    def add_item_action(self, index):
-        """Action to execute when the add item icon is clicked."""
-        self.activate(index)
-
-        from .. import tokens
-        d = tokens.get_folder(tokens.SceneFolder)
-        if QtCore.QFileInfo(f'{common.active("asset", path=True)}/{d}').exists():
-            common.signals.taskFolderChanged.emit(d)
-        actions.show_add_file()
-
-    def edit_item_action(self, index):
-        """Action to execute when the edit item icon is clicked."""
-        actions.edit_asset(index.data(common.ParentPathRole)[-1])
 
     def showEvent(self, event):
         """Show event handler.
@@ -523,7 +492,7 @@ class AssetItemView(views.ThreadedItemView):
         if not index.isValid():
             return super().mouseReleaseEvent(event)
 
-        if index.column() == 0:
+        if index.column() < 4:
             return super().mouseReleaseEvent(event)
 
         self.edit(index)

@@ -296,11 +296,11 @@ def import_favourites(*args, source=None):
 
 
 @QtCore.Slot(QtCore.QModelIndex)
-def apply_default_to_scenes_folder(index):
-    """Slot responsible for applying the default to scenes folder setting.
+def activate_scenes_task_folder(index):
+    """Slot responsible for applying the default to scene folder setting.
 
-    The slot is connected to the :class:`bookmarks.items.file_items.FileItemModel`'s
-    `activeChanged` signal, and we're using it to modify the active 'task' path before
+    The slot is connected to :class:`bookmarks.items.file_items.FileItemModel`'s
+    `activeChanged` signal, is used it to modify the active task path before
     resetting the file model.
 
     Args:
@@ -315,7 +315,7 @@ def apply_default_to_scenes_folder(index):
         return
 
     # Get the current scene folder name from the token configuration.
-    set_active('task', tokens.get_folder(tokens.SceneFolder))
+    common.set_active('task', tokens.get_folder(tokens.SceneFolder))
 
 
 @common.error
@@ -589,7 +589,7 @@ def reset_row_size():
 @common.error
 @common.debug
 def show_servers_editor():
-    """Shows :class:`~bookmarks.editor.jobs.JobsEditor` widget.
+    """Shows :class:`~bookmarks.server.view.ServerEditorDialog` widget.
 
     """
     from .server import view as editor
@@ -705,7 +705,6 @@ def edit_asset_links():
     editor.show()
 
 
-
 @common.error
 @common.debug
 def edit_file(f):
@@ -750,7 +749,7 @@ def add_item():
 @common.error
 @common.debug
 @selection
-def edit_item(index):
+def edit_item_properties(index):
     """Action used to open an item editor.
 
     """

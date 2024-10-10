@@ -1,72 +1,25 @@
-"""Item delegate used to draw bookmark, asset and file items.
-
-Defines :class:`ItemDelegate`, the base delegate class, subclasses and helper functions.
-
-The list views have a number of custom features, such as clickable in-line icons,
-folder names, custom thumbnails that the delegate implements. Since we're using list
-views with a single column, the item layout is defined by a series of custom rectangles
-(see :meth:`ItemDelegate.get_rectangles`.). These are used by the paint methods use to
-drawn elements and the views to define interactive regions.
-
-The downside of painting manually a complex layout is performance and no doubt the
-module could be more optimised. Still, most of the expensive functions are backed by
-caches.
+"""Item delegate used to by the item views to display and edit items.
 
 """
+import copy
 import functools
-import re
 from dataclasses import dataclass
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from .. import common, images
+from .. import common, images, progress
 from .. import database
 from .. import ui
 
-#: Regex used to sanitize version numbers
-regex_remove_version = re.compile(
-    rf'(.*)(v)([{common.SEQSTART}0-9\-{common.SEQEND}]+.*)',
-    flags=re.IGNORECASE
-)
-
-#: Regex used to sanitize collapsed sequence items
-regex_remove_seq_marker = re.compile(
-    rf'[{common.SEQSTART}{common.SEQEND}]*',
-    flags=re.IGNORECASE
-)
-
 HOVER_COLOR = QtGui.QColor(255, 255, 255, 10)
-
-null_rect = QtCore.QRect()
-
-BackgroundRect = common.idx(start=1024, reset=True)
-IndicatorRect = common.idx()
-ThumbnailRect = common.idx()
-DataRect = common.idx()
-
-# Button rectangles
-PropertiesRect = common.idx(start=1024, reset=True)
-RevealRect = common.idx()
-TodoRect = common.idx()
-AddItemRect = common.idx()
-FavouriteRect = common.idx()
-ArchiveRect = common.idx()
-
-clickable_rectangles = {
-    PropertiesRect,
-    RevealRect,
-    TodoRect,
-    AddItemRect,
-    FavouriteRect,
-    ArchiveRect
-}
 
 
 @dataclass
 class PaintContext:
     painter: QtGui.QPainter
-    option: QtWidgets.QStyleOptionViewItem
     index: QtCore.QModelIndex
+    option: QtWidgets.QStyleOptionViewItem
+    rect: QtCore.QRect
     selected: bool
     focused: bool
     active: bool
@@ -77,20 +30,8 @@ class PaintContext:
     metrics: QtGui.QFontMetrics
     x: float
     y: float
-    cursor_position: QtCore.QPoint
     buttons_hidden: bool
-    # Rectangles
-    BackgroundRect: QtCore.QRect
-    IndicatorRect: QtCore.QRect
-    ThumbnailRect: QtCore.QRect
-    DataRect: QtCore.QRect
-    # Button rectangles
-    PropertiesRect: QtCore.QRect
-    RevealRect: QtCore.QRect
-    TodoRect: QtCore.QRect
-    AddItemRect: QtCore.QRect
-    FavouriteRect: QtCore.QRect
-    ArchiveRect: QtCore.QRect
+    link_selected: bool = False
 
 
 #: Used to paint a DCC icon if the asset name contains any of these names
@@ -158,12 +99,25 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self._min = 0
-        self._max = 0
-
         self._filter_rectangles = {}
+        self._button_rectangles = {}
 
         self._filter_candidate_rectangle = None
+        self._button_candidate_rectangle = None
+
+        self._indicator_link = None
+
+    @QtCore.Slot(str)
+    def set_indicator_link(self, link):
+        self._indicator_link = link
+        print(f'Indicator color set to {link}')
+
+    @QtCore.Slot()
+    def clear_rectangles(self, *args, **kwargs):
+        self.clear_filter_candidate_rectangle()
+        self.clear_button_candidate_rectangle()
+        self.clear_filter_rectangles()
+        self.clear_button_rectangles()
 
     def createEditor(self, parent, option, index):
         if not index.isValid():
@@ -249,90 +203,46 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         db.set_value(k, 'description', common.sanitize_hashtags(v), database.AssetTable)
 
     def paint(self, painter, option, index):
-        return super().paint(painter, option, index)
+        if not common.main_widget:
+            return None
+        if common.main_widget.stacked_widget.animation_in_progress:
+            return None
 
-        self.clear_filter_candidate_rectangle()
-        self.clear_filter_rectangles()
+        ctx = self.get_paint_context(painter, option, index)
+
+        self.paint_background(ctx)
+        self.paint_shadows(ctx)
+        self.paint_outlines(ctx)
+
+        rect = self.paint_clickable_filter_segments(
+            ctx, role=QtCore.Qt.DisplayRole, stretch=False)
+
+        self.paint_clickable_filter_segments(
+            ctx,
+            rect=rect,
+            role=common.DescriptionRole,
+            stretch=False,
+            draw_outline=False,
+            opacity=1.0,
+            accent_first=False,
+            align_right=True,
+            clickable_id_offset=1024
+        )
+
+        self.paint_thumbnail(ctx)
+        self.paint_buttons(ctx)
+
+        self.paint_db_status(ctx)
+        self.paint_deleted(ctx)
+
+        self.paint_drag_source(ctx)
+
+        self.paint_indicator(ctx)
+
+        return ctx
 
     def sizeHint(self, option, index):
-        return index.data(QtCore.Qt.SizeHintRole)
-
-    @staticmethod
-    def get_rectangles(visual_rect, index, icon_count=0):
-        """Return all rectangles needed to paint an item.
-
-        Args:
-            visual_rect (QRect): The visual rectangle of the item.
-            index (QModelIndex): An item index.
-            icon_count (int): The number of inline icons.
-
-        Returns:
-            dict: Dictionary containing `count` number of rectangles.
-
-        """
-        r = QtCore.QRect(visual_rect)
-        # Gridline
-        r = r.adjusted(0, 0, 0, -common.Size.Separator(2.0))
-
-        rects = {
-            BackgroundRect: null_rect,
-            IndicatorRect: null_rect,
-            ThumbnailRect: null_rect,
-            AddItemRect: null_rect,
-            TodoRect: null_rect,
-            RevealRect: null_rect,
-            ArchiveRect: null_rect,
-            FavouriteRect: null_rect,
-            DataRect: null_rect,
-            PropertiesRect: null_rect,
-        }
-
-        if index.column() == 0:
-            rects[IndicatorRect] = r
-
-        if index.column() == 1:
-            rects[ThumbnailRect] = r
-
-        if index.column() == 2:
-            r.setRight(r.right() - common.Size.Indicator())
-            if index.row() == (index.model().rowCount() - 1):
-                r.setBottom(r.bottom() - common.Size.Separator())
-            rects[DataRect] = r
-
-        if icon_count == 0:
-            return rects
-
-        if index.column() == 3:
-
-            # Inline icons rect
-            spacing = common.Size.Indicator(2.5)
-
-            button_rect = QtCore.QRect()
-            button_rect.setWidth(common.Size.Margin())
-            button_rect.setHeight(common.Size.Margin())
-            button_rect.moveCenter(r.center())
-
-            # Align left to the edge (rect is out of bounds now)
-            button_rect.moveLeft(r.right())
-
-            for n in range(icon_count):
-                # Move rect by its own width and add spacing and save it
-                button_rect.moveRight(button_rect.right() - button_rect.width() - spacing)
-                rects[1024 + n] = QtCore.QRect(button_rect)
-
-            return rects
-
-    @property
-    def filter_candidate_rectangle(self):
-        return self._filter_candidate_rectangle
-
-    @QtCore.Slot(QtCore.QRect)
-    def set_filter_candidate_rectangle(self, rect):
-        self._filter_candidate_rectangle = rect
-
-    @QtCore.Slot()
-    def clear_filter_candidate_rectangle(self):
-        self._filter_candidate_rectangle = None
+        return QtCore.QSize(index.data(QtCore.Qt.SizeHintRole))
 
     def filter_rectangles(self):
         return self._filter_rectangles
@@ -351,6 +261,49 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         for rect, text in self._filter_rectangles[row].values():
             if rect.contains(pos):
                 return rect, text
+        return None, None
+
+    @property
+    def filter_candidate_rectangle(self):
+        return self._filter_candidate_rectangle
+
+    @QtCore.Slot(QtCore.QRect)
+    def set_filter_candidate_rectangle(self, rect):
+        self._filter_candidate_rectangle = rect
+
+    @QtCore.Slot()
+    def clear_filter_candidate_rectangle(self):
+        self._filter_candidate_rectangle = None
+
+    @property
+    def button_candidate_rectangle(self):
+        return self._button_candidate_rectangle
+
+    @QtCore.Slot(QtCore.QRect)
+    def set_button_candidate_rectangle(self, rect):
+        self._button_candidate_rectangle = rect
+
+    @QtCore.Slot()
+    def clear_button_candidate_rectangle(self):
+        self._button_candidate_rectangle = None
+
+    def button_rectangles(self):
+        return self._button_rectangles
+
+    def add_button_rectangle(self, row, idx, rect):
+        if row not in self._button_rectangles:
+            self._button_rectangles[row] = {}
+        self._button_rectangles[row][idx] = rect
+
+    def clear_button_rectangles(self):
+        self._button_rectangles = {}
+
+    def get_button_rectangle(self, row, pos):
+        if row not in self._button_rectangles:
+            return None, None
+        for idx in self._button_rectangles[row]:
+            if self._button_rectangles[row][idx].contains(pos):
+                return self._button_rectangles[row][idx], idx
         return None, None
 
     def gradient_pixmap(self, width, reverse=False):
@@ -382,7 +335,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         return pixmap
 
-    def get_paint_context(self, painter, option, index, track_cursor=True, antialiasing=False):
+    def get_paint_context(self, painter, option, index, antialiasing=False):
         """A utility class for gathering all the arguments needed to paint
         the individual list elements.
 
@@ -403,7 +356,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         favourite = flags & common.MarkedAsFavourite
         archived = flags & common.MarkedAsArchived
         active = flags & common.MarkedAsActive
-        rectangles = self.get_rectangles(option.rect, index)
 
         if option.rect.height() < common.Size.RowHeight(1.5):
             font, metrics = common.Font.MediumFont(common.Size.SmallText())
@@ -411,20 +363,21 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             font, metrics = common.Font.BoldFont(common.Size.MediumText())
         painter.setFont(font)
 
-        if track_cursor:
-            cursor_position = self.parent().viewport().mapFromGlobal(common.cursor.pos())
-        else:
-            cursor_position = None
+        separator_height = int(common.Size.Separator(option.rect.height() / common.Size.RowHeight(1.0)))
+        rect = option.rect.adjusted(0, 0, 0, -separator_height)
+        x = rect.left()
+        y = rect.center().y() + metrics.ascent() / 2.0 - (metrics.descent() / 4.0)
 
-        option.rect = option.rect.adjusted(0, 0, 0, -(common.Size.Separator(1.0)))
-
-        x = option.rect.left()
-        y = option.rect.center().y() + metrics.ascent() / 2.0 - (metrics.descent() / 4.0)
+        try:
+            link_selected = index.data(common.AssetLinkRole) == self._indicator_link
+        except (AttributeError, KeyError):
+            link_selected = None
 
         ctx = PaintContext(
             painter=painter,
-            option=option,
             index=index,
+            option=option,
+            rect=rect,
             selected=selected,
             focused=focused,
             active=active,
@@ -435,25 +388,43 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             metrics=metrics,
             x=x,
             y=y,
-            cursor_position=cursor_position,
             buttons_hidden=self.parent().buttons_hidden(),
-            BackgroundRect=rectangles[BackgroundRect],
-            IndicatorRect=rectangles[IndicatorRect],
-            ThumbnailRect=rectangles[ThumbnailRect],
-            DataRect=rectangles[DataRect],
-            PropertiesRect=rectangles[PropertiesRect],
-            RevealRect=rectangles[RevealRect],
-            TodoRect=rectangles[TodoRect],
-            AddItemRect=rectangles[AddItemRect],
-            FavouriteRect=rectangles[FavouriteRect],
-            ArchiveRect=rectangles[ArchiveRect]
-
+            link_selected=link_selected,
         )
         return ctx
 
     @save_painter
     def paint_indicator(self, ctx):
-        pass
+        if not ctx.index.isValid():
+            return
+
+        if not ctx.index.data(common.ParentPathRole):
+            return
+        if len(ctx.index.data(common.ParentPathRole)) != 4:
+            return
+
+        if not ctx.index.data(common.AssetLinkRole):
+            return
+        if not ctx.link_selected:
+            return
+
+        rgba = common.color_manager.get_color(ctx.index.data(common.AssetLinkRole))
+        color = QtGui.QColor(*rgba)
+        rect = QtCore.QRect(ctx.rect)
+        rect.setBottom(ctx.option.rect.bottom())
+
+        if ctx.index.column() == 0:
+            rect.setRight(rect.left() + common.Size.Separator(2.0))
+            ctx.painter.fillRect(rect, color)
+        elif ctx.index.column() == 3:
+            rect.setLeft(rect.right() - common.Size.Separator(2.0))
+            ctx.painter.fillRect(rect, color)
+
+        if ctx.index.column() in (2, 3, 4):
+            rect = QtCore.QRect(ctx.rect)
+            ctx.painter.setOpacity(0.3)
+            ctx.painter.setCompositionMode(QtGui.QPainter.CompositionMode_SoftLight)
+            ctx.painter.fillRect(rect, color)
 
     @save_painter
     def paint_background(self, ctx):
@@ -461,9 +432,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         if not ctx.index.isValid():
             return
 
-        if ctx.index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+        if ctx.index.flags() == QtCore.Qt.NoItemFlags:
             return
-        if ctx.archived:
+        if ctx.index.flags() & common.MarkedAsArchived:
             return
 
         ctx.painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
@@ -474,37 +445,48 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             color = common.Color.VeryDarkBackground().darker(120)
             color = color.lighter(105) if ctx.hover else color
             ctx.painter.setBrush(color)
-            ctx.painter.drawRoundedRect(ctx.option.rect, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
+            ctx.painter.drawRoundedRect(ctx.rect, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
         elif ctx.index.column() == 2:
             color = common.Color.DarkBackground()
             color = common.Color.LightBackground() if ctx.selected else color
             color = color.lighter(105) if ctx.hover else color
 
-            r = QtCore.QRect(ctx.option.rect)
-            r.setLeft(r.center().x())
-            ctx.painter.fillRect(r, color)
+            if not ctx.buttons_hidden:
+                r = QtCore.QRect(ctx.rect)
+                r.setLeft(r.center().x())
+                ctx.painter.fillRect(r, color)
 
             ctx.painter.setBrush(color)
-            r = QtCore.QRect(ctx.option.rect)
+            r = QtCore.QRect(ctx.rect)
             r.setLeft(r.left() + common.Size.Separator(2.0))
-            r.setRight(r.center().x() + common.Size.Indicator(1.5))
+            if not ctx.buttons_hidden:
+                r.setRight(r.center().x() + common.Size.Indicator(1.5))
             ctx.painter.drawRoundedRect(r, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
         elif ctx.index.column() == 3:
-            color = common.Color.DarkBackground().darker(130)
+            color = common.Color.DarkBackground()
+            color = common.Color.LightBackground() if ctx.selected else color
+            color = color.lighter(105) if ctx.hover else color
 
-            r = QtCore.QRect(ctx.option.rect)
+            r = QtCore.QRect(ctx.rect)
             r.setRight(r.center().x())
             ctx.painter.fillRect(r, color)
 
             ctx.painter.setBrush(color)
-            ctx.painter.drawRoundedRect(ctx.option.rect, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
+            r = QtCore.QRect(ctx.rect)
+            r.setLeft(r.center().x() - common.Size.Indicator(1.5))
+            ctx.painter.drawRoundedRect(r, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
 
     @save_painter
     def paint_shadows(self, ctx):
         """Paints the item's thumbnail shadow.
 
         """
-        r = QtCore.QRect(ctx.option.rect)
+        if ctx.index.flags() == QtCore.Qt.NoItemFlags:
+            return
+        if ctx.index.flags() & common.MarkedAsArchived:
+            return
+
+        r = QtCore.QRect(ctx.rect)
         r.setLeft(r.left() + common.Size.Separator(2.0))
 
         if ctx.index.column() == 2:
@@ -515,16 +497,10 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
             ctx.painter.save()
             ctx.painter.setClipPath(clip_path)
-
             pixmap = self.gradient_pixmap(common.Size.Margin(2.0))
             r.setWidth(common.Size.Margin(2.0))
             ctx.painter.drawPixmap(r, pixmap, pixmap.rect())
             ctx.painter.restore()
-
-            pixmap = self.gradient_pixmap(common.Size.Margin(6.0), reverse=True)
-            r = QtCore.QRect(ctx.option.rect)
-            r.setLeft(r.right() - common.Size.Margin(6.0))
-            ctx.painter.drawPixmap(r, pixmap, pixmap.rect())
 
     @save_painter
     def paint_clickable_filter_segments(
@@ -542,6 +518,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             clickable_id_offset=0
     ):
         """Paints name of the `AssetWidget`'s items with performance optimizations and requested features."""
+
+        if ctx.index.flags() & common.MarkedAsArchived:
+            opacity *= 0.5
 
         # Early exit conditions
         if not ctx.index.isValid():
@@ -562,17 +541,17 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             self._font_cache = {}
 
         # Determine font size factor based on the height of the rect
-        rect_height = ctx.option.rect.height()
-        size_factor = 1.0  # default size factor
+        rect_height = ctx.rect.height()
+        size_factor = 0.9  # default size factor
 
-        if rect_height < common.Size.RowHeight():
-            size_factor = 0.9
+        if rect_height <= common.Size.RowHeight():
+            size_factor = 0.8
         elif rect_height > common.Size.RowHeight(8.0):
-            size_factor = 1.3
+            size_factor = 1.2
         elif rect_height > common.Size.RowHeight(4.0):
-            size_factor = 1.15
+            size_factor = 1.1
         elif rect_height > common.Size.RowHeight():
-            size_factor = 1.0
+            size_factor = 0.9
 
         # Use cached fonts and metrics if available
         if not font and not metrics:
@@ -588,8 +567,8 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # Calculate padding based on font pixel size
         font_pixel_size = font.pixelSize()
-        horizontal_padding = int(font_pixel_size * 0.7)
-        vertical_padding = int(font_pixel_size * 0.5)
+        horizontal_padding = int(font_pixel_size * 1.3)
+        vertical_padding = int(horizontal_padding * 0.5)
 
         # Adjust font for provided rect
         if rect:
@@ -598,7 +577,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # Prepare and elide the text
         text = ctx.index.data(role) or default_text
-        max_text_width = ctx.option.rect.width() - (horizontal_padding * 2)
+        max_text_width = ctx.rect.width() - (horizontal_padding * 2)
         text = metrics.elidedText(text, QtCore.Qt.ElideRight, max_text_width)
 
         # Split text into segments and strip whitespace
@@ -618,18 +597,18 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         width = total_text_width + (horizontal_padding * 2 * num_segments)
 
         # Adjust width to fit within the available space
-        max_width = ctx.option.rect.width() - (horizontal_padding * 2)
+        max_width = ctx.rect.width() - (horizontal_padding * 2)
         if width > max_width:
             width = max_width
 
         if rect:
-            available_width = abs(rect.right() - ctx.option.rect.right()) - (horizontal_padding * 1.5)
+            available_width = abs(rect.right() - ctx.rect.right()) - (horizontal_padding * 1.5)
             if width > available_width:
                 width = available_width
 
         # Determine the starting x position based on alignment
         if align_right:
-            x = ctx.option.rect.right() - width
+            x = ctx.rect.right() - width
             x = x if (x - horizontal_padding) > rect.right() else rect.right() + horizontal_padding
         else:
             x = ctx.x + (horizontal_padding * 2)
@@ -646,10 +625,10 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # Adjust the background rectangle based on stretching and alignment
         if stretch and not align_right:
-            text_bg_rect.setRight(ctx.option.rect.right() - horizontal_padding)
+            text_bg_rect.setRight(ctx.rect.right() - horizontal_padding)
         elif stretch and align_right:
             text_bg_rect.setLeft(rect.right() + common.Size.Separator(4.0))
-            text_bg_rect.setRight(ctx.option.rect.right() - (horizontal_padding * 2.0))
+            text_bg_rect.setRight(ctx.rect.right() - (horizontal_padding * 2.0))
 
         if align_right and text_bg_rect.width() < horizontal_padding * 2.0:
             return text_bg_rect
@@ -657,24 +636,22 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         # Set clipping path to the text background rectangle
         painter_path = QtGui.QPainterPath()
         painter_path.setFillRule(QtCore.Qt.WindingFill)
+        _o = common.Size.Separator(1.0)
         painter_path.addRoundedRect(
-            text_bg_rect,
+            text_bg_rect.adjusted(-_o, -_o, _o, _o),
             common.Size.Indicator(1.5),
             common.Size.Indicator(1.5)
         )
         ctx.painter.setClipPath(painter_path)
 
+        ctx.painter.setBrush(QtCore.Qt.NoBrush)
+        ctx.painter.setPen(QtCore.Qt.NoPen)
+
         # Draw the background
         ctx.painter.save()
-        if draw_outline:
-            background_color = common.Color.VeryDarkBackground().lighter(140)
-            pen_color = common.Color.VeryDarkBackground().darker(130)
-            ctx.painter.setBrush(background_color)
-            ctx.painter.setPen(pen_color)
-        else:
-            ctx.painter.setBrush(QtCore.Qt.NoBrush)
-            ctx.painter.setPen(QtCore.Qt.NoPen)
-        ctx.painter.drawPath(painter_path.simplified())
+        ctx.painter.setOpacity(0.5)
+        ctx.painter.setBrush(common.Color.Opaque())
+        # ctx.painter.drawPath(painter_path.simplified())
         ctx.painter.restore()
 
         # Set the initial text color
@@ -686,10 +663,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         if not accent_first:
             text_color = text_color.darker(115)
             _text_color = text_color
-
-        if draw_outline:
-            pen = QtGui.QPen(common.Color.VeryDarkBackground())
-            pen.setWidthF(common.Size.Separator())
 
         # Get keyboard modifiers
         modifiers = QtWidgets.QApplication.keyboardModifiers()
@@ -721,7 +694,21 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 metrics.height() + (vertical_padding * 2)
             )
 
-            # Add the rectangle to the filter for interaction
+            # Draw a gradient from the left edge to left + margin
+            if n == 1 and accent_first:
+                ctx.painter.save()
+                gradient = QtGui.QLinearGradient(
+                    text_bounding_rect.topLeft(),
+                    text_bounding_rect.topLeft() + QtCore.QPoint(common.Size.Margin(2.0), 0)
+                )
+                gradient.setColorAt(0.0, common.Color.Opaque())
+                gradient.setColorAt(1.0, common.Color.Transparent())
+                ctx.painter.setBrush(gradient)
+                ctx.painter.setPen(QtCore.Qt.NoPen)
+                ctx.painter.drawRect(text_bounding_rect)
+                ctx.painter.restore()
+
+                # Add the rectangle to the filter for interaction
             if n < 1024:
                 self.add_filter_rectangle(
                     ctx.index.data(common.IdRole),
@@ -737,15 +724,15 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 segment_width = metrics.horizontalAdvance(segment_text)
                 text_bounding_rect.setWidth(segment_width + (horizontal_padding * 2))
 
-            if align_right and text_bounding_rect.right() > ctx.option.rect.right():
-                segment_max_width = ctx.option.rect.right() - x_pos - horizontal_padding
+            if align_right and text_bounding_rect.right() > ctx.rect.right():
+                segment_max_width = ctx.rect.right() - x_pos - horizontal_padding
                 segment_text = metrics.elidedText(segment_text, QtCore.Qt.ElideRight, segment_max_width)
                 segment_width = metrics.horizontalAdvance(segment_text)
                 text_bounding_rect.setWidth(segment_width + (horizontal_padding * 2))
 
             # Stretch the last segment if needed
             if not align_right and n == num_segments - 1 and stretch:
-                text_bounding_rect.setRight(ctx.option.rect.right())
+                text_bounding_rect.setRight(ctx.rect.right())
 
             # Stretch the first segment if aligned right
             if align_right and n == 0 and stretch:
@@ -753,7 +740,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
             # Fill the background for the leading item to give prominence
             if n == 0 and accent_first:
-                ctx.painter.fillRect(text_bounding_rect, common.Color.Opaque())
+                ctx.painter.fillRect(text_bounding_rect, common.Color.DarkBackground().lighter(120))
 
             # Check if the text segment matches the filter criteria
             if self.parent().model().filter.has_string(f'"{segment_text}"', positive_terms=True):
@@ -776,22 +763,38 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             # Draw separator and filter intent indicator
             ctx.painter.save()
 
+            # Hover state
             if text_bounding_rect.toRect() == self.filter_candidate_rectangle:
+                ctx.painter.save()
+
                 color = common.Color.Text()
                 color = common.Color.Green() if shift else color
                 color = common.Color.Red() if alt else color
                 alpha = 30 if no_modifier else 80
                 color.setAlpha(alpha)
+
                 ctx.painter.setBrush(color)
                 ctx.painter.setPen(QtCore.Qt.NoPen)
-            else:
-                ctx.painter.setBrush(QtCore.Qt.NoBrush)
-                if draw_outline:
-                    ctx.painter.setPen(pen)
-                else:
-                    ctx.painter.setPen(QtCore.Qt.NoPen)
+                ctx.painter.drawRect(text_bounding_rect)
 
-            ctx.painter.drawRect(text_bounding_rect)
+                ctx.painter.restore()
+            elif draw_outline and n < num_segments - 1:
+                # Draw separator line between segments
+                _rect = text_bounding_rect.adjusted(
+                    text_bounding_rect.width() - common.Size.Separator(2.0), 0, 0, 0)
+                ctx.painter.fillRect(_rect, common.Color.VeryDarkBackground())
+
+            ctx.painter.restore()
+
+        # Draw outline
+        if draw_outline and ctx.selected:
+            ctx.painter.save()
+            ctx.painter.setOpacity(1.0)
+            pen = QtGui.QPen(common.Color.Opaque())
+            pen.setWidthF(common.Size.Separator(4.0))
+            ctx.painter.setPen(pen)
+            ctx.painter.setBrush(QtCore.Qt.NoBrush)
+            ctx.painter.drawPath(painter_path.simplified())
             ctx.painter.restore()
 
         return text_bg_rect
@@ -806,8 +809,8 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             painter_path = QtGui.QPainterPath()
             painter_path.setFillRule(QtCore.Qt.WindingFill)
 
-            r = QtCore.QRect(ctx.option.rect).adjusted(common.Size.Separator(), common.Size.Separator(),
-                                                       -common.Size.Separator(), -common.Size.Separator())
+            r = QtCore.QRect(ctx.rect).adjusted(common.Size.Separator(), common.Size.Separator(),
+                                                -common.Size.Separator(), -common.Size.Separator())
 
             if ctx.index.column() == 0:
                 pass
@@ -817,7 +820,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 r_left.setRight(r.center().x())
 
                 r_right = QtCore.QRect(r)
-                r_right.setLeft(ctx.option.rect.center().x() - common.Size.Indicator(1.5))
+                r_right.setLeft(ctx.rect.center().x() - common.Size.Indicator(1.5))
                 r_right.setRight(r.right() + common.Size.Indicator(1.5))
 
                 painter_path.addRoundedRect(
@@ -838,7 +841,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 r_left.setLeft(r.left() - common.Size.Indicator(1.5))
 
                 r_right = QtCore.QRect(r)
-                r_right.setLeft(ctx.option.rect.center().x() - common.Size.Indicator(1.5))
+                r_right.setLeft(ctx.rect.center().x() - common.Size.Indicator(1.5))
                 r_right.setRight(r.right())
 
                 painter_path.addRoundedRect(
@@ -850,7 +853,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 r_right.setLeft(r.center().x())
 
                 r_left = QtCore.QRect(r)
-                r_left.setRight(ctx.option.rect.center().x() + common.Size.Indicator(1.5))
+                r_left.setRight(ctx.rect.center().x() + common.Size.Indicator(1.5))
                 r_left.setLeft(r.left() - common.Size.Indicator(1.5))
 
                 painter_path.addRoundedRect(
@@ -859,8 +862,8 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 painter_path.addRect(r_left)
 
             clip_path = QtGui.QPainterPath()
-            clip_path.addRect(ctx.option.rect)
-            ctx.painter.setClipPath(clip_path)
+            clip_path.addRect(ctx.rect)
+            ctx.painter.setClipPath(clip_path.simplified())
 
             ctx.painter.setBrush(QtCore.Qt.NoBrush)
             pen = QtGui.QPen(color)
@@ -876,7 +879,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             ctx.painter.setOpacity(0.22)
             ctx.painter.drawPath(painter_path.simplified())
 
-        if ctx.index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+        if ctx.index.flags() == QtCore.Qt.NoItemFlags:
             return
 
         # Active indicator
@@ -946,8 +949,8 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         mask_path = QtGui.QPainterPath()
         mask_path.addRoundedRect(
-            ctx.option.rect.adjusted(common.Size.Separator(2.0), common.Size.Separator(2.0),
-                                     -common.Size.Separator(2.0), -common.Size.Separator(2.0)),
+            ctx.rect.adjusted(common.Size.Separator(2.0), common.Size.Separator(2.0),
+                              -common.Size.Separator(2.0), -common.Size.Separator(2.0)),
             common.Size.Indicator(1.5), common.Size.Indicator(1.5))
         ctx.painter.setClipPath(mask_path.simplified())
 
@@ -960,7 +963,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             ctx.painter.setBrush(color)
             if ctx.archived:
                 ctx.painter.setOpacity(0.1)
-            ctx.painter.drawRect(ctx.option.rect)
+            ctx.painter.drawRect(ctx.rect)
 
         o = 0.8 if ctx.selected or ctx.active or ctx.hover else 0.65
         ctx.painter.setOpacity(o)
@@ -970,17 +973,287 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # Let's make sure the image is fully fitted, even if the image's size
         # doesn't match ThumbnailRect
-        s = float(ctx.option.rect.height())
+        s = float(ctx.rect.height())
         longest_edge = float(max((pixmap.width(), pixmap.height())))
         ratio = s / longest_edge
         w = pixmap.width() * ratio
         h = pixmap.height() * ratio
         r = QtCore.QRect(0, 0, int(w), int(h))
 
-        r.moveCenter(ctx.option.rect.center())
+        r.moveCenter(ctx.rect.center())
         if ctx.archived:
             ctx.painter.setOpacity(0.1)
         ctx.painter.drawPixmap(r, pixmap, pixmap.rect())
+
+    @save_painter
+    def paint_buttons(self, ctx):
+        if not ctx.index.isValid():
+            return
+        if ctx.index.column() != 3:
+            return
+        if ctx.index.flags() == QtCore.Qt.NoItemFlags:
+            return
+
+        icon_size = common.Size.Margin(1.0)
+        padding = common.Size.Indicator(1.0)
+
+        icon_area_rect = QtCore.QRect(ctx.rect)
+        icon_area_rect.setHeight(icon_size + (padding * 2))
+        icon_area_rect = icon_area_rect.adjusted(
+            padding, 0, -padding, 0)
+
+        icon_area_rect.moveCenter(ctx.rect.center())
+
+        ctx.painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
+        ctx.painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, on=True)
+
+        if ctx.hover or ctx.selected:
+            ctx.painter.setBrush(common.Color.DarkBackground().lighter(150))
+        else:
+            ctx.painter.setBrush(common.Color.DarkBackground())
+        ctx.painter.setPen(QtCore.Qt.NoPen)
+
+        ctx.painter.drawRoundedRect(
+            icon_area_rect,
+            common.Size.Indicator(1.5),
+            common.Size.Indicator(1.5)
+        )
+
+        clip_path = QtGui.QPainterPath()
+        clip_path.addRoundedRect(
+            icon_area_rect,
+            common.Size.Indicator(1.5),
+            common.Size.Indicator(1.5)
+        )
+        ctx.painter.setClipPath(clip_path.simplified())
+
+        icons = self.parent().icons
+
+        button_width = float((icon_area_rect.width() - padding) / float(len(icons)))
+
+        icon_button_rect = QtCore.QRect(icon_area_rect)
+        icon_button_rect.setWidth(button_width)
+        center = icon_button_rect.center()
+        icon_button_rect.moveTopLeft(icon_area_rect.topLeft())
+        icon_button_rect.moveLeft(icon_button_rect.left() + (padding * 0.5))
+
+        icon_button_rect.setHeight(common.Size.Margin(0.9))
+        icon_button_rect.moveCenter(center)
+
+        values = icons.values()
+        last_idx = len(values) - 1
+
+        state = QtGui.QIcon.State.Off
+        mode = QtGui.QIcon.Mode.Normal
+
+        for idx, v in enumerate(icons.values()):
+            if ctx.archived and idx != last_idx:
+                self.add_button_rectangle(ctx.index.data(common.IdRole), idx, QtCore.QRect(icon_button_rect))
+                icon_button_rect.moveLeft(icon_button_rect.left() + button_width)
+                continue
+
+            if icon_button_rect == self.button_candidate_rectangle:
+                color = common.Color.Text()
+            else:
+                color = common.Color.VeryDarkBackground()
+
+            if v['icon']:
+                if v['icon'] == 'favourite' and ctx.index.flags() & common.MarkedAsFavourite:
+                    state = QtGui.QIcon.State.On
+                    mode = QtGui.QIcon.Mode.Active
+                    icon = ui.get_icon(v['icon'])
+                elif v['icon'] == 'archivedHidden' and ctx.index.flags() & common.MarkedAsArchived:
+                    state = QtGui.QIcon.State.On
+                    mode = QtGui.QIcon.Mode.Active
+                    icon = ui.get_icon('archivedVisible')
+                else:
+                    icon = ui.get_icon(v['icon'], color=color)
+
+                icon.paint(
+                    ctx.painter,
+                    icon_button_rect,
+                    alignment=QtCore.Qt.AlignCenter,
+                    mode=mode,
+                    state=state
+                )
+            else:
+                self.paint_custom_item_icon(ctx, icon_button_rect)
+            self.add_button_rectangle(ctx.index.data(common.IdRole), idx, QtCore.QRect(icon_button_rect))
+            icon_button_rect.moveLeft(icon_button_rect.left() + button_width)
+
+    @save_painter
+    def paint_custom_item_icon(self, ctx, rect):
+        """Paints a custom icon for an item.
+
+        """
+        if not ctx.index.isValid():
+            return
+        if not ctx.index.data(QtCore.Qt.DisplayRole):
+            return
+        if not ctx.index.data(common.ParentPathRole):
+            return
+
+        rect = QtCore.QRect(rect)
+        center = rect.center()
+        rect.setWidth(rect.height())
+        rect.moveCenter(center)
+
+        # Draw background
+        ctx.painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
+        ctx.painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, on=True)
+
+        ctx.painter.setBrush(common.Color.Opaque())
+        ctx.painter.setPen(QtCore.Qt.NoPen)
+
+        if len(ctx.index.data(common.ParentPathRole)) == 3:
+            ctx.painter.drawEllipse(rect)
+            if ctx.index.data(common.SGLinkedRole):
+                icon = QtGui.QIcon()
+                pixmap = images.rsc_pixmap(
+                    'sg', common.Color.Text(), common.Size.Margin()
+                )
+                icon.addPixmap(pixmap)
+                icon.paint(ctx.painter, rect, alignment=QtCore.Qt.AlignCenter)
+            else:
+                icon = QtGui.QIcon()
+                pixmap = images.rsc_pixmap(
+                    'sg', common.Color.Background(), common.Size.Margin(0.8)
+                )
+                icon.addPixmap(pixmap)
+                icon.paint(ctx.painter, rect, alignment=QtCore.Qt.AlignCenter)
+
+        if len(ctx.index.data(common.ParentPathRole)) == 4 and ctx.index.data(common.AssetLinkRole):
+            # ctx.painter.drawEllipse(rect)
+
+            icon = QtGui.QIcon()
+            pixmap = images.rsc_pixmap(
+                'link', common.Color.Blue(), common.Size.Margin(0.7)
+            )
+            icon.addPixmap(pixmap)
+            icon.paint(ctx.painter, rect, alignment=QtCore.Qt.AlignCenter)
+        # Paint
+
+    @save_painter
+    def paint_db_status(self, ctx):
+        """Paints the item's configuration status.
+
+        """
+
+        if not ctx.index.isValid():
+            return
+
+        if ctx.index.column() != 2:
+            return
+
+        if not ctx.index.data(QtCore.Qt.DisplayRole):
+            return
+
+        if not ctx.index.data(common.ParentPathRole):
+            return
+
+        db = database.get(*ctx.index.data(common.ParentPathRole)[0:3])
+        if db.is_valid():
+            return
+
+        rect = QtCore.QRect(
+            0, 0, common.Size.Margin(), common.Size.Margin()
+        )
+        rect.moveCenter(ctx.rect.center())
+
+        ctx.painter.setOpacity(1.0) if ctx.hover else ctx.painter.setOpacity(0.9)
+
+        pixmap = images.rsc_pixmap(
+            'alert', common.Color.Red(), common.Size.Margin()
+        )
+        ctx.painter.drawPixmap(rect, pixmap, pixmap.rect())
+        ctx.painter.setBrush(common.Color.Red())
+        ctx.painter.setPen(QtCore.Qt.NoPen)
+        ctx.painter.setOpacity(0.1)
+        ctx.painter.drawRect(ctx.rect)
+
+    @save_painter
+    def paint_deleted(self, ctx):
+        """Paints a deleted item.
+
+        """
+        if ctx.index.flags() != QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+            return
+
+        rect = QtCore.QRect(ctx.rect)
+        rect.setHeight(common.Size.Separator(2.0))
+        rect.moveCenter(ctx.rect.center())
+        ctx.painter.setBrush(common.Color.VeryDarkBackground())
+        ctx.painter.drawRect(rect)
+
+    @save_painter
+    def paint_drag_source(self, ctx):
+        """Overlay to indicate the source of a drag operation."""
+
+        if self.parent().drag_source_row == -1:
+            return
+
+        if (
+                ctx.index.flags() & QtCore.Qt.ItemIsDropEnabled and
+                self.parent().drag_source_row != ctx.index.row()
+        ):
+            ctx.painter.setOpacity(0.5)
+            ctx.painter.setBrush(common.Color.VeryDarkBackground())
+            ctx.painter.drawRect(ctx.rect)
+
+            ctx.painter.setOpacity(1.0)
+            ctx.painter.setBrush(QtCore.Qt.NoBrush)
+            pen = QtGui.QPen(common.Color.SelectedText())
+            pen.setWidthF(common.Size.Separator(2.0))
+            ctx.painter.setPen(pen)
+            ctx.painter.drawRect(ctx.rect)
+
+            font, metrics = common.Font.MediumFont(
+                common.Size.SmallText()
+            )
+            ctx.painter.setFont(font)
+            text = 'Paste item properties'
+            ctx.painter.setPen(common.Color.Green())
+            ctx.painter.drawText(
+                ctx.rect.adjusted(
+                    common.Size.Margin(), 0, -common.Size.Margin(), 0
+                ),
+                QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter |
+                QtCore.Qt.TextWordWrap,
+                text,
+                boundingRect=ctx.rect,
+            )
+            return
+
+        if ctx.index.row() == self.parent().drag_source_row:
+            ctx.painter.setBrush(common.Color.VeryDarkBackground())
+            ctx.painter.drawRect(ctx.rect)
+
+            ctx.painter.setPen(common.Color.Background())
+            font, metrics = common.Font.MediumFont(
+                common.Size.SmallText()
+            )
+            ctx.painter.setFont(font)
+
+            text = ''
+            if ctx.index.data(common.ItemTabRole) in (common.FileTab, common.FavouriteTab):
+                text = '"Drag+Shift" grabs all files    |    "Drag+Alt" grabs the ' \
+                       'first file    |    "Drag+Shift+Alt" grabs the parent folder'
+            if ctx.index.data(common.ItemTabRole) in (common.BookmarkTab, common.AssetTab):
+                text = 'Copied properties'
+
+            ctx.painter.drawText(
+                ctx.rect.adjusted(
+                    common.Size.Margin(), 0, -common.Size.Margin(), 0
+                ),
+                QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter |
+                QtCore.Qt.TextWordWrap,
+                text,
+                boundingRect=ctx.rect,
+            )
+        else:
+            ctx.painter.setOpacity(0.33)
+            ctx.painter.setBrush(common.Color.VeryDarkBackground())
+            ctx.painter.drawRect(ctx.rect)
 
 
 class BookmarkItemViewDelegate(ItemDelegate):
@@ -1040,52 +1313,6 @@ class BookmarkItemViewDelegate(ItemDelegate):
             bookmark_row_data
         )
 
-    def paint(self, painter, option, index):
-        """Paints a :class:`bookmarks.items.bookmark_items.BookmarkItemView`
-        item.
-
-        """
-        # if self.switcher_visible():
-        #     painter.fillRect(option.rect, common.Color.VeryDarkBackground())
-        #     return
-        if not common.main_widget:
-            return
-        if common.main_widget.stacked_widget.animation_in_progress:
-            return
-
-        ctx = self.get_paint_context(painter, option, index)
-        self.paint_indicator(ctx)
-        self.paint_background(ctx)
-        self.paint_shadows(ctx)
-        self.paint_outlines(ctx)
-
-        rect = self.paint_clickable_filter_segments(
-            ctx, role=QtCore.Qt.DisplayRole, stretch=False)
-
-        rect = self.paint_clickable_filter_segments(
-            ctx,
-            rect=rect,
-            role=common.DescriptionRole,
-            stretch=False,
-            draw_outline=False,
-            opacity=1.0,
-            accent_first=False,
-            align_right=True,
-            clickable_id_offset=1024
-        )
-
-        #     self.paint_archived(ctx)
-        #     self.paint_inline_background(ctx)
-        #     self.paint_inline_icons(ctx)
-        self.paint_thumbnail(ctx)
-    #     self.paint_thumbnail_drop_indicator(ctx)
-    #     self.paint_description_editor_background(ctx)
-    #     self.paint_selection_indicator(ctx)
-    #     self.paint_sg_status(ctx)
-    #     self.paint_db_status(ctx)
-    #     self.paint_drag_source(ctx)
-    #     self.paint_deleted(ctx)
-
 
 class AssetItemViewDelegate(ItemDelegate):
     """The delegate used to render
@@ -1093,42 +1320,238 @@ class AssetItemViewDelegate(ItemDelegate):
 
     """
     #: The item's default thumbnail image
-    fallback_thumb = 'asset_item'
+    fallback_thumb = 'icon_bw_sm'
 
     def paint(self, painter, option, index):
-        """Paints a :class:`bookmarks.items.asset_items.AssetItemView`
-        item.
+        """Paints the extra columns of
+        :class:`~bookmarks.items.asset_items.AssetItemView`.
 
         """
-        # if self.switcher_visible():
-        #     painter.fillRect(option.rect, common.Color.VeryDarkBackground())
-        #     return
-        #
-        # if index.column() == 0:
-        #     if index.data(QtCore.Qt.DisplayRole) is None:
-        #         return  # The index might still be populated...
-        #     ctx = self.get_paint_context(painter, option, index)
-        #     self.paint_background(ctx)
-        #     self.paint_outlines(ctx)
-        #     self.paint_hover(ctx)
-        #     self.paint_shadows(ctx)
-        #     self.paint_clickable_filter_segments(ctx)
-        #
-        #     if common.main_widget.stacked_widget.animation_in_progress:
-        #         return
-        #
-        #     self.paint_archived(ctx)
-        #     self.paint_description_editor_background(ctx)
-        #     self.paint_inline_background(ctx)
-        #     self.paint_inline_icons(ctx)
-        #     self.paint_thumbnail(ctx)
-        #     self.paint_thumbnail_drop_indicator(ctx)
-        #     self.paint_selection_indicator(ctx)
-        #     self.paint_sg_status(ctx)
-        #     self.paint_db_status(ctx)
-        #     self.paint_dcc_icon(ctx)
-        #     self.paint_drag_source(ctx)
-        #     self.paint_deleted(ctx)
+        ctx = super().paint(painter, option, index)
+
+        if not ctx:
+            return
+
+        if index.column() < 4:
+            return
+
+        source_model = index.model().sourceModel()
+        source_index = index.model().mapToSource(index)
+
+        p = source_model.source_path()
+        k = source_model.task()
+        t = common.FileItem
+
+        _data = common.get_data(p, k, t)
+
+        if not _data:
+            return
+        if source_index.row() not in _data:
+            return
+        if not _data[source_index.row()][common.AssetProgressRole]:
+            return
+        if index.column() - 4 not in _data[source_index.row()][common.AssetProgressRole]:
+            return
+
+        data = _data[source_index.row()][common.AssetProgressRole][index.column() - 4]
+
+        right_edge = self.paint_progress_background(ctx, data)
+        self.paint_progress_name(ctx, data, right_edge)
+        self.paint_progress_leading_shadow(ctx)
+
+        return ctx
+
+    @save_painter
+    def paint_progress_leading_shadow(self, ctx):
+        if ctx.index.column() != 4:
+            return
+
+        rect = QtCore.QRect(ctx.rect)
+        o = common.Size.Margin(3.0)
+        rect.setWidth(o)
+
+        ctx.painter.setOpacity(0.5)
+        pixmap = images.rsc_pixmap(
+            'gradient', None, rect.height()
+        )
+        ctx.painter.drawPixmap(rect, pixmap, pixmap.rect())
+        rect.setWidth(o * 0.5)
+        ctx.painter.drawPixmap(rect, pixmap, pixmap.rect())
+
+    @save_painter
+    def paint_progress_background(self, ctx, data):
+        rect = QtCore.QRect(ctx.rect)
+        rect.setBottom(rect.bottom() - common.Size.Separator())
+
+        # Draw background
+        color = progress.STATES[data['value']]['color']
+        ctx.painter.setBrush(color)
+        ctx.painter.setPen(QtCore.Qt.NoPen)
+        if ctx.hover:
+            ctx.painter.setOpacity(1.0)
+        else:
+            ctx.painter.setOpacity(0.85)
+        ctx.painter.drawRect(rect)
+
+        if ctx.selected:
+            _color = common.Color.LightBackground()
+            ctx.painter.setBrush(_color)
+            ctx.painter.setOpacity(0.15)
+            ctx.painter.drawRect(rect)
+
+        rect.setWidth(rect.height())
+        center = rect.center()
+
+        r = common.Size.Margin()
+        rect.setSize(QtCore.QSize(r, r))
+        rect.moveCenter(center)
+        rect.moveLeft(ctx.rect.left() + common.Size.Indicator(2.0))
+
+        if data['value'] == progress.OmittedState:
+            if ctx.hover:
+                ctx.painter.setOpacity(1.0)
+            else:
+                ctx.painter.setOpacity(0.1)
+        else:
+            ctx.painter.setOpacity(0.5)
+
+        pixmap = images.rsc_pixmap(
+            progress.STATES[data['value']]['icon'],
+            color=None,
+            size=r
+        )
+
+        ctx.painter.drawPixmap(rect, pixmap, pixmap.rect())
+        return rect.right()
+
+    @save_painter
+    def paint_progress_name(self, ctx, data, right_edge):
+
+        text = progress.STATES[data['value']]['name']
+
+        if data['value'] == progress.OmittedState:
+            text = f'Edit\n{data["name"]}' if ctx.hover else ''
+            ctx.painter.setOpacity(0.25)
+        ctx.painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 255)))
+        _rect = QtCore.QRect(ctx.rect)
+
+        _o = common.Size.Indicator(2.0)
+        _rect.setLeft(right_edge + _o)
+
+        font, metrics = common.Font.LightFont(common.Size.SmallText())
+        ctx.painter.setFont(font)
+        ctx.painter.drawText(
+            _rect, QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft, text
+        )
+
+    def createEditor(self, parent, option, index):
+        """Creates a combobox editor used to change a state value.
+
+        """
+        if index.column() < 4:
+            return super().createEditor(parent, option, index)
+
+        editor = QtWidgets.QComboBox(parent=parent)
+        editor.setStyleSheet(
+            f'border-radius:0px;'
+            f'selection-background-color:rgba(180,180,180,255);'
+            f'margin:0px;'
+            f'padding:0px;'
+            f'min-width:{common.Size.DefaultWidth(0.33)}px;'
+            f'height:{option.rect.height()}px;'
+        )
+        editor.currentIndexChanged.connect(
+            lambda _: self.commitData.emit(editor)
+        )
+        editor.currentIndexChanged.connect(
+            lambda _: self.closeEditor.emit(editor)
+        )
+        QtCore.QTimer.singleShot(100, editor.showPopup)
+        return editor
+
+    def setEditorData(self, editor, index):
+        """Loads the state values from the current index into the editor.
+
+        """
+        if index.column() < 4:
+            return super().setEditorData(editor, index)
+
+        source_model = index.model().sourceModel()
+        source_index = index.model().mapToSource(index)
+
+        p = source_model.source_path()
+        k = source_model.task()
+        t = common.FileItem
+
+        _data = common.get_data(p, k, t)
+        data = _data[source_index.row()][common.AssetProgressRole][index.column() - 4]
+
+        for state in sorted(data['states']):
+            editor.addItem(
+                progress.STATES[state]['name'],
+                userData=state
+            )
+            icon = progress.STATES[state]['icon']
+
+            editor.setItemIcon(
+                editor.count() - 1,
+                ui.get_icon(icon, color=None),
+            )
+            editor.setItemData(
+                editor.count() - 1,
+                progress.STATES[state]['color'],
+                role=QtCore.Qt.BackgroundRole
+            )
+            editor.setItemData(
+                editor.count() - 1,
+                QtCore.QSize(1, common.Size.RowHeight(1.0)),
+                role=QtCore.Qt.SizeHintRole
+            )
+        editor.setCurrentText(
+            progress.STATES[data['value']]['name']
+        )
+
+    def setModelData(self, editor, model, index):
+        """Saves the current state value to the bookmark database.
+
+        """
+        if index.column() < 4:
+            return super().setModelData(editor, model, index)
+
+        source_model = index.model().sourceModel()
+        source_index = index.model().mapToSource(index)
+
+        p = source_model.source_path()
+        k = source_model.task()
+        t = common.FileItem
+
+        data = common.get_data(p, k, t)
+
+        # We don't have to modify the internal data directly because
+        # the db.set_value call will trigger an item refresh
+        progress_data = copy.deepcopy(data[source_index.row()][common.AssetProgressRole])
+        progress_data[index.column() - 4]['value'] = editor.currentData()
+
+        # Write current data to the database
+        pp = data[source_index.row()][common.ParentPathRole]
+        db = database.get(*pp[0:3])
+        db.set_value(
+            data[source_index.row()][common.PathRole],
+            'progress',
+            progress_data,
+            database.AssetTable
+        )
+
+    def updateEditorGeometry(self, editor, option, index):
+        """Resizes the editor.
+
+        """
+        if index.column() < 4:
+            super().updateEditorGeometry(editor, option, index)
+            return
+
+        super().updateEditorGeometry(editor, option, index)
+        editor.setGeometry(option.rect)
 
 
 class FileItemViewDelegate(ItemDelegate):
@@ -1138,43 +1561,6 @@ class FileItemViewDelegate(ItemDelegate):
     """
     #: The item's default thumbnail image
     fallback_thumb = 'file_item'
-
-    def paint(self, painter, option, index):
-        """Paints a :class:`bookmarks.items.file_items.FileItemView`
-        item.
-
-        """
-        # if self.switcher_visible():
-        #     painter.fillRect(option.rect, common.Color.VeryDarkBackground())
-        #     return
-        #
-        # if index.column() == 0:
-        #     ctx = self.get_paint_context(painter, option, index)
-        #     if not index.data(QtCore.Qt.DisplayRole):
-        #         return
-        #
-        #     p_role = index.data(common.ParentPathRole)
-        #     if p_role:
-        #         self.paint_background(ctx)
-        #         self.paint_outlines(ctx)
-        #         self.paint_hover(ctx)
-        #         self.paint_clickable_filter_segments(ctx)
-        #
-        #     if common.main_widget.stacked_widget.animation_in_progress:
-        #         return
-        #
-        #     self.paint_shadows(ctx)
-        #
-        #     self.paint_archived(ctx)
-        #     self.paint_inline_background(ctx)
-        #     self.paint_inline_icons(ctx)
-        #     self.paint_selection_indicator(ctx)
-        #     self.paint_thumbnail(ctx)
-        #     self.paint_thumbnail_drop_indicator(ctx)
-        #     self.paint_description_editor_background(ctx)
-        #     self.paint_drag_source(ctx)
-        #     self.paint_deleted(ctx)
-        #     self.paint_db_status(ctx)
 
 
 class FavouriteItemViewDelegate(FileItemViewDelegate):

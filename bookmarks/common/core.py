@@ -54,9 +54,6 @@ BookmarkTab = 0
 AssetTab = 1
 FileTab = 2
 FavouriteTab = 3
-BookmarkItemSwitch = 5
-AssetItemSwitch = 6
-TaskItemSwitch = 7
 
 PlatformWindows = 0
 PlatformMacOS = 1
@@ -181,11 +178,11 @@ TemplateResource = 'templates'
 
 
 class Font(enum.Enum):
-    BlackFont = 'Inter Display Black'
-    BoldFont = 'Inter Display SemiBold'
-    MediumFont = 'Inter Display'
-    LightFont = 'Inter Display Medium'
-    ThinFont = 'Inter Display Light'
+    BlackFont = 'Inter Black'
+    BoldFont = 'Inter SemiBold'
+    MediumFont = 'Inter'
+    LightFont = 'Inter Medium'
+    ThinFont = 'Inter Light'
 
     def __call__(self, size):
         from .. import common
@@ -482,6 +479,14 @@ def is_dir(path):
     return QtCore.QFileInfo(path).isDir()
 
 
+@functools.lru_cache(maxsize=1048576)
+def normalize_path(path):
+    """Normalize the path and replace backslashes with forward slashes."""
+    return os.path.abspath(os.path.normpath(path)).replace('\\', '/')
+
+
+
+@functools.lru_cache(maxsize=1048576)
 def get_sequence_and_shot(s):
     """Returns the sequence and shot name of the given path.
 

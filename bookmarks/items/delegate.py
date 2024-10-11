@@ -110,7 +110,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
     @QtCore.Slot(str)
     def set_indicator_link(self, link):
         self._indicator_link = link
-        print(f'Indicator color set to {link}')
 
     @QtCore.Slot()
     def clear_rectangles(self, *args, **kwargs):
@@ -211,7 +210,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         ctx = self.get_paint_context(painter, option, index)
 
         self.paint_background(ctx)
-        self.paint_shadows(ctx)
+        self.paint_indicator(ctx)
+
+        self.paint_thumbnail(ctx)
         self.paint_outlines(ctx)
 
         rect = self.paint_clickable_filter_segments(
@@ -226,18 +227,16 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             opacity=1.0,
             accent_first=False,
             align_right=True,
+            draw_background=False,
             clickable_id_offset=1024
         )
 
-        self.paint_thumbnail(ctx)
         self.paint_buttons(ctx)
 
         self.paint_db_status(ctx)
         self.paint_deleted(ctx)
 
         self.paint_drag_source(ctx)
-
-        self.paint_indicator(ctx)
 
         return ctx
 
@@ -305,35 +304,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             if self._button_rectangles[row][idx].contains(pos):
                 return self._button_rectangles[row][idx], idx
         return None, None
-
-    def gradient_pixmap(self, width, reverse=False):
-
-        # 1. Set up the linear gradient
-        gradient = QtGui.QLinearGradient()
-        gradient.setStart(QtCore.QPoint(0, 0))
-        gradient.setFinalStop(QtCore.QPoint(width, 0))
-
-        # 2. Define the color stops
-        gradient.setSpread(QtGui.QGradient.PadSpread)
-
-        if reverse:
-            gradient.setColorAt(0.0, common.Color.Transparent())
-            gradient.setColorAt(1.0, common.Color.DarkBackground().darker(130))
-        else:
-            gradient.setColorAt(0.0, common.Color.DarkBackground().darker(130))
-            gradient.setColorAt(1.0, common.Color.Transparent())
-
-        # 3. Create a QPixmap and fill it with transparent color
-        pixmap = QtGui.QPixmap(width, 1)
-        pixmap.setDevicePixelRatio(common.pixel_ratio)
-        pixmap.fill(QtCore.Qt.transparent)
-
-        # 4. Render the gradient onto the QPixmap
-        painter = QtGui.QPainter(pixmap)
-        painter.fillRect(pixmap.rect(), gradient)
-        painter.end()
-
-        return pixmap
 
     def get_paint_context(self, painter, option, index, antialiasing=False):
         """A utility class for gathering all the arguments needed to paint
@@ -408,23 +378,16 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         if not ctx.link_selected:
             return
 
+        if ctx.index.column() != 0:
+            return
+
         rgba = common.color_manager.get_color(ctx.index.data(common.AssetLinkRole))
         color = QtGui.QColor(*rgba)
         rect = QtCore.QRect(ctx.rect)
         rect.setBottom(ctx.option.rect.bottom())
 
-        if ctx.index.column() == 0:
-            rect.setRight(rect.left() + common.Size.Separator(2.0))
-            ctx.painter.fillRect(rect, color)
-        elif ctx.index.column() == 3:
-            rect.setLeft(rect.right() - common.Size.Separator(2.0))
-            ctx.painter.fillRect(rect, color)
-
-        if ctx.index.column() in (2, 3, 4):
-            rect = QtCore.QRect(ctx.rect)
-            ctx.painter.setOpacity(0.3)
-            ctx.painter.setCompositionMode(QtGui.QPainter.CompositionMode_SoftLight)
-            ctx.painter.fillRect(rect, color)
+        rect.setRight(rect.left() + common.Size.Separator(1.0))
+        ctx.painter.fillRect(rect, color)
 
     @save_painter
     def paint_background(self, ctx):
@@ -440,8 +403,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         ctx.painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
 
         if ctx.index.column() == 0:
-            pass
-        elif ctx.index.column() == 1:
+            return
+
+        if ctx.index.column() == 1:
             color = common.Color.VeryDarkBackground().darker(120)
             color = color.lighter(105) if ctx.hover else color
             ctx.painter.setBrush(color)
@@ -477,40 +441,13 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             ctx.painter.drawRoundedRect(r, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
 
     @save_painter
-    def paint_shadows(self, ctx):
-        """Paints the item's thumbnail shadow.
-
-        """
-        if ctx.index.flags() == QtCore.Qt.NoItemFlags:
-            return
-        if ctx.index.flags() & common.MarkedAsArchived:
-            return
-
-        r = QtCore.QRect(ctx.rect)
-        r.setLeft(r.left() + common.Size.Separator(2.0))
-
-        if ctx.index.column() == 2:
-            ctx.painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, on=True)
-
-            clip_path = QtGui.QPainterPath()
-            clip_path.addRoundedRect(r, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
-
-            ctx.painter.save()
-            ctx.painter.setClipPath(clip_path)
-            pixmap = self.gradient_pixmap(common.Size.Margin(2.0))
-            r.setWidth(common.Size.Margin(2.0))
-            ctx.painter.drawPixmap(r, pixmap, pixmap.rect())
-            ctx.painter.restore()
-
-    @save_painter
     def paint_clickable_filter_segments(
             self, ctx,
             rect=None,
             stretch=True,
             role=QtCore.Qt.DisplayRole,
             default_text='',
-            font=None,
-            metrics=None,
+            draw_background=True,
             draw_outline=True,
             opacity=1.0,
             accent_first=True,
@@ -536,10 +473,6 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         ctx.painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
         ctx.painter.setOpacity(opacity)
 
-        # Initialize font cache if it doesn't exist
-        if not hasattr(self, '_font_cache'):
-            self._font_cache = {}
-
         # Determine font size factor based on the height of the rect
         rect_height = ctx.rect.height()
         size_factor = 0.9  # default size factor
@@ -554,16 +487,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             size_factor = 0.9
 
         # Use cached fonts and metrics if available
-        if not font and not metrics:
-            font_key = f'bold_{size_factor}'
-            if font_key in self._font_cache:
-                font, metrics = self._font_cache[font_key]
-            else:
-                font, metrics = common.Font.BoldFont(common.Size.MediumText(size_factor))
-                self._font_cache[font_key] = (font, metrics)
-        elif font and metrics:
-            ctx.font = font
-            ctx.metrics = metrics
+        font, metrics = common.Font.BoldFont(common.Size.MediumText(size_factor))
+        ctx.font = font
+        ctx.metrics = metrics
 
         # Calculate padding based on font pixel size
         font_pixel_size = font.pixelSize()
@@ -648,11 +574,12 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         ctx.painter.setPen(QtCore.Qt.NoPen)
 
         # Draw the background
-        ctx.painter.save()
-        ctx.painter.setOpacity(0.5)
-        ctx.painter.setBrush(common.Color.Opaque())
-        # ctx.painter.drawPath(painter_path.simplified())
-        ctx.painter.restore()
+        if draw_background:
+            ctx.painter.save()
+            ctx.painter.setOpacity(0.5)
+            ctx.painter.setBrush(common.Color.Opaque())
+            ctx.painter.drawPath(painter_path.simplified())
+            ctx.painter.restore()
 
         # Set the initial text color
         text_color = common.Color.Text()
@@ -949,8 +876,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         mask_path = QtGui.QPainterPath()
         mask_path.addRoundedRect(
-            ctx.rect.adjusted(common.Size.Separator(2.0), common.Size.Separator(2.0),
-                              -common.Size.Separator(2.0), -common.Size.Separator(2.0)),
+            ctx.rect,
             common.Size.Indicator(1.5), common.Size.Indicator(1.5))
         ctx.painter.setClipPath(mask_path.simplified())
 
@@ -1122,12 +1048,42 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 icon.addPixmap(pixmap)
                 icon.paint(ctx.painter, rect, alignment=QtCore.Qt.AlignCenter)
 
+            try:
+                if ctx.index.data(common.AssetCountRole):
+                    ctx.painter.setClipping(False)
+                    font, metrics = common.Font.LightFont(common.Size.SmallText(0.8))
+                    center = rect.bottomRight()
+
+                    h = metrics.lineSpacing() + common.Size.Separator(4.0)
+                    rect.setSize(
+                        QtCore.QSize(h, h)
+                    )
+                    rect.moveCenter(center)
+
+                    o = common.Size.Separator(1.0)
+                    rect = rect.adjusted(o, o, -o, -o)
+                    ctx.painter.setBrush(common.Color.Blue())
+                    ctx.painter.setPen(common.Color.Opaque())
+                    ctx.painter.drawEllipse(rect)
+                    ctx.painter.setPen(common.Color.Text())
+
+                    text = f'{ctx.index.data(common.AssetCountRole)}'
+
+                    ctx.painter.drawText(
+                        rect,
+                        QtCore.Qt.AlignCenter,
+                        text,
+                        boundingRect=rect
+                    )
+            except:
+                pass
+
         if len(ctx.index.data(common.ParentPathRole)) == 4 and ctx.index.data(common.AssetLinkRole):
             # ctx.painter.drawEllipse(rect)
 
             icon = QtGui.QIcon()
             pixmap = images.rsc_pixmap(
-                'link', common.Color.Blue(), common.Size.Margin(0.7)
+                'link', common.Color.SecondaryText(), common.Size.Margin(0.7)
             )
             icon.addPixmap(pixmap)
             icon.paint(ctx.painter, rect, alignment=QtCore.Qt.AlignCenter)
@@ -1338,7 +1294,7 @@ class AssetItemViewDelegate(ItemDelegate):
         source_model = index.model().sourceModel()
         source_index = index.model().mapToSource(index)
 
-        p = source_model.source_path()
+        p = source_model.parent_path()
         k = source_model.task()
         t = common.FileItem
 
@@ -1479,7 +1435,7 @@ class AssetItemViewDelegate(ItemDelegate):
         source_model = index.model().sourceModel()
         source_index = index.model().mapToSource(index)
 
-        p = source_model.source_path()
+        p = source_model.parent_path()
         k = source_model.task()
         t = common.FileItem
 
@@ -1521,7 +1477,7 @@ class AssetItemViewDelegate(ItemDelegate):
         source_model = index.model().sourceModel()
         source_index = index.model().mapToSource(index)
 
-        p = source_model.source_path()
+        p = source_model.parent_path()
         k = source_model.task()
         t = common.FileItem
 

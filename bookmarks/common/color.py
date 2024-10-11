@@ -35,7 +35,7 @@ class ColorManager:
         """
         Generates a palette of harmonious colors based on color theory.
         """
-        base_hue = 30  # Base hue (e.g., blue)
+        base_hue = 0  # Base hue (e.g., blue)
         harmony_scheme = 'analogous'  # Can be 'analogous', 'complementary', 'triadic', 'tetradic'
         hues = self._get_harmony_hues(base_hue, harmony_scheme)
 
@@ -59,7 +59,7 @@ class ColorManager:
         """
         if scheme == 'analogous':
             # Hues at -30, 0, +30 degrees from base hue
-            hues = [(base_hue + angle) % 360 for angle in (-70, 0, 70)]
+            hues = [(base_hue + angle) % 360 for angle in (-30, 0, 30)]
         elif scheme == 'complementary':
             # Base hue and its complement
             hues = [base_hue, (base_hue + 180) % 360]

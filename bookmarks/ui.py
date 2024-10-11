@@ -656,7 +656,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
 
         o = common.Size.Margin()
         rect = self.rect().adjusted(o, o, -o, -o)
-        text = QtGui.QFontMetrics(self.font()).elidedText(
+        text = QtGui.QFontMetricsF(self.font()).elidedText(
             message,
             QtCore.Qt.ElideMiddle,
             rect.width(),

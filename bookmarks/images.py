@@ -792,7 +792,7 @@ class ImageCache(QtCore.QObject):
         Args:
             source (str): Path to an OpenImageIO compliant image file.
             size (int): The size of the requested image.
-            hash (str): Use this hash key instead source to store the data.
+            hash (str): Use this hash key instead of source to store the data.
             force (bool): Force reloads the image from source.
             oiio (bool): Use OpenImageIO to load the image data.
 

@@ -33,20 +33,13 @@ class DataDict(dict):
         self._loaded = False
         self._refresh_needed = False
         self._data_type = None
-        self._sg_names = []
-        self._sg_task_names = []
-        self._file_types = []
-        self._subdirectories = []
-        self._servers = []
-        self._jobs = []
-        self._roots = []
 
     @property
     def loaded(self):
         """Special attribute used by the item models and associated thread workers.
 
         When set to `True`, the helper threads have finished populating data and the item
-        is considered fully loaded.
+        and its children are fully loaded.
 
         """
         return self._loaded
@@ -57,7 +50,7 @@ class DataDict(dict):
 
     @property
     def refresh_needed(self):
-        """Used to signal that the cached data is out of date and needs updating.
+        """The data is out of date and needs refetching.
 
         """
         return self._refresh_needed
@@ -78,67 +71,65 @@ class DataDict(dict):
         self._data_type = v
 
     @property
-    def sg_names(self):
-        """Returns a list of Shotgun task names associated with the data dictionary."""
-        return self._sg_names
-
-    @sg_names.setter
-    def sg_names(self, v):
-        self._sg_names = v
-
-    @property
-    def sg_task_names(self):
-        """Returns a list of Shotgun task names associated with the data dictionary."""
-        return self._sg_task_names
-
-    @sg_task_names.setter
-    def sg_task_names(self, v):
-        self._sg_task_names = v
-
-    @property
-    def file_types(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._file_types
-
-    @file_types.setter
-    def file_types(self, v):
-        self._file_types = v
-
-    @property
-    def subdirectories(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._subdirectories
-
-    @subdirectories.setter
-    def subdirectories(self, v):
-        self._subdirectories = v
-
-    @property
     def servers(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._servers
-
-    @servers.setter
-    def servers(self, v):
-        self._servers = v
+        """Get a list of servers stored in the data dictionary."""
+        role = common.ParentPathRole
+        return [v[role][0] for v in self.values() if v[role] and len(v[role]) > 1]
 
     @property
     def jobs(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._jobs
-
-    @jobs.setter
-    def jobs(self, v):
-        self._jobs = v
+        """Get a list of jobs stored in the data dictionary."""
+        role = common.ParentPathRole
+        return [v[role][1] for v in self.values() if v[role] and len(v[role]) > 2]
 
     @property
     def roots(self):
-        """Returns a list of file types stored in the data dictionary."""
-        return self._roots
+        """Get a list of file types stored in the data dictionary."""
+        role = common.ParentPathRole
+        return [v[role][2] for v in self.values() if v[role] and len(v[role]) > 3]
 
-    @roots.setter
-    def roots(self, v):
-        self._roots = v
+    @property
+    def assets(self):
+        """Get a list of assets stored in the data dictionary."""
+        role = common.ParentPathRole
+        return [v[role][3] for v in self.values() if v[role] and len(v[role]) > 4]
+
+    @property
+    def tasks_folders(self):
+        """Get a list of tasks folders stored in the data dictionary."""
+        role = common.ParentPathRole
+        return [v[role][4] for v in self.values() if v[role] and len(v[role]) > 5]
+
+    @property
+    def relative_folders(self):
+        """Get a list of relative folders stored in the data dictionary."""
+
+        def func(v):
+            pp = v[common.ParentPathRole]
+            if not pp:
+                return []
+            _path = '/'.join(pp)
+            if not v[common.PathRole]:
+                return []
+            path = v[common.PathRole]
+            rel_path = path.replace(_path, '').rstrip('/')
+            return rel_path.split('/')
+
+        return list(set([f for v in self.values() for f in func(v)]))
+
+    @property
+    def file_types(self):
+        """Get a list of file types stored in the data dictionary."""
+
+        def func(v):
+            if not v[common.PathRole]:
+                return ''
+            path = v[common.PathRole]
+            if '.' not in path.split('/')[-1]:
+                return ''
+            return path.split('.')[-1].lstrip('.')
+
+        return list(set([f for v in self.values() for f in func(v)]))
 
 
 def sort_data(ref, sort_by, sort_order):
@@ -176,13 +167,6 @@ def sort_data(ref, sort_by, sort_order):
     d.loaded = ref().loaded
     d.data_type = ref().data_type
     d.refresh_needed = ref().refresh_needed
-    d.sg_names = ref().sg_names
-    d.sg_task_names = ref().sg_task_names
-    d.file_types = ref().file_types
-    d.subdirectories = ref().subdirectories
-    d.servers = ref().servers
-    d.jobs = ref().jobs
-    d.roots = ref().roots
 
     for n, idx in enumerate(sorted_idxs):
         if not ref():

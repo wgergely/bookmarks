@@ -291,7 +291,7 @@ def update_active_item(*args):
 
     scene = cmds.file(query=True, expandName=True)
 
-    p = model.source_path()
+    p = model.parent_path()
     k = model.task()
     t1 = model.data_type()
     t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem

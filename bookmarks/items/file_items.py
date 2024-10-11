@@ -19,9 +19,6 @@ task folder. In the real world, these correspond to workspace folders used by DC
 such as the `scenes`, `cache`, `images`, `render`, etc. folders. These folders are the
 main containers for file items.
 
-:class:`FileItemModel` will always load files from inside the active task folder. We
-set the active task folder using :class:`~bookmarks.items.switch.TaskSwitchView`.
-
 The relative file path segment is what :class:`FileItemView` displays.
 This segment often includes a series of subdirectories the view represents as
 interactive labels. These labels can be used to filter the list view.
@@ -85,64 +82,16 @@ def _add_path_to_mime(mime, path):
     return mime
 
 
-@functools.lru_cache(maxsize=1048576)
-def get_path_elements(p, k, name, path, source_path):
-    """Returns the path elements needed to populate the file item model data.
-
-    Args:
-        p (tuple): Parent path elements.
-        k (str): Task folder.
-        name (str): File name.
-        path (str): File path.
-        source_path (str): File source path.
-
-    Returns:
-        tuple: Tuple of path, ext, file_root, dir, sort_by_name_role.
-    """
-    path = path.replace('\\', '/')
-
-    ext = name.split('.')[-1]
-
-    # Getting the file's relative root folder
-    # This data is used to display the clickable subfolders relative
-    # to the current task folder
-    file_root = path[:path.rfind('/')][len(source_path) + 1:]
-
-    sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
-    _dir = None
-
-    if file_root:
-        # Save the file's parent folder for the file system watcher
-        _dir = source_path + '/' + file_root
-        # To sort by folders correctly, we populate a fixed length
-        # list with the subfolders and file names. Sorting is case-insensitive.
-        _file_root = file_root.lower().split('/')
-        for idx in range(len(_file_root)):
-            _idx = idx + 5
-            sort_by_name_role[_idx] = _file_root[idx].lower()
-            if _idx == 6:
-                break
-
-    sort_by_name_role[6] = ext
-    sort_by_name_role[7] = name.lower()
-
-    # Add server, job, root and task folders to the name sort list
-    for idx, _p in enumerate(p + (k,)):
-        sort_by_name_role[idx] = _p.lower()
-    return path, ext, file_root, _dir, sort_by_name_role
-
-
 @functools.lru_cache(maxsize=4194304)
 def get_sequence_elements(filepath):
-    """cache-backed utility function to retrieve the sequence elements from the given file
-    path.
+    """Cache-backed utility function to retrieve the sequence elements from the given file path.
 
     Args:
         filepath (str): A file path.
 
     Returns:
-        The regex match instance and a proxy sequence path.
-
+        tuple: (seq, sequence_path) where seq is the regex match object or None,
+               and sequence_path is the proxy sequence path or None.
     """
     try:
         seq = common.get_sequence(filepath)
@@ -151,7 +100,18 @@ def get_sequence_elements(filepath):
 
     sequence_path = None
     if seq:
-        sequence_path = seq.group(1) + common.SEQPROXY + seq.group(3) + '.' + seq.group(4)
+        try:
+            # Ensure seq has the expected number of groups
+            if len(seq.groups()) >= 4:
+                sequence_path = seq.group(1) + common.SEQPROXY + seq.group(3) + '.' + seq.group(4)
+            else:
+                # seq does not have the expected groups
+                seq = None
+                sequence_path = None
+        except IndexError:
+            # seq groups are not accessible
+            seq = None
+            sequence_path = None
     return seq, sequence_path
 
 
@@ -243,7 +203,7 @@ class FileItemModel(models.ItemModel):
         """Returns the refresh states of the current model data set.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t = common.FileItem
 
@@ -260,7 +220,7 @@ class FileItemModel(models.ItemModel):
         """Sets the refresh status of the current model data set.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t = common.FileItem
 
@@ -273,288 +233,312 @@ class FileItemModel(models.ItemModel):
                 continue
             data.refresh_needed = v
 
+    def item_generator(self, path):
+        """Recursive iterator for retrieving files from all task subfolders."""
+        try:
+            with os.scandir(path) as it:
+                for entry in it:
+                    if self._interrupt_requested:
+                        return
+                    if entry.is_file():
+                        yield entry
+                    elif entry.is_dir(follow_symlinks=False):
+                        yield from self.item_generator(entry.path)
+        except OSError as e:
+            log.error(f"Error scanning {path}: {e}")
+
     @common.status_bar_message('Loading Files...')
     @models.initdata
     @common.error
     @common.debug
     def init_data(self):
-        """The method is responsible for getting the bare-bones file item data by
-        running a recursive file-iterator stemming from ``self.source_path()``.
-
-        Additional information, like description, item flags or thumbnails are
-        fetched by thread workers.
-
-        The method iterates the items returned by
-        :meth:`item_generator` and gathers information for both individual
-        ``FileItems`` and collapsed ``SequenceItems``, excluding items the current
-        token filters exclude.
-
-        """
-        p = self.source_path()
+        """Collects file data for both individual files and sequences."""
+        p = self.parent_path()
         k = self.task()
         t = common.FileItem
 
         if not p or not all(p) or not k or t is None:
             return
 
-        _subdirectories = []
-        _watch_paths = []
-        _extensions = []
-
+        # Initialize data structures
         data = common.get_data(p, k, t)
+        sequence_data = common.DataDict()  # Temporary dictionary for sequence data
 
-        sequence_data = common.DataDict()  # temporary dict for temp data
-
-        # Reset file system watcher
-        _source_path = '/'.join(p + (k,))
-        if not QtCore.QFileInfo(_source_path).exists():
+        # Prepare source path as absolute and normalized path
+        source_path = common.normalize_path('/'.join(p + (k,)))
+        if not os.path.exists(source_path):
             return
-        _watch_paths.append(_source_path)
 
-        # Let's get the token config instance to check what extensions are
-        # currently allowed to be displayed in the task folder
-        config = tokens.get(*p[0:3])
-        is_valid_task = config.check_task(k)
-        if is_valid_task:
-            valid_extensions = config.get_task_extensions(k)
-        else:
-            valid_extensions = config.get_extensions(tokens.AllFormat)
-
+        # Initialize variables
+        watcher = common.get_watcher(common.FileTab)
+        watcher.reset()
+        watch_paths = {source_path,}
+        favourites = common.favourites
         disable_filter = self.disable_filter()
 
+        # Get valid extensions
+        config = tokens.get(*p[0:3])
+        valid_extensions = (
+            config.get_task_extensions(k) if config.check_task(k) else config.get_extensions(tokens.AllFormat)
+        )
+
+        # Cache commonly used values
+        parent_path_prefix = tuple(p + (k,))
+        row_size = self.row_size
+        queues = self.queues
+
+        # Progress bar variables
         nth = 987
         c = 0
 
-        for entry in self.item_generator(_source_path):
+        # Iterate over files using optimized item_generator
+        for entry in self.item_generator(source_path):
             if self._interrupt_requested:
                 break
 
-            # Skipping directories
-            if entry.is_dir():
+            # Early filtering
+            if not entry.is_file():
                 continue
 
             filename = entry.name
 
-            # Skipping common hidden files
-            if filename[0] == '.':
+            # Skip hidden and system files
+            if filename.startswith('.') or filename.lower() == 'thumbs.db':
                 continue
 
-            # Skip items without file extension
-            if '.' not in filename:
+            # Get file extension
+            ext = os.path.splitext(filename)[1][1:].lower()
+            if not ext:
                 continue
 
-            if 'thumbs.db' in filename:
-                continue
-
-            # These values will always resolve to be the same, and therefore we
-            # can use a cache to retrieve them
-            filepath, ext, file_root, _dir, sort_by_name_role = get_path_elements(
-                p,
-                k,
-                filename,
-                entry.path,
-                _source_path
-            )
-
-            # We'll check against the current file extension against the allowed
-            # extensions. If the task folder is not defined in the token config,
-            # we'll allow all extensions
+            # Filter by valid extensions
             if not disable_filter and ext not in valid_extensions:
                 continue
 
-            if _dir:
-                _watch_paths.append(_dir)
-                _d = _dir[len(_source_path) + 1:]
-                _subdirectories += [('/' + f) for f in _d.split('/')]
-            _extensions.append(ext)
+            # Prepare file paths
+            filepath = common.normalize_path(entry.path)
 
-            # Progress bar
+            # Check if filepath is within source_path
+            try:
+                common_path = os.path.commonpath([source_path, filepath]).replace('\\', '/')
+            except ValueError:
+                # Paths are on different drives on Windows
+                common_path = None
+
+            if common_path != source_path:
+                # File is outside the source path; skip or handle appropriately
+                log.error(f"File {filepath} is outside the source path {source_path}. Skipping.")
+                continue
+
+            # Compute relative path from task folder to file without relative denominators
+            relative_path = os.path.relpath(filepath, source_path).replace('\\', '/')
+            # Ensure relative_path does not contain '../' or './'
+            if '..' in relative_path or relative_path.startswith('.'):
+                # Path goes outside the source directory; use absolute path or handle accordingly
+                display_path = os.path.basename(filepath)  # Fallback to filename
+            else:
+                display_path = relative_path
+
+            file_root = os.path.splitext(filename)[0]
+            sort_by_name_role = [name.lower() for name in p[:8]] + [display_path.lower()]
+
+            # Update progress bar
             c += 1
-            if not c % nth:
-                common.signals.showStatusBarMessage.emit(
-                    'Loading files (found ' + str(c) + ' items)...'
+            if c % nth == 0:
+                common.signals.showStatusBarMessage.emit(f'Loading files (found {c} items)...')
+                QtWidgets.QApplication.instance().processEvents(
+                    QtCore.QEventLoop.ExcludeUserInputEvents
                 )
-                QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
+            # Set flags
             flags = models.DEFAULT_ITEM_FLAGS
-            seq, sequence_path = get_sequence_elements(filepath)
+            if filepath in favourites:
+                flags |= common.MarkedAsFavourite
 
-            if (seq and (
-                    sequence_path in common.favourites or filepath in
-                    common.favourites)) or (
-                    filepath in common.favourites):
-                flags = flags | common.MarkedAsFavourite
-
-            parent_path_role = p + (k, file_root)
-
+            # Add file to data (FileItem model) regardless of sequence
             idx = len(data)
             if idx >= common.max_list_items:
-                break  # Let's limit the maximum number of items we load
+                break  # Limit the number of items loaded
 
-            data[idx] = common.DataDict(
-                {
-                    QtCore.Qt.DisplayRole: filename,
-                    common.FilterTextRole: filename,
-                    QtCore.Qt.EditRole: filename,
-                    common.PathRole: filepath,
-                    QtCore.Qt.SizeHintRole: self.row_size,
-                    #
-                    QtCore.Qt.StatusTipRole: filename,
-                    QtCore.Qt.AccessibleDescriptionRole: filename,
-                    QtCore.Qt.WhatsThisRole: filename,
-                    QtCore.Qt.ToolTipRole: filename,
-                    #
-                    common.QueueRole: self.queues,
-                    common.DataTypeRole: common.FileItem,
-                    common.DataDictRole: weakref.ref(data),
-                    common.ItemTabRole: common.FileTab,
-                    #
-                    common.EntryRole: [entry, ],
-                    common.FlagsRole: flags,
-                    common.ParentPathRole: parent_path_role,
-                    common.DescriptionRole: '',
-                    common.NoteCountRole: 0,
-                    common.FileDetailsRole: '',
-                    common.SequenceRole: seq,
-                    common.FramesRole: [],
-                    common.StartPathRole: None,
-                    common.EndPathRole: None,
-                    #
-                    common.FileInfoLoaded: False,
-                    common.ThumbnailLoaded: False,
-                    #
-                    common.SortByNameRole: sort_by_name_role,
-                    common.SortByLastModifiedRole: 0,
-                    common.SortBySizeRole: 0,
-                    common.SortByTypeRole: ext,
-                    #
-                    common.IdRole: idx,  # non-mutable
-                    #
-                    common.SGLinkedRole: False,
-                }
-            )
+            file_data_dict = common.DataDict({
+                QtCore.Qt.DisplayRole: display_path,
+                common.FilterTextRole: f"{display_path}\n{filename}",
+                QtCore.Qt.EditRole: filename,
+                common.PathRole: filepath,
+                QtCore.Qt.SizeHintRole: row_size,
+                QtCore.Qt.StatusTipRole: display_path,
+                QtCore.Qt.AccessibleDescriptionRole: display_path,
+                QtCore.Qt.WhatsThisRole: display_path,
+                QtCore.Qt.ToolTipRole: display_path,
+                common.QueueRole: queues,
+                common.DataTypeRole: common.FileItem,
+                common.DataDictRole: weakref.ref(data),
+                common.ItemTabRole: common.FileTab,
+                common.EntryRole: [entry],
+                common.FlagsRole: flags,
+                common.ParentPathRole: parent_path_prefix + tuple(relative_path.split('/')[:-1]),
+                common.DescriptionRole: '',
+                common.NoteCountRole: 0,
+                common.FileDetailsRole: '',
+                common.SequenceRole: None,
+                common.FramesRole: [],
+                common.StartPathRole: None,
+                common.EndPathRole: None,
+                common.FileInfoLoaded: False,
+                common.ThumbnailLoaded: False,
+                common.SortByNameRole: sort_by_name_role,
+                common.SortByLastModifiedRole: 0,
+                common.SortBySizeRole: 0,
+                common.SortByTypeRole: ext,
+                common.IdRole: idx,
+                common.SGLinkedRole: False,
+            })
 
-            # If the file in question is a sequence, we will also save a reference
-            # to it in the sequence data dict
-            if seq:
-                # If the sequence has not yet been added to our dictionary
-                # of sequences we add it here
-                if sequence_path not in sequence_data:  # create if it doesn't exist
-                    sequence_name = sequence_path.split('/')[-1]
-                    flags = models.DEFAULT_ITEM_FLAGS
+            # Add file to data (FileItem model)
+            data[idx] = file_data_dict
 
-                    if sequence_path in common.favourites:
-                        flags = flags | common.MarkedAsFavourite
+            # Get sequence information
+            seq_match = get_sequence_elements(filepath)  # Use the full filepath here
+            seq = None  # Initialize seq
+            if seq_match and len(seq_match) == 2:
+                seq, sequence_path = seq_match
+                if seq and sequence_path:
+                    # Now proceed with sequence processing
+                    sequence_path = common.normalize_path(sequence_path)
 
-                    sort_by_name_role = sort_by_name_role.copy()
-                    sort_by_name_role[7] = sequence_name.lower()
+                    # Check if sequence_path is within source_path
+                    try:
+                        seq_common_path = os.path.commonpath([source_path, sequence_path]).replace('\\', '/')
+                    except ValueError:
+                        seq_common_path = None
 
-                    sequence_data[sequence_path] = common.DataDict(
-                        {
-                            QtCore.Qt.DisplayRole: sequence_name,
-                            common.FilterTextRole: sequence_name,
-                            QtCore.Qt.EditRole: sequence_name,
-                            common.PathRole: sequence_path,
-                            QtCore.Qt.SizeHintRole: self.row_size,
-                            #
-                            QtCore.Qt.StatusTipRole: sequence_name,
-                            QtCore.Qt.AccessibleDescriptionRole: sequence_name,
-                            QtCore.Qt.WhatsThisRole: sequence_name,
-                            QtCore.Qt.ToolTipRole: sequence_name,
-                            #
-                            common.QueueRole: self.queues,
-                            common.DataTypeRole: common.SequenceItem,
-                            common.DataDictRole: None,
-                            common.ItemTabRole: common.FileTab,
-                            #
-                            common.EntryRole: [],
-                            common.FlagsRole: flags,
-                            common.ParentPathRole: parent_path_role,
-                            common.DescriptionRole: '',
-                            common.NoteCountRole: 0,
-                            common.FileDetailsRole: '',
-                            common.SequenceRole: seq,
-                            common.FramesRole: [],
-                            common.StartPathRole: None,
-                            common.EndPathRole: None,
-                            #
-                            common.FileInfoLoaded: False,
-                            common.ThumbnailLoaded: False,
-                            #
-                            common.SortByNameRole: sort_by_name_role,
-                            common.SortByLastModifiedRole: 0,
-                            common.SortBySizeRole: 0,  # Initializing with null-size
-                            common.SortByTypeRole: ext,
-                            #
-                            common.IdRole: 0,
-                            #
-                            common.SGLinkedRole: False,
-                        }
-                    )
+                    if seq_common_path != source_path:
+                        log.error(f"Sequence {sequence_path} is outside the source path {source_path}. Skipping.")
+                        seq = None  # Treat as individual file
+                    else:
+                        # Compute relative path for sequence
+                        sequence_relative_path = os.path.relpath(sequence_path, source_path).replace('\\', '/')
+                        if '..' in sequence_relative_path or sequence_relative_path.startswith('.'):
+                            sequence_name = os.path.basename(sequence_path)
+                        else:
+                            sequence_name = sequence_relative_path
 
-                sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
-                sequence_data[sequence_path][common.EntryRole].append(entry)
+                        sort_by_name_role_seq = [name.lower() for name in p[:8]] + [sequence_name.lower()]
+
+                        # Initialize sequence data if not already present
+                        if sequence_path not in sequence_data:
+                            seq_flags = models.DEFAULT_ITEM_FLAGS
+                            if sequence_path in favourites:
+                                seq_flags |= common.MarkedAsFavourite
+
+                            sequence_data[sequence_path] = common.DataDict({
+                                QtCore.Qt.DisplayRole: sequence_name,
+                                common.FilterTextRole: sequence_name,
+                                QtCore.Qt.EditRole: os.path.basename(sequence_path),
+                                common.PathRole: sequence_path,
+                                QtCore.Qt.SizeHintRole: row_size,
+                                QtCore.Qt.StatusTipRole: sequence_name,
+                                QtCore.Qt.AccessibleDescriptionRole: sequence_name,
+                                QtCore.Qt.WhatsThisRole: sequence_name,
+                                QtCore.Qt.ToolTipRole: sequence_name,
+                                common.QueueRole: queues,
+                                common.DataTypeRole: common.SequenceItem,
+                                common.DataDictRole: None,  # Will be set later
+                                common.ItemTabRole: common.FileTab,
+                                common.EntryRole: [],
+                                common.FlagsRole: seq_flags,
+                                common.ParentPathRole: parent_path_prefix + tuple(
+                                    sequence_relative_path.split('/')[:-1]),
+                                common.DescriptionRole: '',
+                                common.NoteCountRole: 0,
+                                common.FileDetailsRole: '',
+                                common.SequenceRole: seq,
+                                common.FramesRole: [],
+                                common.StartPathRole: None,
+                                common.EndPathRole: None,
+                                common.FileInfoLoaded: False,
+                                common.ThumbnailLoaded: False,
+                                common.SortByNameRole: sort_by_name_role_seq,
+                                common.SortByLastModifiedRole: 0,
+                                common.SortBySizeRole: 0,
+                                common.SortByTypeRole: ext,
+                                common.IdRole: 0,  # Will be updated later
+                                common.SGLinkedRole: False,
+                            })
+
+                        # Append frame and entry to sequence data
+                        sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
+                        sequence_data[sequence_path][common.EntryRole].append(entry)
+                else:
+                    seq = None  # Treat as individual file
             else:
-                # The sequence dictionary should contain not only sequence items but single files also,
-                # so we'll add them here
-                sequence_data[filepath] = common.DataDict(data[idx])
-                sequence_data[filepath][common.IdRole] = -1
+                seq = None  # Treat as individual file
 
-        # Cast the sequence data back onto the model
-        t = common.SequenceItem
-        data = common.get_data(p, k, t)
-
-        for idx, v in enumerate(sequence_data.values()):
+        # Process sequence data
+        sequence_items = common.get_data(p, k, common.SequenceItem)
+        for idx, (seq_path, seq_data) in enumerate(sequence_data.items()):
             if idx >= common.max_list_items:
-                break  # Let's limit the maximum number of items we load
+                break  # Limit the number of items loaded
 
-            # Filter sequence items with a single element and change them back
-            # to file type
-            if len(v[common.FramesRole]) == 1:
-                _seq = v[common.SequenceRole]
-                filepath = (
-                        _seq.group(1) +
-                        v[common.FramesRole][0] +
-                        _seq.group(3) +
-                        '.' + _seq.group(4)
-                )
-                filename = filepath.split('/')[-1]
-                v[QtCore.Qt.DisplayRole] = filename
-                v[common.FilterTextRole] = filename
-                v[QtCore.Qt.EditRole] = filename
-                v[common.PathRole] = filepath
-                v[common.DataTypeRole] = common.FileItem
-                v[common.SortByLastModifiedRole] = 0
+            frames = seq_data.get(common.FramesRole, [])
+            if len(frames) == 1:
+                # Sequence with a single frame; treat as individual file
+                _seq = seq_data[common.SequenceRole]
+                if _seq and len(_seq.groups()) >= 4:
+                    frame = frames[0]
+                    filepath = common.normalize_path(f"{_seq.group(1)}{frame}{_seq.group(3)}.{_seq.group(4)}")
 
-                flags = models.DEFAULT_ITEM_FLAGS
-                if filepath in common.favourites:
-                    flags = flags | common.MarkedAsFavourite
+                    # Compute relative path
+                    relative_path = os.path.relpath(filepath, source_path).replace('\\', '/')
+                    if '..' in relative_path or relative_path.startswith('.'):
+                        display_path = os.path.basename(filepath)
+                    else:
+                        display_path = relative_path
 
-                v[common.FlagsRole] = flags
+                    filename = os.path.basename(filepath)
+                    seq_data.update({
+                        QtCore.Qt.DisplayRole: display_path,
+                        common.FilterTextRole: f"{display_path}\n{filename}",
+                        QtCore.Qt.EditRole: filename,
+                        common.PathRole: filepath,
+                        common.DataTypeRole: common.FileItem,
+                        common.SortByLastModifiedRole: 0,
+                        common.FlagsRole: models.DEFAULT_ITEM_FLAGS | (
+                            common.MarkedAsFavourite if filepath in favourites else 0
+                        ),
+                        common.SequenceRole: None,
+                        common.FramesRole: [],
+                    })
 
-            elif len(v[common.FramesRole]) == 0:
-                v[common.DataTypeRole] = common.FileItem
+                    # Add to sequence_items (SequenceItem model)
+                    seq_data[common.DataDictRole] = weakref.ref(sequence_items)
+                    seq_data[common.IdRole] = idx
+                    sequence_items[idx] = seq_data
+                else:
+                    # Invalid sequence; treat as individual file
+                    seq_data[common.DataTypeRole] = common.FileItem
+                    seq_data[common.DataDictRole] = weakref.ref(sequence_items)
+                    seq_data[common.IdRole] = idx
+                    sequence_items[idx] = seq_data
+            else:
+                # Sequence with multiple frames
+                seq_relative_path = os.path.relpath(seq_path, source_path).replace('\\', '/')
+                if '..' in seq_relative_path or seq_relative_path.startswith('.'):
+                    seq_display_name = os.path.basename(seq_path)
+                else:
+                    seq_display_name = seq_relative_path
 
-            data[idx] = v
-            data[idx][common.DataDictRole] = weakref.ref(data)
-            data[idx][common.IdRole] = idx
+                seq_data[QtCore.Qt.DisplayRole] = seq_display_name
+                seq_data[common.FilterTextRole] = seq_display_name
+                seq_data[common.SortByNameRole][-1] = seq_display_name.lower()
+                seq_data[common.DataDictRole] = weakref.ref(sequence_items)
+                seq_data[common.IdRole] = idx
+                sequence_items[idx] = seq_data
 
-        watcher = common.get_watcher(common.FileTab)
-        _directories = watcher.directories()
-        # watcher.reset()
-        watcher.add_directories(sorted(set([f for f in _watch_paths if f] + _directories)))
+        # Update file system watcher
+        watcher.add_directories(sorted(watch_paths))
 
-        # Add the list of file extensions to the model's data
-        _extensions = sorted(set([('.' + f) for f in _extensions if f]))
-        common.get_data(p, k, common.FileItem).file_types = _extensions
-        common.get_data(p, k, common.SequenceItem).file_types = _extensions
-
-        # Add the list of subdirectories to the model's data
-        _subdirectories = sorted(set([f for f in _subdirectories if f]))
-        common.get_data(p, k, common.FileItem).subdirectories = _subdirectories
-        common.get_data(p, k, common.SequenceItem).subdirectories = _subdirectories
-
-        # Model does not need a refresh at this point
+        # Mark refresh as not needed
         common.get_data(p, k, common.FileItem).refresh_needed = False
         common.get_data(p, k, common.SequenceItem).refresh_needed = False
 
@@ -562,7 +546,7 @@ class FileItemModel(models.ItemModel):
         """Overrides the token config and disables file filters."""
         return False
 
-    def source_path(self):
+    def parent_path(self):
         """The model's parent folder path segments.
 
         Returns:
@@ -575,22 +559,6 @@ class FileItemModel(models.ItemModel):
             common.active('root'),
             common.active('asset')
         )
-
-    def item_generator(self, path):
-        """Recursive iterator for retrieving files from all task subfolders.
-
-        """
-        try:
-            it = os.scandir(path)
-        except OSError as e:
-            log.error(e)
-            return
-
-        for entry in it:
-            if entry.is_file():
-                yield entry
-                continue
-            yield from self.item_generator(entry.path)
 
     def save_active(self):
         """Saves the current active item.
@@ -800,9 +768,9 @@ class FileItemView(views.ThreadedItemView):
         model = proxy.sourceModel()
         k = model.task()
 
-        if not all(model.source_path()):
+        if not all(model.parent_path()):
             return
-        source_path = '/'.join(model.source_path())
+        source_path = '/'.join(model.parent_path())
 
         # We probably saved outside the asset, we won't be showing the
         # file...

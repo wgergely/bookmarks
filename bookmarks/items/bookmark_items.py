@@ -61,7 +61,6 @@ from PySide2 import QtCore, QtWidgets
 from . import delegate
 from . import models
 from . import views
-from .. import actions, tokens
 from .. import common
 from .. import contextmenu
 from .. import database
@@ -141,7 +140,7 @@ class BookmarkItemModel(models.ItemModel):
         """Collects the data needed to populate the bookmark item model.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         _k = self.task()
         t = self.data_type()
 
@@ -149,63 +148,54 @@ class BookmarkItemModel(models.ItemModel):
             return
 
         data = common.get_data(p, _k, t)
-        database.remove_all_connections()
 
-        _servers = []
-        _jobs = []
-        _roots = []
+        ServerAPI.load_bookmarks()  # Force re-fetch bookmarks
+        database.remove_all_connections()  # Reset database connections
 
-        for k, v in self.item_generator():
+        for k, v in common.bookmarks.items():
             common.check_type(v, dict)
 
             if not all(v.values()):
                 continue
-            if not len(v.values()) >= 3:
+            if not len(v.values()) == 3:
                 continue
 
             server = v['server']
             job = v['job']
             root = v['root']
 
-            _servers.append(server)
-            _jobs.append(job)
-            _roots.append(root)
+            # Default display name
+            rel_path = f'{job}/{root}'
 
             # Get the display name based on the value set in the database
-
             db = database.get(server, job, root)
             display_name_token = db.value(db.source(), 'bookmark_display_token', database.BookmarkTable)
 
-            # Default display name
-            display_name = f'{job}/{root}'
-
             # If a token is set, expand it
             if display_name_token:
-                _display_name = common.parser.format(
+                display_name = common.parser.format(
                     display_name_token,
                     server=server,
                     job=job,
                     root=root,
                     prefix=db.value(db.source(), 'prefix', database.BookmarkTable)
                 )
-
-                if tokens.invalid_token not in _display_name:
-                    display_name = _display_name
+            else:
+                display_name = rel_path
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
 
-            # We'll mark the item archived if the saved bookmark does not refer
+            # Mark the item archived if the saved bookmark doesn't refer
             # to an existing file
-            if exists:
-                flags = models.DEFAULT_ITEM_FLAGS
-            else:
-                flags = models.DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
+            flags = models.DEFAULT_ITEM_FLAGS
+            if not exists:
+                flags |= common.MarkedAsArchived
 
-            filepath = file_info.filePath()
+            # Resolve relative paths
+            abs_path = file_info.absoluteFilePath()
 
-            # Item flags. Active and favourite flags will be only set if the
-            # bookmark exist
+            # Active and favourite flags will be only set if the bookmark is valid
             if all(
                     (
                             server == common.active('server'),
@@ -215,7 +205,7 @@ class BookmarkItemModel(models.ItemModel):
             ) and exists:
                 flags = flags | common.MarkedAsActive
 
-            if filepath in common.favourites and exists:
+            if abs_path in common.favourites and exists:
                 flags = flags | common.MarkedAsFavourite
 
             parent_path_role = (server, job, root)
@@ -225,21 +215,21 @@ class BookmarkItemModel(models.ItemModel):
                 break  # Let's limit the maximum number of items we load
 
             # Find the entry
-            entry = common.get_entry_from_path(filepath)
+            entry = common.get_entry_from_path(file_info.filePath())
 
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
-            for i, n in enumerate(parent_path_role):
-                if i >= 8:
-                    break
-                sort_by_name_role[i] = n.lower()
+            sort_by_name_role[0] = display_name.lower()
+            sort_by_name_role[1] = server.lower()
+            sort_by_name_role[2] = job.lower()
+            sort_by_name_role[3] = root.lower()
 
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: display_name,
                     common.FilterTextRole: display_name,
                     QtCore.Qt.EditRole: display_name,
-                    common.PathRole: filepath,
-                    QtCore.Qt.ToolTipRole: filepath,
+                    common.PathRole: abs_path,
+                    QtCore.Qt.ToolTipRole: abs_path,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     #
                     common.QueueRole: self.queues,
@@ -264,7 +254,7 @@ class BookmarkItemModel(models.ItemModel):
                     #
                     common.SortByNameRole: sort_by_name_role,
                     common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),
-                    common.SortBySizeRole: file_info.size(),
+                    common.SortBySizeRole: 0,
                     common.SortByTypeRole: sort_by_name_role,
                     #
                     common.IdRole: idx,
@@ -276,20 +266,7 @@ class BookmarkItemModel(models.ItemModel):
             if not exists:
                 continue
 
-        data.servers = sorted(set(_servers))
-        data.jobs = sorted(set(_jobs))
-        data.roots = sorted(set(_roots))
-
         self.activeChanged.emit(self.active_index())
-
-    def item_generator(self):
-        """Returns the items to be processed by :meth:`init_data`.
-
-        """
-        # Force re-fetch bookmarks
-        ServerAPI.load_bookmarks()
-        for item in common.bookmarks.items():
-            yield item
 
     def save_active(self):
         """Save the active bookmark item.
@@ -309,14 +286,13 @@ class BookmarkItemModel(models.ItemModel):
         common.set_active('job', job)
         common.set_active('root', root)
 
-    def source_path(self):
+    def parent_path(self):
         """The bookmark list's source paths.
 
-        There's no file source for bookmark items, so we're returning some arbitrary
-        names.
+        There's no file source for bookmark items, returning na arbitrary name.
 
         """
-        return 'bookmarks',
+        return '{server}',
 
     def data_type(self):
         """The data type of the model.

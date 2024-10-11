@@ -60,7 +60,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
     #: UI layout definition
     sections = {
         0: {
-            'name': 'Settings',
+            'name': 'Bookmark Settings',
             'icon': 'bookmark',
             'color': common.Color.DarkBackground(),
             'groups': {

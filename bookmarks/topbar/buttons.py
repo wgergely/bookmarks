@@ -280,7 +280,7 @@ class RefreshButton(BaseControlButton):
             return False
 
         model = common.widget().model().sourceModel()
-        p = model.source_path()
+        p = model.parent_path()
         k = model.task()
         t = model.data_type()
 

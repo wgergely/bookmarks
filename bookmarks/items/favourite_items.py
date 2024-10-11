@@ -62,7 +62,7 @@ class FavouriteItemModel(file_items.FileItemModel):
         """Collects the data needed to populate the favourite item model.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t = common.FileItem
 
@@ -256,7 +256,7 @@ class FavouriteItemModel(file_items.FileItemModel):
 
         self.set_refresh_needed(False)
 
-    def source_path(self):
+    def parent_path(self):
         """The path of the source file.
 
         """

@@ -59,7 +59,7 @@ def show_event_override(cls, event):
 
     """
     widths = []
-    metrics = QtGui.QFontMetrics(cls.font())
+    metrics = QtGui.QFontMetricsF(cls.font())
 
     menu_height = common.Size.Margin(2.0)
     icon_padding = common.Size.Margin()
@@ -547,7 +547,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = ui.get_icon('copy')
 
         path = self.index.data(common.PathRole)
-        metrics = QtGui.QFontMetrics(self.font())
+        metrics = QtGui.QFontMetricsF(self.font())
         for mode in (
                 common.WindowsPath, common.MacOSPath, common.UnixPath):
             m = key()

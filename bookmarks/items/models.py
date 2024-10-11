@@ -27,7 +27,6 @@ is implemented separately to run directly over the source data.
 
 """
 import functools
-import os.path
 import uuid
 import weakref
 
@@ -85,7 +84,7 @@ def initdata(func):
             self._load_in_progress = False
             self.endResetModel()
 
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
@@ -103,7 +102,7 @@ class ItemModel(QtCore.QAbstractTableModel):
     """The base model used for interacting with all bookmark, asset and file items.
 
     Data is stored in the datacache module that can be fetched using the model's
-    `source_path`, `task` and `data_type`.
+    `parent_path`, `task` and `data_type`.
 
     Attributes:
 
@@ -163,7 +162,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         """The model's row count.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
         if not all((p, k)) or t is None:
@@ -404,7 +403,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         common.check_type(force, bool)
         common.check_type(emit_active, bool)
 
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         if not p or not all(p) or not k:
             return
@@ -458,7 +457,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         self.set_sort_order(order)
         self.sort_data()
 
-    def source_path(self):
+    def parent_path(self):
         """Source path of the model data as a tuple of path segments.
 
         Returns:
@@ -540,7 +539,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         sort_by = self.sort_by()
         sort_order = self.sort_order()
 
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
@@ -586,7 +585,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         """Checks whether the current data type is fully loaded.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
 
@@ -599,7 +598,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         """The pointer to the model's internal data.
 
         """
-        p = self.source_path()
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
 
@@ -679,7 +678,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         """The model's associated task.
 
         """
-        return 'default'
+        return 'default_task'
 
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings
@@ -959,7 +958,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         model = self.sourceModel()
-        p = model.source_path()
+        p = model.parent_path()
         k = model.task()
         t = model.data_type()
 
@@ -986,8 +985,12 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         # Apply text filter
         r = []
-        for line in ref()[idx][common.FilterTextRole].split('\n'):
-            r.append(self._filter.match_string(line.strip()))
+        try:
+            for line in ref()[idx][common.FilterTextRole].split('\n'):
+                r.append(self._filter.match_string(line.strip()))
+        except Exception as e:
+            from pprint import pprint
+            pprint(ref()[idx])
+            raise
+
         return any(r)
-
-

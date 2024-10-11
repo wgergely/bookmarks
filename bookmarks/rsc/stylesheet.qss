@@ -1,5 +1,5 @@
 QWidget {
-    font-family: "<BoldFont>";
+    font-family: "<MediumFont>";
     font-size: <MediumText@1.0>px;
     background-color: <Background>;
     color: <Text>;
@@ -118,7 +118,7 @@ QPushButton {
     color: <Text>;
     text-align: center;
     background-color: <DarkBackground>;
-    border-radius: <Indicator@1.0>px;
+    border-radius: <Indicator@1.5>px;
     border: <Separator@1.0>px solid <Opaque>;
     margin: 0;
     padding: 0 <MediumText@1.0>px;
@@ -551,7 +551,7 @@ QTabBar {
 }
 
 QToolBar {
-    font-family: "<MediumFont>";
+    font-family: "<BoldFont>";
     font-size: <MediumText@1.0>px;
     background-color: <DarkBackground>;
     border: <Separator@1.0>px solid <DarkBackground>;
@@ -565,6 +565,8 @@ QToolBar::separator {
     padding: 0 <Indicator@8.0>px;
 }
 QToolBar QToolButton {
+    font-family: "ThinFont>";
+    font-size: <MediumText@0.9>px;
     color: <Text>;
     text-align: center;
     background-color: <Transparent>;
@@ -694,7 +696,7 @@ BasePropertyEditor > QScrollArea > QWidget > QWidget {
 }
 
 BasePropertyEditor QLineEdit {
-    font-family: <BlackFont>;
+    font-family: <BoldFont>;
     font-size: <MediumText@1.0>px;
     color: <Text>;
     background-color: <Transparent>;
@@ -901,4 +903,35 @@ TokenLineEdit {
 }
 TokenLineEdit:focus {
     background-color: <Opaque>;
+}
+
+
+FilterPopupDialog,
+FilterPopupDialog > QListView {
+    background-color: <VeryDarkBackground>;
+    border: none;
+    border-radius: <Indicator@1.5>px;
+}
+
+FilterPopupDialog:focus,
+FilterPopupDialog > QListView:focus {
+    border: none;
+}
+
+FilterPopupDialog > QListView::item {
+    color: <Text>;
+    background-color: <Transparent>;
+    padding-left: <Indicator@1.0>px;
+}
+
+FilterPopupDialog > QListView::item:hover,
+FilterPopupDialog > QListView::item:selected {
+    color: <SelectedText>;
+    background-color: <LightBackground>;
+}
+
+ItemControlBar {
+    background-color: rgba(255,255,255, 10);
+    outline: 0;
+    border: none;
 }

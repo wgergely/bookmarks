@@ -123,7 +123,7 @@ class FileWatcher(QtCore.QFileSystemWatcher):
             return
 
         source_model = common.source_model(self.tab_idx)
-        p = source_model.source_path()
+        p = source_model.parent_path()
         k = source_model.task()
 
         for t in (common.FileItem, common.SequenceItem,):

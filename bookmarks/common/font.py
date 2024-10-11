@@ -84,12 +84,16 @@ class FontDatabase(QtGui.QFontDatabase):
         else:
             raise ValueError(f'Invalid font role, expected one of {[f for f in Font]}')
 
-        font = super().font('Inter', style, size)
+        font = super().font(role.value, style, size)
+        if not font:
+            raise RuntimeError(f'Could not find font: {role.value} {style} {size}')
+        if font.family() != role.value:
+            raise RuntimeError(f'Could not find font: {role.value} {style} {size}')
 
         font.setPixelSize(size)
 
         common.font_cache[role][size] = font
-        common.metrics_cache[role][size] = QtGui.QFontMetrics(font)
+        common.metrics_cache[role][size] = QtGui.QFontMetricsF(font)
 
         return common.font_cache[role][size], common.metrics_cache[role][size]
 

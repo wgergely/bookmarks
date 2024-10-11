@@ -800,7 +800,7 @@ class SyncWidget(base.BasePropertyEditor):
             QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             model = common.source_model(common.AssetTab)
-            p = model.source_path()
+            p = model.parent_path()
             k = model.task()
             t = model.data_type()
 

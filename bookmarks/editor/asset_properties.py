@@ -65,8 +65,8 @@ class AssetPropertyEditor(base.BasePropertyEditor):
     #: UI layout definition
     sections = {
         0: {
-            'name': 'Settings',
-            'icon': '',
+            'name': 'Asset Settings',
+            'icon': 'asset',
             'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
@@ -93,7 +93,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         1: {
             'name': 'ShotGrid Entity',
             'icon': 'sg',
-            'color': None,
+            'color': common.Color.DarkBackground(),
             'groups': {
                 0: {
                     0: {
@@ -155,8 +155,8 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             }
         },
         2: {
-            'name': 'Settings',
-            'icon': 'bookmark',
+            'name': 'Cut',
+            'icon': '',
             'color': common.Color.DarkBackground(),
             'groups': {
                 0: {

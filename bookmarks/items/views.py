@@ -81,7 +81,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._pixmap = pixmap
         self._text = text
 
-        _, metrics = common.MediumFont(common.Size.MediumText())
+        _, metrics = common.Font.MediumFont(common.Size.MediumText())
         self._text_width = metrics.horizontalAdvance(text)
 
         width = self._text_width + common.Size.Margin()
@@ -395,11 +395,6 @@ class ProgressWidget(QtWidgets.QWidget):
         """
         self.setGeometry(self.parent().geometry())
 
-    @QtCore.Slot(str)
-    def set_message(self, text):
-        """Sets the message to be displayed when saving the widget."""
-        self._message = text
-
     def paintEvent(self, event):
         """Event handler.
 
@@ -429,6 +424,11 @@ class ProgressWidget(QtWidgets.QWidget):
             return
         event.accept()
         self.hide()
+
+    @QtCore.Slot(str)
+    def set_message(self, text):
+        """Sets the message to be displayed when saving the widget."""
+        self._message = text
 
 
 class FilterOnOverlayWidget(ProgressWidget):
@@ -544,9 +544,8 @@ class BaseItemView(QtWidgets.QTableView):
         self.drag_current_row = -1
         self.drag_source_row = -1
 
-        self.switcher_visible = False
-
         self.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
+        self.setDefaultDropAction(QtCore.Qt.CopyAction)
         self.setDragEnabled(True)
         self.setDropIndicatorShown(False)
         self.viewport().setAcceptDrops(True)
@@ -628,6 +627,416 @@ class BaseItemView(QtWidgets.QTableView):
         self.delayed_save_visible_timer.timeout.connect(self.save_visible_rows)
         self.delayed_reset_row_layout_timer.timeout.connect(self.reset_row_layout)
 
+    def dragMoveEvent(self, event):
+        """Drag move events checks source validity against available drop actions.
+
+        """
+        self._thumbnail_drop = (-1, False)
+
+        index = self.indexAt(event.pos())
+
+        if not index.isValid():
+            self.viewport().update()
+            return
+
+        proxy = self.model()
+        model = proxy.sourceModel()
+        index = proxy.mapToSource(index)
+
+        # Thumbnail image drop
+        if model.can_drop_image_file(
+                event.mimeData(),
+                event.proposedAction(),
+                index.row(),
+                0,
+                QtCore.QModelIndex()
+        ):
+            self._thumbnail_drop = (index.row(), True)
+            event.accept()
+            self.viewport().update()
+            return
+
+        # Internal property copy
+        if model.can_drop_properties(
+                event.mimeData(),
+                event.proposedAction(),
+                index.row(),
+                0,
+                QtCore.QModelIndex()
+        ):
+            event.accept()
+            self._thumbnail_drop = (-1, False)
+            self.viewport().update()
+            return
+
+        self._thumbnail_drop = (-1, False)
+        self.viewport().update()
+        return super().dragMoveEvent(event)
+
+    def startDrag(self, supported_actions):
+        """Drag action start.
+
+        """
+        index = common.get_selected_index(self)
+        if not index.isValid():
+            return super().startDrag(supported_actions)
+        if not index.data(common.PathRole):
+            return super().startDrag(supported_actions)
+        if not index.data(common.ParentPathRole):
+            return super().startDrag(supported_actions)
+
+        self.drag_source_row = index.row()
+
+        drag = ItemDrag(index, self)
+        QtCore.QTimer.singleShot(1, self.viewport().update)
+        drag.exec_(supported_actions)
+        QtCore.QTimer.singleShot(10, self._reset_drag_indicators)
+
+    def dropEvent(self, event):
+        """Event handler.
+
+        """
+        pos = event.pos()
+
+        index = self.indexAt(pos)
+        if not index.isValid():
+            self._reset_drag_indicators()
+            return
+
+        proxy = self.model()
+        model = proxy.sourceModel()
+        index = proxy.mapToSource(index)
+
+        if model.dropMimeData(
+                event.mimeData(),
+                event.proposedAction(),
+                index.row(),
+                0,
+                QtCore.QModelIndex()
+        ):
+            event.accept()
+            self._reset_drag_indicators()
+            return
+
+        self._reset_drag_indicators()
+
+    def showEvent(self, event):
+        """Show event handler.
+
+        """
+        self.scheduleDelayedItemsLayout()
+
+    def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
+        if widget is not self:
+            return False
+        if event.type() == QtCore.QEvent.Paint:
+            ui.paint_background_icon(self._background_icon, widget)
+
+            if self.model().sourceModel()._load_in_progress:
+                self.paint_loading(widget, event)
+            elif self.model().sourceModel().rowCount() == 0:
+                self.paint_hint(widget, event)
+            else:
+                self.paint_status_message(widget, event)
+            return True
+        return False
+
+    def resizeEvent(self, event):
+        """Event handler.
+
+        """
+        self.resized.emit(self.viewport().geometry())
+        self.scheduleDelayedItemsLayout()
+
+    def keyPressEvent(self, event):
+        """Key press event handler.
+
+        Define the default behavior of the list-items, including
+        the actions needed to navigate the list using the keyboard.
+
+        """
+        numpad_modifier = event.modifiers() & QtCore.Qt.KeypadModifier
+        no_modifier = event.modifiers() == QtCore.Qt.NoModifier
+
+        if no_modifier or numpad_modifier:
+            if not self.timer.isActive():
+                self.timed_search_string = ''
+            self.timer.start()
+
+            if event.key() == QtCore.Qt.Key_Escape:
+                if self.state() == QtWidgets.QAbstractItemView.EditingState:
+                    self.key_down()
+                    self.key_up()
+                    return
+
+                self.interruptRequested.emit()
+
+                if self.selectionModel().hasSelection():
+                    self.selectionModel().select(
+                        QtCore.QModelIndex(),
+                        QtCore.QItemSelectionModel.ClearAndSelect |
+                        QtCore.QItemSelectionModel.Rows
+                    )
+                    self.selectionModel().setCurrentIndex(
+                        QtCore.QModelIndex(),
+                        QtCore.QItemSelectionModel.ClearAndSelect |
+                        QtCore.QItemSelectionModel.Rows
+                    )
+                return
+            if event.key() == QtCore.Qt.Key_Space:
+                self.key_space()
+                self.delay_save_selection()
+                return
+            if event.key() == QtCore.Qt.Key_Down:
+                self.key_down()
+                self.delay_save_selection()
+                return
+            if event.key() == QtCore.Qt.Key_Up:
+                self.key_up()
+                self.delay_save_selection()
+                return
+            if (event.key() == QtCore.Qt.Key_Return) or (
+                    event.key() == QtCore.Qt.Key_Enter):
+                self.key_enter()
+                self.delay_save_selection()
+                return
+            if event.key() == QtCore.Qt.Key_Tab:
+                if self.state() != QtWidgets.QAbstractItemView.EditingState:
+                    self.key_tab()
+                    self.delay_save_selection()
+                    return
+                else:
+                    self.key_down()
+                    self.key_tab()
+                    self.delay_save_selection()
+                    return
+            if event.key() == QtCore.Qt.Key_Backtab:
+                if not self.state() == QtWidgets.QAbstractItemView.EditingState:
+                    self.key_tab()
+                    self.delay_save_selection()
+                    return
+                else:
+                    self.key_up()
+                    self.key_tab()
+                    self.delay_save_selection()
+                    return
+            if event.key() == QtCore.Qt.Key_PageDown:
+                super().keyPressEvent(event)
+                self.delay_save_selection()
+                return
+            if event.key() == QtCore.Qt.Key_PageUp:
+                super().keyPressEvent(event)
+                self.delay_save_selection()
+                return
+            if event.key() == QtCore.Qt.Key_Home:
+                super().keyPressEvent(event)
+                self.delay_save_selection()
+                return
+            if event.key() == QtCore.Qt.Key_End:
+                super().keyPressEvent(event)
+                self.delay_save_selection()
+                return
+
+            self.timed_search_string += event.text()
+
+            sel = self.selectionModel()
+            for n in range(self.model().rowCount()):
+                index = self.model().index(n, 0, parent=QtCore.QModelIndex())
+                # When only one key is pressed we want to cycle through
+                # only items starting with that letter:
+                if len(self.timed_search_string) == 1:
+                    if n <= sel.currentIndex().row():
+                        continue
+
+                    if index.data(QtCore.Qt.DisplayRole)[
+                        0].lower() == self.timed_search_string.lower():
+                        self.selectionModel().select(
+                            index,
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
+                        )
+                        self.selectionModel().setCurrentIndex(
+                            index,
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
+                        )
+                        self.delay_save_selection()
+                        break
+                else:
+                    try:
+                        match = re.search(
+                            self.timed_search_string,
+                            index.data(QtCore.Qt.DisplayRole),
+                            flags=re.IGNORECASE
+                        )
+                    except:
+                        match = None
+
+                    if match:
+                        self.selectionModel().select(
+                            index,
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
+                        )
+                        self.selectionModel().setCurrentIndex(
+                            index,
+                            QtCore.QItemSelectionModel.ClearAndSelect |
+                            QtCore.QItemSelectionModel.Rows
+                        )
+                        self.delay_save_selection()
+                        return
+
+        if event.modifiers() & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_Tab:
+                self.key_up()
+                self.key_tab()
+                self.delay_save_selection()
+                return
+            elif event.key() == QtCore.Qt.Key_Backtab:
+                self.key_up()
+                self.key_tab()
+                self.delay_save_selection()
+                return
+
+    def wheelEvent(self, event):
+        """Custom wheel event responsible for scrolling the list.
+
+        """
+        control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
+
+        if not control_modifier:
+            shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
+
+            # Adjust the scroll amount based on the row size
+            if self.model().sourceModel().row_size.height() > (
+                    common.Size.RowHeight(2.0)):
+                o = 9 if shift_modifier else 1
+            else:
+                o = 9 if shift_modifier else 3
+
+            v = self.verticalScrollBar().value()
+            if event.angleDelta().y() > 0:
+                v = self.verticalScrollBar().setValue(v + o)
+            else:
+                v = self.verticalScrollBar().setValue(v - o)
+            self.start_delayed_queue_timer()
+            return
+
+        if event.angleDelta().y() > 0:
+            actions.increase_row_size()
+        else:
+            actions.decrease_row_size()
+        self.start_delayed_queue_timer()
+
+    def mousePressEvent(self, event):
+        """Deselect the current index when clicked on an empty space.
+
+        """
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+
+        event.accept()
+        index = self.indexAt(event.pos())
+        if not index.isValid():
+            self.selectionModel().select(
+                QtCore.QModelIndex(),
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
+            self.selectionModel().setCurrentIndex(
+                QtCore.QModelIndex(),
+                QtCore.QItemSelectionModel.ClearAndSelect |
+                QtCore.QItemSelectionModel.Rows
+            )
+        super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Event handler.
+
+        """
+        event.ignore()
+        self.delay_save_selection()
+        super().mouseReleaseEvent(event)
+
+    def mouseDoubleClickEvent(self, event):
+        """Custom doubleclick event.
+
+        A double click can `activate` an item, or it can trigger an edit event.
+        As each item is associated with multiple editors we have to inspect
+        the double click location before deciding what action to take.
+
+        """
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+
+        index = self.indexAt(event.pos())
+        if not index.isValid():
+            event.ignore()
+            return
+
+        if index.flags() & common.MarkedAsArchived:
+            event.ignore()
+            return
+
+        if index.column() == 1:
+            event.accept()
+            actions.capture_thumbnail()
+            return
+
+        if index.column() == 2:
+            rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
+            rects = self.itemDelegate().filter_rectangles()
+            last_rect = list(rects[index.data(common.IdRole)].values())[-1][0]
+
+            # Edit the description if the last rectangle is double-clicked
+            if rect and rect.contains(event.pos()) and rect == last_rect:
+                event.accept()
+                self.edit(index)
+                return
+
+            # Otherwise, activate the item
+            event.accept()
+            self.activate(index)
+            return
+
+        event.ignore()
+        super().mouseDoubleClickEvent(event)
+
+    def contextMenuEvent(self, event):
+        """Custom context menu event."""
+        index = self.indexAt(event.pos())
+
+        shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
+        alt_modifier = event.modifiers() & QtCore.Qt.AltModifier
+        control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
+
+        if shift_modifier or alt_modifier or control_modifier:
+            self.customContextMenuRequested.emit(index, self)
+            return
+
+        if not self.ContextMenu:
+            return
+
+        if index.isValid() and index.column() == 1:
+            widget = self.ThumbnailContextMenu(index, parent=self)
+        else:
+            widget = self.ContextMenu(index, parent=self)
+
+        widget.move(event.globalPos())
+        common.move_widget_to_available_geo(widget)
+        widget.exec_()
+
+    def _reset_drag_indicators(self):
+        self._thumbnail_drop = (-1, False)
+        self.drag_source_row = -1
+        self.drag_current_row = -1
+        self.stopAutoScroll()
+        self.setState(QtWidgets.QAbstractItemView.NoState)
+        self.viewport().update()
+
     def get_source_model(self):
         """Returns the model class associated with this view.
 
@@ -653,6 +1062,7 @@ class BaseItemView(QtWidgets.QTableView):
             return True
         return self._buttons_hidden
 
+    @QtCore.Slot(bool)
     def set_buttons_hidden(self, val):
         """Sets the visibility of the inline icon buttons.
 
@@ -1033,7 +1443,7 @@ class BaseItemView(QtWidgets.QTableView):
 
         model = self.model().sourceModel()
 
-        p = model.source_path()
+        p = model.parent_path()
         k = model.task()
 
         if not p or not all(p):
@@ -1437,7 +1847,7 @@ class BaseItemView(QtWidgets.QTableView):
         proxy = self.model()
         model = proxy.sourceModel()
 
-        p = model.source_path()
+        p = model.parent_path()
 
         if p and len(p) == 3:
             # Read from the cache if it exists
@@ -1497,416 +1907,6 @@ class BaseItemView(QtWidgets.QTableView):
                 )
                 self.save_selection()
                 return
-
-    def _reset_drag_indicators(self):
-        self._thumbnail_drop = (-1, False)
-        self.drag_source_row = -1
-        self.drag_current_row = -1
-        self.stopAutoScroll()
-        self.setState(QtWidgets.QAbstractItemView.NoState)
-        self.viewport().update()
-
-    def dragMoveEvent(self, event):
-        """Drag move events checks source validity against available drop actions.
-
-        """
-        self._thumbnail_drop = (-1, False)
-
-        index = self.indexAt(event.pos())
-
-        if not index.isValid():
-            self.viewport().update()
-            return
-
-        proxy = self.model()
-        model = proxy.sourceModel()
-        index = proxy.mapToSource(index)
-
-        # Thumbnail image drop
-        if model.can_drop_image_file(
-                event.mimeData(),
-                event.proposedAction(),
-                index.row(),
-                0,
-                QtCore.QModelIndex()
-        ):
-            self._thumbnail_drop = (index.row(), True)
-            event.accept()
-            self.viewport().update()
-            return
-
-        # Internal property copy
-        if model.can_drop_properties(
-                event.mimeData(),
-                event.proposedAction(),
-                index.row(),
-                0,
-                QtCore.QModelIndex()
-        ):
-            event.accept()
-            self._thumbnail_drop = (-1, False)
-            self.viewport().update()
-            return
-
-        self._thumbnail_drop = (-1, False)
-        self.viewport().update()
-        return super().dragMoveEvent(event)
-
-    def startDrag(self, supported_actions):
-        """Drag action start.
-
-        """
-        index = common.get_selected_index(self)
-        if not index.isValid():
-            return super().startDrag(supported_actions)
-        if not index.data(common.PathRole):
-            return super().startDrag(supported_actions)
-        if not index.data(common.ParentPathRole):
-            return super().startDrag(supported_actions)
-
-        self.drag_source_row = index.row()
-
-        drag = ItemDrag(index, self)
-        QtCore.QTimer.singleShot(1, self.viewport().update)
-        drag.exec_(supported_actions)
-        QtCore.QTimer.singleShot(10, self._reset_drag_indicators)
-
-    def dropEvent(self, event):
-        """Event handler.
-
-        """
-        pos = event.pos()
-
-        index = self.indexAt(pos)
-        if not index.isValid():
-            self._reset_drag_indicators()
-            return
-
-        proxy = self.model()
-        model = proxy.sourceModel()
-        index = proxy.mapToSource(index)
-
-        if model.dropMimeData(
-                event.mimeData(),
-                event.proposedAction(),
-                index.row(),
-                0,
-                QtCore.QModelIndex()
-        ):
-            event.accept()
-            self._reset_drag_indicators()
-            return
-
-        self._reset_drag_indicators()
-
-    def showEvent(self, event):
-        """Show event handler.
-
-        """
-        self.scheduleDelayedItemsLayout()
-
-    def mouseReleaseEvent(self, event):
-        """Event handler.
-        
-        """
-        event.ignore()
-        self.delay_save_selection()
-        super().mouseReleaseEvent(event)
-
-    def eventFilter(self, widget, event):
-        """Event filter handler.
-
-        """
-        if widget is not self:
-            return False
-        if event.type() == QtCore.QEvent.Paint:
-            ui.paint_background_icon(self._background_icon, widget)
-
-            if self.model().sourceModel()._load_in_progress:
-                self.paint_loading(widget, event)
-            elif self.model().sourceModel().rowCount() == 0:
-                self.paint_hint(widget, event)
-            else:
-                self.paint_status_message(widget, event)
-            return True
-        return False
-
-    def resizeEvent(self, event):
-        """Event handler.
-
-        """
-        self.delayed_layout_timer.start(self.delayed_layout_timer.interval())
-        self.resized.emit(self.viewport().geometry())
-
-    def keyPressEvent(self, event):
-        """Key press event handler.
-
-        Define the default behavior of the list-items, including
-        the actions needed to navigate the list using the keyboard.
-
-        """
-        numpad_modifier = event.modifiers() & QtCore.Qt.KeypadModifier
-        no_modifier = event.modifiers() == QtCore.Qt.NoModifier
-
-        if no_modifier or numpad_modifier:
-            if not self.timer.isActive():
-                self.timed_search_string = ''
-            self.timer.start()
-
-            if event.key() == QtCore.Qt.Key_Escape:
-                if self.state() == QtWidgets.QAbstractItemView.EditingState:
-                    self.key_down()
-                    self.key_up()
-                    return
-
-                self.interruptRequested.emit()
-
-                if self.selectionModel().hasSelection():
-                    self.selectionModel().select(
-                        QtCore.QModelIndex(),
-                        QtCore.QItemSelectionModel.ClearAndSelect |
-                        QtCore.QItemSelectionModel.Rows
-                    )
-                    self.selectionModel().setCurrentIndex(
-                        QtCore.QModelIndex(),
-                        QtCore.QItemSelectionModel.ClearAndSelect |
-                        QtCore.QItemSelectionModel.Rows
-                    )
-                return
-            if event.key() == QtCore.Qt.Key_Space:
-                self.key_space()
-                self.delay_save_selection()
-                return
-            if event.key() == QtCore.Qt.Key_Down:
-                self.key_down()
-                self.delay_save_selection()
-                return
-            if event.key() == QtCore.Qt.Key_Up:
-                self.key_up()
-                self.delay_save_selection()
-                return
-            if (event.key() == QtCore.Qt.Key_Return) or (
-                    event.key() == QtCore.Qt.Key_Enter):
-                self.key_enter()
-                self.delay_save_selection()
-                return
-            if event.key() == QtCore.Qt.Key_Tab:
-                if self.state() != QtWidgets.QAbstractItemView.EditingState:
-                    self.key_tab()
-                    self.delay_save_selection()
-                    return
-                else:
-                    self.key_down()
-                    self.key_tab()
-                    self.delay_save_selection()
-                    return
-            if event.key() == QtCore.Qt.Key_Backtab:
-                if not self.state() == QtWidgets.QAbstractItemView.EditingState:
-                    self.key_tab()
-                    self.delay_save_selection()
-                    return
-                else:
-                    self.key_up()
-                    self.key_tab()
-                    self.delay_save_selection()
-                    return
-            if event.key() == QtCore.Qt.Key_PageDown:
-                super().keyPressEvent(event)
-                self.delay_save_selection()
-                return
-            if event.key() == QtCore.Qt.Key_PageUp:
-                super().keyPressEvent(event)
-                self.delay_save_selection()
-                return
-            if event.key() == QtCore.Qt.Key_Home:
-                super().keyPressEvent(event)
-                self.delay_save_selection()
-                return
-            if event.key() == QtCore.Qt.Key_End:
-                super().keyPressEvent(event)
-                self.delay_save_selection()
-                return
-
-            self.timed_search_string += event.text()
-
-            sel = self.selectionModel()
-            for n in range(self.model().rowCount()):
-                index = self.model().index(n, 0, parent=QtCore.QModelIndex())
-                # When only one key is pressed we want to cycle through
-                # only items starting with that letter:
-                if len(self.timed_search_string) == 1:
-                    if n <= sel.currentIndex().row():
-                        continue
-
-                    if index.data(QtCore.Qt.DisplayRole)[
-                        0].lower() == self.timed_search_string.lower():
-                        self.selectionModel().select(
-                            index,
-                            QtCore.QItemSelectionModel.ClearAndSelect |
-                            QtCore.QItemSelectionModel.Rows
-                        )
-                        self.selectionModel().setCurrentIndex(
-                            index,
-                            QtCore.QItemSelectionModel.ClearAndSelect |
-                            QtCore.QItemSelectionModel.Rows
-                        )
-                        self.delay_save_selection()
-                        break
-                else:
-                    try:
-                        match = re.search(
-                            self.timed_search_string,
-                            index.data(QtCore.Qt.DisplayRole),
-                            flags=re.IGNORECASE
-                        )
-                    except:
-                        match = None
-
-                    if match:
-                        self.selectionModel().select(
-                            index,
-                            QtCore.QItemSelectionModel.ClearAndSelect |
-                            QtCore.QItemSelectionModel.Rows
-                        )
-                        self.selectionModel().setCurrentIndex(
-                            index,
-                            QtCore.QItemSelectionModel.ClearAndSelect |
-                            QtCore.QItemSelectionModel.Rows
-                        )
-                        self.delay_save_selection()
-                        return
-
-        if event.modifiers() & QtCore.Qt.ShiftModifier:
-            if event.key() == QtCore.Qt.Key_Tab:
-                self.key_up()
-                self.key_tab()
-                self.delay_save_selection()
-                return
-            elif event.key() == QtCore.Qt.Key_Backtab:
-                self.key_up()
-                self.key_tab()
-                self.delay_save_selection()
-                return
-
-    def wheelEvent(self, event):
-        """Custom wheel event responsible for scrolling the list.
-
-        """
-        control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
-
-        if not control_modifier:
-            shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
-
-            # Adjust the scroll amount based on the row size
-            if self.model().sourceModel().row_size.height() > (
-                    common.Size.RowHeight(2.0)):
-                o = 9 if shift_modifier else 1
-            else:
-                o = 9 if shift_modifier else 3
-
-            v = self.verticalScrollBar().value()
-            if event.angleDelta().y() > 0:
-                v = self.verticalScrollBar().setValue(v + o)
-            else:
-                v = self.verticalScrollBar().setValue(v - o)
-            self.start_delayed_queue_timer()
-            return
-
-        if event.angleDelta().y() > 0:
-            actions.increase_row_size()
-        else:
-            actions.decrease_row_size()
-        self.start_delayed_queue_timer()
-
-    def contextMenuEvent(self, event):
-        """Custom context menu event."""
-        index = self.indexAt(event.pos())
-
-        shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
-        alt_modifier = event.modifiers() & QtCore.Qt.AltModifier
-        control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
-
-        if shift_modifier or alt_modifier or control_modifier:
-            self.customContextMenuRequested.emit(index, self)
-            return
-
-        if not self.ContextMenu:
-            return
-
-        if index.isValid() and index.column() == 1:
-            widget = self.ThumbnailContextMenu(index, parent=self)
-        else:
-            widget = self.ContextMenu(index, parent=self)
-
-        widget.move(event.globalPos())
-        common.move_widget_to_available_geo(widget)
-        widget.exec_()
-
-    def mousePressEvent(self, event):
-        """Deselect the current index when clicked on an empty space.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-
-        event.accept()
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            self.selectionModel().select(
-                QtCore.QModelIndex(),
-                QtCore.QItemSelectionModel.ClearAndSelect |
-                QtCore.QItemSelectionModel.Rows
-            )
-            self.selectionModel().setCurrentIndex(
-                QtCore.QModelIndex(),
-                QtCore.QItemSelectionModel.ClearAndSelect |
-                QtCore.QItemSelectionModel.Rows
-            )
-        super().mousePressEvent(event)
-
-    def mouseDoubleClickEvent(self, event):
-        """Custom doubleclick event.
-
-        A double click can `activate` an item, or it can trigger an edit event.
-        As each item is associated with multiple editors we have to inspect
-        the double click location before deciding what action to take.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            event.ignore()
-            return
-
-        if index.flags() & common.MarkedAsArchived:
-            event.ignore()
-            return
-
-        if index.column() == 1:
-            event.accept()
-            actions.capture_thumbnail()
-            return
-
-        if index.column() == 2:
-            rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
-            rects = self.itemDelegate().filter_rectangles()
-            last_rect = list(rects[index.data(common.IdRole)].values())[-1][0]
-
-            # Edit the description if the last rectangle is double-clicked
-            if rect and rect.contains(event.pos()) and rect == last_rect:
-                event.accept()
-                self.edit(index)
-                return
-
-            # Otherwise, activate the item
-            event.accept()
-            self.activate(index)
-            return
-
-        event.ignore()
-        super().mouseDoubleClickEvent(event)
 
 
 class InlineIconView(BaseItemView):
@@ -1997,10 +1997,10 @@ class InlineIconView(BaseItemView):
 
     def set_row_size(self, v):
         super().set_row_size(v)
-        self.update_headers()
+        self.adjust_headers()
 
     @QtCore.Slot()
-    def update_headers(self, *args, **kwargs):
+    def adjust_headers(self, *args, **kwargs):
         if not self.model():
             return
         if not self.model().sourceModel():
@@ -2008,9 +2008,10 @@ class InlineIconView(BaseItemView):
         if not self.model().sourceModel().model_data():
             return
 
+        self.setColumnHidden(3, self.inline_icons_count() == 0)
+        self.horizontalHeader().setHidden(self._progress_hidden)
         self.verticalHeader().setHidden(True)
 
-        self.horizontalHeader().setHidden(self._progress_hidden)
         self.horizontalHeader().setMinimumSectionSize(0)
 
         # Indicator
@@ -2026,12 +2027,15 @@ class InlineIconView(BaseItemView):
 
         # Control buttons calculated based on the inline_icons_count
         self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
-        icon_width = common.Size.Margin()
-        spacing = common.Size.Indicator(2.5)
-        count = self.inline_icons_count()
-        inline_buttons_column_width = (icon_width + spacing) * count + spacing
-        self.setColumnWidth(3, inline_buttons_column_width)
-        self.setColumnHidden(3, self.inline_icons_count() == 0)
+
+        if self.inline_icons_count() == 0:
+            self.setColumnWidth(3, 0)
+        else:
+            icon_width = common.Size.Margin()
+            spacing = common.Size.Indicator(2.5)
+            count = self.inline_icons_count()
+            inline_buttons_column_width = (icon_width + spacing) * count + spacing
+            self.setColumnWidth(3, inline_buttons_column_width)
 
         # Make sure the geometries are up to date after toggling the header
         self.updateGeometries()
@@ -2039,8 +2043,6 @@ class InlineIconView(BaseItemView):
 
     def _connect_signals(self):
         super()._connect_signals()
-        self.delayed_layout_timer.timeout.connect(self.update_headers)
-        self.delayed_reset_row_layout_timer.timeout.connect(self.update_headers)
 
         self.buttonRectangleEntered.connect(self.itemDelegate().set_button_candidate_rectangle)
         self.buttonRectangleLeft.connect(self.itemDelegate().clear_button_candidate_rectangle)
@@ -2049,8 +2051,7 @@ class InlineIconView(BaseItemView):
     def init_model(self):
         super().init_model()
 
-        self.model().sourceModel().modelReset.connect(self.update_headers)
-        self.model().sourceModel().modelReset.connect(self.update_headers)
+        self.model().sourceModel().modelReset.connect(self.adjust_headers)
 
         self.model().sourceModel().modelAboutToBeReset.connect(self.itemDelegate().clear_rectangles)
         self.model().sourceModel().modelAboutToBeReset.connect(self.itemDelegate().clear_rectangles)
@@ -2058,7 +2059,7 @@ class InlineIconView(BaseItemView):
 
         self.selectionModel().selectionChanged.connect(self.set_indicator_link)
 
-        self.update_headers()
+        self.adjust_headers()
 
     def inline_icons_count(self):
         """Inline buttons count.
@@ -2249,15 +2250,16 @@ class InlineIconView(BaseItemView):
 
         """
         if not isinstance(event, QtGui.QMouseEvent):
+            super().mouseMoveEvent(event)
             return
 
         if self.verticalScrollBar().isSliderDown():
-            event.ignore()
+            super().mouseMoveEvent(event)
             return
 
         index = self.indexAt(event.pos())
         if not index.isValid():
-            event.accept()
+            super().mouseMoveEvent(event)
             return
 
         if index.column() == 3:  # Inline icons and multi-toggle
@@ -2280,7 +2282,6 @@ class InlineIconView(BaseItemView):
 
             # Ignore operation if no mouse buttons are pressed
             if event.buttons() == QtCore.Qt.NoButton:
-                event.ignore()
                 super().mouseMoveEvent(event)
                 return
 
@@ -2290,6 +2291,7 @@ class InlineIconView(BaseItemView):
 
             # Exclude the current item
             if index == self.multi_toggle_item:
+                super().mouseMoveEvent(event)
                 return
 
             self.multi_toggle_item = index
@@ -2298,7 +2300,6 @@ class InlineIconView(BaseItemView):
             archived = index.flags() & common.MarkedAsArchived
 
             if idx not in self.multi_toggle_items:
-                event.accept()
 
                 if self.multi_toggle_flag == common.MarkedAsFavourite:
                     self.multi_toggle_items[idx] = favourite
@@ -2309,6 +2310,8 @@ class InlineIconView(BaseItemView):
                         commit_now=False,
                     )
                     self.repaint(self.visualRect(index))
+
+                    super().mouseMoveEvent(event)
                     return
 
                 if self.multi_toggle_flag == common.MarkedAsArchived:
@@ -2320,10 +2323,15 @@ class InlineIconView(BaseItemView):
                         commit_now=False,
                     )
                     self.repaint(self.visualRect(index))
+
+                    super().mouseMoveEvent(event)
                     return
 
             if index == initial_index:
+                super().mouseMoveEvent(event)
                 return
+
+        super().mouseMoveEvent(event)
 
 
 class ClickableFilterView(InlineIconView):
@@ -2338,30 +2346,33 @@ class ClickableFilterView(InlineIconView):
 
     def mouseMoveEvent(self, event):
         if not isinstance(event, QtGui.QMouseEvent):
+            super().mouseMoveEvent(event)
             return
-
-        super().mouseMoveEvent(event)
 
         index = self.indexAt(event.pos())
         if not index.isValid():
+            super().mouseMoveEvent(event)
             return
 
         if index.column() != 2:
+            super().mouseMoveEvent(event)
             return
 
         rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
         if not text:
             self.filterRectangleLeft.emit()
         else:
-
             self.filterRectangleEntered.emit(rect)
             common.signals.showStatusTipMessage.emit(
                 f'Shift-click to filter by "{text}"  |  Alt-click to exclude "{text}"')
 
         self.repaint(self.visualRect(index))
 
+        super().mouseMoveEvent(event)
+
     def mouseReleaseEvent(self, event):
         if not isinstance(event, QtGui.QMouseEvent):
+            super().mouseReleaseEvent(event)
             return
 
         index = self.indexAt(event.pos())
@@ -2376,15 +2387,12 @@ class ClickableFilterView(InlineIconView):
                 return
 
             modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
-            no_modifier = modifiers == QtCore.Qt.NoModifier
             shift_modifier = modifiers & QtCore.Qt.ShiftModifier
             alt_modifier = modifiers & QtCore.Qt.AltModifier
 
             if modifiers == QtCore.Qt.NoModifier:
                 super().mouseReleaseEvent(event)
                 return
-
-            event.accept()
 
             negative_filter_text = f'--"{text}"'
             positive_filter_text = f'"{text}"'

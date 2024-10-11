@@ -28,8 +28,6 @@ FavouriteThumbnail = 'FavouriteThumbnail'
 AssetThumbnail = 'AssetThumbnail'
 BookmarkThumbnail = 'BookmarkThumbnail'
 FileInfo = 'FileInfo'
-FileInfo2 = 'FileInfo2'
-FileInfo3 = 'FileInfo3'
 FavouriteInfo = 'FavouriteInfo'
 AssetInfo = 'AssetInfo'
 BookmarkInfo = 'BookmarkInfo'
@@ -90,17 +88,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.FileTab,
-    },
-    FileInfo2: {
-        'queue': collections.deque([], common.max_list_items),
-        'preload': True,
-        'data_types': {
-            common.FileItem: DataType(FileInfo, common.FileItem),
-            common.SequenceItem: DataType(FileInfo, common.SequenceItem),
-        },
-        'worker': workers.InfoWorker,
-        'role': common.FileInfoLoaded,
-        'tab': common.TaskItemSwitch,
     },
     FileThumbnail: {
         'queue': collections.deque([], 99),

@@ -40,7 +40,6 @@ from .items import asset_items
 from .items import bookmark_items
 from .items import favourite_items
 from .items import file_items
-from .items import switch
 from .items import views
 from .topbar import topbar
 
@@ -92,10 +91,6 @@ class MainWidget(QtWidgets.QWidget):
         self.files_widget = None
         self.favourites_widget = None
 
-        self.bookmark_switch_widget = None
-        self.asset_switch_widget = None
-        self.task_switch_widget = None
-
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -119,16 +114,6 @@ class MainWidget(QtWidgets.QWidget):
         self.assets_widget = asset_items.AssetItemView(parent=self)
         self.files_widget = file_items.FileItemView(parent=self)
         self.favourites_widget = favourite_items.FavouriteItemView(parent=self)
-
-        # Switch views
-        self.bookmark_switch_widget = switch.BookmarkSwitchView(parent=self.bookmarks_widget)
-        self.bookmark_switch_widget.setHidden(True)
-
-        self.asset_switch_widget = switch.AssetSwitchView(parent=self.files_widget)
-        self.asset_switch_widget.setHidden(True)
-
-        self.task_switch_widget = switch.TaskSwitchView(parent=self.files_widget)
-        self.task_switch_widget.setHidden(True)
 
         # Add items to stacked widget
         self.stacked_widget.addWidget(self.bookmarks_widget)
@@ -189,8 +174,6 @@ class MainWidget(QtWidgets.QWidget):
         a = self.assets_widget
         f = self.files_widget
 
-        l = self.task_switch_widget
-
         # Make sure the active values are correctly set
         self.aboutToInitialize.connect(common.init_active)
 
@@ -214,8 +197,6 @@ class MainWidget(QtWidgets.QWidget):
             lambda: common.signals.tabChanged.emit(common.FileTab)
         )
 
-        common.signals.tabChanged.connect(l.tab_changed)
-        common.widget(common.FileTab).resized.connect(l.resize_widget)
 
         common.signals.tabChanged.connect(common.signals.updateTopBarButtons)
 
@@ -327,7 +308,6 @@ class MainWidget(QtWidgets.QWidget):
                 actions.change_tab, common.AssetTab
             )
         )
-        connect(shortcuts.ShowFilesTab, actions.toggle_task_switch_view)
         connect(
             shortcuts.ShowFilesTab, functools.partial(
                 actions.change_tab, common.FileTab

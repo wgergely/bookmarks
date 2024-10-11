@@ -30,14 +30,14 @@ from PySide2 import QtCore
 from .. import common
 
 #: Start character used to encapsulate the sequence range of collapsed items.
-SEQSTART = '{'
+SEQSTART = '<<'
 
 #: End character used to encapsulate the sequence range of collapsed items.
-SEQEND = '}'
+SEQEND = '>>'
 
 #: Placeholder sequence marker used to associate settings and database values
 #: with sequence items.
-SEQPROXY = f'{SEQSTART}0{SEQEND}'
+SEQPROXY = f'{SEQSTART}?{SEQEND}'
 
 #: Regular expression used to find sequence items
 IsSequenceRegex = re.compile(

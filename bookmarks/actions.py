@@ -123,7 +123,7 @@ def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
 
     for model in models:
 
-        p = model.source_path()
+        p = model.parent_path()
         k = model.task()
 
         # Make sure data is up-to-date in all data sets.
@@ -456,53 +456,6 @@ def generate_thumbnails_changed(state):
                     w.start_delayed_queue_timer()
 
 
-@QtCore.Slot()
-@must_be_initialized
-def toggle_bookmark_switch_view():
-    """Shows or hides the visibility of the
-    :class:~bookmarks.items.switch.TaskSwitchView`` widget.
-
-    """
-    if common.current_tab() != common.AssetTab:
-        return
-    common.widget(common.BookmarkItemSwitch).setHidden(
-        not common.widget(common.BookmarkItemSwitch).isHidden()
-    )
-    if common.widget(common.BookmarkItemSwitch).isVisible():
-        common.widget(common.BookmarkItemSwitch).model().sourceModel().reset_data()
-
-
-@QtCore.Slot()
-@must_be_initialized
-def toggle_asset_switch_view():
-    """Shows or hides the visibility of the
-    :class:~bookmarks.items.switch.TaskSwitchView`` widget.
-
-    """
-    if common.current_tab() != common.FileTab:
-        return
-    common.widget(common.AssetItemSwitch).setHidden(
-        not common.widget(common.AssetItemSwitch).isHidden()
-    )
-    if common.widget(common.AssetItemSwitch).isVisible():
-        common.widget(common.AssetItemSwitch).model().sourceModel().reset_data()
-
-
-@QtCore.Slot()
-@must_be_initialized
-def toggle_task_switch_view():
-    """Shows or hides the visibility of the
-    :class:~bookmarks.items.switch.TaskSwitchView`` widget.
-
-    """
-    if common.current_tab() != common.FileTab:
-        return
-    common.widget(common.TaskItemSwitch).setHidden(
-        not common.widget(common.TaskItemSwitch).isHidden()
-    )
-    if common.widget(common.TaskItemSwitch).isVisible():
-        common.widget(common.TaskItemSwitch).model().sourceModel().reset_data()
-
 
 @must_be_initialized
 def toggle_filter_editor():
@@ -781,7 +734,7 @@ def refresh(idx=None):
     # Remove the asset list cache if we're forcing a refresh on the asset tab
     if common.current_tab() == common.AssetTab:
         # Read from the cache if it exists
-        p = model.source_path()
+        p = model.parent_path()
         source = '/'.join(p) if p else ''
         assets_cache_dir = QtCore.QDir(f'{common.active("root", path=True)}/{common.bookmark_item_data_dir}/assets')
         if not assets_cache_dir.exists():
@@ -1662,8 +1615,8 @@ def delete_selected_files(index):
         return
 
     model = index.model().sourceModel()
-    f_data = common.get_data(model.source_path(), model.task(), common.FileItem)
-    s_data = common.get_data(model.source_path(), model.task(), common.SequenceItem)
+    f_data = common.get_data(model.parent_path(), model.task(), common.FileItem)
+    s_data = common.get_data(model.parent_path(), model.task(), common.SequenceItem)
 
     paths = set(common.get_sequence_paths(index))
 

@@ -31,12 +31,12 @@ from PySide2 import QtCore, QtWidgets
 from . import delegate
 from . import models
 from . import views
-from .. import actions, tokens
 from .. import common
 from .. import contextmenu
 from .. import database
 from .. import log
 from .. import progress
+from .. import tokens
 from ..links.lib import LinksAPI
 from ..threads import threads
 
@@ -127,7 +127,7 @@ class AssetItemModel(models.ItemModel):
 
         # The rest of the columns are the progress tracker columns
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
-            p = self.source_path()
+            p = self.parent_path()
             k = self.task()
             t = common.FileItem
             data = common.get_data(p, k, t)
@@ -158,72 +158,140 @@ class AssetItemModel(models.ItemModel):
             flags &= ~QtCore.Qt.ItemIsDragEnabled
         return flags
 
+    def item_generator(self, path):
+        """Yields the asset items to be processed by :meth:`init_data`.
+
+        Args:
+            path (string): The path to a directory containing asset folders.
+
+        Yields:
+            DirEntry: Entry instances of valid asset folders.
+        """
+        # Convert path to absolute and normalized path
+        path = os.path.abspath(os.path.normpath(path.replace('\\', '/')))
+
+        try:
+            with os.scandir(path) as it:
+                # Iterate over the directories in the root item folder
+                for entry in it:
+                    if self._interrupt_requested:
+                        return
+
+                    # Skip entries that are not directories or are hidden
+                    if entry.name.startswith('.') or not entry.is_dir(follow_symlinks=False):
+                        continue
+
+                    # Check if the directory is readable
+                    if not os.access(entry.path, os.R_OK):
+                        continue
+
+                    # Convert entry.path to absolute and normalized path
+                    asset_root = os.path.abspath(os.path.normpath(entry.path.replace('\\', '/')))
+
+                    # Check if asset_root is within the source path
+                    try:
+                        common_path = os.path.commonpath([path, asset_root])
+                    except ValueError:
+                        # Paths are on different drives on Windows
+                        common_path = None
+
+                    if common_path != path:
+                        # Asset is outside the source path; skip or handle appropriately
+                        log.error(f"Asset {asset_root} is outside the source path {path}. Skipping.")
+                        # continue
+
+                    # Check if the root item has links
+                    api = LinksAPI(asset_root)
+                    links = api.get(force=True)
+
+                    # Only perform the expensive os.path.exists check when links are found
+                    if links:
+                        for rel_path in links:
+                            abs_path = os.path.abspath(os.path.normpath(f'{asset_root}/{rel_path}'.replace('\\', '/')))
+                            if os.path.exists(abs_path):
+                                yield abs_path, api.links_file
+                    else:
+                        # If no links were found, yield the root item
+                        yield asset_root, None
+        except OSError as e:
+            log.error(e)
+            return
+
     @common.status_bar_message('Loading assets...')
     @models.initdata
     @common.error
     @common.debug
     def init_data(self):
-        """Collects the data needed to populate the asset item model.
-
-        """
-        p = self.source_path()
+        """Collects the data needed to populate the asset item model."""
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
 
         if not p or not all(p) or not k or t is None:
             return
 
+        # Convert source to absolute and normalized path
+        source = os.path.abspath(os.path.normpath('/'.join(p).replace('\\', '/')))
+
         data = common.get_data(p, k, t)
-        source = '/'.join(p)
 
-        # Let's get the identifier from the bookmark database
+        # Cache commonly used values upfront
         db = database.get(*p)
+        display_token = db.value(source, 'asset_display_token', database.BookmarkTable)
+        prefix = db.value(source, 'prefix', database.BookmarkTable)
 
-        # ...and the display token
-        display_token = db.value(
-            source,
-            'asset_display_token',
-            database.BookmarkTable
-        )
-        prefix = db.value(
-            source,
-            'prefix',
-            database.BookmarkTable
-        )
-
-        nth = 17
+        nth = 27
         c = 0
+
+        # Cache active asset and favorites for faster lookup
+        active = common.active('asset')
+        favourites = common.favourites
+
         for filepath, links_file in self.item_generator(source):
             if self._interrupt_requested:
                 break
 
-            # Progress bar
             c += 1
-            if not c % nth:
-                common.signals.showStatusBarMessage.emit(
-                    f'Loading assets ({c} found)...'
-                )
+            if c % nth == 0:
+                common.signals.showStatusBarMessage.emit(f'Loading assets ({c} found)...')
                 QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
-            if '..' in filepath:
-                _filepath = re.sub(r'\.\.[/]?', '', filepath).rstrip('/')
-                dir_name = os.path.abspath(filepath).replace('\\', '/').split('/')[-1]
-                filename = f'{_filepath[len(source) + 1:]}/{dir_name}'
+            # Convert filepath to absolute and normalized path
+            filepath = os.path.abspath(os.path.normpath(filepath.replace('\\', '/')))
+
+            # Check if filepath is within source
+            try:
+                common_path = os.path.commonpath([source, filepath])
+            except ValueError:
+                common_path = None
+
+            if common_path != source:
+                # Asset is outside the source path; skip or handle appropriately
+                log.error(f"Asset {filepath} is outside the source path {source}. Skipping.")
+                # continue
+
+            # Compute relative path
+            relative_path = os.path.relpath(filepath, source).replace('\\', '/')
+            # Ensure relative_path does not contain '../' or './'
+            if '..' in relative_path or relative_path.startswith('.'):
+                # Use the base name of the filepath
+                filename = os.path.basename(filepath)
             else:
-                filename = filepath[len(source) + 1:]
+                filename = relative_path
+
+            # Remove any leading './' from filename
+            if filename.startswith('./'):
+                filename = filename[2:]
+
+            # Set flags efficiently
             flags = models.DEFAULT_ITEM_FLAGS
+            if filepath in favourites:
+                flags |= common.MarkedAsFavourite
+            if active == filename:
+                flags |= common.MarkedAsActive
 
-            if filepath in common.favourites:
-                flags = flags | common.MarkedAsFavourite
-
-            # Is the item currently active?
-            active = common.active('asset')
-            if active and active == filename:
-                flags = flags | common.MarkedAsActive
-
+            # Prepare display name based on bookmark token, only if valid
             display_name = filename
-
-            # Set the display name based on the bookmark item's configuration value
             if display_token:
                 seq, shot = common.get_sequence_and_shot(filepath)
                 _display_name = common.parser.format(
@@ -242,71 +310,60 @@ class AssetItemModel(models.ItemModel):
                 if tokens.invalid_token not in _display_name:
                     display_name = _display_name
 
-            parent_path_role = p + (filename,)
-
+            # Optimize role setup by pre-caching and limiting length
+            parent_path_role = tuple(p + (filename,))
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
-            for i, n in enumerate(p):
-                if i >= 8:
+            for idx, segment in enumerate(re.split(r'[\\/|]', filename)):
+                if idx >= len(sort_by_name_role):
                     break
-                sort_by_name_role[i] = n.lower()
-            sort_by_name_role[3] = filename.lower()
+                sort_by_name_role[idx] = segment.lower().strip().strip('.').strip('_').strip('/')
 
+            # Limit the number of items loaded for performance
             idx = len(data)
             if idx >= common.max_list_items:
-                break  # Let's limit the maximum number of items we load
+                break
 
-            data[idx] = common.DataDict(
-                {
-                    QtCore.Qt.DisplayRole: display_name,
-                    common.FilterTextRole: display_name,
-                    QtCore.Qt.EditRole: filename,
-                    common.PathRole: filepath,
-                    QtCore.Qt.SizeHintRole: self.row_size,
-                    #
-                    common.AssetLinkRole: links_file,
-                    #
-                    QtCore.Qt.StatusTipRole: filename,
-                    QtCore.Qt.AccessibleDescriptionRole: filename,
-                    QtCore.Qt.WhatsThisRole: filename,
-                    QtCore.Qt.ToolTipRole: filename,
-                    #
-                    common.QueueRole: self.queues,
-                    common.DataTypeRole: t,
-                    common.DataDictRole: weakref.ref(data),
-                    common.ItemTabRole: common.AssetTab,
-                    #
-                    common.EntryRole: [],
-                    common.FlagsRole: flags,
-                    common.ParentPathRole: parent_path_role,
-                    common.DescriptionRole: '',
-                    common.NoteCountRole: 0,
-                    common.AssetCountRole: 0,
-                    common.FileDetailsRole: '',
-                    common.SequenceRole: None,
-                    common.FramesRole: [],
-                    common.StartPathRole: None,
-                    common.EndPathRole: None,
-                    #
-                    common.FileInfoLoaded: False,
-                    common.ThumbnailLoaded: False,
-                    #
-                    common.SortByNameRole: sort_by_name_role,
-                    common.SortByLastModifiedRole: 0,
-                    common.SortBySizeRole: 0,
-                    common.SortByTypeRole: display_name,
-                    #
-                    common.IdRole: idx,
-                    #
-                    common.SGLinkedRole: False,
-                    #
-                    common.AssetProgressRole: copy.deepcopy(progress.STAGES),
-                }
-            )
+            data[idx] = common.DataDict({
+                QtCore.Qt.DisplayRole: display_name,
+                common.FilterTextRole: display_name,
+                QtCore.Qt.EditRole: filename,
+                common.PathRole: filepath,
+                QtCore.Qt.SizeHintRole: self.row_size,
+                common.AssetLinkRole: links_file,
+                QtCore.Qt.StatusTipRole: filename,
+                QtCore.Qt.AccessibleDescriptionRole: filename,
+                QtCore.Qt.WhatsThisRole: filename,
+                QtCore.Qt.ToolTipRole: filename,
+                common.QueueRole: self.queues,
+                common.DataTypeRole: t,
+                common.DataDictRole: weakref.ref(data),
+                common.ItemTabRole: common.AssetTab,
+                common.EntryRole: [],
+                common.FlagsRole: flags,
+                common.ParentPathRole: parent_path_role,
+                common.DescriptionRole: '',
+                common.NoteCountRole: 0,
+                common.AssetCountRole: 0,
+                common.FileDetailsRole: '',
+                common.SequenceRole: None,
+                common.FramesRole: [],
+                common.StartPathRole: None,
+                common.EndPathRole: None,
+                common.FileInfoLoaded: False,
+                common.ThumbnailLoaded: False,
+                common.SortByNameRole: sort_by_name_role,
+                common.SortByLastModifiedRole: 0,
+                common.SortBySizeRole: 0,
+                common.SortByTypeRole: display_name,
+                common.IdRole: idx,
+                common.SGLinkedRole: False,
+                common.AssetProgressRole: copy.deepcopy(progress.STAGES),
+            })
 
-        # Explicitly emit `activeChanged` to notify other dependent models
+        # Emit `activeChanged` once, only at the end for efficiency
         self.activeChanged.emit(self.active_index())
 
-    def source_path(self):
+    def parent_path(self):
         """The model's parent folder path.
 
         Returns:
@@ -318,50 +375,6 @@ class AssetItemModel(models.ItemModel):
             common.active('job'),
             common.active('root'),
         )
-
-    def item_generator(self, path):
-        """Yields the asset items to be processed by :meth:`init_data`.
-
-        Args:
-            path (string): The path to a directory containing asset folders.
-
-        Yields:
-            DirEntry: Entry instances of valid asset folders.
-
-        """
-        try:
-            it = os.scandir(path)
-        except OSError as e:
-            log.error(e)
-            return
-
-        # Iterate over the directories in the root item folder
-        for entry in it:
-            if self._interrupt_requested:
-                return
-
-            if entry.name.startswith('.'):
-                continue
-            if not entry.is_dir():
-                continue
-            if not os.access(entry.path, os.R_OK):
-                continue
-
-            asset_root = f'{path}/{entry.name}'.replace('\\', '/')
-
-            # Check if the root item has links
-            api = LinksAPI(asset_root)
-            links = api.get(force=True)
-
-            for rel_path in links:
-                abs_path = f'{asset_root}/{rel_path}'.replace('\\', '/')
-                if not os.path.exists(abs_path):
-                    continue
-                yield abs_path, api.links_file
-
-            # If no links were found, yield the root item
-            if not links:
-                yield entry.path.replace('\\', '/'), None
 
     def save_active(self):
         """Saves the active item.

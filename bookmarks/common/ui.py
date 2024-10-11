@@ -51,13 +51,13 @@ def _init_dpi():
 
 
 def _init_stylesheet():
-    """Loads and stores the custom stylesheet used by the app.
+    """Loads and stores the custom style sheet used by the app.
 
-    The stylesheet template is stored in the ``rsc/stylesheet.qss`` file, and we use
+    The style sheet template is stored in the ``rsc/stylesheet.qss`` file, and we use
     the values in ``config.json`` to expand it.
 
     Returns:
-        str: The stylesheet.
+        str: The style sheet.
 
     """
     from .. import images
@@ -65,10 +65,10 @@ def _init_stylesheet():
 
     path = common.rsc(common.stylesheet_file)
     if not os.path.isfile(path):
-        raise FileNotFoundError(f'Stylesheet file not found: {path}')
+        raise FileNotFoundError(f'Style sheet file not found: {path}')
 
     if common.stylesheet:
-        raise RuntimeError('Stylesheet already initialized!')
+        raise RuntimeError('Style sheet already initialized!')
 
     with open(path, 'r', encoding='utf-8') as f:
         qss = f.read()
@@ -79,6 +79,7 @@ def _init_stylesheet():
         if not enum:
             raise RuntimeError(f'Font {enum.name} not found!')
         font, _ = enum(common.Size.MediumText())
+        print(font.family())
         kwargs[enum.name] = font.family()
 
     for enum in core.Color:
@@ -108,7 +109,7 @@ def _init_stylesheet():
     # Custom Image Data
     pixmap = images.rsc_pixmap(
         'server',
-        QtGui.QColor(0,0,0,255),
+        QtGui.QColor(0, 0, 0, 255),
         common.Size.RowHeight(3.0),
         opacity=0.2
     )
@@ -117,7 +118,7 @@ def _init_stylesheet():
 
     pixmap = images.rsc_pixmap(
         'bookmark',
-        QtGui.QColor(0,0,0,255),
+        QtGui.QColor(0, 0, 0, 255),
         common.Size.RowHeight(3.0),
         opacity=0.2
     )
@@ -320,7 +321,7 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
     painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, False)
 
-    metrics = QtGui.QFontMetrics(font)
+    metrics = QtGui.QFontMetricsF(font)
 
     if elide is None:
         elide = QtCore.Qt.ElideLeft
@@ -627,13 +628,6 @@ def widget(idx=None):
 
     if idx is None:
         return common.main_widget.stacked_widget.currentWidget()
-
-    if idx == common.BookmarkItemSwitch:
-        return common.main_widget.bookmark_switch_widget
-    if idx == common.AssetItemSwitch:
-        return common.main_widget.asset_switch_widget
-    if idx == common.TaskItemSwitch:
-        return common.main_widget.task_switch_widget
     return common.main_widget.stacked_widget.widget(idx)
 
 

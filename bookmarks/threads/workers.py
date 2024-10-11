@@ -239,7 +239,7 @@ class BaseWorker(QtCore.QObject):
 
         model = _model(self.queue)
 
-        p = model.source_path()
+        p = model.parent_path()
         k = model.task()
         source = common.proxy_path(source)
         n = -1
@@ -341,7 +341,7 @@ class BaseWorker(QtCore.QObject):
         sort_by = model.sort_by()
         sort_order = model.sort_order()
 
-        p = model.source_path()
+        p = model.parent_path()
         k = model.task()
         t = ref().data_type
 
@@ -548,15 +548,20 @@ class InfoWorker(BaseWorker):
                 ref()[common.FileInfoLoaded] = True
 
     def _process_data(self, ref):
-        """Utility method for :meth:`process_data.
+        """Utility method for :meth:`process_data`.
 
-        ref (weakref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
+        Args:
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
 
         """
         pp = ref()[common.ParentPathRole]
         st = ref()[common.PathRole]
         if not pp or not st:
             raise RuntimeError('Failed to process item.')
+
+        # Normalize and convert st to absolute path
+        st = os.path.abspath(os.path.normpath(st.replace('\\', '/')))
+        ref()[common.PathRole] = st
 
         flags = ref()[common.FlagsRole]
         item_type = ref()[common.DataTypeRole]
@@ -568,9 +573,13 @@ class InfoWorker(BaseWorker):
         if len(pp) > 4:
             collapsed = common.is_collapsed(st)
             proxy_k = common.proxy_path(st)
+            proxy_k = os.path.abspath(os.path.normpath(proxy_k.replace('\\', '/')))
             k = proxy_k if collapsed else st
         else:
             k = st
+
+        # Now normalize and convert k to absolute path
+        k = os.path.abspath(os.path.normpath(k.replace('\\', '/')))
 
         asset_row_data = db.get_row(k, database.AssetTable)
         bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
@@ -584,9 +593,11 @@ class InfoWorker(BaseWorker):
                 _h = common.sanitize_hashtags(asset_row_data['description'])
                 ref()[common.DescriptionRole] = _h
                 ref()[common.FilterTextRole] += '\n' + _h
+
         # Asset Progress Data
-        if len(pp) == 4 and asset_row_data['progress']:
+        if len(pp) == 4 and asset_row_data and asset_row_data.get('progress'):
             ref()[common.AssetProgressRole] = asset_row_data['progress']
+
         # Asset entry data
         if len(pp) == 4:
             ref()[common.EntryRole].append(
@@ -600,28 +611,24 @@ class InfoWorker(BaseWorker):
         # Asset ShotGrid task to list
         if (
                 len(pp) == 4 and
-                asset_row_data['sg_task_name'] and
-                ref()[common.DataDictRole] and
+                asset_row_data and
+                asset_row_data.get('sg_task_name') and
                 not asset_row_data['flags'] & common.MarkedAsArchived
         ):
             if ref():
                 _ref = ref()[common.DataDictRole]
 
-            # TODO: This does not seem to be thread safe (?) but since we only have one asset worker
-            #       it should be fine for now.
-            if _ref():
-                if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'] not in _ref().sg_task_names:
-                    if _ref():
+                if _ref():
+                    if asset_row_data['sg_task_name'] and asset_row_data['sg_task_name'] not in _ref().sg_task_names:
                         _ref().sg_task_names.append(asset_row_data['sg_task_name'])
 
-            if _ref():
-                if asset_row_data['sg_name'] and asset_row_data['sg_name'] not in _ref().sg_names:
-                    if _ref():
+                    if asset_row_data['sg_name'] and asset_row_data['sg_name'] not in _ref().sg_names:
                         _ref().sg_names.append(asset_row_data['sg_name'])
 
         # ShotGrid status
         if len(pp) <= 4:
             update_sg_configured(pp, bookmark_row_data, asset_row_data, ref)
+
         # Note count
         if asset_row_data:
             ref()[common.NoteCountRole] = count_todos(asset_row_data)
@@ -635,69 +642,6 @@ class InfoWorker(BaseWorker):
         if len(pp) > 4:
             flags |= _proxy_flags if _proxy_flags else 0
         ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
-
-        if ref() and ref()[common.ItemTabRole] == common.TaskItemSwitch:
-            # Let's get the token config instance to check what extensions are
-            # currently allowed to be displayed in the task folder
-            config = tokens.get(*pp[0:3])
-
-            description = config.get_description(pp[-1])
-            ref()[common.DescriptionRole] = description
-            ref()[common.FilterTextRole] += '\n' + description
-
-            is_valid_task = config.check_task(pp[-1])
-            if is_valid_task:
-                valid_extensions = config.get_task_extensions(pp[-1])
-            else:
-                valid_extensions = config.get_extensions(tokens.AllFormat)
-
-            def _file_it(path):
-                try:
-                    _it = os.scandir(path)
-                except:
-                    return
-                for entry in _it:
-                    if entry.is_symlink():
-                        continue
-                    if entry.name.startswith('.'):
-                        continue
-                    if entry.name == 'thumbs.db':
-                        continue
-
-                    if entry.is_dir():
-                        yield from _file_it(entry.path)
-
-                    if not entry.is_file():
-                        continue
-
-                    if QtCore.QFileInfo(entry.path).suffix().lower() not in valid_extensions:
-                        continue
-
-                    yield entry.path
-
-            _idx = 0
-            _max = 199
-            for _idx, _ in enumerate(_file_it(st)):
-                if not ref():
-                    break
-
-                ref()[common.NoteCountRole] = _idx + 1
-
-                if _idx == 1:
-                    _s = 'a' + pp[-1].lower()
-                    ref()[common.SortByNameRole] = _s
-                    ref()[common.SortByLastModifiedRole] = _s
-                    ref()[common.SortBySizeRole] = _s
-                    ref()[common.SortByTypeRole] = _s
-
-                if _idx > _max:
-                    break
-
-            _suffix = f'{_idx + 1} items' if _idx < _max else f'{_max}+ items'
-            _suffix = _suffix if _idx > 0 else ''
-            _suffix = f' ({_suffix})' if description and _idx > 0 else _suffix
-
-            ref()[common.DescriptionRole] += _suffix
 
         self._process_bookmark_item(ref, db.source(), bookmark_row_data, pp)
         self._process_file_item(ref, item_type)
@@ -724,6 +668,7 @@ class InfoWorker(BaseWorker):
         if not self.is_valid(ref):
             return False
         ref()[common.AssetCountRole] = count
+        ref()[common.SortBySizeRole] = count
         ref()[common.DescriptionRole] = description
         ref()[common.FilterTextRole] += '\n' + description
         ref()[QtCore.Qt.ToolTipRole] = description
@@ -735,7 +680,6 @@ class InfoWorker(BaseWorker):
             return
 
         seq = ref()[common.SequenceRole]
-
         frs = sorted(ref()[common.FramesRole], key=lambda x: int(x))
         ref()[common.FramesRole] = frs
 
@@ -746,10 +690,23 @@ class InfoWorker(BaseWorker):
         padding = len(frs[0])
         rangestring = get_ranges(intframes, padding)
 
-        startpath = seq.group(1) + str(min(intframes)).zfill(padding) + seq.group(3) + '.' + seq.group(4)
-        endpath = seq.group(1) + str(max(intframes)).zfill(padding) + seq.group(3) + '.' + seq.group(4)
-        seqpath = seq.group(1) + common.SEQSTART + rangestring + common.SEQEND + seq.group(3) + '.' + seq.group(4)
-        seqname = seqpath.split('/')[-1]
+        # Construct paths and normalize them
+        startpath = common.normalize_path(
+            seq.group(1) + str(min(intframes)).zfill(padding) + seq.group(3) + '.' + seq.group(4))
+        endpath = common.normalize_path(
+            seq.group(1) + str(max(intframes)).zfill(padding) + seq.group(3) + '.' + seq.group(4))
+        seqpath = common.normalize_path(
+            seq.group(1) + common.SEQSTART + rangestring + common.SEQEND + seq.group(3) + '.' + seq.group(4))
+
+        # Compute relative path for display name
+        try:
+            source_path = '/'.join(ref()[common.ParentPathRole][0:5])
+            seqname = os.path.relpath(seqpath, source_path).replace('\\', '/')
+            if '..' in seqname or seqname.startswith('.'):
+                seqname = os.path.basename(seqpath)
+        except Exception as e:
+            log.error(f'Failed to compute relative path: {e}')
+            seqname = os.path.basename(seqpath)
 
         _mtime = 0
         info_string = ''
@@ -757,14 +714,10 @@ class InfoWorker(BaseWorker):
             for entry in er:
                 stat = entry.stat()
                 size += stat.st_size
-                _mtime = stat.st_mtime if stat.st_mtime > _mtime else _mtime
+                _mtime = max(_mtime, stat.st_mtime)
 
             mtime = _qlast_modified(_mtime)
-            info_string += str(len(intframes)) + 'f;' + mtime.toString('dd') + '/' + mtime.toString(
-                'MM'
-            ) + '/' + mtime.toString('yyyy') + ' ' + mtime.toString('hh') + ':' + mtime.toString(
-                'mm'
-            ) + ';' + common.byte_to_pretty_string(size)
+            info_string += f"{len(intframes)}f;{mtime.toString('dd/MM/yyyy hh:mm')};{common.byte_to_pretty_string(size)}"
 
         # Setting the path names
         if not self.is_valid(ref):
@@ -796,9 +749,7 @@ class InfoWorker(BaseWorker):
         _mtime = stat.st_mtime
         mtime = _qlast_modified(_mtime)
 
-        info_string = mtime.toString('dd') + '/' + mtime.toString('MM') + '/' + mtime.toString(
-            'yyyy'
-        ) + ' ' + mtime.toString('hh') + ':' + mtime.toString('mm') + ';' + common.byte_to_pretty_string(size)
+        info_string = f"{mtime.toString('dd/MM/yyyy hh:mm')};{common.byte_to_pretty_string(size)}"
 
         if not self.is_valid(ref):
             return False

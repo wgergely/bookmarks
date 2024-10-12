@@ -701,16 +701,17 @@ class LinksView(QtWidgets.QTreeView):
 
         self.model().clear()
 
-        for entry in os.scandir(path):
-            if not entry.is_dir():
-                continue
-            if entry.is_symlink():
-                continue
-            if not os.access(entry.path, os.W_OK):
-                continue
-            if entry.name.startswith('.'):
-                continue
-            self.model().add_path(entry.path.replace('\\', '/'))
+        with os.scandir(path) as it:
+            for entry in it:
+                if not entry.is_dir():
+                    continue
+                if entry.is_symlink():
+                    continue
+                if not os.access(entry.path, os.W_OK):
+                    continue
+                if entry.name.startswith('.'):
+                    continue
+                self.model().add_path(entry.path.replace('\\', '/'))
 
         self.expandAll()
 

@@ -590,18 +590,19 @@ class PublishWidget(base.BasePropertyEditor):
 
         self.progress_widget.setValue(1)
 
-        for entry in os.scandir(_dir.path()):
-            if entry.name.startswith('.') and entry.is_dir():
-                continue
+        with os.scandir(_dir.path()) as it:
+            for entry in it:
+                if entry.name.startswith('.') and entry.is_dir():
+                    continue
 
-            if not f.exists():
-                _dir.mkpath(f'./.archive/{s}')
+                if not f.exists():
+                    _dir.mkpath(f'./.archive/{s}')
 
-            file_info = QtCore.QFileInfo(entry.path)
-            if not QtCore.QFile(file_info.filePath()).rename(
-                    f'{_dir.path()}/.archive/{s}/{file_info.fileName()}'
-            ):
-                log.error(f'Could not remove {file_info.filePath()}')
+                file_info = QtCore.QFileInfo(entry.path)
+                if not QtCore.QFile(file_info.filePath()).rename(
+                        f'{_dir.path()}/.archive/{s}/{file_info.fileName()}'
+                ):
+                    log.error(f'Could not remove {file_info.filePath()}')
 
         log.success('Previous publish archived successfully.')
 

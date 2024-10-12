@@ -485,53 +485,6 @@ def normalize_path(path):
     return os.path.abspath(os.path.normpath(path)).replace('\\', '/')
 
 
-
-@functools.lru_cache(maxsize=1048576)
-def get_sequence_and_shot(s):
-    """Returns the sequence and shot name of the given path.
-
-    E.g. if the path is `C:/SEQ050/SH010/my_file.ma` will return
-    `('SEQ050', 'SH010')`. If neither the sequence or shot name is found,
-    will try to match using digits only.
-
-    Args:
-        s (str): A file or folder path.
-
-    Returns:
-        tuple (str, str): Sequence and shot name, or `(None, None)`
-                                    if not found.
-
-    """
-    common.check_type(s, str)
-
-    # Get sequence name
-    match = re.search(
-        r'(sq|sq_|seq|seq_|sequence|sequence_)(\d+)',
-        s,
-        flags=re.IGNORECASE
-    )
-    seq = ''.join(match.groups()) if match and match.groups() else None
-
-    # Get shot name
-    match = re.search(
-        r'(sh|sh_|shot|shot_)(\d+)',
-        s,
-        flags=re.IGNORECASE
-    )
-    shot = ''.join(match.groups()) if match and match.groups() else None
-
-    # If we don't have a match for either, we could try to check for a numerical pattern
-    if not seq and not shot:
-        match = re.search(
-            r'(\d{2,})\D{1,6}(\d{3,})',
-            s,
-            flags=re.IGNORECASE
-        )
-        seq, shot = (match.group(1), match.group(2)) if match else (seq, shot)
-
-    return seq, shot
-
-
 def get_entry_from_path(path, is_dir=True, force_exists=False):
     """Returns a scandir entry of the given file path.
 
@@ -549,11 +502,12 @@ def get_entry_from_path(path, is_dir=True, force_exists=False):
     if not force_exists and not file_info.exists():
         return None
 
-    for entry in os.scandir(file_info.dir().path()):
-        if is_dir and not entry.is_dir():
-            continue
-        if entry.name == file_info.fileName():
-            return entry
+    with os.scandir(file_info.dir().path()) as it:
+        for entry in it:
+            if is_dir and not entry.is_dir():
+                continue
+            if entry.name == file_info.fileName():
+                return entry
     return None
 
 
@@ -561,11 +515,11 @@ def byte_to_pretty_string(num, suffix='B'):
     """Converts a numeric byte value to a human-readable string.
 
     Args:
-        num (int): The number of bytes.
-        suffix (str): A custom suffix.
+        num (int): the number of bytes.
+        suffix (str): a custom suffix.
 
     Returns:
-        str:            Human readable byte value.
+        str: Human readable byte value.
 
     """
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
@@ -576,7 +530,7 @@ def byte_to_pretty_string(num, suffix='B'):
 
 
 def get_py_obj_size(obj):
-    """Sum size of object & members.
+    """Sum byte size of an object and its members.
 
     """
     from gc import get_referents

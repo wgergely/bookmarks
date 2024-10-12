@@ -72,20 +72,21 @@ def get_binary(binary_name):
     if root and QtCore.QFileInfo(root).exists():
         bin_dir = QtCore.QFileInfo(f'{root}/bin')
         if bin_dir.exists():
-            for entry in os.scandir(bin_dir.filePath()):
-                try:
-                    if not entry.is_file():
+            with os.scandir(bin_dir.filePath()) as it:
+                for entry in it:
+                    try:
+                        if not entry.is_file():
+                            continue
+                    except:
                         continue
-                except:
-                    continue
 
-                match = re.match(
-                    rf'^{binary_name}$|{binary_name}\..+',
-                    entry.name,
-                    flags=re.IGNORECASE
-                )
-                if match:
-                    return QtCore.QFileInfo(entry.path).filePath()
+                    match = re.match(
+                        rf'^{binary_name}$|{binary_name}\..+',
+                        entry.name,
+                        flags=re.IGNORECASE
+                    )
+                    if match:
+                        return QtCore.QFileInfo(entry.path).filePath()
 
     # Check the environment variables for possible values
     key = f'{common.product}_{binary_name}'.upper()

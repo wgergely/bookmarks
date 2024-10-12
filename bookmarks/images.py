@@ -90,8 +90,9 @@ def init_resources():
     for _source, k in ((common.rsc(f), f) for f in
                        (common.GuiResource, common.ThumbnailResource,
                         common.FormatResource)):
-        for _entry in os.scandir(_source):
-            common.image_resource_list[k].append(_entry.name.split('.', maxsplit=1)[0])
+        with os.scandir(_source) as it:
+            for _entry in it:
+                common.image_resource_list[k].append(_entry.name.split('.', maxsplit=1)[0])
 
 
 def init_pixel_ratio():

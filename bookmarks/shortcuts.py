@@ -61,6 +61,8 @@ ToggleItemFavourite = common.idx()
 PushToRV = common.idx()
 PushToRVFullScreen = common.idx()
 
+EditAssetLinks = common.idx()
+
 # Link editor shortcuts
 AddLink = common.idx()
 RemoveLink = common.idx()
@@ -521,6 +523,13 @@ MainWidgetShortcuts = {
         'default': 'Ctrl+Shift+P',
         'repeat': False,
         'description': 'Push footage to RV in full-screen',
+        'shortcut': None,
+    },
+    EditAssetLinks: {
+        'value': 'Ctrl+L',
+        'default': 'Ctrl+L',
+        'repeat': False,
+        'description': 'Edit Links...',
         'shortcut': None,
     },
 }

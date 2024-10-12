@@ -686,14 +686,15 @@ class FFMpegWidget(base.BasePropertyEditor):
                 raise RuntimeError('Could not create ffmpeg temp dir')
 
         # Remove any previously created temp image frames
-        for entry in os.scandir(temp_dir.path()):
-            if entry.is_dir():
-                continue
-            if not entry.name.startswith('ffmpeg_'):
-                continue
-            _f = QtCore.QFile(entry.path)
-            if not _f.remove():
-                log.error(f'Could not remove {_f.filePath()}')
+        with os.scandir(temp_dir.path()) as it:
+            for entry in it:
+                if entry.is_dir():
+                    continue
+                if not entry.name.startswith('ffmpeg_'):
+                    continue
+                _f = QtCore.QFile(entry.path)
+                if not _f.remove():
+                    log.error(f'Could not remove {_f.filePath()}')
 
         ext = QtCore.QFileInfo(index.data(common.PathRole)).suffix().strip('.').lower()
 

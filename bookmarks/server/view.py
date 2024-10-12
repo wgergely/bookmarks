@@ -610,20 +610,21 @@ class AddJobDialog(QtWidgets.QDialog):
             depth += 1
             if depth > max_depth:
                 return
-            for entry in os.scandir(path):
-                if not entry.is_dir():
-                    continue
-                if entry.name.startswith('.'):
-                    continue
-                if not os.access(entry.path, os.R_OK | os.W_OK):
-                    continue
-                p = entry.path.replace('\\', '/')
-                _rel_path = p[len(self._root_path) + 1:].strip('/')
+            with os.scandir(path) as it:
+                for entry in it:
+                    if not entry.is_dir():
+                        continue
+                    if entry.name.startswith('.'):
+                        continue
+                    if not os.access(entry.path, os.R_OK | os.W_OK):
+                        continue
+                    p = entry.path.replace('\\', '/')
+                    _rel_path = p[len(self._root_path) + 1:].strip('/')
 
-                if depth == max_depth:
-                    yield _rel_path
-                abs_path = entry.path.replace('\\', '/')
-                yield from _it(abs_path, depth, max_depth)
+                    if depth == max_depth:
+                        yield _rel_path
+                    abs_path = entry.path.replace('\\', '/')
+                    yield from _it(abs_path, depth, max_depth)
 
         def _add_completer(editor, values):
             completer = QtWidgets.QCompleter(values, parent=editor)

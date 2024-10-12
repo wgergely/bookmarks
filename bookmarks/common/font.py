@@ -39,17 +39,18 @@ class FontDatabase(QtGui.QFontDatabase):
         """
         source = common.rsc('fonts')
 
-        for entry in os.scandir(source):
-            if not entry.name.endswith('ttc'):
-                continue
+        with os.scandir(source) as it:
+            for entry in it:
+                if not entry.name.endswith('ttc'):
+                    continue
 
-            idx = self.addApplicationFont(entry.path)
-            if idx < 0:
-                raise RuntimeError(f'Could not load font file: {entry.path}')
+                idx = self.addApplicationFont(entry.path)
+                if idx < 0:
+                    raise RuntimeError(f'Could not load font file: {entry.path}')
 
-            family = self.applicationFontFamilies(idx)
-            if not family:
-                raise RuntimeError(f'Could not find font family in file: {entry.path} ({idx})')
+                family = self.applicationFontFamilies(idx)
+                if not family:
+                    raise RuntimeError(f'Could not find font family in file: {entry.path} ({idx})')
 
     def get(self, size, role):
         """Retrieve the font and metrics for the given font size and

@@ -32,7 +32,7 @@ def show():
 
 
 class ThumbnailLibrary(ui.GalleryWidget):
-    """Editor used to show a list of predefined thumbnail icons.
+    """The editor used to show a list of predefined thumbnail icons.
 
     """
 
@@ -43,9 +43,11 @@ class ThumbnailLibrary(ui.GalleryWidget):
         """Yields a list of predefined thumbnail icons.
 
         """
-        for entry in os.scandir(common.rsc(common.ThumbnailResource)):
-            if not entry.name.endswith(common.thumbnail_format):
-                continue
-            label = entry.name.replace('thumb_', '').split('.')[0]
-            path = entry.path.replace('\\', '/')
-            yield label, path, path
+
+        with os.scandir(common.rsc(common.ThumbnailResource)) as it:
+            for entry in it:
+                if not entry.name.endswith(common.thumbnail_format):
+                    continue
+                label = entry.name.replace('thumb_', '').split('.')[0]
+                path = entry.path.replace('\\', '/')
+                yield label, path, path

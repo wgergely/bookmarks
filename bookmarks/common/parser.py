@@ -131,6 +131,7 @@ class StringParser(QtCore.QObject):
         env['second'] = datetime.now().second
 
         env['date'] = datetime.now().strftime('%Y%m%d')
+        env['today'] = datetime.now().strftime('%Y%m%d')
 
         env['user'] = common.get_username()
         env['platform'] = common.get_platform()
@@ -140,12 +141,24 @@ class StringParser(QtCore.QObject):
         env['###'] = '000'
         env['####'] = '0000'
         env['#####'] = '00000'
+        env['#####'] = '000000'
         env['%01d'] = '0'
-        env['%01d'] = '00'
-        env['%02d'] = '000'
-        env['%03d'] = '0000'
-        env['%04d'] = '00000'
-        env['%05d'] = '000000'
+        env['%02d'] = '00'
+        env['%03d'] = '000'
+        env['%04d'] = '0000'
+        env['%05d'] = '00000'
+        env['%06d'] = '00000'
+
+        # Set shot and sequence
+        env['sequence'] = '000'
+        env['shot'] = '0000'
+
+        if common.active('asset', path=True):
+            seq, shot = common.get_sequence_and_shot(common.active('asset', path=True))
+            if seq:
+                env['sequence'] = seq
+            if shot:
+                env['shot'] = shot
 
         self._env = env
 
@@ -403,7 +416,7 @@ class TokenSyntaxHighlighter(QtGui.QSyntaxHighlighter):
 
 class TokenLineEdit(QtWidgets.QTextEdit):
     returnPressed = QtCore.Signal()
-    textChanged = QtCore.Signal(str) # Mimic QLineEdit's textChanged signal with a single string argument
+    textChanged = QtCore.Signal(str)  # Mimic QLineEdit's textChanged signal with a single string argument
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -412,7 +425,6 @@ class TokenLineEdit(QtWidgets.QTextEdit):
         # Mimic QLineEdit methods
         self.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
         self.setAcceptRichText(False)
-        self.setAlignment(QtCore.Qt.AlignRight)
 
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 

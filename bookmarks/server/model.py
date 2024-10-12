@@ -452,9 +452,10 @@ class ServerModel(QtCore.QAbstractItemModel):
             return node.has_children()
 
         if node.type == NodeType.ServerNode:
-            for entry in os.scandir(node.path()):
-                if entry.is_dir():
-                    return True
+            with os.scandir(node.path()) as it:
+                for entry in it:
+                    if entry.is_dir():
+                        return True
         if node.type == NodeType.JobNode:
             bookmarks = [v['root'] for v in common.bookmarks.values() if
                          v['server'] == node.server and v['job'] == node.job]
@@ -492,26 +493,26 @@ class ServerModel(QtCore.QAbstractItemModel):
 
                 if depth > self._job_style:
                     return
+                with os.scandir(path) as it:
+                    for entry in it:
+                        if not entry.is_dir():
+                            continue
+                        if entry.name[0] in {'.', '$'}:
+                            continue
+                        if entry.name in templates_lib.template_blacklist:
+                            continue
+                        if not os.access(entry.path, os.R_OK | os.W_OK):
+                            log.error(f'No access to {entry.path}')
+                            continue
+                        p = entry.path.replace('\\', '/')
 
-                for entry in os.scandir(path):
-                    if not entry.is_dir():
-                        continue
-                    if entry.name[0] in {'.', '$'}:
-                        continue
-                    if entry.name in templates_lib.template_blacklist:
-                        continue
-                    if not os.access(entry.path, os.R_OK | os.W_OK):
-                        log.error(f'No access to {entry.path}')
-                        continue
-                    p = entry.path.replace('\\', '/')
+                        rel_path = p.replace(root_path, '').strip('/')
 
-                    rel_path = p.replace(root_path, '').strip('/')
-
-                    if depth == self._job_style:
-                        yield rel_path
-                    abs_path = entry.path.replace('\\', '/')
-                    images.ImageCache.flush(abs_path)
-                    yield from _it(entry.path, depth)
+                        if depth == self._job_style:
+                            yield rel_path
+                        abs_path = entry.path.replace('\\', '/')
+                        images.ImageCache.flush(abs_path)
+                        yield from _it(entry.path, depth)
 
             current_job_names = [child.job for child in node.children()]
             new_job_names = sorted([job_path for job_path in _it(root_path, -1)], key=lambda s: s.lower())

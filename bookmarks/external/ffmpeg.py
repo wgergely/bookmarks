@@ -216,20 +216,21 @@ def _get_sequence_start_end(path):
         raise RuntimeError(f'{_dir} does not exists.')
 
     f = []
-    for entry in os.scandir(_dir.path()):
-        _path = entry.path.replace('\\', '/')
-        if not _path.endswith(ext):
-            continue
-        if not seq.group(1) in _path:
-            continue
-        _seq = common.get_sequence(_path)
-        if not _seq:
-            continue
-        f.append(int(_seq.group(2)))
-    if not f:
-        raise RuntimeError(
-            'Could not find the first frame of the sequence.'
-        )
+    with os.scandir(_dir.path()) as it:
+        for entry in it:
+            _path = entry.path.replace('\\', '/')
+            if not _path.endswith(ext):
+                continue
+            if not seq.group(1) in _path:
+                continue
+            _seq = common.get_sequence(_path)
+            if not _seq:
+                continue
+            f.append(int(_seq.group(2)))
+        if not f:
+            raise RuntimeError(
+                'Could not find the first frame of the sequence.'
+            )
 
     return seq, min(f), max(f)
 

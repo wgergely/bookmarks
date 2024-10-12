@@ -144,16 +144,17 @@ class AddJobDialog(QtWidgets.QDialog):
     def _init_completers(self):
 
         def _it(path):
-            for entry in os.scandir(path):
-                if not entry.is_dir():
-                    continue
-                if entry.name.startswith('.'):
-                    continue
-                if not os.access(entry.path, os.R_OK | os.W_OK):
-                    continue
-                p = entry.path.replace('\\', '/')
-                _rel_path = p[len(common.active('root', path=True)) + 1:].strip('/')
-                yield _rel_path
+            with os.scandir(path) as it:
+                for entry in it:
+                    if not entry.is_dir():
+                        continue
+                    if entry.name.startswith('.'):
+                        continue
+                    if not os.access(entry.path, os.R_OK | os.W_OK):
+                        continue
+                    p = entry.path.replace('\\', '/')
+                    _rel_path = p[len(common.active('root', path=True)) + 1:].strip('/')
+                    yield _rel_path
 
         def _add_completer(editor, values):
             completer = QtWidgets.QCompleter(values, parent=editor)

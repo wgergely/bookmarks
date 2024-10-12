@@ -20,11 +20,12 @@ def recursive_search(_path):
         return
 
     print(f'>>> Searching for modules in: {_path}')
-    for _entry in os.scandir(_path):
-        if _entry.is_dir():
-            yield from recursive_search(_entry.path.replace('\\', '/'))
-        else:
-            yield _entry
+    with os.scandir(_path) as it:
+        for _entry in it:
+            if _entry.is_dir():
+                yield from recursive_search(_entry.path.replace('\\', '/'))
+            else:
+                yield _entry
 
 
 

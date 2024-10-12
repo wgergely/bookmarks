@@ -236,7 +236,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         self.paint_db_status(ctx)
         self.paint_deleted(ctx)
 
-        self.paint_drag_source(ctx)
+        self.paint_drag_items(ctx)
 
         return ctx
 
@@ -1142,19 +1142,21 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         ctx.painter.drawRect(rect)
 
     @save_painter
-    def paint_drag_source(self, ctx):
+    def paint_drag_items(self, ctx):
         """Overlay to indicate the source of a drag operation."""
-
+        # no drag operation
         if self.parent().drag_source_row == -1:
             return
 
+        # Drag destination
         if (
                 ctx.index.flags() & QtCore.Qt.ItemIsDropEnabled and
-                self.parent().drag_source_row != ctx.index.row()
+                self.parent().drag_source_row != ctx.index.row() and
+                ctx.index.column() == 2
         ):
             ctx.painter.setOpacity(0.5)
             ctx.painter.setBrush(common.Color.VeryDarkBackground())
-            ctx.painter.drawRect(ctx.rect)
+            ctx.painter.drawRoundedRect(ctx.rect, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
 
             ctx.painter.setOpacity(1.0)
             ctx.painter.setBrush(QtCore.Qt.NoBrush)
@@ -1167,7 +1169,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
                 common.Size.SmallText()
             )
             ctx.painter.setFont(font)
-            text = 'Paste item properties'
+            text = 'Drop to paste item properties'
             ctx.painter.setPen(common.Color.Green())
             ctx.painter.drawText(
                 ctx.rect.adjusted(
@@ -1180,9 +1182,9 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
             )
             return
 
-        if ctx.index.row() == self.parent().drag_source_row:
+        if ctx.index.row() == self.parent().drag_source_row and ctx.index.column() == 2:
             ctx.painter.setBrush(common.Color.VeryDarkBackground())
-            ctx.painter.drawRect(ctx.rect)
+            ctx.painter.drawRoundedRect(ctx.rect, common.Size.Indicator(1.5), common.Size.Indicator(1.5))
 
             ctx.painter.setPen(common.Color.Background())
             font, metrics = common.Font.MediumFont(

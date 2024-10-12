@@ -137,20 +137,21 @@ def increment_version(v, dir, name, func, increment):
     idx = name.index(v)
 
     _arr = []
-    for entry in os.scandir(_dir.path()):
-        if len(name) != len(entry.name):
-            continue
-        if name[:idx] != entry.name[:idx]:
-            continue
+    with os.scandir(_dir.path()) as it:
+        for entry in it:
+            if len(name) != len(entry.name):
+                continue
+            if name[:idx] != entry.name[:idx]:
+                continue
 
-        _v = entry.name[idx:idx + len(v)]
-        _prefix = 'v' if _v.startswith('v') else ''
-        _padding = len(_v.replace('v', ''))
-        try:
-            _n = int(_v.replace('v', ''))
-        except ValueError:
-            continue
-        _arr.append(_n)
+            _v = entry.name[idx:idx + len(v)]
+            _prefix = 'v' if _v.startswith('v') else ''
+            _padding = len(_v.replace('v', ''))
+            try:
+                _n = int(_v.replace('v', ''))
+            except ValueError:
+                continue
+            _arr.append(_n)
 
     if not _arr:
         n += increment

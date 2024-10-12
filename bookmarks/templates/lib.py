@@ -895,35 +895,36 @@ class TemplateItem(object):
                     log.error(f'No read access to the folder: {path}')
                     return
 
-                for entry in os.scandir(path):
-                    if entry.is_symlink():
-                        continue
+                with os.scandir(path) as it:
+                    for entry in it:
+                        if entry.is_symlink():
+                            continue
 
-                    p = entry.path.replace('\\', '/').rstrip('/')
-                    rp = p[len(source_folder) + 1:]
+                        p = entry.path.replace('\\', '/').rstrip('/')
+                        rp = p[len(source_folder) + 1:]
 
-                    if skip_system_files and entry.name.lower() in blacklist:
-                        log.debug(f'Skipping system file: {p}')
-                        _skipped.append(entry.path)
-                        continue
+                        if skip_system_files and entry.name.lower() in blacklist:
+                            log.debug(f'Skipping system file: {p}')
+                            _skipped.append(entry.path)
+                            continue
 
-                    if entry.is_file():
-                        file_size = os.path.getsize(p)
-                        if _total_size + file_size > max_size_bytes:
-                            raise TemplateSizeError(
-                                f'Template size exceeds the maximum allowed size of {max_size_mb} MB.')
-                        _total_size += file_size
+                        if entry.is_file():
+                            file_size = os.path.getsize(p)
+                            if _total_size + file_size > max_size_bytes:
+                                raise TemplateSizeError(
+                                    f'Template size exceeds the maximum allowed size of {max_size_mb} MB.')
+                            _total_size += file_size
 
-                        if rp == '.links':
-                            self._has_links = True
+                            if rp == '.links':
+                                self._has_links = True
 
-                        _files.append(rp)
-                        zf.write(p, rp)
-                    elif entry.is_dir():
-                        rp = f'{rp}/'
-                        _folders.append(rp)
-                        zf.writestr(rp, '')
-                        _it(p, _total_size, _files, _folders, _skipped)
+                            _files.append(rp)
+                            zf.write(p, rp)
+                        elif entry.is_dir():
+                            rp = f'{rp}/'
+                            _folders.append(rp)
+                            zf.writestr(rp, '')
+                            _it(p, _total_size, _files, _folders, _skipped)
 
             _it(source_folder, total_size, files, folders, skipped)
 
@@ -1022,10 +1023,10 @@ class TemplateItem(object):
         if _type == TemplateType.UserTemplate:
             if not os.path.exists(cls.default_user_folder):
                 return
-
-            for entry in os.scandir(cls.default_user_folder):
-                if not entry.name.endswith(f'.{cls.default_extension}'):
-                    continue
+            with os.scandir(cls.default_user_folder) as it:
+                for entry in it:
+                    if not entry.name.endswith(f'.{cls.default_extension}'):
+                        continue
 
                 yield cls(path=f'{cls.default_user_folder}/{entry.name}')
 
@@ -1054,6 +1055,7 @@ class TemplateItem(object):
             if not os.path.exists(TemplateItem.default_user_folder):
                 return False
 
-            for entry in os.scandir(TemplateItem.default_user_folder):
-                if entry.name.endswith(f'.{TemplateItem.default_extension}'):
-                    return True
+            with os.scandir(TemplateItem.default_user_folder) as it:
+                for entry in it:
+                    if entry.name.endswith(f'.{TemplateItem.default_extension}'):
+                        return True

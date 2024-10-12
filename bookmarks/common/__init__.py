@@ -129,3 +129,4 @@ from .signals import *
 from .filter import *
 from .ui import *
 from .color import *
+from .seqshot import *

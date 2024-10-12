@@ -277,14 +277,15 @@ class FavouriteItemModel(file_items.FileItemModel):
                 continue
 
             source_paths = tuple(f for f in common.favourites[k] if f and f != 'default')
-            for entry in os.scandir(_path):
-                path = entry.path.replace('\\', '/')
-                if path == k:
-                    yield entry, source_paths
-                    continue
-                _k = common.proxy_path(path)
-                if k == _k:
-                    yield entry, source_paths
+            with os.scandir(_path) as it:
+                for entry in it:
+                    path = entry.path.replace('\\', '/')
+                    if path == k:
+                        yield entry, source_paths
+                        continue
+                    _k = common.proxy_path(path)
+                    if k == _k:
+                        yield entry, source_paths
 
     def task(self):
         """The model's associated task.

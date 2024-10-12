@@ -96,15 +96,16 @@ def _init_stylesheet():
             kwargs[key] = round(enum() * i)
 
     # Gui resource paths
-    for entry in os.scandir(common.rsc('gui')):
-        if not entry.name.endswith('png'):
-            continue
-        key = f'{entry.name.split(".")[0]}'
-        if key in kwargs:
-            raise KeyError(f'Key {key} already set!')
+    with os.scandir(common.rsc('gui')) as it:
+        for entry in it:
+            if not entry.name.endswith('png'):
+                continue
+            key = f'{entry.name.split(".")[0]}'
+            if key in kwargs:
+                raise KeyError(f'Key {key} already set!')
 
-        # Image path
-        kwargs[key] = images.rsc_pixmap(key, None, None, get_path=True)
+            # Image path
+            kwargs[key] = images.rsc_pixmap(key, None, None, get_path=True)
 
     # Custom Image Data
     pixmap = images.rsc_pixmap(

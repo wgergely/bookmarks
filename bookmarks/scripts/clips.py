@@ -667,11 +667,12 @@ class EdlWidget(base.BasePropertyEditor):
             raise ValueError('')
 
         def _get_sources(path, ext):
-            for entry in os.scandir(path):
-                if entry.is_dir():
-                    yield from _get_sources(entry.path, ext)
-                elif entry.is_file() and entry.name.endswith(ext):
-                    yield entry.path.replace('\\', '/')
+            with os.scandir(path) as it:
+                for entry in it:
+                    if entry.is_dir():
+                        yield from _get_sources(entry.path, ext)
+                    elif entry.is_file() and entry.name.endswith(ext):
+                        yield entry.path.replace('\\', '/')
 
         data = {}
 

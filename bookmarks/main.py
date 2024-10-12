@@ -367,6 +367,7 @@ class MainWidget(QtWidgets.QWidget):
 
         connect(shortcuts.PushToRV, actions.push_to_rv)
         connect(shortcuts.PushToRVFullScreen, actions.push_to_rv_full_screen)
+        connect(shortcuts.EditAssetLinks, actions.edit_asset_links)
 
     def _paint_background(self, painter):
         rect = QtCore.QRect(self.rect())

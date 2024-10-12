@@ -10,7 +10,7 @@ import weakref
 import bookmarks_openimageio
 from PySide2 import QtCore, QtWidgets
 
-from .. import common, tokens
+from .. import common
 from .. import database
 from .. import images
 from .. import log
@@ -411,14 +411,15 @@ def count_assets(path):
     if not os.path.isdir(path):
         return n
 
-    for entry in os.scandir(path):
-        if entry.name.startswith('.'):
-            continue
-        if not entry.is_dir():
-            continue
-        path = entry.path.replace('\\', '/')
-        n += 1
-    return n
+    with os.scandir(path) as it:
+        for entry in it:
+            if entry.name.startswith('.'):
+                continue
+            if not entry.is_dir():
+                continue
+            path = entry.path.replace('\\', '/')
+            n += 1
+        return n
 
 
 def get_bookmark_description(bookmark_row_data):

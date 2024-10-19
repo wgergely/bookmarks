@@ -146,7 +146,7 @@ def exec_(print_info=True):
 
     """
     from . import common
-    with common.initialize(common.StandaloneMode) as app:
+    with common.initialize(common.Mode.Standalone, run_app=True) as app:
         if print_info:
             print(info())
 

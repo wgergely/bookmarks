@@ -1,7 +1,7 @@
-"""The module contains the elements used when initialized in :attr:`~bookmarks.common.core.StandaloneMode`.
+"""The module contains the classes needed to initialize in :attr:`~bookmarks.common.Mode.Standalone` mode.
 
 It defines :class:`.BookmarksAppWindow`, the app's main window based on :class:`.main.MainWidget` (in
-:attr:`~bookmarks.common.core.EmbeddedMode`, Bookmarks uses :class:`.main.MainWidget` as the main widget).
+:attr:`~bookmarks.common.Mode.Embedded`, Bookmarks uses :class:`.main.MainWidget` as the main widget).
 
 """
 import ctypes
@@ -20,7 +20,7 @@ def init():
     """Initializes the main app window.
 
     """
-    if common.init_mode != common.StandaloneMode:
+    if common.init_mode != common.Mode.Standalone:
         raise RuntimeError('Must be initialized in StandaloneMode!')
 
     if isinstance(common.main_widget, BookmarksAppWindow):
@@ -43,7 +43,7 @@ def show():
     """Shows the main app window.
 
     """
-    if common.init_mode != common.StandaloneMode or not isinstance(
+    if common.init_mode != common.Mode.Standalone or not isinstance(
             common.main_widget,
             BookmarksAppWindow
     ):

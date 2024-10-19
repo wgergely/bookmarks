@@ -276,7 +276,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """General app window specific actions.
 
         """
-        if common.init_mode != common.StandaloneMode:
+        if common.init_mode != common.Mode.Standalone:
             return
 
         w = self.parent().window()
@@ -837,7 +837,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Application shutdown options.
 
         """
-        if common.init_mode != common.StandaloneMode:
+        if common.init_mode != common.Mode.Standalone:
             return
 
         self.menu[key()] = {

@@ -6,7 +6,10 @@ Use it in conjunction with make.bat to generate the documentation.
 import os
 
 PYTHON_MODULE_DIR = os.path.normpath(f'{__file__}/{os.pardir}/{os.pardir}/{os.pardir}/bookmarks').replace('\\', '/')
+print(f'>>> PYTHON_MODULE_DIR: {PYTHON_MODULE_DIR}')
+
 PYTHON_MODULE_DOCS_DIR = os.path.normpath(f'{__file__}/{os.pardir}/modules').replace('\\', '/')
+print(f'>>> PYTHON_MODULE_DOCS_DIR: {PYTHON_MODULE_DOCS_DIR}')
 
 if not os.path.isdir(PYTHON_MODULE_DOCS_DIR):
     raise RuntimeError(f'Could not find the docs directory: {PYTHON_MODULE_DOCS_DIR}')
@@ -72,6 +75,7 @@ if __name__ == '__main__':
         if entry.name == '__init__.py':
             rst_dir = f'{PYTHON_MODULE_DOCS_DIR}/{basemod}'
             rst_file = f'{rst_dir}/{basemod}.rst'
+            print(f'>>> Module found: {rst_dir}')
             os.makedirs(rst_dir, exist_ok=True)
             continue
 

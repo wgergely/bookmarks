@@ -18,7 +18,7 @@ from .. import ui
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
 from ..links.lib import LinksAPI
-from ..links.view import PlainTextEdit, LinksEditor
+from ..links.view import LinksEditor
 
 
 def show():
@@ -375,7 +375,7 @@ class AddLinkPresetEditor(QtWidgets.QDialog):
         row.layout().addWidget(self.name_editor)
 
         row = ui.add_row('Links', height=None, parent=grp)
-        self.links_editor = PlainTextEdit(parent=row)
+        self.links_editor = common.TokenEditor(parent=row)
         self.links_editor.setPlaceholderText(
             'Enter relative folder links separated by new lines, for example:\n\n'
             '\n'

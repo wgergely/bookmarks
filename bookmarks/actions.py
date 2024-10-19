@@ -456,7 +456,6 @@ def generate_thumbnails_changed(state):
                     w.start_delayed_queue_timer()
 
 
-
 @must_be_initialized
 def toggle_filter_editor():
     """Toggles the search filter editor view of the current item view.
@@ -806,7 +805,7 @@ def toggle_stays_always_on_top():
     """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` stacking value.
 
     """
-    if common.init_mode != common.StandaloneMode:
+    if common.init_mode != common.Mode.Standalone:
         return
 
     w = common.main_widget
@@ -1340,7 +1339,7 @@ def capture_thumbnail(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(common.PathRole)
 
-    if common.init_mode == common.StandaloneMode:
+    if common.init_mode == common.Mode.Standalone:
         common.save_window_state(common.main_widget)
         common.main_widget.hide()
 
@@ -1349,7 +1348,7 @@ def capture_thumbnail(index):
         server=server, job=job, root=root, source=source, proxy=False
     )
 
-    if common.init_mode == common.StandaloneMode:
+    if common.init_mode == common.Mode.Standalone:
         from . import standalone
         widget.captureFinished.connect(standalone.show)
 
@@ -1535,8 +1534,12 @@ def toggle_active_mode():
     """Toggle the active path mode.
 
     """
+    if common.active_mode == common.ActiveMode.Overridden:
+        raise RuntimeError('The current active values are overridden and cannot be toggled.')
+
     common.active_mode = int(not bool(common.active_mode))
     common.write_current_mode_to_lock()
+    common.prune_lock()
 
     if common.main_widget is None or not common.main_widget.is_initialized:
         return

@@ -7,7 +7,7 @@ import os
 import sys
 import time
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
 from .. import common
 
@@ -21,14 +21,69 @@ dependencies = (
 
 
 class initialize:
+    """
+    Initializes the components required to run Bookmarks.
 
-    def __new__(cls, mode, *args, **kwargs):
-        print('[Bookmarks] Initializing...')
-        initialize_func(mode)
+    This function must be called before any other Bookmarks functions. It is responsible for loading resource variables
+    and starting helper threads that item models use to load information. When using Bookmarks inside a compatible DCC,
+    the mode should be :attr:`~bookmarks.common.Mode.Embedded`. For running as a standalone app,
+    use :attr:`~bookmarks.common.Mode.Standalone`. Remember to call :func:`shutdown` before terminating the app to
+    gracefully stop threads and remove previously initialized components from memory.
+
+    Example:
+
+        .. code-block:: python
+            :linenos:
+
+            from bookmarks import common
+
+            common.initialize(common.Mode.Standalone)
+            common.shutdown()
+
+            # or as a context manager
+
+            with common.initialize(common.Mode.Standalone) as app:  # automatically calls exec_() on exit
+                asset = common.active('asset')
+
+    Args:
+        mode (common.Mode): The mode in which to initialize Bookmarks.
+        run_app (bool): If True, the QApplication will be executed on exit. Default is False.
+
+    """
+
+    def __new__(
+            cls,
+            mode=common.Mode.Standalone,
+            run_app=False,
+            server=None,
+            job=None,
+            root=None,
+            asset=None,
+            task=None
+    ):
+        from bookmarks import log
+        log.debug(f'Initializing Bookmarks in {mode} mode...')
+        initialize_func(mode=mode, server=server, job=job, root=root, asset=asset, task=task)
         return super().__new__(cls)
 
-    def __init__(self, mode):
+    def __init__(
+            self,
+            mode=common.Mode.Standalone,
+            run_app=False,
+            server=None,
+            job=None,
+            root=None,
+            asset=None,
+            task=None
+    ):
         self.mode = mode
+        self.run_app = run_app
+
+        self.server = server
+        self.job = job
+        self.root = root
+        self.asset = asset
+        self.task = task
 
     def __enter__(self):
         return QtWidgets.QApplication.instance()
@@ -38,88 +93,94 @@ class initialize:
             shutdown()
             return False
 
-        if self.mode == common.StandaloneMode:
+        if self.mode == common.Mode.Standalone and self.run_app:
             QtWidgets.QApplication.instance().exec_()
 
-        print('[Bookmarks] Shutting down...')
+        from bookmarks import log
+        log.debug(f'Bookmarks is shutting down...')
+
         shutdown()
 
         return False
 
 
-def initialize_func(mode):
-    """Initializes the components required to run Bookmarks.
+def get_active_overrides_from_env():
+    """Get active overrides from the environment."""
+    # Check and verify that the active overrides are set and are pointing to a valid path
+    overrides = {}
 
-    It's important to call this function before running the app as it's responsible
-    for loading the resource variables and starting the helper threads item models use
-    to load information.
+    for k in common.ActivePathSegmentTypes:
+        v = os.environ.get(f'Bookmarks_ACTIVE_{k.upper()}', None)
+        overrides[k] = v
 
-    Note:
-        Don't forget to call :func:`shutdown` before terminating the application,
-        to gracefully stop threads and remove previously initialized components from the
-        memory.
+        # Check if the path exists
+        path = '/'.join([v for v in overrides.values() if v])
+        if path and not os.path.exists(path):
+            continue
 
-    When Bookmarks is used inside a compatible DCC, the mode should be
-    :attr:`~bookmarks.common.core.EmbeddedMode`. When running as a standalone application, use
-    :attr:`~bookmarks.common.core.StandaloneMode`.
-
-
-    .. code-block:: python
-        :linenos:
-
-        from bookmarks import common
-
-        common.initialize(common.StandaloneMode)
-        common.main_widget.show()
-        common.shutdown()
+    return overrides
 
 
-    Args:
-        mode (str): The initialization mode. One of :attr:`~bookmarks.common.core.StandaloneMode`,
-            :attr:`~bookmarks.common.core.EmbeddedMode`, or :attr:`~bookmarks.common.core.CoreMode`.
+def initialize_func(
+        mode=common.Mode.Standalone,
+        server=None,
+        job=None,
+        root=None,
+        asset=None,
+        task=None
+):
+    """Initializes all app components.
 
     """
-    try:
-        if common.init_mode is not None:
-            raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
-        if mode not in (common.StandaloneMode, common.EmbeddedMode, common.CoreMode):
-            raise ValueError(
-                f'Invalid initialization mode. Got "{mode}", expected '
-                f'`StandaloneMode` or `EmbeddedMode` or `CoreMode`.'
-            )
+    if common.init_mode is not None:
+        raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
 
+    if mode not in common.Mode:
+        raise ValueError(
+            f'Invalid initialization mode. Got "{mode}", '
+            f'expected one of {", ".join([f"{m}" for m in common.Mode])}.'
+        )
+
+    # Set active overrides if they're provided and/or available from the environment
+    # Explicitly passed overrides take precedence over environment variables
+    env_overrides = get_active_overrides_from_env()
+    common.active_server_override = server or env_overrides.get('server', None) or None
+    common.active_job_override = job or env_overrides.get('job', None) or None
+    common.active_root_override = root or env_overrides.get('root', None) or None
+    common.active_asset_override = asset or env_overrides.get('asset', None) or None
+    common.active_task_override = task or env_overrides.get('task', None) or None
+
+    try:
         common.init_mode = mode
         common.item_data = common.DataDict()
-
-        from .parser import StringParser
 
         if not os.path.isdir(common.temp_path()):
             os.makedirs(os.path.normpath(common.temp_path()))
 
-        common.init_signals(connect_signals=mode != common.CoreMode)
+        common.init_signals(connect_signals=mode != common.Mode.Core)
         common.init_active_mode()
         common.init_settings()
         common.init_active()
+
+        from .parser import StringParser
         common.parser = StringParser()
 
         from . import color
         common.init_color_manager()
 
-        if mode == common.CoreMode:
+        if mode == common.Mode.Core:
             return
 
-        common.cursor = QtGui.QCursor()
-
         from . import ui
-        ui._init_ui_scale()
-        ui._init_dpi()
+        ui.init_ui_scale()
+        ui.init_dpi()
 
         from .. import images
         images.init_image_cache()
         images.init_resources()
 
         from .. import standalone
-        if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
+        if not QtWidgets.QApplication.instance() and mode == common.Mode.Standalone:
             standalone.set_application_properties()
 
             app = QtWidgets.QApplication(sys.argv)
@@ -152,9 +213,9 @@ def initialize_func(mode):
         font._init_font_db()
         ui._init_stylesheet()
 
-        if mode == common.StandaloneMode:
+        if mode == common.Mode.Standalone:
             standalone.init()
-        elif mode == common.EmbeddedMode:
+        elif mode == common.Mode.Embedded:
             from .. import main
             main.init()
 
@@ -179,7 +240,7 @@ def initialize_func(mode):
             if n >= timeout:
                 break
     except Exception as e:
-        from bookmarks import log
+        from .. import log
         log.error(f'Error during initialization: {e}')
     finally:
         return io.BytesIO()
@@ -218,11 +279,11 @@ def shutdown():
         from . import log
         log.error(f'Error during shutdown: {e}')
     finally:
-        if _init_mode == common.StandaloneMode and QtWidgets.QApplication.instance():
+        if _init_mode == common.Mode.Standalone and QtWidgets.QApplication.instance():
             QtWidgets.QApplication.instance().exit(0)
 
 
-def _add_path_to_path(v, p):
+def _add_path_to_patht(v, p):
     _v = os.path.normpath(f'{v}{os.path.sep}{p}')
     if not os.path.isdir(_v):
         raise RuntimeError(f'{_v} does not exist.')

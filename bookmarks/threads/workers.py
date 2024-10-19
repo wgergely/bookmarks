@@ -552,7 +552,7 @@ class InfoWorker(BaseWorker):
         """Utility method for :meth:`process_data`.
 
         Args:
-            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data` method.
+            ref (weakref.ref): A data item as created by the :meth:`bookmarks.items.models.ItemModel.init_data`.
 
         """
         pp = ref()[common.ParentPathRole]
@@ -560,7 +560,7 @@ class InfoWorker(BaseWorker):
         if not pp or not st:
             raise RuntimeError('Failed to process item.')
 
-        # Normalize and convert st to absolute path
+        # Normalize and convert st to an absolute path
         st = os.path.abspath(os.path.normpath(st.replace('\\', '/')))
         ref()[common.PathRole] = st
 
@@ -579,11 +579,12 @@ class InfoWorker(BaseWorker):
         else:
             k = st
 
-        # Now normalize and convert k to absolute path
+        # Now normalize and convert k to an absolute path
         k = os.path.abspath(os.path.normpath(k.replace('\\', '/')))
 
         asset_row_data = db.get_row(k, database.AssetTable)
         bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
+        bookmark_row_data['description'] = common.sanitize_hashtags(asset_row_data['description'])
 
         if len(pp) > 4:
             _proxy_flags = db.value(proxy_k, 'flags', database.AssetTable)

@@ -11,8 +11,12 @@ from .. import database
 from .. import ui
 from ..shotgun import actions as sg_actions
 from ..shotgun import shotgun
-from bookmarks.editor.tokeneditors import FileNameConfigEditor, PublishConfigEditor, FFMpegTCConfigEditor, AssetFolderConfigEditor, \
-    FileFormatConfigEditor
+from ..config.editor import (
+    FileNameConfigEditor,
+    PublishConfigEditor,
+    FFMpegTCConfigEditor,
+    AssetFolderConfigEditor,
+    FileFormatConfigEditor)
 
 
 def close():
@@ -508,9 +512,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         if not hasattr(self, f'{k}_editor'):
             raise RuntimeError(f'{k}_editor not found')
 
-        from bookmarks.editor.tokeneditors import TokenEditor
+        from bookmarks.config.editor import ConfigEditor
         editor = getattr(self, f'{k}_editor')
-        w = TokenEditor(self.server, self.job, self.root, parent=editor)
+        w = ConfigEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
         w.exec_()
 
@@ -520,8 +524,8 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         if not hasattr(self, f'{k}_editor'):
             raise RuntimeError(f'{k}_editor not found')
 
-        from bookmarks.editor.tokeneditors import TokenEditor
+        from bookmarks.config.editor import ConfigEditor
         editor = getattr(self, f'{k}_editor')
-        w = TokenEditor(self.server, self.job, self.root, parent=editor)
+        w = ConfigEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
         w.exec_()

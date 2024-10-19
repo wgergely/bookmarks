@@ -60,7 +60,7 @@ class StatusBarWidget(QtWidgets.QStatusBar):
 
 class ToggleSessionModeButton(ui.ClickableIconButton):
     """Button used to toggle between the active path mode between
-    ``common.SynchronizedActivePaths`` and ``common.PrivateActivePaths``.
+    ``common.ActiveMode.Synchronized`` and ``common.ActiveMode.Private``.
 
     """
     ContextMenu = None
@@ -81,35 +81,43 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
         """Get pixmap based on the current status.
 
         """
-        if common.active_mode == common.SynchronizedActivePaths:
+        if common.active_mode == common.ActiveMode.Synchronized:
             return images.rsc_pixmap(
                 'check',
                 common.Color.Green(),
                 self._size
             )
-        if common.active_mode == common.PrivateActivePaths:
+        elif common.active_mode == common.ActiveMode.Private:
             return images.rsc_pixmap(
                 'crossed',
                 common.Color.Red(),
                 self._size
             )
-        return images.rsc_pixmap(
-            'crossed',
-            common.Color.Red(),
-            self._size
-        )
+        elif common.active_mode == common.ActiveMode.Overridden:
+            return images.rsc_pixmap(
+                'check',
+                common.Color.Yellow(),
+                self._size
+            )
+        else:
+            return images.rsc_pixmap(
+                'alert',
+                common.Color.Red(),
+                self._size
+            )
 
     def statusTip(self):
         """Status tip message.
 
         """
-        if common.active_mode == common.SynchronizedActivePaths:
+        if common.active_mode == common.ActiveMode.Synchronized:
             return 'This session sets active paths. Click to toggle.'
-
-        if common.active_mode == common.PrivateActivePaths:
-            return 'This session does not modify active paths. Click to toggle.'
-
-        return 'Invalid session lock.'
+        elif common.active_mode == common.ActiveMode.Private:
+            return 'This session does not permanently save active paths. Click to toggle.'
+        elif common.active_mode == common.ActiveMode.Overridden:
+            return 'This session has overridden active paths.'
+        else:
+            return 'Invalid active mode.'
 
 
 class StatusBar(QtWidgets.QWidget):

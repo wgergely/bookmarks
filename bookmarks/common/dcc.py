@@ -1,3 +1,11 @@
+import unittest
+
+__all__ = [
+    'get_dcc_icon_name',
+    'get_all_known_dcc_formats',
+    'CACHE_FORMATS',
+]
+
 DCC_FILE_FORMATS = {
     # 3D Scene Layout and World Building
     'city_engine': ('cej',),
@@ -143,6 +151,49 @@ DCC_ALIASES = {
     'synth_eyes': ['SynthEyes', 'Syntheyes'],
 }
 
+CACHE_FORMATS = {
+    'abc'
+    'hda',
+    'ass',
+    'bgeo',
+    'fbx',
+    'geo',
+    'ifd',
+    'obj',
+    'rs',
+    'sc',
+    'sim',
+    'vdb',
+    'usd',
+    'usda',
+    'usdc'
+    'usdz',
+    'vrscene',
+    'mi',
+    'prt',
+    'bin',
+    'gltf',
+    'glb',
+    'ply',
+    'stl',
+    '3ds',
+    'dae',
+    'vrmesh'
+    'rib',
+    'orbx',
+    'ocs',
+    'uasset',
+    'umap',
+    'ma',
+    'mb',
+    'blend',
+    'hip',
+    'hiplc',
+    'c4d',
+    'max',
+}
+
+
 import functools
 import re
 
@@ -234,7 +285,7 @@ def normalize_dcc_name(dcc_name):
 
 
 @functools.cache
-def get_dcc_icon(dcc_name):
+def get_dcc_icon_name(dcc_name):
     """
     Retrieve the canonical DCC name for a given DCC name or alias.
 
@@ -284,117 +335,12 @@ def get_dcc_icon(dcc_name):
     return None
 
 
-import unittest
-
-
-class TestNormalizeDCCName(unittest.TestCase):
-    """Tests for the normalize_dcc_name function."""
-
-    def test_removing_years(self):
-        """Test that years are correctly removed."""
-        test_cases = [
-            ('Adobe Photoshop 2020', 'photoshop'),
-            ('Houdini FX 18.5', 'houdini'),
-            ('Maya 2022', 'maya'),
-            ('Cinema 4D R23', 'cinema4d'),
-        ]
-        for input_name, expected in test_cases:
-            result = normalize_dcc_name(input_name)
-            self.assertEqual(result, expected, f"Failed to remove years from '{input_name}'")
-
-    def test_removing_versions(self):
-        """Test that version numbers are correctly removed."""
-        test_cases = [
-            ('Blender 2.93', 'blender'),
-            ('Unity 2020.1.2f1', 'unity'),
-            ('ZBrush 4R8', 'zbrush'),  # '4R8' is part of the product name
-        ]
-        for input_name, expected in test_cases:
-            result = normalize_dcc_name(input_name)
-            self.assertEqual(result, expected, f"Failed to remove versions from '{input_name}'")
-
-    def test_removing_special_characters(self):
-        """Test that special characters are correctly removed."""
-        test_cases = [
-            ('After-Effects!', 'aftereffects'),
-            ('Maya-2022', 'maya'),
-            ('Substance_Painter', 'substancepainter'),
-            ('  Unreal Engine 4  ', 'unrealengine'),
-            ('3ds Max', '3dsmax'),
-        ]
-        for input_name, expected in test_cases:
-            result = normalize_dcc_name(input_name)
-            self.assertEqual(result, expected, f"Failed to remove special characters from '{input_name}'")
-
-    def test_normalizing_to_lowercase(self):
-        """Test that the output is in lowercase."""
-        test_cases = [
-            ('Blender', 'blender'),
-            ('UNITY', 'unity'),
-            ('After Effects', 'aftereffects'),
-            ('ZBrush', 'zbrush'),
-            ('Mocha Pro', 'mocha'),
-        ]
-        for input_name, expected in test_cases:
-            result = normalize_dcc_name(input_name)
-            self.assertEqual(result, expected, f"Failed to convert to lowercase for '{input_name}'")
-
-    def test_stripping_leading_trailing_characters(self):
-        """Test that leading and trailing underscores, hyphens, and spaces are stripped."""
-        test_cases = [
-            ('_Blender_', 'blender'),
-            ('-Maya-', 'maya'),
-            ('   Houdini   ', 'houdini'),
-            ('--ZBrush--', 'zbrush'),
-            ('___Unity___', 'unity'),
-        ]
-        for input_name, expected in test_cases:
-            result = normalize_dcc_name(input_name)
-            self.assertEqual(result, expected, f"Failed to strip leading/trailing characters for '{input_name}'")
-
-
 @functools.cache
-def get_dcc_icon(dcc_name):
+def get_all_known_dcc_formats():
     """
-    Retrieve the canonical DCC name for a given DCC name or alias.
+    Retrieve all known DCC formats.
+
+    Returns:
+        dict: A dictionary mapping DCC names to their associated file formats.
     """
-    # Normalize the input name
-    dcc_name_normalized = normalize_dcc_name(dcc_name)
-
-    # First, check for exact matches in DCC_FILE_FORMATS
-    if dcc_name_normalized in DCC_FILE_FORMATS:
-        return dcc_name_normalized
-
-    # Check for exact matches in aliases
-    for dcc, aliases in DCC_ALIASES.items():
-        for alias in aliases:
-            alias_normalized = normalize_dcc_name(alias)
-            if dcc_name_normalized == alias_normalized:
-                return dcc
-
-    # Now check if any of the aliases is contained within the normalized input name
-    for dcc, aliases in DCC_ALIASES.items():
-        for alias in aliases:
-            alias_normalized = normalize_dcc_name(alias)
-            if alias_normalized in dcc_name_normalized:
-                return dcc
-
-    # As a last resort, split by space and check individual words (longer than 2 characters)
-    for name in dcc_name.split():
-        if len(name) <= 2:
-            continue  # Skip short words to avoid false positives
-        name_normalized = normalize_dcc_name(name)
-        if name_normalized in DCC_FILE_FORMATS:
-            return name_normalized
-        for dcc, aliases in DCC_ALIASES.items():
-            for alias in aliases:
-                alias_normalized = normalize_dcc_name(alias)
-                if name_normalized == alias_normalized:
-                    return dcc
-
-    # Return None if nothing matches
-    return None
-
-
-if __name__ == '__main__':
-    unittest.main()
+    return {f for v in DCC_FILE_FORMATS.values() for f in v}

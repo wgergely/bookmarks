@@ -6,7 +6,6 @@ import json
 
 try:
     import OpenImageIO
-
     oiio_extensions = OpenImageIO.get_string_attribute('extension_list')
 except ImportError:
     oiio_extensions = ''

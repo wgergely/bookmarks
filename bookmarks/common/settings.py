@@ -150,7 +150,7 @@ def init_settings():
     common.favourites = v
     common.signals.favouritesChanged.emit()
 
-    from bookmarks.server.lib import ServerAPI
+    from ..server.lib import ServerAPI
     ServerAPI.load_bookmarks()
 
 
@@ -279,7 +279,7 @@ class UserSettings(QtCore.QSettings):
 
         """
         # Skip saving private active values
-        if common.active_mode == common.PrivateActivePaths and key in common.ActivePathSegmentTypes:
+        if common.active_mode == common.ActiveMode.Private and key in common.ActivePathSegmentTypes:
             return
 
         if key == 'settings/disable_oiio':

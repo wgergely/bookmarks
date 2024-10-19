@@ -196,8 +196,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
 
         # Set the database value
         # Note that we don't need to set the data directly as
-        # the database will emit a value changed signal that will
-        # automatically update the views and model data caches
+        # the database emits a value changed signal triggering a refresh
         db = database.get(*source_path[0:3])
         db.set_value(k, 'description', common.sanitize_hashtags(v), database.AssetTable)
 
@@ -1227,15 +1226,9 @@ class BookmarkItemViewDelegate(ItemDelegate):
         if not source_path:
             return
 
-        p = index.data(common.PathRole)
-        if common.is_collapsed(p):
-            k = common.proxy_path(index)
-        else:
-            k = p
-
         # Get the database value
         db = database.get(*source_path[0:3])
-        v = db.value(k, 'description', database.BookmarkTable)
+        v = db.value(db.source(), 'description', database.AssetTable)
 
         editor.setText(v)
 
@@ -1257,7 +1250,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
         db = database.get(*source_path[0:3])
         v = editor.text().strip() if editor.text() else ''
         with db.connection():
-            db.set_value(k, 'description', common.sanitize_hashtags(v), database.BookmarkTable)
+            db.set_value(k, 'description', common.sanitize_hashtags(v), database.AssetTable)
             bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
 
         # Set value to cached data

@@ -1,38 +1,34 @@
-"""This module provides the :class:`BookmarkDB` class, which offers an interface to an SQLite database for storing
-properties related to bookmark items. These properties include custom descriptions, flags, dimensions (width and
-height), and values from :mod:`bookmarks.tokens.tokens`, among others.
+"""
+This module provides the `BookmarkDB` class, which interfaces with an SQLite database for managing bookmark item data.
 
-The database file for each bookmark item is located at the root of the item's cache folder, as specified by
-:attr:`common.bookmark_item_data_dir`. The database path is constructed as follows:
+The app stores various properties, like descriptions, width, height, flags, configuration values in the database
+associated by pairing data with a path hash.
+
+Each bookmark's database file resides at the root of its cache folder, with the path constructed as:
 
 .. code-block:: python
     :linenos:
 
     f'{server}/{job}/{root}/{common.bookmark_item_data_dir}/{common.bookmark_item_database}'
 
-The database table structure is defined by :attr:`TABLES`, which maps SQLite column types to the corresponding Python
-types used in the app.
+The database structure is defined by `TABLES`, which maps SQLite column types to Python types.
 
-To get an instance of the database interface, use the :func:`.get` function, which retrieves cached, thread-specific
-database controllers.
-
-**Example usage:**
+To get a cached, thread-specific database controller, use the :func:`get()`:
 
 .. code-block:: python
     :linenos:
 
     from bookmarks import database
 
-    # Get the database interface for a specific bookmark item
+    # Get the database interface for a specific bookmark
     db = database.get(server, job, root)
-    value = db.value(db.source(), 'width', database.BookmarkTable)
+    width = db.value(db.source(), 'width', database.BookmarkTable)
 
-    # Get the database interface of the active bookmark item
+    # Get the database interface for the active bookmark
     db = database.get(*common.active('root', args=True))
-    value = db.value(db.source(), 'height', database.BookmarkTable)
+    height = db.value(db.source(), 'height', database.BookmarkTable)
 
-Every call to :meth:`BookmarkDB.value` and :meth:`BookmarkDB.set_value` triggers an automatic commit. To group
-multiple commits together, use the built-in context manager:
+To group multiple database changes, use the built-in context manager for handling transactions:
 
 .. code-block:: python
     :linenos:
@@ -43,25 +39,14 @@ multiple commits together, use the built-in context manager:
     with db.connection():
         db.set_value(*args)
 
-The database contains two tables for storing item data: :attr:`common.BookmarkTable` and :attr:`common.AssetTable`.
-The `AssetTable` is intended for general descriptions and notes applicable to all items, while the `BookmarkTable`
-contains properties specific to the bookmark item.
-
-**Note:** Bookmark items should ideally store their descriptions in the `AssetTable` since it is a general property.
-However, they currently use the 'description' column in the `BookmarkTable`, which is redundant. This is a known
-issue that may be addressed in future versions of the software.
-
-The module also provides utility functions for creating and managing the database, handling connections, encoding and
-decoding data, and managing item flags. For more details, refer to the docstrings of the specific functions.
-
+This module also includes utility functions for database management, connection handling, encoding/decoding data,
+and flag management.
 """
 
 import base64
 import functools
 import json
-import platform
 import sqlite3
-import time
 
 from PySide2 import QtCore, QtWidgets
 
@@ -166,43 +151,9 @@ TABLES = {
         }
 
     },
-    InfoTable: {
-        'id': {
-            'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
-            'type': str
-        },
-        'server': {
-            'sql': 'TEXT NOT NULL',
-            'type': str
-        },
-        'job': {
-            'sql': 'TEXT NOT NULL',
-            'type': str,
-        },
-        'root': {
-            'sql': 'TEXT NOT NULL',
-            'type': str
-        },
-        'user': {
-            'sql': 'TEXT NOT NULL',
-            'type': str,
-        },
-        'host': {
-            'sql': 'TEXT NOT NULL',
-            'type': str
-        },
-        'created': {
-            'sql': 'REAL NOT NULL',
-            'type': float
-        }
-    },
     BookmarkTable: {
         'id': {
             'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
-            'type': str
-        },
-        'description': {
-            'sql': 'TEXT',
             'type': str
         },
         'width': {
@@ -269,7 +220,27 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
-        'tokens': {
+        'config_file_format': {
+            'sql': 'TEXT',
+            'type': dict
+        },
+        'config_scene_names': {
+            'sql': 'TEXT',
+            'type': dict
+        },
+        'config_publish': {
+            'sql': 'TEXT',
+            'type': dict
+        },
+        'config_tasks': {
+            'sql': 'TEXT',
+            'type': dict
+        },
+        'config_asset_folders': {
+            'sql': 'TEXT',
+            'type': dict
+        },
+        'config_burnin': {
             'sql': 'TEXT',
             'type': dict
         },
@@ -299,7 +270,7 @@ TABLES = {
             'sql': 'BLOB',
             'type': bytes
         },
-    }
+    },
 }
 
 
@@ -383,14 +354,9 @@ def b64decode(v):
     return base64.b64decode(v).decode('utf-8')
 
 
-def sleep():
-    """Utility function to pause execution for a short duration."""
-    app = QtWidgets.QApplication.instance()
-    if app and app.thread() == QtCore.QThread.currentThread():
-        QtCore.QThread.msleep(25)
-        return
-    QtCore.QThread.msleep(50)
-
+def sleep(attempt=1):
+    delay = min(0.1 * (2 ** attempt), 1.0)  # Cap the delay at 1 second
+    QtCore.QThread.msleep(int(delay * 1000))
 
 def set_flag(server, job, root, k, mode, flag):
     """Utility method to set a flag for an item in the database."""
@@ -499,6 +465,7 @@ def convert_return_values(table, key, value):
 
 class BookmarkDB(QtCore.QObject):
     """Database connector for interfacing with a bookmark item's SQLite database."""
+    retries = 6
 
     def __init__(self, server, job, root, parent=None):
         super().__init__(parent=parent)
@@ -535,7 +502,6 @@ class BookmarkDB(QtCore.QObject):
             for table in TABLES:
                 self._create_table(table)
                 self._patch_table(table)
-            self._add_info()
             self._init_version()
             self._connection.commit()
 
@@ -572,6 +538,7 @@ class BookmarkDB(QtCore.QObject):
                 log.error(e)
 
         if memory or not self._is_valid:
+            log.debug('Switching to in-memory database mode due to persistent failure.')
             self._connection = sqlite3.connect(
                 ':memory:',
                 isolation_level=None,
@@ -614,6 +581,32 @@ class BookmarkDB(QtCore.QObject):
         if table not in TABLES:
             raise ValueError(f'Table "{table}" not found in TABLES.')
 
+        # Check if the table already exists
+        sql_check = f"SELECT name FROM sqlite_master WHERE type='table' AND name=?;"
+
+        attempt = 0
+        while attempt <= self.retries:
+            try:
+                res = self._connection.execute(sql_check, (table,))
+                if res.fetchone():
+                    return  # Table already exists
+                break
+            except sqlite3.OperationalError as e:
+                if 'database is locked' in str(e):
+                    attempt += 1
+                    log.debug(f'Database is locked during table check, retrying {attempt}/{self.retries}...')
+                    sleep(attempt=attempt)
+                    continue
+                else:
+                    log.error(f'OperationalError during table check:\n{e}')
+                    raise
+            except sqlite3.Error as e:
+                log.error(f'Error during table check:\n{e}')
+                raise
+        else:
+            log.error('Failed to check table existence after multiple retries due to database lock.')
+            raise sqlite3.OperationalError('Failed to check table existence due to database lock.')
+
         args = []
 
         for k, v in TABLES[table].items():
@@ -631,42 +624,62 @@ class BookmarkDB(QtCore.QObject):
 
         sql = f'PRAGMA table_info(\'{table}\');'
 
-        try:
-            res = self._connection.execute(sql)
-        except sqlite3.Error as e:
-            log.error(e)
-            raise
+        # Retry logic for getting table information
+        attempt = 0
+        while attempt <= self.retries:
+            try:
+                res = self._connection.execute(sql)
+                break
+            except sqlite3.OperationalError as e:
+                if 'database is locked' in str(e):
+                    attempt += 1
+                    log.debug(
+                        f'Database is locked during table patching (PRAGMA table_info), '
+                        f'retrying {attempt}/{self.retries}...'
+                    )
+                    sleep(attempt=attempt)
+                    continue
+                else:
+                    log.error(f'OperationalError during table patching (PRAGMA table_info):\n{e}')
+                    raise
+            except sqlite3.Error as e:
+                log.error(f'Error during table patching (PRAGMA table_info):\n{e}')
+                raise
+        else:
+            log.error('Failed to get table info after multiple retries due to database lock.')
+            raise sqlite3.OperationalError('Failed to get table info due to database lock.')
 
         columns = [c[1] for c in res]  # Direct iteration over the cursor without fetchall
         missing = list(set(TABLES[table]) - set(columns))
 
+        # Retry logic for adding missing columns
         for column in missing:
             sql_type = f'{column} {TABLES[table][column]["sql"]}'
-            sql = f'ALTER TABLE {table} ADD COLUMN {sql_type};'
-            try:
-                self._connection.execute(sql)
-                log.success(f'Added missing column "{column}"')
-            except sqlite3.Error as e:
-                log.error(f'Failed to add column "{column}": {e}')
-                raise
-
-    def _add_info(self):
-        columns = sorted(TABLES[InfoTable])
-        args = ', '.join(columns)
-        placeholders = ', '.join(['?'] * len(columns))
-        sql = f'INSERT OR IGNORE INTO {InfoTable} ({args}) VALUES ({placeholders});'
-
-        values = [
-            common.get_hash(self._bookmark),
-            b64encode(self.server),
-            b64encode(self.job),
-            b64encode(self.root),
-            b64encode(common.get_username()),
-            b64encode(platform.node()),
-            time.time()
-        ]
-
-        self._connection.execute(sql, values)
+            sql_alter = f'ALTER TABLE {table} ADD COLUMN {sql_type};'
+            attempt = 0
+            while attempt <= self.retries:
+                try:
+                    self._connection.execute(sql_alter)
+                    log.success(f'Added missing column "{column}"')
+                    break
+                except sqlite3.OperationalError as e:
+                    if 'database is locked' in str(e):
+                        attempt += 1
+                        log.debug(
+                            f'Database is locked during adding column "{column}", '
+                            f'retrying {attempt}/{self.retries}...'
+                        )
+                        sleep(attempt=attempt)
+                        continue
+                    else:
+                        log.error(f'OperationalError adding column "{column}":\n{e}')
+                        raise
+                except sqlite3.Error as e:
+                    log.error(f'Error adding column "{column}":\n{e}')
+                    raise
+            else:
+                log.error(f'Failed to add column "{column}" after multiple retries due to database lock.')
+                raise sqlite3.OperationalError(f'Failed to add column "{column}" due to database lock.')
 
     def connection(self):
         """Return the database connection instance."""
@@ -860,17 +873,35 @@ class BookmarkDB(QtCore.QObject):
 
         sql = f'SELECT {key} FROM {table} WHERE id=?'
 
-        try:
-            res = self._connection.execute(sql, (common.get_hash(source),))
-            row = res.fetchone()
+        attempt = 0
+        while attempt <= self.retries:
+            try:
+                res = self._connection.execute(sql, (common.get_hash(source),))
+                row = res.fetchone()
 
-            value = row[0] if row else None
-            self._is_valid = True
-        except sqlite3.Error as e:
+                value = row[0] if row else None
+                self._is_valid = True
+                break
+            except sqlite3.OperationalError as e:
+                if 'database is locked' in str(e):
+                    attempt += 1
+                    log.debug(f'Database is locked, retrying {attempt}/{self.retries}...')
+                    sleep(attempt=attempt)
+                    continue  # Retry
+                else:
+                    value = None
+                    self._is_valid = False
+                    log.error(e)
+                    break
+            except sqlite3.Error as e:
+                value = None
+                self._is_valid = False
+                log.error(e)
+                break
+        else:
+            # If we exhausted all retries
+            log.error('Failed to retrieve value after multiple retries due to database lock.')
             value = None
-            self._is_valid = False
-
-            log.error(e)
 
         return convert_return_values(table, key, value)
 
@@ -964,15 +995,32 @@ class BookmarkDB(QtCore.QObject):
         if sql.count('?') != len(params):
             raise ValueError(f'Parameter count mismatch. Expected {sql.count("?")}, got {len(params)}.')
 
-        try:
-            self._connection.execute(sql, params)
-            self._is_valid = True
+        attempt = 0
+        while attempt <= self.retries:
+            try:
+                self._connection.execute(sql, params)
+                self._is_valid = True
 
-            # Emit change signal with the value set in the database
-            _value = self.value(source, key, table=table)
-            common.signals.databaseValueUpdated.emit(
-                table, source, key, _value
-            )
-        except sqlite3.Error as e:
-            log.error(f'Error setting value:\n{e}')
-            self._is_valid = False
+                # Emit change signal with the value set in the database
+                _value = self.value(source, key, table=table)
+                common.signals.databaseValueUpdated.emit(
+                    table, source, key, _value
+                )
+                break  # Success
+            except sqlite3.OperationalError as e:
+                if 'database is locked' in str(e):
+                    attempt += 1
+                    log.debug(f'Database is locked, retrying {attempt}/{self.retries}...')
+                    sleep(attempt=attempt)
+                    continue  # Retry
+                else:
+                    log.error(f'OperationalError setting value:\n{e}')
+                    self._is_valid = False
+                    break
+            except sqlite3.Error as e:
+                log.error(f'Error setting value:\n{e}')
+                self._is_valid = False
+                break
+        else:
+            # If we exhausted all retries
+            log.error('Failed to set value after multiple retries due to database lock.')

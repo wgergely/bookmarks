@@ -48,22 +48,44 @@ Example:
 
 
 """
+import enum
 import itertools
 import re
 import unittest
 
-__all__ = ['StringParser', 'TokenLineEdit']
+__all__ = ['StringParser', 'TokenEditor', 'TokenLineEdit']
 
 from datetime import datetime
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common
+from .. import common, database
 
 
 class StringParser(QtCore.QObject):
     token_pattern = re.compile(r'\{([^{}]+?)\}')
     _env = {}
+
+    db_keys = {
+        database.BookmarkTable: (
+            'prefix',
+            'width',
+            'height',
+            'framerate',
+            'startframe',
+            'duration'
+        ),
+        database.AssetTable: (
+            'cut_duration',
+            'cut_in',
+            'cut_out',
+            'edit_in',
+            'edit_out',
+            'asset_width',
+            'asset_height',
+            'asset_framerate',
+        ),
+    }
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -150,15 +172,50 @@ class StringParser(QtCore.QObject):
         env['%06d'] = '00000'
 
         # Set shot and sequence
-        env['sequence'] = '000'
-        env['shot'] = '0000'
 
         if common.active('asset', path=True):
             seq, shot = common.get_sequence_and_shot(common.active('asset', path=True))
-            if seq:
-                env['sequence'] = seq
-            if shot:
-                env['shot'] = shot
+        else:
+            seq, shot = '000', '0000'
+
+        env['sequence'] = seq
+        env['seq'] = seq
+        env['sq'] = env['sequence']
+
+        env['shot'] = shot
+        env['sh'] = env['shot']
+
+        # Item properties
+        properties = {}
+        if common.active('root', args=True):
+            db = database.get(*common.active('root', args=True))
+            for k in self.db_keys[database.BookmarkTable]:
+                v = db.value(db.source(), k, database.BookmarkTable)
+                properties[k] = v
+            if common.active('asset', args=True):
+                for k in self.db_keys[database.AssetTable]:
+                    v = db.value(common.active('asset', path=True), k, database.AssetTable)
+                    properties[k] = v
+            else:
+                for k in self.db_keys[database.AssetTable]:
+                    properties[k] = None
+        else:
+            for k in self.db_keys[database.BookmarkTable]:
+                properties[k] = None
+            for k in self.db_keys[database.AssetTable]:
+                properties[k] = None
+
+        env['fps'] = properties['asset_framerate'] or properties['framerate'] or '24'
+        env['cut_in'] = properties['cut_in'] or properties['startframe'] or 1
+        env['cut_out'] = properties['cut_out'] or properties['duration'] or 100
+        env['width'] = properties['asset_width'] or properties['width'] or 1920
+        env['height'] = properties['asset_height'] or properties['height'] or 1080
+        env['prefix'] = properties['prefix'] or None
+
+        # TODO: Add config values when they're implemented
+
+        # Update env with kwargs
+        env.update(kwargs)
 
         self._env = env
 
@@ -249,7 +306,8 @@ class StringParser(QtCore.QObject):
         # Return the results
         return '\n'.join(results)
 
-    def _parse_token_expression(self, token_expr):
+    @staticmethod
+    def _parse_token_expression(token_expr):
         """
         Parses the token expression and returns a dictionary with components:
         - name: the token name
@@ -315,6 +373,12 @@ class StringParser(QtCore.QObject):
 
         sliced = '/'.join(sliced_parts)
         return sliced
+
+
+class EditorMode(enum.IntEnum):
+    """Enumeration for different editor modes."""
+    LineMode = 1
+    TextMode = 2
 
 
 class TokenSyntaxHighlighter(QtGui.QSyntaxHighlighter):
@@ -414,27 +478,131 @@ class TokenSyntaxHighlighter(QtGui.QSyntaxHighlighter):
                 self.setFormat(current_pos, modifiers_len, self.formats['modifier'])
 
 
-class TokenLineEdit(QtWidgets.QTextEdit):
-    returnPressed = QtCore.Signal()
-    textChanged = QtCore.Signal(str)  # Mimic QLineEdit's textChanged signal with a single string argument
+class NumberBar(QtWidgets.QWidget):
+    """A custom widget that displays line numbers for a text editor."""
 
     def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.parent().blockCountChanged.connect(self.update_width)
+        self.parent().updateRequest.connect(self.update_contents)
+
+    def paintEvent(self, event):
+        painter = QtGui.QPainter()
+        painter.begin(self)
+
+        if not self.parent().toPlainText():
+            alpha = 0
+        else:
+            alpha = 20
+
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(QtGui.QColor(0, 0, 0, alpha))
+        painter.drawRoundedRect(
+            event.rect(),
+            common.Size.Indicator(),
+            common.Size.Indicator()
+        )
+
+        block = self.parent().firstVisibleBlock()
+
+        font = self.parent().font()
+        metrics = self.parent().fontMetrics()
+
+        # Iterate over all visible text blocks in the document.
+        while block.isValid():
+            block_number = block.blockNumber()
+            block_top = self.parent().blockBoundingGeometry(block).translated(self.parent().contentOffset()).top()
+
+            # Check if the position of the block is outside the visible area.
+            if not block.isVisible() or block_top >= event.rect().bottom():
+                break
+
+            # We want the line number for the selected line to be bold.
+            if block_number == self.parent().textCursor().blockNumber():
+                painter.setPen(common.Color.Blue())
+            else:
+                painter.setPen(common.Color.LightBackground())
+            painter.setFont(font)
+
+            # Draw the line number right justified at the position of the line.
+            paint_rect = QtCore.QRect(
+                0,
+                block_top,
+                self.width() - (common.Size.Indicator(2.0)),
+                metrics.height()
+            )
+
+            if self.parent().toPlainText():
+                painter.drawText(
+                    paint_rect,
+                    QtCore.Qt.AlignRight,
+                    f'{block_number + 1}'
+                )
+
+            block = block.next()
+
+        painter.end()
+
+        super().paintEvent(event)
+
+    def get_width(self):
+        metrics = self.parent().fontMetrics()
+
+        count = self.parent().blockCount()
+        width = metrics.width(f'{count}') + common.Size.Margin()
+        return width
+
+    def update_width(self):
+        width = self.get_width()
+        if self.width() != width:
+            self.setFixedWidth(width)
+            self.parent().setViewportMargins(width, 0, 0, 0)
+
+    def update_contents(self, rect, scroll):
+        font = self.parent().font()
+
+        if scroll:
+            self.scroll(0, scroll)
+        else:
+            self.update(0, rect.y(), self.width(), rect.height())
+
+        if rect.contains(self.parent().viewport().rect()):
+            font_size = self.parent().currentCharFormat().font().pointSize()
+            font.setPointSize(font_size)
+            font.setStyle(QtGui.QFont.StyleNormal)
+            self.update_width()
+
+
+class TokenEditor(QtWidgets.QPlainTextEdit):
+    """A text editor with syntax highlighting, mode-based configurations, and optional line numbering.
+
+    Can operate in either line mode or text mode, adjusting size constraints and displaying line numbers accordingly.
+
+    Signals:
+        returnPressed: Emitted when the Return key is pressed.
+        textChanged(str): Emitted when the text is changed.
+    """
+
+    returnPressed = QtCore.Signal()
+    textChanged = QtCore.Signal(str)
+
+    def __init__(self, parent=None, mode=EditorMode.TextMode):
+        """Initialize the TokenEditor with the specified mode.
+
+        Args:
+            parent (QtWidgets.QWidget, optional): The parent widget. Defaults to None.
+            mode (EditorMode, optional): The mode of the editor. Defaults to EditorMode.LineMode.
+        """
         super().__init__(parent)
+        self.mode = mode
         self.highlighter = TokenSyntaxHighlighter(self.document())
 
-        # Mimic QLineEdit methods
-        self.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
-        self.setAcceptRichText(False)
-
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-        # Initialize the completer
         self.completer = QtWidgets.QCompleter(self)
         common.set_stylesheet(self.completer.popup())
         self.completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
 
-        # Modifiers
         self.modifiers = [
             'upper', 'lower', 'title'
         ]
@@ -442,19 +610,32 @@ class TokenLineEdit(QtWidgets.QTextEdit):
         self.completer.activated.connect(self.insert_completion)
         super().textChanged.connect(lambda: self.textChanged.emit(self.toPlainText()))
 
+        self._number_bar = None
+        self._init_mode()
+
     @property
     def tokens(self):
+        """Available tokens for autocompletion."""
         return list(common.parser.env.keys())
 
     def text(self):
-        """Get the text content (mimic QLineEdit's text method)."""
+        """Get the text content."""
         return self.toPlainText()
 
     def set_text(self, text):
-        """Set the text content (mimic QLineEdit's setText method)."""
+        """Set the text content.
+
+        Args:
+            text (str): The text to set.
+        """
         self.setPlainText(text)
 
     def insert_completion(self, completion):
+        """Insert the selected completion into the text.
+
+        Args:
+            completion (str): The completion string.
+        """
         tc = self.textCursor()
         extra = completion[len(self.completer.completionPrefix()):]
         tc.insertText(extra)
@@ -462,22 +643,27 @@ class TokenLineEdit(QtWidgets.QTextEdit):
         self.completer.popup().hide()
 
     def focusInEvent(self, event):
-        """Re-implemented to notify the completer of focus."""
+        """Handle focus in events to notify the completer.
+
+        Args:
+            event (QtGui.QFocusEvent): The focus event.
+        """
         if self.completer:
             self.completer.setWidget(self)
         super().focusInEvent(event)
 
     def keyPressEvent(self, event):
+        """Handle key press events for custom behavior.
+
+        Args:
+            event (QtGui.QKeyEvent): The key event.
+        """
         if event.key() == QtCore.Qt.Key_Tab:
-            # Tab pressed
             self.move_to_next_token_or_word()
-            # Prevent default tab behavior
             event.accept()
             return
         elif event.key() == QtCore.Qt.Key_Backtab:
-            # Shift+Tab pressed
             self.move_to_previous_token_or_word()
-            # Prevent default tab behavior
             event.accept()
             return
 
@@ -489,125 +675,98 @@ class TokenLineEdit(QtWidgets.QTextEdit):
                 event.ignore()
                 return
 
-        # Emit returnPressed signal when Enter is pressed
         if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
             self.returnPressed.emit()
-            # Prevent the default QTextEdit behavior of inserting a newline
             event.accept()
             return
 
-        # Automatically insert matching '}' when '{' is typed
         if event.text() == '{':
-            # Call the original keyPressEvent to insert '{'
             super().keyPressEvent(event)
-            # Insert matching '}'
             self.insertPlainText('name}')
-
-            # Move cursor back to between the brackets
             cursor = self.textCursor()
             cursor.movePosition(QtGui.QTextCursor.Left)
             self.setTextCursor(cursor)
-
-            # Move cursor back to the beginning of name
             cursor = self.textCursor()
             cursor.movePosition(QtGui.QTextCursor.Left, QtGui.QTextCursor.KeepAnchor, len('name'))
             self.setTextCursor(cursor)
-
-            #
-            # # Select the 'foobar' inside the brackets
-            # cursor.movePosition(QtGui.QTextCursor.Left, QtGui.QTextCursor.KeepAnchor, 6)
-            # self.setTextCursor(cursor)
-
-            # Show the completer with base tokens
             self.update_completer_model(self.tokens)
             self.show_completer()
-        elif event.key() == QtCore.Qt.Key_Period or event.text() == '.' and self.is_inside_token():
+        elif (event.key() == QtCore.Qt.Key_Period or event.text() == '.') and self.is_inside_token():
             super().keyPressEvent(event)
-            # Show the completer with modifiers
             self.update_completer_model(self.modifiers)
             self.show_completer()
-        elif event.key() == QtCore.Qt.Key_BracketLeft or event.text() == '[' and self.is_inside_token():
+        elif (event.key() == QtCore.Qt.Key_BracketLeft or event.text() == '[') and self.is_inside_token():
             super().keyPressEvent(event)
             self.insertPlainText('0]')
-            # Move cursor back to between the brackets
             cursor = self.textCursor()
             cursor.movePosition(QtGui.QTextCursor.Left)
             self.setTextCursor(cursor)
-
-            # Select the '0' inside the brackets
             cursor.movePosition(QtGui.QTextCursor.Left, QtGui.QTextCursor.KeepAnchor)
             self.setTextCursor(cursor)
-
-
         else:
             super().keyPressEvent(event)
-
-            # Show or update completer if inside a token
             if self.is_inside_token():
                 self.update_completer()
             elif self.is_completer_visible():
                 self.completer.popup().hide()
 
     def move_to_next_token_or_word(self):
+        """Move the cursor to the next token or word."""
         cursor = self.textCursor()
         pos = cursor.position()
         text = self.toPlainText()
         text_length = len(text)
 
-        # Increment position to avoid finding the same brace again
         search_pos = pos + 1 if pos + 1 < text_length else pos
-
-        # Find the position of the next '{' after the current cursor position
         next_brace_pos = text.find('{', search_pos)
         if next_brace_pos != -1:
-            # Move cursor to the next '{'
             cursor.setPosition(next_brace_pos)
         else:
-            # No '{' found, move to the start of the next word
             pattern = re.compile(r'\b\w', re.UNICODE)
             match = pattern.search(text, search_pos)
             if match:
                 cursor.setPosition(match.start())
             else:
-                # No next word found, move cursor to the end
                 cursor.movePosition(QtGui.QTextCursor.End)
         self.setTextCursor(cursor)
 
     def move_to_previous_token_or_word(self):
+        """Move the cursor to the previous token or word."""
         cursor = self.textCursor()
         pos = cursor.position()
         text = self.toPlainText()
 
-        # Decrement position to avoid finding the same brace again
         search_pos = pos - 1 if pos > 0 else pos
-
-        # Find the position of the previous '{' before the current cursor position
         prev_brace_pos = text.rfind('{', 0, search_pos)
         if prev_brace_pos != -1:
-            # Move cursor to the previous '{'
             cursor.setPosition(prev_brace_pos)
         else:
-            # No '{' found, move to the start of the previous word
             pattern = re.compile(r'\b\w', re.UNICODE)
             matches = list(pattern.finditer(text, 0, search_pos))
             if matches:
-                # Get the last match before the current position
                 cursor.setPosition(matches[-1].start())
             else:
-                # No previous word found, move cursor to the start
                 cursor.movePosition(QtGui.QTextCursor.Start)
         self.setTextCursor(cursor)
 
     def is_completer_visible(self):
+        """Check if the completer popup is visible.
+
+        Returns:
+            bool: True if visible, False otherwise.
+        """
         return self.completer.popup().isVisible()
 
     def is_inside_token(self):
-        """Check if the cursor is inside a token (between '{' and '}')."""
+        """Determine if the cursor is inside a token.
+
+        Returns:
+            bool: True if inside a token, False otherwise.
+        """
         cursor = self.textCursor()
         pos = cursor.position()
         text = self.toPlainText()
 
-        # Find the position of the last '{' before the cursor
         brace_start = text.rfind('{', 0, pos)
         brace_end = text.find('}', brace_start)
 
@@ -618,154 +777,100 @@ class TokenLineEdit(QtWidgets.QTextEdit):
         return True
 
     def show_completer(self):
+        """Display the completer popup at the current cursor position."""
         self.completer.popup().setCurrentIndex(
             self.completer.completionModel().index(0, 0)
         )
 
         rect = self.cursorRect()
-        rect.setWidth(self.completer.popup().sizeHintForColumn(0)
-                      + self.completer.popup().verticalScrollBar().sizeHint().width())
+        rect.setWidth(
+            self.completer.popup().sizeHintForColumn(0) +
+            self.completer.popup().verticalScrollBar().sizeHint().width()
+        )
         self.completer.complete(rect)
 
     def update_completer(self):
+        """Update the completer's current index."""
         self.completer.popup().setCurrentIndex(
             self.completer.completionModel().index(0, 0)
         )
 
     def update_completer_model(self, suggestions):
+        """Update the completer model with new suggestions.
+
+        Args:
+            suggestions (List[str]): The list of suggestion strings.
+        """
         model = QtCore.QStringListModel(suggestions, parent=self.completer)
         model.setStringList(suggestions)
-        print(suggestions)
         self.completer.setModel(model)
 
     def focusOutEvent(self, event):
+        """Handle focus out events to hide the completer.
+
+        Args:
+            event (QtGui.QFocusEvent): The focus event.
+        """
         if self.completer:
             self.completer.popup().hide()
         super().focusOutEvent(event)
 
+    def _init_mode(self):
+        """Initialize mode-specific configurations, including size constraints and line numbering."""
+        self.setWordWrapMode(QtGui.QTextOption.NoWrap)
 
-class TestStringParser(unittest.TestCase):
-    def setUp(self):
-        self._env = {
-            'token': 'my/test/path',
-            'token1': 'base1,base2',
-            'token2': 'path1,path2',
-            'token3': 'base',
-            'token4': 'base1,base2,base3',
-            'name': 'Alice',
-            'age': '30',
-            'empty_token': ''
-        }
-        self._parser = StringParser()
-        self._parser.env = self._env
+        if self.mode == EditorMode.LineMode:
+            self.setFixedHeight(common.Size.RowHeight(0.8))
+        elif self.mode == EditorMode.TextMode:
 
-    def test_no_tokens(self):
-        input_text = 'This is a test string with no tokens.'
-        expected = 'This is a test string with no tokens.'
-        self.assertEqual(self._parser.format(input_text), expected)
+            self._number_bar = NumberBar(parent=self)
+            self.setSizePolicy(
+                QtWidgets.QSizePolicy.Minimum,
+                QtWidgets.QSizePolicy.MinimumExpanding
+            )
 
-    def test_simple_token(self):
-        self.assertEqual(self._parser.format('{token}'), 'my/test/path')
+    def sizeHint(self):
+        """Provide a recommended size for the editor.
 
-    def test_multiple_tokens(self):
-        input_text = 'Name: {name}, Age: {age}'
-        expected = 'Name: Alice, Age: 30'
-        self.assertEqual(self._parser.format(input_text), expected)
-
-    def test_index_zero(self):
-        self.assertEqual(self._parser.format('{token[0]}'), 'my')
-
-    def test_index_negative_one(self):
-        self.assertEqual(self._parser.format('{token[-1]}'), 'path')
-
-    def test_slice_zero_to_one(self):
-        self.assertEqual(self._parser.format('{token[0-1]}'), 'my/test')
-
-    def test_slice_negative_indices(self):
-        self.assertEqual(self._parser.format('{token[-2--1]}'), 'test/path')
-
-    def test_lower_modifier(self):
-        self.assertEqual(self._parser.format('{token.lower}'), 'my/test/path')
-
-    def test_upper_modifier(self):
-        self.assertEqual(self._parser.format('{token.upper}'), 'MY/TEST/PATH')
-
-    def test_title_modifier(self):
-        self.assertEqual(self._parser.format('{token.title}'), 'My/Test/Path')
-
-    def test_combined_slice_and_modifier(self):
-        self.assertEqual(self._parser.format('{token[0].upper}'), 'MY')
-
-    def test_generator_token_single_value(self):
-        self.assertEqual(self._parser.format('my/{token3*}/path'), 'my/base/path')
-
-    def test_generator_token_multiple_values(self):
-        expected = 'my/base1/path\nmy/base2/path\nmy/base3/path'
-        self.assertEqual(self._parser.format('my/{token4*}/path'), expected)
-
-    def test_multiple_generator_tokens(self):
-        expected = (
-            'my/base1/path1\n'
-            'my/base1/path2\n'
-            'my/base2/path1\n'
-            'my/base2/path2'
-        )
-        self.assertEqual(self._parser.format('my/{token1*}/{token2*}'), expected)
-
-    def test_generator_and_non_generator_tokens(self):
-        expected = 'my/base1/base\nmy/base2/base'
-        self.assertEqual(self._parser.format('my/{token1*}/{token3}'), expected)
-
-    def test_generator_with_modifiers(self):
-        expected = 'my/BASE1/path\nmy/BASE2/path'
-        self.assertEqual(self._parser.format('my/{token1*.upper}/path'), expected)
-
-    def test_invalid_syntax(self):
-        with self.assertRaises(ValueError):
-            self._parser.format('my/{token[}/path')
-
-    def test_empty_generator_token(self):
-        self.assertEqual(self._parser.format('value/{empty_token*}/test'), 'value//test')
-
-    def test_slicing_out_of_range(self):
-        self.assertEqual(self._parser.format('{token[10]}'), '')
-
-    def test_modifier_on_empty_value(self):
-        self.assertEqual(self._parser.format('{empty_token.upper}'), '')
-
-    def test_nested_modifiers_and_slicing(self):
-        self.assertEqual(self._parser.format('{token[0].title}'), 'My')
-
-    def test_generator_token_with_slicing_and_modifier(self):
-        self._parser.env['token1'] = 'base1/path1,base2/path2'
-        expected = 'my/BASE1/path1\nmy/BASE2/path2'
-        self.assertEqual(
-            self._parser.format('my/{token1*[0].upper}/{token1*[1]}'),
-            expected
+        Returns:
+            QtCore.QSize: The recommended size.
+        """
+        return QtCore.QSize(
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight(0.5)
         )
 
-    def test_adjacent_tokens(self):
-        self._parser.env['a'] = 'X,Y'
-        self._parser.env['b'] = '1,2'
-        expected = 'XX1\nXX2\nYY1\nYY2'  # Updated expected output
-        self.assertEqual(self._parser.format('{a*}{a*}{b*}'), expected)
+    def minimumSizeHint(self):
+        """Provide a minimum recommended size for the editor.
 
-    def test_tokens_with_no_generator(self):
-        self.assertEqual(
-            self._parser.format('Hello {name}, you are {age} years old.'),
-            'Hello Alice, you are 30 years old.'
+        Returns:
+            QtCore.QSize: The minimum recommended size.
+        """
+        return QtCore.QSize(
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight(0.1)
         )
 
-    def test_tokens_with_mixed_generators(self):
-        self._parser.env['greeting'] = 'Hi,Hello'
-        expected = 'Hi Alice\nHello Alice'
-        self.assertEqual(self._parser.format('{greeting*} {name}'), expected)
+    def resizeEvent(self, event):
+        """Handle resize events to adjust the NumberBar geometry.
 
-    def test_token_with_no_value(self):
-        self._parser.env['undefined_token'] = ''
-        self.assertEqual(self._parser.format('Value: {undefined_token}'), 'Value: ')
+        Args:
+            event (QtGui.QResizeEvent): The resize event.
+        """
+        if self.mode == EditorMode.TextMode and self._number_bar:
+            cr = self.contentsRect()
+            rec = QtCore.QRect(
+                cr.left(),
+                cr.top(),
+                self._number_bar.get_width(),
+                cr.height()
+            )
+            self._number_bar.setGeometry(rec)
+        super().resizeEvent(event)
 
-    def test_multiple_tokens_no_generators(self):
-        input_text = 'Name: {name}, Age: {age}, Location: {undefined_token}'
-        expected = 'Name: Alice, Age: 30, Location: '
-        self.assertEqual(self._parser.format(input_text), expected)
+
+class TokenLineEdit(TokenEditor):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent, mode=EditorMode.LineMode)
+

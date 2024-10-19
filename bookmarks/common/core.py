@@ -43,12 +43,18 @@ ui_scale_factors = [
 
 thumbnail_format = 'png'
 
-#: Startup mode when bookmarks is called as a library
-CoreMode = 'CoreMode'
-#: Startup mode used when `Bookmarks` runs embedded in a host DCC.
-EmbeddedMode = 'EmbeddedMode'
-#: Startup mode when `Bookmarks` is running as a standalone Qt app
-StandaloneMode = 'StandaloneMode'
+
+class Mode(enum.IntEnum):
+    """Startup mode used to initialize the app.
+
+    """
+    #: Startup mode when bookmarks is called as a library
+    Core = 0
+    #: Startup mode used when `Bookmarks` runs embedded in a host DCC.
+    Embedded = 1
+    #: Startup mode when `Bookmarks` is running as a standalone Qt app
+    Standalone = 2
+
 
 BookmarkTab = 0
 AssetTab = 1
@@ -72,9 +78,7 @@ SequenceItem = 1200
 
 
 def idx_func():
-    """
-    Constructs and returns the index function.
-    
+    """A simple number generator similar to itertools.count().
     """
     _num = -1
     _start = -1
@@ -325,7 +329,7 @@ def error(func):
         try:
             return func(*args, **kwargs)
         except:
-            # Remove decorator(s) from the traceback stack
+            # Remove decorator from the traceback stack
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:
                 while 'wrapper' in exc_traceback.tb_frame.f_code.co_name:

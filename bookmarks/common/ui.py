@@ -19,7 +19,7 @@ CancelButton = 'Cancel'
 NoButton = 'No'
 
 
-def _init_ui_scale():
+def init_ui_scale():
     v = common.settings.value('settings/ui_scale')
 
     if v is None or not isinstance(v, str):
@@ -41,7 +41,7 @@ def _init_ui_scale():
     common.ui_scale_factor = v
 
 
-def _init_dpi():
+def init_dpi():
     if common.get_platform() == common.PlatformWindows:
         common.dpi = 72.0
     elif common.get_platform() == common.PlatformMacOS:

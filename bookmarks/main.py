@@ -36,10 +36,10 @@ from . import common
 from . import images
 from . import shortcuts
 from . import statusbar
-from .items import asset_items
-from .items import bookmark_items
-from .items import favourite_items
-from .items import file_items
+from .items import assets
+from .items import bookmarks
+from .items import favourites
+from .items import files
 from .items import views
 from .topbar import topbar
 
@@ -48,7 +48,7 @@ def init():
     """Creates the :class:`MainWidget` instance.
 
     """
-    if common.init_mode == common.StandaloneMode:
+    if common.init_mode == common.Mode.Standalone:
         raise RuntimeError("Cannot be initialized in `StandaloneMode`.")
 
     if isinstance(common.main_widget, MainWidget):
@@ -58,9 +58,9 @@ def init():
 
 
 class MainWidget(QtWidgets.QWidget):
-    """Bookmark's main widget when initialized in :attr:`~bookmarks.common.core.EmbeddedMode`.
+    """Bookmark's main widget when initialized in :attr:`~bookmarks.common.Mode.Embedded`.
     See also :class:`bookmarks.standalone.BookmarksAppWindow`, a subclass used
-    as the main widget when run in :attr:`~bookmarks.common.core.StandaloneMode`.
+    as the main widget when run in :attr:`~bookmarks.common.Mode.Standalone`.
 
     Attributes:
         aboutToInitialize (Signal): Emitted just before the main widget is about to
@@ -141,8 +141,8 @@ class MainWidget(QtWidgets.QWidget):
         idx = common.BookmarkTab if idx is None or idx is False else idx
         idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
 
-        root = common.active_paths[common.SynchronizedActivePaths]['root']
-        asset = common.active_paths[common.SynchronizedActivePaths]['asset']
+        root = common.active_paths[common.ActiveMode.Synchronized]['root']
+        asset = common.active_paths[common.ActiveMode.Synchronized]['asset']
 
         if (
                 not root
@@ -338,7 +338,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.CopyProperties, actions.copy_properties)
         connect(shortcuts.PasteProperties, actions.paste_properties)
 
-        if common.init_mode == common.StandaloneMode:
+        if common.init_mode == common.Mode.Standalone:
             connect(shortcuts.Quit, common.shutdown)
             connect(shortcuts.Minimize, actions.toggle_minimized)
             connect(shortcuts.Maximize, actions.toggle_maximized)

@@ -24,12 +24,12 @@ except ImportError:
 def initialize():
     """Initializes the Bookmarks Maya module.
 
-    This will start Bookmarks in :attr:`~bookmarks.common.core.EmbeddedMode` and will create the settings
+    This will start Bookmarks in :attr:`~bookmarks.common.Mode.Embedded` and will create the settings
     and widgets needed to embed it into the Maya UI.
 
     """
     from .. import common
-    common.initialize(common.EmbeddedMode)
+    common.initialize(common.Mode.Embedded)
 
     from . import main
     main.init_maya_widget()

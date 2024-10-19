@@ -1515,9 +1515,7 @@ class BaseItemView(QtWidgets.QTableView):
             current_index = QtCore.QModelIndex()
 
         first_index = self.model().index(0, 0)
-        last_index = self.model().index(
-            self.model().rowCount() - 1, 0
-        )
+        last_index = self.model().index(self.model().rowCount() - 1, 0)
 
         if first_index == last_index:
             return

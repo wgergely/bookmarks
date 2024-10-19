@@ -67,7 +67,6 @@ def initdata(func):
         common.init_active(
             load_settings=True,
             clear_all=False,
-            load_env=False,
             load_private=False,
         )
 

@@ -11,12 +11,22 @@ __all__ = [
     'Section',
     'Format',
     'AssetFolder',
+    'State'
 ]
 
-from enum import Enum
+
+class State(enum.IntEnum):
+    Omitted = common.idx(reset=True, start=0)
+    OnHold = common.idx()
+    NotStarted = common.idx()
+    InProgress = common.idx()
+    PendingReview = common.idx()
+    Priority = common.idx()
+    Approved = common.idx()
+    Completed = common.idx()
 
 
-class Section(Enum):
+class Section(enum.Enum):
     """Database column enums with additional info."""
 
     FileFormatConfig = {
@@ -238,6 +248,9 @@ class Config(QtCore.QObject):
              dict: config values of the given section.
 
         """
+        if section not in Section:
+            raise ValueError(f'Invalid section: {section}. Expected one of {Section}')
+
         if not self.is_valid():
             return self._data[section]
 
@@ -248,7 +261,7 @@ class Config(QtCore.QObject):
             db = database.get(self.server, self.job, self.root)
             v = db.value(
                 db.source(),
-                section,
+                section.value(),
                 database.BookmarkTable
             )
 
@@ -289,7 +302,7 @@ class Config(QtCore.QObject):
             db = database.get(self.server, self.job, self.root)
             db.set_value(
                 db.source(),
-                section,
+                section.value(),
                 data,
                 database.BookmarkTable
             )
@@ -298,237 +311,237 @@ class Config(QtCore.QObject):
 
         self._data[section].update(copy.deepcopy(data))
 
-    def get_description(self, section, token, force=False):
-        """Returns the description of the given token.
-
-        Args:
-            section (Section): The section to retrieve.
-            token (str): A file-format or a folder name, for example, 'anim'.
-            force (bool, optional): Force retrieve tokens from the database.
-
-        Returns:
-            str: The description of the token.
-
-        """
-        common.check_type(token, str)
-
-        if section not in Section:
-            raise ValueError(f'Invalid section: {section}. Expected one of {Section}')
-
-        if section not in self._data:
-            raise KeyError(f'Malformed data, `{section}` not found.')
-
-        if force:
-            self.data(section, force=True)
-
-        for v in self._data[section].values():
-            if v['name'] == token and 'description' in v:
-                return v['description']
-
-        return ''
-
-    def get_extensions(self, flag, force=False):
-        """Returns a list of accepted extensions based on the given flag.
-
-        Args:
-            flag (Format): A format flag.
-            force (bool, optional): Force retrieve tokens from the database.
-
-        Returns:
-            tuple:           A tuple of file format extensions.
-
-        """
-        if flag not in Format:
-            raise ValueError(f'Invalid flag: {flag}. Expected one of {Format}')
-
-        section = Section.FileFormatConfig
-
-        if force:
-            self.data(section, force=True)
-
-        formats = []
-
-        # No flags
-        if flag == Format.NoFormat:
-            return tuple(formats)
-
-        # All flags
-        if flag == Format.AllFormat:
-            for v in self._data[section].values():
-                if not isinstance(v['value'], str):
-                    continue
-                formats += [f.strip() for f in v['value'].split(',') if f.strip()]
-            return tuple(sorted(set(formats)))
-
-        # Specific flags
-        for v in self._data[section].values():
-            if not (v['flag'] & flag):
-                continue
-
-            if not isinstance(v['value'], str):
-                continue
-
-            formats += [f.strip() for f in v['value'].split(',') if f.strip()]
-
-        return tuple(sorted(set(formats)))
-
-    def is_asset_folder(self, folder, force=False):
-        """Returns True if the given folder is an asset folder.
-
-        Args:
-            folder (str): A folder name.
-            force (bool, optional): Force retrieve tokens from the database.
-
-        Returns:
-            bool: True if the folder is an asset folder.
-
-        """
-        common.check_type(folder, str)
-
-        if not folder or not isinstance(folder, str):
-            return False
-
-        section = Section.AssetFolderConfig
-
-        if force:
-            self.data(section, force=True)
-
-        # Check if any of the current values match the given folder
-        for v in self._data[section].values():
-            if v['value'].lower() == folder.lower():
-                return True
-
-            if 'subfolders' not in v:
-                continue
-
-            for subfolder in v['subfolders'].values():
-                if subfolder['value'].lower() == folder.lower():
-                    return True
-
-        return False
-
-    def get_allowed_extensions(self, folder, force=False):
-        """Returns a list of allowed extensions for the given asset folder.
-
-        Args:
-            folder (str): The name of a task folder.
-            force (bool, optional): Force retrieve tokens from the database.
-
-        Returns:
-            set: A set of file format extensions.
-
-        """
-        common.check_type(folder, str)
-
-        if not folder or not isinstance(folder, str):
-            return set()
-
-        if not self.is_asset_folder(folder, force=force):
-            return set()
-
-        section = Section.AssetFolderConfig
-
-        if force:
-            self.data(section, force=True)
-
-        for v in self._data[section].values():
-            if v['value'].lower() == folder.lower():
-                flag = v['flag']
-                if flag not in Format:
-                    log.error(f'Invalid flag: {flag}. Expected one of {Format}. Skipping...')
-                    continue
-                return set(self.get_extensions(flag, force=force))
-        return set()
-
-    def get_asset_folder(self, asset_folder, force=False):
-        """Return the name of an asset folder based on the current token config
-        values.
-
-        Args:
-            asset_folder (AssetFolder): An asset folder name, for example `AssetFolder.SceneFolder`.
-            force (bool, optional): Force reload data from the database.
-
-        Returns:
-            str: The name of the asset folder.
-
-        """
-        if asset_folder not in AssetFolder:
-            raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
-
-        data = self.data(force=force)
-        if not data:
-            return None
-
-        section = Section.AssetFolderConfig
-
-        if force:
-            self.data(section, force=True)
-
-        for v in self._data[section].values():
-            if v['name'] == asset_folder.value:
-                return v['value']
-        return None
-
-    def get_asset_subfolder(self, asset_folder, subfolder, force=False):
-        """Returns the value of an asset subfolder based on the current token config
-        values.
-
-        Args:
-            asset_folder (AssetFolder): An asset folder name, for example, `AssetFolder.SceneFolder`.
-            subfolder (str): A subfolder name, for example, `anim`.
-            force (bool, optional): Force reload data from the database.
-
-        Returns:
-            str: A custom value set in config settings, or None.
-
-        """
-        if asset_folder not in AssetFolder:
-            raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
-
-        common.check_type(subfolder, str)
-
-        if not subfolder or not isinstance(subfolder, str):
-            return None
-
-        section = Section.AssetFolderConfig
-
-        if force:
-            self.data(section, force=True)
-
-        if section not in self._data:
-            return None
-
-        for v in self._data[section].values():
-            if v['name'] == asset_folder:
-                if 'subfolders' not in v:
-                    return None
-                for sub in v['subfolders'].values():
-                    if sub['name'] == subfolder:
-                        return sub['value']
-
-        return None
-
-    def get_asset_subfolders(self, asset_folder, force=False):
-        """Returns the subfolders of the given asset folder.
-
-        Args:
-        Returns:
-            list: A tuple of folder names.
-
-        """
-        if asset_folder not in AssetFolder:
-            raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
-
-        section = Section.AssetFolderConfig
-
-        if force:
-            self.data(section, force=True)
-
-        for v in self._data[section].values():
-            if v['name'] != asset_folder:
-                continue
-            if 'subfolders' not in v:
-                continue
-            return sorted({_v['value'] for _v in v['subfolders'].values()})
-
-        return []
+    # def get_description(self, section, token, force=False):
+    #     """Returns the description of the given token.
+    #
+    #     Args:
+    #         section (Section): The section to retrieve.
+    #         token (str): A file-format or a folder name, for example, 'anim'.
+    #         force (bool, optional): Force retrieve tokens from the database.
+    #
+    #     Returns:
+    #         str: The description of the token.
+    #
+    #     """
+    #     common.check_type(token, str)
+    #
+    #     if section not in Section:
+    #         raise ValueError(f'Invalid section: {section}. Expected one of {Section}')
+    #
+    #     if section not in self._data:
+    #         raise KeyError(f'Malformed data, `{section}` not found.')
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     for v in self._data[section].values():
+    #         if v['name'] == token and 'description' in v:
+    #             return v['description']
+    #
+    #     return ''
+    #
+    # def get_extensions(self, flag, force=False):
+    #     """Returns a list of accepted extensions based on the given flag.
+    #
+    #     Args:
+    #         flag (Format): A format flag.
+    #         force (bool, optional): Force retrieve tokens from the database.
+    #
+    #     Returns:
+    #         tuple:           A tuple of file format extensions.
+    #
+    #     """
+    #     if flag not in Format:
+    #         raise ValueError(f'Invalid flag: {flag}. Expected one of {Format}')
+    #
+    #     section = Section.FileFormatConfig
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     formats = []
+    #
+    #     # No flags
+    #     if flag == Format.NoFormat:
+    #         return tuple(formats)
+    #
+    #     # All flags
+    #     if flag == Format.AllFormat:
+    #         for v in self._data[section].values():
+    #             if not isinstance(v['value'], str):
+    #                 continue
+    #             formats += [f.strip() for f in v['value'].split(',') if f.strip()]
+    #         return tuple(sorted(set(formats)))
+    #
+    #     # Specific flags
+    #     for v in self._data[section].values():
+    #         if not (v['flag'] & flag):
+    #             continue
+    #
+    #         if not isinstance(v['value'], str):
+    #             continue
+    #
+    #         formats += [f.strip() for f in v['value'].split(',') if f.strip()]
+    #
+    #     return tuple(sorted(set(formats)))
+    #
+    # def is_asset_folder(self, folder, force=False):
+    #     """Returns True if the given folder is an asset folder.
+    #
+    #     Args:
+    #         folder (str): A folder name.
+    #         force (bool, optional): Force retrieve tokens from the database.
+    #
+    #     Returns:
+    #         bool: True if the folder is an asset folder.
+    #
+    #     """
+    #     common.check_type(folder, str)
+    #
+    #     if not folder or not isinstance(folder, str):
+    #         return False
+    #
+    #     section = Section.AssetFolderConfig
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     # Check if any of the current values match the given folder
+    #     for v in self._data[section].values():
+    #         if v['value'].lower() == folder.lower():
+    #             return True
+    #
+    #         if 'subfolders' not in v:
+    #             continue
+    #
+    #         for subfolder in v['subfolders'].values():
+    #             if subfolder['value'].lower() == folder.lower():
+    #                 return True
+    #
+    #     return False
+    #
+    # def get_allowed_extensions(self, folder, force=False):
+    #     """Returns a list of allowed extensions for the given asset folder.
+    #
+    #     Args:
+    #         folder (str): The name of a task folder.
+    #         force (bool, optional): Force retrieve tokens from the database.
+    #
+    #     Returns:
+    #         set: A set of file format extensions.
+    #
+    #     """
+    #     common.check_type(folder, str)
+    #
+    #     if not folder or not isinstance(folder, str):
+    #         return set()
+    #
+    #     if not self.is_asset_folder(folder, force=force):
+    #         return set()
+    #
+    #     section = Section.AssetFolderConfig
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     for v in self._data[section].values():
+    #         if v['value'].lower() == folder.lower():
+    #             flag = v['flag']
+    #             if flag not in Format:
+    #                 log.error(f'Invalid flag: {flag}. Expected one of {Format}. Skipping...')
+    #                 continue
+    #             return set(self.get_extensions(flag, force=force))
+    #     return set()
+    #
+    # def get_asset_folder(self, asset_folder, force=False):
+    #     """Return the name of an asset folder based on the current token config
+    #     values.
+    #
+    #     Args:
+    #         asset_folder (AssetFolder): An asset folder name, for example `AssetFolder.SceneFolder`.
+    #         force (bool, optional): Force reload data from the database.
+    #
+    #     Returns:
+    #         str: The name of the asset folder.
+    #
+    #     """
+    #     if asset_folder not in AssetFolder:
+    #         raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
+    #
+    #     data = self.data(force=force)
+    #     if not data:
+    #         return None
+    #
+    #     section = Section.AssetFolderConfig
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     for v in self._data[section].values():
+    #         if v['name'] == asset_folder.value:
+    #             return v['value']
+    #     return None
+    #
+    # def get_asset_subfolder(self, asset_folder, subfolder, force=False):
+    #     """Returns the value of an asset subfolder based on the current token config
+    #     values.
+    #
+    #     Args:
+    #         asset_folder (AssetFolder): An asset folder name, for example, `AssetFolder.SceneFolder`.
+    #         subfolder (str): A subfolder name, for example, `anim`.
+    #         force (bool, optional): Force reload data from the database.
+    #
+    #     Returns:
+    #         str: A custom value set in config settings, or None.
+    #
+    #     """
+    #     if asset_folder not in AssetFolder:
+    #         raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
+    #
+    #     common.check_type(subfolder, str)
+    #
+    #     if not subfolder or not isinstance(subfolder, str):
+    #         return None
+    #
+    #     section = Section.AssetFolderConfig
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     if section not in self._data:
+    #         return None
+    #
+    #     for v in self._data[section].values():
+    #         if v['name'] == asset_folder:
+    #             if 'subfolders' not in v:
+    #                 return None
+    #             for sub in v['subfolders'].values():
+    #                 if sub['name'] == subfolder:
+    #                     return sub['value']
+    #
+    #     return None
+    #
+    # def get_asset_subfolders(self, asset_folder, force=False):
+    #     """Returns the subfolders of the given asset folder.
+    #
+    #     Args:
+    #     Returns:
+    #         list: A tuple of folder names.
+    #
+    #     """
+    #     if asset_folder not in AssetFolder:
+    #         raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
+    #
+    #     section = Section.AssetFolderConfig
+    #
+    #     if force:
+    #         self.data(section, force=True)
+    #
+    #     for v in self._data[section].values():
+    #         if v['name'] != asset_folder:
+    #             continue
+    #         if 'subfolders' not in v:
+    #             continue
+    #         return sorted({_v['value'] for _v in v['subfolders'].values()})
+    #
+    #     return []

@@ -930,8 +930,6 @@ class TemplateItem(object):
 
         zp.seek(0)
         self._template = zp.getvalue()
-        print(f'Files: {files}')
-        print(f'Folders: {folders}')
         return files, folders
 
     def new_template_from_tokens(self):

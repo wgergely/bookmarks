@@ -1284,7 +1284,7 @@ class ServerView(QtWidgets.QTreeView):
 
         node.api().remove_link(node.server, node.job, node.root)
 
-        idx = node.parent().children().index(node)
+        idx = node.parent().children().index(node, )
         self.model().sourceModel().beginRemoveRows(source_index.parent(), idx, idx)
         node.parent().remove_child(idx)
         self.model().sourceModel().endRemoveRows()

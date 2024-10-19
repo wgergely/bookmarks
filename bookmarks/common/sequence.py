@@ -178,11 +178,15 @@ def proxy_path(v):
 def _proxy_path(v):
     collapsed = is_collapsed(v)
     if collapsed:
-        return f'{collapsed.group(1)}{SEQPROXY}{collapsed.group(3)}'
+        v = f'{collapsed.group(1)}{SEQPROXY}{collapsed.group(3)}'
+        return v.replace('\\', '/')
+
     seq = get_sequence(v)
     if seq:
-        return f'{seq.group(1)}{SEQPROXY}{seq.group(3)}.{seq.group(4)}'
-    return v
+        v = f'{seq.group(1)}{SEQPROXY}{seq.group(3)}.{seq.group(4)}'
+        return v.replace('\\', '/')
+
+    return v.replace('\\', '/')
 
 
 @functools.lru_cache(maxsize=4194304)

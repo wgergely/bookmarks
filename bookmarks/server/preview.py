@@ -33,7 +33,7 @@ class Node:
 
     def row(self):
         if self.parent:
-            return self.parent.children.index(self)
+            return self.parent.children.index(self, )
         return 0
 
     def set_data(self, column, value):

@@ -197,7 +197,7 @@ class Node(object):
 
     def row(self):
         if self._parent:
-            return self._parent._children.index(self)
+            return self._parent._children.index(self, )
         return 0
 
     def child(self, row):

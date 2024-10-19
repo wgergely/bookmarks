@@ -326,9 +326,8 @@ class FileItemModel(models.ItemModel):
                 common_path = None
 
             if common_path != source_path:
-                # File is outside the source path; skip or handle appropriately
-                log.error(f"File {filepath} is outside the source path {source_path}. Skipping.")
-                continue
+                log.error(
+                    f'File {filepath} is outside the source path {source_path}. Verify if this is intentional.')
 
             # Compute relative path from task folder to file without relative denominators
             relative_path = os.path.relpath(filepath, source_path).replace('\\', '/')
@@ -413,10 +412,11 @@ class FileItemModel(models.ItemModel):
                         seq_common_path = None
 
                     if seq_common_path != source_path:
-                        log.error(f"Sequence {sequence_path} is outside the source path {source_path}. Skipping.")
-                        seq = None  # Treat as individual file
+                        log.error(
+                            f'Sequence {sequence_path} is outside the source path {source_path}. Verify if this is intentional.')
+                        seq = None  # Treat as an individual file
                     else:
-                        # Compute relative path for sequence
+                        # Compute the relative path for the sequence
                         sequence_relative_path = os.path.relpath(sequence_path, source_path).replace('\\', '/')
                         if '..' in sequence_relative_path or sequence_relative_path.startswith('.'):
                             sequence_name = os.path.basename(sequence_path)

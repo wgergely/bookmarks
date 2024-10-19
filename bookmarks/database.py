@@ -28,7 +28,7 @@ To get a cached, thread-specific database controller, use the :func:`get()`:
     db = database.get(*common.active('root', args=True))
     height = db.value(db.source(), 'height', database.BookmarkTable)
 
-To group multiple database changes, use the built-in context manager for handling transactions:
+To group multiple database changes, use the built-in context manager    for handling transactions:
 
 .. code-block:: python
     :linenos:

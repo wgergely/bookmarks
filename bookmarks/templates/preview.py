@@ -137,7 +137,7 @@ class TreeModel(QtCore.QAbstractItemModel):
         grandparent_node = parent_node.parent
         row = 0
         if grandparent_node:
-            row = grandparent_node.children.index(parent_node)
+            row = grandparent_node.children.index(parent_node, )
         return self.createIndex(row, 0, parent_node)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):

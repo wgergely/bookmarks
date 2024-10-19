@@ -4,7 +4,6 @@
 import collections
 import time
 import uuid
-import weakref
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -180,24 +179,20 @@ def quit_threads():
             break
 
 
-
 def get_thread(k):
     """Get a cached thread controller instance.
 
     Args:
-        k (str): Name of the thread controller to return, for example
+        k (str): Name of the thread controller to return, for example,
             ``threads.QueuedSGQuery``.
 
-    If the controller does not yet exist we will create and cache it.
+    If the controller doesn't yet exist, create and cache it.
     All threads are associated with worker, defined by `THREADS`.
 
     """
     if k not in THREADS:
-        raise KeyError(
-            '{} is invalid. Must be one of {}'.format(
-                k, '\n'.join(THREADS.keys())
-            )
-        )
+        keys = ', '.join(THREADS.keys())
+        raise KeyError(f'{k} is invalid. Must be one of {keys}')
 
     if k in controllers:
         return controllers[k]
@@ -211,20 +206,6 @@ def queue(k):
     if k not in THREADS:
         raise KeyError('Wrong key')
     return THREADS[k]['queue']
-
-
-def add_to_queue(k, ref):
-    """Adds a wekref item to the worker's queue.
-
-    Args:
-        ref (weakref.ref): A weak reference to a data segment.
-        end (bool): Add to the end of the queue instead if `True`.
-
-    """
-    common.check_type(ref, weakref.ref)
-
-    if ref not in queue(k) and ref():
-        queue(k).append(ref)
 
 
 class BaseThread(QtCore.QThread):
@@ -248,10 +229,12 @@ class BaseThread(QtCore.QThread):
         else:
             self.setObjectName(f'Thread_{uuid.uuid1().hex}')
 
-        self.setTerminationEnabled(True)
-
         self.worker = worker
         self._connect_signals()
+
+    def run(self):
+        loop = QtCore.QEventLoop()
+        loop.exec_()
 
     def _connect_signals(self):
         if QtCore.QCoreApplication.instance():
@@ -279,3 +262,6 @@ class BaseThread(QtCore.QThread):
         if self.worker.thread() == QtWidgets.QApplication.instance().thread():
             s = 'Could not move worker to thread.'
             raise RuntimeError(s)
+
+        if self.worker.thread() != self:
+            raise RuntimeError('Worker was not moved to the correct thread.')

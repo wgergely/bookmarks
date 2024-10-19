@@ -110,10 +110,10 @@ class MainWidget(QtWidgets.QWidget):
         self.stacked_widget = views.ListsWidget(parent=self)
 
         # Item views
-        self.bookmarks_widget = bookmark_items.BookmarkItemView(parent=self)
-        self.assets_widget = asset_items.AssetItemView(parent=self)
-        self.files_widget = file_items.FileItemView(parent=self)
-        self.favourites_widget = favourite_items.FavouriteItemView(parent=self)
+        self.bookmarks_widget = bookmarks.BookmarkItemView(parent=self)
+        self.assets_widget = assets.AssetItemView(parent=self)
+        self.files_widget = files.FileItemView(parent=self)
+        self.favourites_widget = favourites.FavouriteItemView(parent=self)
 
         # Add items to stacked widget
         self.stacked_widget.addWidget(self.bookmarks_widget)

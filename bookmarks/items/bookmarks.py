@@ -153,6 +153,7 @@ class BookmarkItemModel(models.ItemModel):
         database.remove_all_connections()  # force-reset database connections on reload
 
         bookmarks = common.bookmarks.copy()
+
         # Ensure the current active items are added to the list if missing
         if not all(
                 (

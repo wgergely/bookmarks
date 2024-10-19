@@ -30,10 +30,6 @@ def _widget(q):
     return widget
 
 
-def _qlast_modified(n):
-    return QtCore.QDateTime.fromMSecsSinceEpoch(int(n) * 1000)
-
-
 def _model(q):
     widget = _widget(q)
     if widget is None:
@@ -42,6 +38,10 @@ def _model(q):
     if q not in widget.queues:
         return None
     return widget.model().sourceModel()
+
+
+def _qlast_modified(n):
+    return QtCore.QDateTime.fromMSecsSinceEpoch(int(n) * 1000)
 
 
 def verify_thread_affinity():
@@ -153,8 +153,10 @@ class BaseWorker(QtCore.QObject):
 
     sgEntityDataReady = QtCore.Signal(str, list)
 
+    errorOccurred = QtCore.Signal(str)
+
     def __init__(self, queue, parent=None):
-        super(BaseWorker, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.setObjectName(f'{queue}Worker_{uuid.uuid1().hex}')
 
@@ -189,6 +191,7 @@ class BaseWorker(QtCore.QObject):
 
         self.coreDataReset.connect(self.clear_queue, cnx)
         self.coreDataLoaded.connect(self.queue_model, cnx)
+
         self.queue_timer.timeout.connect(self.process_data, cnx)
 
         self.databaseValueUpdated.connect(self.update_changed_database_value, cnx)
@@ -202,7 +205,7 @@ class BaseWorker(QtCore.QObject):
         threads.get_thread(self.queue).startTimer.connect(self.startTimer, cnx)
         threads.get_thread(self.queue).stopTimer.connect(self.stopTimer, cnx)
 
-        # If the queue type allows preloading the model, we will queue all
+        # If the queue type allows preloading the model, queue all
         # model data when the core data has been loaded in the gui thread
         if widget:
             widget.queueItems.connect(self.queueItems, cnx)
@@ -220,7 +223,7 @@ class BaseWorker(QtCore.QObject):
         self.sgEntityDataReady.connect(common.signals.sgEntityDataReady, cnx)
 
     def update_changed_database_value(self, table, source, key, value):
-        """Process changes when any bookmark database value changes.
+        """Process changes when a database value changes.
 
         Args:
             table (str): The database table.
@@ -229,39 +232,38 @@ class BaseWorker(QtCore.QObject):
             value (object): The value to set.
 
         Returns:
-            type: Description of returned object.
+            type: Description of the returned object.
 
         """
-        from . import threads
+        verify_thread_affinity()
 
+        from . import threads
         if not threads.THREADS[self.queue]['preload']:
             return
 
-        model = _model(self.queue)
+        _source = common.proxy_path(source)
+        file_item = common.get_data_from_value(
+            _source,
+            common.FileItem,
+            role=common.PathRole,
+            get_container=False
+        )
+        if file_item:
+            file_item[common.FileInfoLoaded] = False
+            threads.THREADS[self.queue]['queue'].append(weakref.ref(file_item))
 
-        p = model.parent_path()
-        k = model.task()
-        source = common.proxy_path(source)
-        n = -1
+        seq_item = common.get_data_from_value(
+            _source,
+            common.SequenceItem,
+            role=common.PathRole,
+            get_container=False
+        )
+        if seq_item:
+            seq_item[common.FileInfoLoaded] = False
+            threads.THREADS[self.queue]['queue'].append(weakref.ref(seq_item))
 
-        t1 = model.data_type()
-        t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
-
-        for t in (t1, t2):
-            ref = common.get_data_ref(p, k, t)
-            for idx in ref():
-                if not ref():
-                    raise RuntimeError('Data changed during update.')
-                # Impose a limit on how many items we'll query
-                n += 1
-                if n > 99999:
-                    return
-
-                s = common.proxy_path(ref()[idx][common.PathRole])
-                if source == s:
-                    ref()[idx][common.FileInfoLoaded] = False
-                    threads.THREADS[self.queue]['queue'].append(weakref.ref(ref()[idx]))
-                    self.queue_timer.start()
+        if any((file_item, seq_item)):
+            self.queue_timer.start()
 
     @common.error
     def queue_items(self, refs):
@@ -292,10 +294,13 @@ class BaseWorker(QtCore.QObject):
         """
         from . import threads
 
-        # Skip if the model is not meant to be preloaded by the worker
         q = self.queue
+
+        # Skip if the model is not meant to be preloaded by the worker
         if not threads.THREADS[q]['preload']:
             return
+
+        # Skip if the worker is not associated with a tab
         if threads.THREADS[q]['tab'] == -1:
             return
 
@@ -539,9 +544,11 @@ class InfoWorker(BaseWorker):
             return True
         except TypeError:
             if ref():
+                self.errorOccurred.emit('The worker failed to process an item.')
                 log.error(f'Failed to process item.')
             return False
         except:
+            self.errorOccurred.emit('The worker failed to process an item.')
             log.error(f'Failed to process item.')
             return False
         finally:
@@ -561,7 +568,7 @@ class InfoWorker(BaseWorker):
             raise RuntimeError('Failed to process item.')
 
         # Normalize and convert st to an absolute path
-        st = os.path.abspath(os.path.normpath(st.replace('\\', '/')))
+        st = os.path.abspath(os.path.normpath(st)).replace('\\', '/')
         ref()[common.PathRole] = st
 
         flags = ref()[common.FlagsRole]
@@ -570,17 +577,20 @@ class InfoWorker(BaseWorker):
         # Load values from the database
         db = database.get(*pp[0:3])
 
+        _proxy_flags = 0
+        proxy_k = None
+
         # Get the sequence proxy path if the item is collapsed
         if len(pp) > 4:
             collapsed = common.is_collapsed(st)
             proxy_k = common.proxy_path(st)
-            proxy_k = os.path.abspath(os.path.normpath(proxy_k.replace('\\', '/')))
+            proxy_k = os.path.abspath(os.path.normpath(proxy_k)).replace('\\', '/')
             k = proxy_k if collapsed else st
         else:
             k = st
 
         # Now normalize and convert k to an absolute path
-        k = os.path.abspath(os.path.normpath(k.replace('\\', '/')))
+        k = os.path.abspath(os.path.normpath(k)).replace('\\', '/')
 
         asset_row_data = db.get_row(k, database.AssetTable)
         bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)

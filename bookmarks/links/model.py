@@ -359,7 +359,7 @@ class AssetLinksModel(QtCore.QAbstractItemModel):
 
         grandparent_node = parent_node.parent()
         if grandparent_node and parent_node in grandparent_node.children():
-            row = grandparent_node.children().index(parent_node)
+            row = grandparent_node.children().index(parent_node, )
             return self.createIndex(row, 0, parent_node)
         else:
             return QtCore.QModelIndex()

@@ -506,7 +506,6 @@ class LinksAPI:
         """
         if links is None:
             v = self.get(force=True)
-            print(v)
         elif links and isinstance(links, (list, tuple)):
             v = links
         else:

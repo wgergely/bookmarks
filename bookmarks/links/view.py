@@ -1101,8 +1101,6 @@ class LinksTextEditor(QtWidgets.QWidget):
         )
         links = links if links else []
 
-        print(links)
-
         api = lib.LinksAPI(self._current_path)
         api.clear()
 

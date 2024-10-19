@@ -61,7 +61,7 @@ def asset_item_generator(path, interrupt_requested=False):
         tuple: A tuple containing the absolute path of the asset item and the links file,
                or None if no links are found.
     """
-    path = os.path.abspath(os.path.normpath(path.replace('\\', '/')))
+    path = os.path.abspath(os.path.normpath(path)).replace('\\', '/')
 
     try:
         with os.scandir(path) as it:
@@ -75,7 +75,7 @@ def asset_item_generator(path, interrupt_requested=False):
                 if not os.access(entry.path, os.R_OK):
                     continue
 
-                asset_root = os.path.abspath(os.path.normpath(entry.path.replace('\\', '/')))
+                asset_root = os.path.abspath(os.path.normpath(entry.path)).replace('\\', '/')
 
                 try:
                     common_path = os.path.commonpath([path, asset_root])
@@ -84,14 +84,15 @@ def asset_item_generator(path, interrupt_requested=False):
                     common_path = None
 
                 if common_path != path:
-                    log.error(f'Asset {asset_root} is outside the source path {path}.')
+                    log.error(
+                        f'Asset {asset_root} is outside the source path {path}. Please verify if this is intentional')
 
                 api = LinksAPI(asset_root)
                 links = api.get(force=True)
 
                 if links:
                     for rel_path in links:
-                        abs_path = os.path.abspath(os.path.normpath(f'{asset_root}/{rel_path}'.replace('\\', '/')))
+                        abs_path = os.path.abspath(os.path.normpath(f'{asset_root}/{rel_path}')).replace('\\', '/')
                         if os.path.exists(abs_path):
                             yield abs_path, api.links_file
                 else:
@@ -232,7 +233,7 @@ class AssetItemModel(models.ItemModel):
             return
 
         # Convert the source to the absolute and normalized path
-        source = os.path.abspath(os.path.normpath('/'.join(p).replace('\\', '/')))
+        source = os.path.abspath(os.path.normpath('/'.join(p))).replace('\\', '/')
 
         data = common.get_data(p, k, t)
 
@@ -258,7 +259,7 @@ class AssetItemModel(models.ItemModel):
                 QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
             # Convert the path to the absolute and normalized path
-            filepath = os.path.abspath(os.path.normpath(filepath.replace('\\', '/')))
+            filepath = os.path.abspath(os.path.normpath(filepath)).replace('\\', '/')
 
             # Check if the path is within the source
             try:
@@ -267,9 +268,8 @@ class AssetItemModel(models.ItemModel):
                 common_path = None
 
             if common_path != source:
-                # Asset is outside the source path; skip or handle appropriately
-                log.error(f"Asset {filepath} is outside the source path {source}. Skipping.")
-                # continue
+                log.error(
+                    f'Asset {filepath} is outside the source path {source}. Please verify if this is intentional.')
 
             # Compute the relative path
             relative_path = os.path.relpath(filepath, source).replace('\\', '/')

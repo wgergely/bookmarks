@@ -11,6 +11,10 @@ from PySide2 import QtCore
 from . import common
 
 
+# module level QReadWriteLock
+lock = QtCore.QReadWriteLock()
+
+
 class DataDict(dict):
     """Custom dictionary class used to store model item data.
 
@@ -202,12 +206,14 @@ def get_data(key, task, data_type):
     return common.item_data[key][task][data_type]
 
 
-def get_data_from_value(value, data_type, role=common.PathRole):
+def get_data_from_value(value, data_type, role=common.PathRole, get_container=True):
     """Get the internal data dictionary associated with a path.
 
     Args:
         value (object): A value to match.
         data_type (int): One of :attr:`~bookmarks.common.FileItem` or :attr:`~bookmarks.common.SequenceItem`.
+        role (int): The role to match.
+        get_container (bool): Return the container weakref if True, otherwise the data item that was found.
 
     Returns:
         common.DataDict: The cached data or None if not found.
@@ -219,8 +225,16 @@ def get_data_from_value(value, data_type, role=common.PathRole):
                 return None
             data = common.item_data[key][task][data_type]
             for idx in data:
-                if value in data[idx][role]:
-                    return data
+                if value == data[idx][role]:
+                    if get_container:
+                        return data
+                    else:
+                        return data[idx]
+                elif value in data[idx][role]:
+                    if get_container:
+                        return data
+                    else:
+                        return data[idx]
     return None
 
 

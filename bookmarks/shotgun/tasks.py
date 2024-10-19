@@ -86,7 +86,7 @@ class InteralNode(QtCore.QObject):
         """Removes itself from the parent's children."""
         if self.parentNode:
             if self in self.parentNode.children:
-                idx = self.parentNode.children.index(self)
+                idx = self.parentNode.children.index(self, )
                 del self.parentNode.children[idx]
 
     def removeChild(self, child):
@@ -127,7 +127,7 @@ class InteralNode(QtCore.QObject):
     def row(self):
         """Row number of this node."""
         if self.parentNode:
-            return self.parentNode.children.index(self)
+            return self.parentNode.children.index(self, )
         return None
 
 
@@ -469,7 +469,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         if node not in node.parentNode.children:
             raise ValueError('Node\'s parent doesn\'t contain the node.')
 
-        idx = node.parentNode.children.index(node)
+        idx = node.parentNode.children.index(node, )
         return self.createIndex(idx, 0, node)
 
 

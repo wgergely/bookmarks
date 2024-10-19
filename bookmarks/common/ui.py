@@ -79,7 +79,6 @@ def _init_stylesheet():
         if not enum:
             raise RuntimeError(f'Font {enum.name} not found!')
         font, _ = enum(common.Size.MediumText())
-        print(font.family())
         kwargs[enum.name] = font.family()
 
     for enum in core.Color:

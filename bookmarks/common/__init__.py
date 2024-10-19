@@ -56,6 +56,8 @@ stylesheet = None
 cursor = None
 font_db = None
 
+color_manager = None
+
 servers = None
 env_bookmark_items = {}
 bookmarks = {}

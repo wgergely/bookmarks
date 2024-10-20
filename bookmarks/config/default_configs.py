@@ -130,7 +130,6 @@ default_task_state = {
     },
 }
 
-
 default_task_config = {
     common.idx(reset=True, start=0): {
         'name': 'Design',
@@ -363,7 +362,6 @@ default_task_config = {
         'enabled': True
     },
 }
-
 
 default_file_format_config = {
     common.idx(reset=True, start=0): {

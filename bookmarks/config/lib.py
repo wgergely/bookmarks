@@ -261,7 +261,7 @@ class Config(QtCore.QObject):
             db = database.get(self.server, self.job, self.root)
             v = db.value(
                 db.source(),
-                section.value(),
+                section.db_column,
                 database.BookmarkTable
             )
 
@@ -279,7 +279,7 @@ class Config(QtCore.QObject):
         except (RuntimeError, ValueError, TypeError):
             log.error('Failed to get token config from the database.')
         finally:
-            self._initialized = True
+            self._initialized[section] = True
 
         return self._data[section]
 
@@ -302,7 +302,7 @@ class Config(QtCore.QObject):
             db = database.get(self.server, self.job, self.root)
             db.set_value(
                 db.source(),
-                section.value(),
+                section.db_column,
                 data,
                 database.BookmarkTable
             )

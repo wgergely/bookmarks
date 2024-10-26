@@ -32,17 +32,17 @@ class ActiveMode(enum.IntEnum):
 
 
 def init_active(clear_all=True, load_settings=True, load_private=True, load_overrides=True):
-    if clear_all:
-        # Initialize the active_paths object
-        common.active_paths = {
-            ActiveMode.Synchronized: collections.OrderedDict(),
-            ActiveMode.Private: collections.OrderedDict(),
-        }
+    # Initialize the active_paths object
+    if clear_all or common.active_paths is None:
+        common.active_paths = {}
+
+        for mode in ActiveMode:
+            common.active_paths[mode] = collections.OrderedDict()
 
         # Init none values
-        for k in (ActiveMode.Synchronized, ActiveMode.Private):
-            for f in ActivePathSegmentTypes:
-                common.active_paths[k][f] = None
+        for mode in ActiveMode:
+            for k in ActivePathSegmentTypes:
+                common.active_paths[mode][k] = None
 
     if load_settings:
         # Load values from the user settings file

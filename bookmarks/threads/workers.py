@@ -149,7 +149,7 @@ class BaseWorker(QtCore.QObject):
     stopTimer = QtCore.Signal()
 
     refUpdated = QtCore.Signal(weakref.ref)
-    databaseValueUpdated = QtCore.Signal(str, str, str, object)
+    databaseValueChanged = QtCore.Signal(str, str, str, object)
 
     sgEntityDataReady = QtCore.Signal(str, list)
 
@@ -194,7 +194,7 @@ class BaseWorker(QtCore.QObject):
 
         self.queue_timer.timeout.connect(self.process_data, cnx)
 
-        self.databaseValueUpdated.connect(self.update_changed_database_value, cnx)
+        self.databaseValueChanged.connect(self.update_changed_database_value, cnx)
 
         q = self.queue
         cnx = QtCore.Qt.QueuedConnection
@@ -218,7 +218,7 @@ class BaseWorker(QtCore.QObject):
             self.dataTypeAboutToBeSorted.connect(model.internal_data_about_to_be_sorted, cnx)
             self.dataTypeSorted.connect(model.internal_data_sorted, cnx)
 
-            common.signals.databaseValueUpdated.connect(self.databaseValueUpdated, cnx)
+            common.signals.databaseValueChanged.connect(self.databaseValueChanged, cnx)
 
         self.sgEntityDataReady.connect(common.signals.sgEntityDataReady, cnx)
 

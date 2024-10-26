@@ -34,8 +34,8 @@ class CoreSignals(QtCore.QObject):
     #: Signal a thumbnail update
     thumbnailUpdated = QtCore.Signal(str)
 
-    #: Signals a value update in the bookmark database
-    databaseValueUpdated = QtCore.Signal(str, str, str, object)
+    #: Signals a value change in the bookmark database -(db table, source path, column, new value)
+    databaseValueChanged = QtCore.Signal(str, str, str, object)
 
     #: Signal called when thumbnail generating is enabled or disabled
     generateThumbnailsChanged = QtCore.Signal(QtCore.Qt.CheckState)

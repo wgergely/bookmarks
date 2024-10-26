@@ -132,234 +132,244 @@ default_task_state = {
 
 default_task_config = {
     common.idx(reset=True, start=0): {
+        'name': 'Progress',
+        'value': 'progress',
+        'color': common.color_manager.get_color('design', base_hue=180),
+        'description': 'The current task\'s progress',
+        'icon': 'asset',
+        'status': 0,
+        'step': None,
+        'enabled': False
+    },
+    common.idx(): {
         'name': 'Design',
         'value': 'design',
-        'color': common.color_manager.get_color('design', qcolor=True, base_hue=180),
+        'color': common.color_manager.get_color('design', base_hue=180),
         'description': 'Design concepts, visual styles, and visual plans.',
         'icon': 'task_design',
-        'status': {},
+        'status': 0,
         'step': None,
         'enabled': True
     },
     common.idx(): {
         'name': 'Storyboarding',
         'value': 'storyboard',
-        'color': common.color_manager.get_color('storyboard', qcolor=True, base_hue=180),
+        'color': common.color_manager.get_color('storyboard', base_hue=180),
         'description': 'Create storyboards and animatics to visualize narrative flow and key scenes.',
         'icon': 'task_storyboarding',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Concept Art',
         'value': 'concept',
-        'color': common.color_manager.get_color('concept', qcolor=True, base_hue=180),
+        'color': common.color_manager.get_color('concept', base_hue=180),
         'description': 'Develop concept artworks depicting backgrounds, characters, and props.',
         'icon': 'task_concept_art',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Previz',
         'value': 'previz',
-        'color': common.color_manager.get_color('previz', qcolor=True, base_hue=180),
+        'color': common.color_manager.get_color('previz', base_hue=180),
         'description': 'Create preliminary visualizations and block-o-matics to plan and refine scenes.',
         'icon': 'task_previs',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Motion Capture',
         'value': 'mocap',
-        'color': common.color_manager.get_color('mocap', qcolor=True, base_hue=30),
+        'color': common.color_manager.get_color('mocap', base_hue=30),
         'description': 'Capture and process motion data for realistic character animations.',
         'icon': 'task_mocap',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Motion Cleanup',
         'value': 'cleanup',
-        'color': common.color_manager.get_color('cleanup', qcolor=True, base_hue=30),
+        'color': common.color_manager.get_color('cleanup', base_hue=30),
         'description': 'Animation and motion capture cleanup',
         'icon': 'task_cleanup',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Modeling',
         'value': 'model',
-        'color': common.color_manager.get_color('model', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('model', base_hue=-100),
         'description': 'Build detailed 3D models of characters, props, and environments.',
         'icon': 'task_modeling',
-        'status': {},
+        'status': 0,
         'step': None,
         'enabled': True
     },
     common.idx(): {
         'name': 'Rigging',
         'value': 'rigging',
-        'color': common.color_manager.get_color('rigging', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('rigging', base_hue=-100),
         'description': 'Develop rigging systems for characters and props to enable animation.',
         'icon': 'task_rigging',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Animation',
         'value': 'anim',
-        'color': common.color_manager.get_color('anim', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('anim', base_hue=-100),
         'description': 'Animate characters and props using keyframe and motion capture techniques.',
         'icon': 'task_animation',
-        'status': {},
+        'status': 0,
         'step': None,
         'enabled': True
     },
     common.idx(): {
         'name': 'Layout',
         'value': 'layout',
-        'color': common.color_manager.get_color('layout', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('layout', base_hue=-100),
         'description': 'Arrange camera placement, staging, shot composition, and scene assembly.',
         'icon': 'task_layout',
-        'status': {},
+        'status': 0,
         'step': None,
         'enabled': True
     },
     common.idx(): {
         'name': 'Effects',
         'value': 'fx',
-        'color': common.color_manager.get_color('fx', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('fx', base_hue=-100),
         'description': 'Create atmospheric effects such as smoke, fire, dust, and water.',
         'icon': 'task_fx',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Texture',
         'value': 'texture',
-        'color': common.color_manager.get_color('texture', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('texture', base_hue=-100),
         'description': 'Perform 2D and 3D texture painting to add surface details to models.',
         'icon': 'task_texture',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Shading & Surfacing',
         'value': 'surfacing',
-        'color': common.color_manager.get_color('surfacing', qcolor=True, base_hue=-100),
+        'color': common.color_manager.get_color('surfacing', base_hue=-100),
         'description': 'Apply shading and surfacing techniques to achieve realistic material appearances.',
         'icon': 'task_surfacing',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Compositing',
         'value': 'comp',
-        'color': common.color_manager.get_color('comp', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('comp', base_hue=0),
         'description': 'Combine rendered elements and assets to create final composite shots.',
         'icon': 'task_compositing',
-        'status': {},
+        'status': 0,
         'step': None,
         'enabled': True
     },
     common.idx(): {
         'name': 'Tracking',
         'value': 'tracking',
-        'color': common.color_manager.get_color('tracking', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('tracking', base_hue=0),
         'description': 'Perform camera and object tracking to align CGI elements with live-action footage.',
         'icon': 'task_tracking',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Match-moving',
         'value': 'matchmove',
-        'color': common.color_manager.get_color('matchmove', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('matchmove', base_hue=0),
         'description': 'Execute camera and object matchmoving to integrate CGI seamlessly.',
         'icon': 'task_matchmove',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Music & Audio',
         'value': 'audio',
-        'color': common.color_manager.get_color('audio', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('audio', base_hue=0),
         'description': 'Manage sound and music production, including recording, editing, and mixing.',
         'icon': 'task_audio',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Sound FX',
         'value': 'sfx',
-        'color': common.color_manager.get_color('sfx', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('sfx', base_hue=0),
         'description': 'Design, record, and integrate sound effects to enhance the auditory experience.',
         'icon': 'task_sfx',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Conform',
         'value': 'conform',
-        'color': common.color_manager.get_color('conform', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('conform', base_hue=0),
         'description': 'Ensure source data and footage conform to project specifications for consistency.',
         'icon': 'task_conform',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Grading',
         'value': 'grading',
-        'color': common.color_manager.get_color('grading', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('grading', base_hue=0),
         'description': 'Perform color grading to adjust and enhance color, contrast, and overall tone.',
         'icon': 'task_grading',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Lighting',
         'value': 'lighting',
-        'color': common.color_manager.get_color('lighting', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('lighting', base_hue=0),
         'description': 'Execute scene and asset lighting to achieve the desired mood and realism.',
         'icon': 'task_lighting',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'Rendering',
         'value': 'render',
-        'color': common.color_manager.get_color('render', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('render', base_hue=0),
         'description': 'Conduct final imaging and rendering processes to produce high-quality outputs.',
         'icon': 'task_rendering',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
     common.idx(): {
         'name': 'RnD',
         'value': 'rnd',
-        'color': common.color_manager.get_color('rnd', qcolor=True, base_hue=0),
+        'color': common.color_manager.get_color('rnd', base_hue=0),
         'description': 'Conduct research and development to innovate techniques, tools, and workflows.',
         'icon': 'task_rnd',
-        'status': {},
+        'status': 0,
         'step': None,
-        'enabled': True
+        'enabled': False
     },
 }
 

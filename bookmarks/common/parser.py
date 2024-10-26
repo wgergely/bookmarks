@@ -92,7 +92,7 @@ class StringParser(QtCore.QObject):
         self._connect_signals()
 
     def _connect_signals(self):
-        common.signals.databaseValueUpdated.connect(self.update_env)
+        common.signals.databaseValueChanged.connect(self.update_env)
         common.signals.bookmarkItemActivated.connect(self.update_env)
         common.signals.assetItemActivated.connect(self.update_env)
         common.signals.fileItemActivated.connect(self.update_env)

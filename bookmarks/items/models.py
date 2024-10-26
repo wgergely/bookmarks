@@ -784,7 +784,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         self.modelAboutToBeReset.connect(self.verify_items.stop)
         self.modelReset.connect(self.verify_items.start)
-        common.signals.databaseValueUpdated.connect(self.verify_items.start)
+        common.signals.databaseValueChanged.connect(self.verify_items.start)
         self.modelReset.connect(self.invalidateFilter)
 
         self.filterTextChanged.connect(self.verify_items.start)

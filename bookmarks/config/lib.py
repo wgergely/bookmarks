@@ -2,8 +2,6 @@ import copy
 import enum
 import threading
 
-from PySide2 import QtCore
-
 from .. import common, log, database
 
 __all__ = [
@@ -119,7 +117,7 @@ class AssetFolder(enum.StrEnum):
     DataFolder = 'data'
 
 
-class Config(QtCore.QObject):
+class BaseConfig:
     """The class is used to interface with bookmark property configuration values.
 
     """
@@ -142,20 +140,20 @@ class Config(QtCore.QObject):
     def __str__(self):
         return self.__repr__()
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, server, job, root):
         """Creates a new item instance backed by a cache.
 
         """
-        if args:
-            raise ValueError('Item cannot be created with positional arguments')
-
         _valid_args = []
-        for kwarg in kwargs:
-            if not kwargs[kwarg]:
+        for arg in [server, job, root]:
+            if not arg:
                 break
-            _valid_args.append(kwargs[kwarg])
+            _valid_args.append(arg)
 
-        cache_key = '/'.join(_valid_args) if len(_valid_args) >= 3 else None
+        if len(_valid_args) != 3:
+            raise ValueError('Invalid arguments. Expected 3 arguments.')
+
+        cache_key = '/'.join(_valid_args) if len(_valid_args) == 3 else None
 
         # Null-item
         if not cache_key:
@@ -165,7 +163,7 @@ class Config(QtCore.QObject):
         try:
             if cache_key in cls._cache:
                 return cls._cache[cache_key]
-            instance = super(Config, cls).__new__(cls)
+            instance = super().__new__(cls)
             cls._cache[cache_key] = instance
             return instance
         finally:
@@ -184,9 +182,8 @@ class Config(QtCore.QObject):
         finally:
             cls._lock.release()
 
-    def __init__(self, server, job, root, force=False, parent=None):
-        super().__init__(parent=parent)
-
+    def __init__(self, server, job, root, force=False):
+        """Initializes the item instance."""
         self._server = server
         self._job = job
         self._root = root
@@ -213,12 +210,12 @@ class Config(QtCore.QObject):
     def root(self):
         return self._root
 
-    def is_valid(self):
-        return all([self._server, self._job, self._root])
-
     @classmethod
     def default_data(cls):
         """Returns the default token config values.
+
+        The default values are hard-coded in the `default_configs` module and are set to
+        reasonable defaults to be edited by the user.
 
         Returns:
             dict: Token config values.
@@ -258,7 +255,7 @@ class Config(QtCore.QObject):
             return self._data[section]
 
         try:
-            db = database.get(self.server, self.job, self.root)
+            db = database.get(self.server, self.job, self.root, force=force)
             v = db.value(
                 db.source(),
                 section.db_column,
@@ -310,6 +307,13 @@ class Config(QtCore.QObject):
             log.error(f'Failed to save token config to the database: {e}')
 
         self._data[section].update(copy.deepcopy(data))
+
+    def is_valid(self):
+        """Returns the database status."""
+        if not all([self._server, self._job, self._root]):
+            return False
+        db = database.get(self._server, self._job, self._root)
+        return db.is_valid()
 
     # def get_description(self, section, token, force=False):
     #     """Returns the description of the given token.
@@ -545,3 +549,123 @@ class Config(QtCore.QObject):
     #         return sorted({_v['value'] for _v in v['subfolders'].values()})
     #
     #     return []
+
+
+class TaskConfig(BaseConfig):
+
+    def __init__(self, server, job, root):
+        super().__init__(server, job, root)
+
+    def _values(self):
+        return {v['value'] for v in self._data[Section.TaskConfig].values()}
+
+    def task(self, task_value, force=False):
+        if task_value not in self._values():
+            raise ValueError(f'Invalid task: {task_value}. Expected one of {self._values()}')
+
+        task_config = self.data(Section.TaskConfig, force=force)
+        return [v for v in task_config.values() if v['value'] == task_value][0]
+
+    def save(self):
+        """Saves the current task configuration values to the database.
+
+        """
+        if not self.is_valid():
+            log.error('Invalid database connection.')
+            return
+
+        self.set_data(Section.TaskConfig, self.data(Section.TaskConfig))
+
+    def tasks(self, force=False):
+        """Returns the task configuration values.
+
+        Args:
+            force (bool, optional): Force retrieve load data from the database.
+
+        Returns:
+            dict: Task configuration values.
+
+        """
+        if not self.is_valid():
+            log.error('Using default task values, database connection is invalid.')
+            default = self.default_data()
+            return default[Section.TaskConfig]
+
+        return self.data(Section.TaskConfig, force=force)
+
+    def set_enabled(self, task_value, enabled, force=False):
+        """Sets the enabled state of a task.
+
+        Args:
+            task_value (str): The task value.
+            enabled (bool): The enabled state.
+            force (bool, optional): Force retrieve load data from the database
+
+        """
+        if not self.is_valid():
+            log.error('Cannot set task state, invalid database connection.')
+            return
+
+        task = self.task(task_value, force=force)
+        task['enabled'] = enabled
+        self.save()
+
+    def is_enabled(self, task_value, force=False):
+        """Returns True if the task is enabled.
+
+        Args:
+            task_value (str): The task value.
+            force (bool, optional): Force retrieve load data from the database
+
+        Returns:
+            bool: True if the task is enabled.
+
+        """
+        task = self.task(task_value, force=force)
+        return task.get('enabled', False)
+
+    def get_state(self, task_value):
+        """Returns the state of a task.
+
+        Args:
+            task_value (str): The task value.
+
+        Returns:
+            State: The task state.
+
+        """
+        if not self.is_valid():
+            log.error('Cannot get task state, invalid database connection.')
+            return State(0)
+
+        task = self.task(task_value, force=False)
+        if 'state' not in task:
+            raise ValueError('Malformed data, `state` not found.')
+
+        idx = task['state']
+        if not isinstance(idx, int) or idx not in State:
+            idx = 0  # Use default value
+
+        return State(idx)
+
+    def set_state(self, task_value, state):
+        """Sets the state of a task.
+
+        Args:
+            task_value (str): The task value.
+            state (State): The task state.
+
+        """
+        if not self.is_valid():
+            log.error('Cannot set task state, invalid database connection.')
+            return
+
+        if state not in State:
+            raise ValueError(f'Invalid state: {state}. Expected one of {State}')
+
+        task = self.task(task_value, force=False)
+        task['state'] = state.value
+
+
+class Config(TaskConfig):
+    pass

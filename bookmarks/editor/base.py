@@ -319,7 +319,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             lambda: self.done(QtWidgets.QDialog.Accepted)
         )
 
-        common.signals.databaseValueUpdated.connect(self.update_changed_database_value)
+        common.signals.databaseValueChanged.connect(self.update_changed_database_value)
 
         common.signals.bookmarkItemActivated.connect(self.close)
         common.signals.assetItemActivated.connect(self.close)

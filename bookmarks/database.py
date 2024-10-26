@@ -1003,7 +1003,7 @@ class BookmarkDB(QtCore.QObject):
 
                 # Emit change signal with the value set in the database
                 _value = self.value(source, key, table=table)
-                common.signals.databaseValueUpdated.emit(
+                common.signals.databaseValueChanged.emit(
                     table, source, key, _value
                 )
                 break  # Success

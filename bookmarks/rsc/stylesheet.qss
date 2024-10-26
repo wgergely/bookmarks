@@ -185,6 +185,7 @@ QComboBox QListView::item {
     color: <Text>;
     background-color: <DarkBackground>;
     padding-left: <Indicator@1.0>px;
+    padding-right: <Indicator@1.0>px;
 }
 QComboBox QListView::item:hover {
     color: <SelectedText>;
@@ -217,29 +218,124 @@ QLineEdit {
     min-height: <RowHeight@0.8>px;
 }
 
+
 QScrollBar {
-    background: <Transparent>;
-    width: <Indicator@2.0>px;
-    height: <Indicator@2.0>px;
+    background-color: <DarkBackground>;
+    border: none;
+}
+
+QScrollBar:horizontal {
+    height: <Indicator@3.0>px;
+}
+
+QScrollBar:vertical {
+    width: <Indicator@3.0>px;
+}
+
+QScrollBar:hover,
+QScrollBar:pressed {
+    background-color: <Opaque>;
 }
 
 QScrollBar::handle {
-    background: <DarkBackground>;
-    border: <Separator@1.0>px solid <Opaque>;
-    border-radius: <Indicator@1.5>px;
-    padding: 0;
-    margin: 0;
-    min-height: <Margin@4.0>px;
+    background: <Opaque>;
 }
 
-QScrollBar::add-page,
+QScrollBar::handle:horizontal {
+    min-width: <Margin@3.0>px;
+    margin: <Indicator@2.0>px <Indicator@3.0>px;
+    border-radius: <Indicator@1.0>px;
+}
+QScrollBar::handle:vertical {
+    min-height: <Margin@3.0>px;
+    margin: <Indicator@3.0>px <Indicator@2.0>px;
+    border-radius: <Indicator@1.0>px;
+}
+
+QScrollBar::handle:hover {
+    background: <LightBackground>;
+}
+QScrollBar::handle:pressed {
+    background: <DisabledText>;
+}
+
+QScrollBar::handle:horizontal:hover {
+    margin: <Indicator@1.0>px <Indicator@3.0>px;
+}
+QScrollBar::handle:horizontal:pressed {
+    margin: <Indicator@0.5>px <Indicator@3.0>px;
+}
+
+QScrollBar::handle:vertical:hover {
+    margin: <Indicator@3.0>px <Indicator@1.0>px;
+}
+QScrollBar::handle:vertical:pressed {
+    margin: <Indicator@3.0>px <Indicator@0.5>px;
+}
+
+
+
 QScrollBar::add-line,
-QScrollBar::sub-page,
-QScrollBar::sub-line,
+QScrollBar::sub-line {
+    background: <Transparent>;
+    border: none;
+}
+QScrollBar::add-line:hover,
+QScrollBar::sub-line:hover {
+    background: <Opaque>;
+}
+
+QScrollBar::add-line:horizontal {
+    width: <Indicator@3.0>px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+QScrollBar::add-line:vertical {
+    height: <Indicator@3.0>px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    width: <Indicator@3.0>px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+QScrollBar::sub-line:vertical {
+    height: <Indicator@3.0>px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+
+
+QScrollBar::add-page, QScrollBar::sub-page {
+    background: none;
+}
+
+QScrollBar::left-arrow,
+QScrollBar::right-arrow,
 QScrollBar::up-arrow,
 QScrollBar::down-arrow {
+    width: <Indicator@3.0>px;
+    height: <Indicator@3.0>px;
     background: <Transparent>;
 }
+
+QScrollBar::left-arrow {
+    image: url("<scroll-left>");
+}
+QScrollBar::right-arrow {
+    image: url("<scroll-right>");
+}
+QScrollBar::up-arrow {
+    image: url("<scroll-up>");
+}
+QScrollBar::down-arrow {
+    image: url("<scroll-down>");
+}
+
+
 
 QTableWidget,
 QTableView,
@@ -260,6 +356,7 @@ QTreeView::item,
 QListWidget::item,
 QListView::item {
     padding-left: <Indicator@2.0>px;
+    padding-right: <Indicator@2.0>px;
     outline: 0;
     color: <Text>;
     background: <Background>;
@@ -922,6 +1019,7 @@ FilterPopupDialog > QListView::item {
     color: <Text>;
     background-color: <Transparent>;
     padding-left: <Indicator@1.0>px;
+    padding-right: <Indicator@1.0>px;
 }
 
 FilterPopupDialog > QListView::item:hover,
@@ -934,4 +1032,44 @@ ItemControlBar {
     background-color: rgba(255,255,255, 10);
     outline: 0;
     border: none;
+}
+
+
+SourceTasksView::item,
+SourceTasksView::item:selected,
+SourceTasksView::item:hover {
+    background-color: <Transparent>;
+    border-radius: <Indicator@1.5>px;
+    border: <Separator@2.0>px solid <Transparent>;
+}
+SourceTasksView::item:hover,
+SourceTasksView::item:selected {
+    background-color: <Opaque>;
+}
+SourceTasksView::item:selected {
+    border: <Separator@2.0>px solid <Blue>;
+}
+
+ActiveTasksView::item,
+ActiveTasksView::item:selected,
+ActiveTasksView::item:hover {
+    border-radius: <Indicator@1.5>px;
+    border: <Separator@2.0>px solid <Transparent>;
+}
+
+ActiveTasksView::item:selected {
+    background-color: <Opaque>;
+    border: <Separator@2.0>px solid <Blue>;
+}
+
+/*SourceTasksView,*/
+/*SourceTasksView QScrollBar {*/
+/*    background-color: <Transparent>;*/
+/*}*/
+
+SourceTasksView,
+ActiveTasksView,
+SourceTasksView:focus,
+ActiveTasksView:focus {
+    border: <Separator@2.0>px solid <Transparent>;
 }

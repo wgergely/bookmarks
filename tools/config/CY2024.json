@@ -81,14 +81,14 @@
         },
         {
             "name": "openimageio",
-            "version": "2.5.14.0"
+            "version": "3.0.0.3#1"
         },
         {
             "name": "ffmpeg",
             "version": "7.0.2#4"
         }
     ],
-    "builtin-baseline": "29b2ea2d4b6197e66ef346e62ccbba35b55b7de5",
+    "builtin-baseline": "5e5d0e1cd7785623065e77eff011afdeec1a3574",
     "vcpkg-configuration": {
         "registries": [
             {

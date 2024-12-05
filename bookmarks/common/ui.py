@@ -198,7 +198,8 @@ def fit_screen_geometry(w):
     app = QtWidgets.QApplication.instance()
     for screen in app.screens():
         _geo = screen.availableGeometry()
-        if _geo.contains(common.cursor.pos(screen)):
+        cursor = QtGui.QCursor()
+        if _geo.contains(cursor.pos(screen)):
             w.setGeometry(_geo)
             return
 
@@ -215,7 +216,8 @@ def center_window(w):
     for screen in app.screens():
         _geo = screen.availableGeometry()
         r = w.rect()
-        if _geo.contains(common.cursor.pos(screen)):
+        cursor = QtGui.QCursor()
+        if _geo.contains(cursor.pos(screen)):
             w.move(_geo.center() + (r.topLeft() - r.center()))
             return
 

@@ -188,7 +188,8 @@ class ScreenCapture(QtWidgets.QDialog):
         """
         # Convert click and current mouse positions to local space.
         if not self._mouse_pos:
-            mouse_pos = self.mapFromGlobal(common.cursor.pos())
+            cursor = QtGui.QCursor()
+            mouse_pos = self.mapFromGlobal(cursor.pos())
         else:
             mouse_pos = self.mapFromGlobal(self._mouse_pos)
 

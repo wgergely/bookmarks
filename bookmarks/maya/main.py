@@ -249,7 +249,6 @@ class PanelPicker(QtWidgets.QDialog):
 
         """
         # Convert click and current mouse positions to local space.
-        mouse_pos = self.mapFromGlobal(common.cursor.pos())
         painter = QtGui.QPainter()
         painter.begin(self)
 
@@ -260,7 +259,8 @@ class PanelPicker(QtWidgets.QDialog):
         painter.drawRect(self.rect())
 
         for panel in self.panels.values():
-            _mouse_pos = panel.mapFromGlobal(common.cursor.pos())
+            cursor = QtGui.QCursor()
+            _mouse_pos = panel.mapFromGlobal(cursor.pos())
 
             if not panel.rect().contains(_mouse_pos):
                 self.setCursor(QtCore.Qt.ArrowCursor)
@@ -301,7 +301,7 @@ class PanelPicker(QtWidgets.QDialog):
             return
 
         for panel, widget in self.panels.items():
-            mouse_pos = widget.mapFromGlobal(common.cursor.pos())
+            mouse_pos = event.pos()
             if widget.rect().contains(mouse_pos):
                 self.panel = panel
                 self.done(QtWidgets.QDialog.Accepted)
@@ -594,7 +594,8 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
                 parent.viewport().mapToGlobal(rect.bottomLeft()).y(),
             )
         else:
-            widget.move(common.cursor.pos())
+            cursor = QtGui.QCursor()
+            widget.move(cursor.pos())
 
         widget.setFixedWidth(width)
         widget.move(widget.x() + common.Size.Indicator(), widget.y())

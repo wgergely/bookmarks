@@ -503,7 +503,7 @@ class TaskView(QtWidgets.QTreeView):
         """Custom context menu event."""
         index = self.indexAt(event.pos())
         widget = TaskViewContextMenu(index, parent=self)
-        widget.move(common.cursor.pos())
+        widget.move(event.globalPos())
         common.move_widget_to_available_geo(widget)
         widget.exec_()
 

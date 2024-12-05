@@ -501,7 +501,7 @@ class AssetItemView(views.ThreadedItemView):
         return super().showEvent(event)
 
     def mouseReleaseEvent(self, event):
-        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
+        cursor_position = event.pos()
         index = self.indexAt(cursor_position)
         if not index.isValid():
             return super().mouseReleaseEvent(event)

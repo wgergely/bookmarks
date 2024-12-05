@@ -928,7 +928,7 @@ class ServerView(QtWidgets.QTreeView):
         persistent_index = QtCore.QPersistentModelIndex(source_index)
 
         menu = ServerContextMenu(persistent_index, parent=self)
-        menu.move(common.cursor.pos())
+        menu.move(event.globalPos())
         menu.exec_()
 
     def sizeHint(self):

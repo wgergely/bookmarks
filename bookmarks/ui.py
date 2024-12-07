@@ -954,6 +954,7 @@ def get_icon(
         color=common.Color.DisabledText(),
         size=common.Size.RowHeight(2.0),
         opacity=1.0,
+        active_brightness=250,
         resource=common.GuiResource
 ):
     """
@@ -964,12 +965,13 @@ def get_icon(
         color (QColor or None): The base color of the icon.
         size (QtGui.QSize or None): The size of the icon.
         opacity (float): The opacity of the icon.
+        active_brightness (int): Brighten the color by this percentage when the icon is active. Defaults to 250.
         resource (str): The resource source for the icon.
 
     Returns:
         QtGui.QIcon: The constructed QIcon with states for QMenu and QToolButton usage.
     """
-    k = f'{name}/{color}/{size}/{opacity}/{resource}'
+    k = f'{name}/{color}/{size}/{opacity}/{active_brightness}/{resource}'
 
     # Use cached icon if already created
     if k in common.image_cache[images.IconType]:
@@ -981,7 +983,7 @@ def get_icon(
 
     # Normal
     icon.addPixmap(
-        images.rsc_pixmap(name, color.lighter(250), size, opacity=opacity, resource=resource),
+        images.rsc_pixmap(name, color.lighter(active_brightness), size, opacity=opacity, resource=resource),
         mode=QtGui.QIcon.Normal, state=QtGui.QIcon.On)
     icon.addPixmap(
         images.rsc_pixmap(name, color, size, opacity=opacity, resource=resource),
@@ -989,10 +991,10 @@ def get_icon(
 
     # Active
     icon.addPixmap(
-        images.rsc_pixmap(name, color.lighter(200), size, opacity=opacity, resource=resource),
+        images.rsc_pixmap(name, color.lighter(active_brightness), size, opacity=opacity, resource=resource),
         mode=QtGui.QIcon.Active, state=QtGui.QIcon.On)
     icon.addPixmap(
-        images.rsc_pixmap(name, color.lighter(200), size, opacity=opacity, resource=resource),
+        images.rsc_pixmap(name, color, size, opacity=opacity, resource=resource),
         mode=QtGui.QIcon.Active, state=QtGui.QIcon.Off)
 
     # Cache the created icon for reuse

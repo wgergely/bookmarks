@@ -5,7 +5,7 @@ import re
 
 from PySide2 import QtWidgets, QtCore
 
-from .lib import ServerAPI, JobStyle
+from .lib import ServerAPI, JobDepth
 from .model import ServerModel, NodeType, Node, ServerFilterProxyModel
 from .preview import DictionaryPreview
 from .. import contextmenu, common, shortcuts, ui, actions
@@ -177,7 +177,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon('icon_bw_sm')
 
-        for style in JobStyle:
+        for style in JobDepth:
             name = style.name
             # split name by capital letters
             name_split = re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', name)
@@ -501,7 +501,7 @@ class AddJobDialog(QtWidgets.QDialog):
 
     def _init_job_style(self):
         v = common.settings.value(ServerAPI.job_style_settings_key)
-        v = JobStyle(v) if isinstance(v, int) else JobStyle.DefaultJobFolders.value
+        v = JobDepth(v) if isinstance(v, int) else JobDepth.NoParent.value
         self.job_style = v
 
     def _create_ui(self):
@@ -581,12 +581,12 @@ class AddJobDialog(QtWidgets.QDialog):
         self.layout().addWidget(widget, 1)
 
     def _apply_job_style(self):
-        if self.job_style == JobStyle.DefaultJobFolders:
+        if self.job_style == JobDepth.NoParent:
             self.client_row.hide()
             self.department_row.hide()
-        elif self.job_style == JobStyle.JobsHaveClient:
+        elif self.job_style == JobDepth.HasParent:
             self.department_row.hide()
-        elif self.job_style == JobStyle.JobsHaveClientAndDepartment:
+        elif self.job_style == JobDepth.HasGrandparent:
             pass
 
     def _init_templates(self):
@@ -650,11 +650,11 @@ class AddJobDialog(QtWidgets.QDialog):
 
             editor.setCompleter(completer)
 
-        if self.job_style == JobStyle.DefaultJobFolders:
+        if self.job_style == JobDepth.NoParent:
             values = sorted([f for f in _it(self._root_path, -1, 1)])
             _add_completer(self.job_editor, set(values))
 
-        elif self.job_style == JobStyle.JobsHaveClient:
+        elif self.job_style == JobDepth.HasParent:
             values = sorted([f for f in _it(self._root_path, -1, 2)])
             client_values = [f.split('/')[0] for f in values if len(f.split('/')) >= 1]
             job_values = [f.split('/')[1] for f in values if len(f.split('/')) >= 2]
@@ -662,7 +662,7 @@ class AddJobDialog(QtWidgets.QDialog):
             _add_completer(self.client_editor, set(client_values))
             _add_completer(self.job_editor, set(job_values))
 
-        elif self.job_style == JobStyle.JobsHaveClientAndDepartment:
+        elif self.job_style == JobDepth.HasGrandparent:
             values = sorted([f for f in _it(self._root_path, -1, 3)])
             client_values = [f.split('/')[0] for f in values if len(f.split('/')) >= 1]
             job_values = [f.split('/')[1] for f in values if len(f.split('/')) >= 2]
@@ -687,17 +687,17 @@ class AddJobDialog(QtWidgets.QDialog):
         ct = self.client_editor.text()
         dt = self.department_editor.text()
 
-        if self.job_style == JobStyle.DefaultJobFolders:
+        if self.job_style == JobDepth.NoParent:
             if not jt:
                 self.summary_label.setText(invalid_label)
                 return
             summary = f'{summary}/{jt}'
-        elif self.job_style == JobStyle.JobsHaveClient:
+        elif self.job_style == JobDepth.HasParent:
             if not all((ct, jt)):
                 self.summary_label.setText(invalid_label)
                 return
             summary = f'{summary}/{ct}/{jt}'
-        elif self.job_style == JobStyle.JobsHaveClientAndDepartment:
+        elif self.job_style == JobDepth.HasGrandparent:
             if not all((ct, jt, dt)):
                 self.summary_label.setText(invalid_label)
                 return
@@ -729,15 +729,15 @@ class AddJobDialog(QtWidgets.QDialog):
         ct = self.client_editor.text()
         dt = self.department_editor.text()
 
-        if self.job_style == JobStyle.DefaultJobFolders:
+        if self.job_style == JobDepth.NoParent:
             if not jt:
                 raise ValueError('Job name is required.')
             rel_path = jt
-        elif self.job_style == JobStyle.JobsHaveClient:
+        elif self.job_style == JobDepth.HasParent:
             if not all((ct, jt)):
                 raise ValueError('Client and job name are required.')
             rel_path = f'{ct}/{jt}'
-        elif self.job_style == JobStyle.JobsHaveClientAndDepartment:
+        elif self.job_style == JobDepth.HasGrandparent:
             if not all((ct, jt, dt)):
                 raise ValueError('Client, job, and department are required.')
             rel_path = f'{ct}/{jt}/{dt}'
@@ -770,7 +770,7 @@ class AddJobDialog(QtWidgets.QDialog):
 
 
 class ServerView(QtWidgets.QTreeView):
-    jobStyleChanged = QtCore.Signal(int)
+    JobDepthChanged = QtCore.Signal(int)
     bookmarkNodeSelected = QtCore.Signal(str)
 
     def __init__(self, parent=None):
@@ -788,7 +788,7 @@ class ServerView(QtWidgets.QTreeView):
         if not parent:
             common.set_stylesheet(self)
 
-        self.setHeaderHidden(True)
+        self.setHeaderHidden(False)
         self._expanded_nodes = []
         self._selected_node = None
 
@@ -1392,7 +1392,7 @@ class ServerEditor(QtWidgets.QSplitter):
         menu = QtWidgets.QMenu(button)
         action_grp = QtWidgets.QActionGroup(self)
         action_grp.setExclusive(True)
-        for style in JobStyle:
+        for style in JobDepth:
             name = style.name
             # split name by capital letters
             name_split = re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', name)

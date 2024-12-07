@@ -355,13 +355,45 @@ QTreeWidget::item,
 QTreeView::item,
 QListWidget::item,
 QListView::item {
-    padding-left: <Indicator@2.0>px;
-    padding-right: <Indicator@2.0>px;
-    outline: 0;
+    padding: <Separator@1.0>px <Indicator@2.0>px;
+    margin: 0px;
+    margin-bottom: <Separator@1.0>px;
+    outline: none;
     color: <Text>;
     background: <Background>;
-    border-bottom: <Separator@1.0>px solid <Opaque>;
+    border: none;
+    border-radius: <Indicator@1.0>px;
 }
+
+QTableWidget::item:!first:!last,
+QTableView::item:!first:!last,
+QTreeWidget::item:!first:!last,
+QTreeView::item:!first:!last,
+QListWidget::item:!first:!last,
+QListView::item:!first:!last {
+    border-radius: 0px;
+}
+
+QTableWidget::item:first,
+QTableView::item:first,
+QTreeWidget::item:first,
+QTreeView::item:first,
+QListWidget::item:first,
+QListView::item:first {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+QTableWidget::item:last,
+QTableView::item:last,
+QTreeWidget::item:last,
+QTreeView::item:last,
+QListWidget::item:last,
+QListView::item:last {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    margin-right: <Separator@1.0>px;
+}
+
 
 QTableWidget::item:hover,
 QTableView::item:hover,
@@ -458,12 +490,6 @@ QTreeWidget::branch:open:has-children:has-siblings,
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings {
     image: url("<branch_open>");
-}
-
-QTreeWidget::item:open,
-QTreeView::item {
-    border: <Separator@1.0>px solid <Opaque>;
-    border-radius: <Indicator@1.0>px;
 }
 
 TableWidget {

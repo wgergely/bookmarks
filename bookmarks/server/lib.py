@@ -8,15 +8,15 @@ from ..links.lib import LinksAPI
 from ..templates.lib import TemplateItem, TemplateType
 
 
-class JobStyle(enum.IntEnum):
-    DefaultJobFolders = 0  # 0 subdirectories
-    JobsHaveClient = 1  # 1 subdirectory
-    JobsHaveClientAndDepartment = 2  # 2 subdirectories
+class JobDepth(enum.IntEnum):
+    NoParent = 0
+    HasParent = 1
+    HasGrandparent = 2
 
 
 class ServerAPI:
     server_settings_key = 'servers/value'
-    job_style_settings_key = 'servers/jobstyle'
+    job_style_settings_key = 'servers/JobDepth'
     bookmark_settings_key = 'user/bookmarks'
 
     @classmethod

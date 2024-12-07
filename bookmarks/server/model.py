@@ -4,7 +4,7 @@ import os
 
 from PySide2 import QtCore, QtGui
 
-from .lib import ServerAPI, JobStyle
+from .lib import ServerAPI, JobDepth
 from .. import common, ui, log, images
 from ..links.lib import LinksAPI
 from ..templates import lib as templates_lib
@@ -252,7 +252,7 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
 
 
 class ServerModel(QtCore.QAbstractItemModel):
-    row_size = QtCore.QSize(1, common.Size.RowHeight(1.0))
+    row_size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -264,9 +264,9 @@ class ServerModel(QtCore.QAbstractItemModel):
     def _init_job_style(self):
         v = common.settings.value(ServerAPI.job_style_settings_key)
         if isinstance(v, int):
-            e = JobStyle(v)
+            e = JobDepth(v)
         else:
-            e = JobStyle.DefaultJobFolders
+            e = JobDepth.NoParent
         self._job_style = int(e)
 
     def clear(self):
@@ -375,7 +375,6 @@ class ServerModel(QtCore.QAbstractItemModel):
                     return '1 item'
                 return f'{len(node.children())} items'
 
-
         if index.column() in (1, 2):
             if role == QtCore.Qt.FontRole:
                 font, _ = common.Font.LightFont(common.Size.MediumText(0.8))
@@ -394,7 +393,7 @@ class ServerModel(QtCore.QAbstractItemModel):
                 if node.type == NodeType.ServerNode:
                     v = node.server
                 elif node.type == NodeType.JobNode:
-                    v = ' | '.join(node.job.split('/'))
+                    v = ' / '.join(node.job.split('/'))
                 elif node.type == NodeType.BookmarkNode:
                     v = node.root
                 return v
@@ -412,31 +411,24 @@ class ServerModel(QtCore.QAbstractItemModel):
             if role == QtCore.Qt.WhatsThisRole:
                 return node.path()
             if role == QtCore.Qt.FontRole:
-                if node.is_bookmarked():
-                    font, _ = common.Font.BlackFont(common.Size.MediumText())
-                    font.setUnderline(True)
-                    return font
-                else:
-                    font, _ = common.Font.LightFont(common.Size.MediumText())
-                    return font
+                font, _ = common.Font.LightFont(common.Size.MediumText())
+                return font
             if role == QtCore.Qt.DecorationRole:
-                if node.type == NodeType.ServerNode:
-                    return None
-                elif node.type == NodeType.JobNode:
-                    return None
-                elif node.type == NodeType.BookmarkNode:
-                    if not node.exists():
-                        return ui.get_icon('alert', color=common.Color.Red())
-                    if not node.exists() and node.is_bookmarked():
-                        return ui.get_icon('alert', color=common.Color.Yellow())
-                    if node.is_bookmarked():
-                        return ui.get_icon('bookmark', color=common.Color.Green())
-                    return ui.get_icon('link', color=common.Color.Blue())
 
+                # Indicate error state
+                if not node.exists():
+                    return ui.get_icon('alert', color=common.Color.Red())
+                if not node.exists() and node.is_bookmarked():
+                    return ui.get_icon('alert', color=common.Color.Yellow())
+
+                if node.type == NodeType.ServerNode:
+                    return ui.get_icon('server', active_brightness=100)
+                elif node.type == NodeType.JobNode:
+                    return ui.get_icon('asset', color=common.Color.Yellow(), active_brightness=100)
+                elif node.type == NodeType.BookmarkNode:
+                    return ui.get_icon('link', color=common.Color.Blue(), active_brightness=100)
 
         if role == QtCore.Qt.SizeHintRole:
-            if node.type == NodeType.JobNode:
-                return QtCore.QSize(self.row_size.width(), common.Size.RowHeight(0.66))
             return self.row_size
 
     def canFetchMore(self, parent):
@@ -641,8 +633,8 @@ class ServerModel(QtCore.QAbstractItemModel):
             v (int): The job style enum.
 
         """
-        if v not in JobStyle:
-            raise ValueError(f'Invalid job style: {v}. Expected one of {JobStyle}.')
+        if v not in JobDepth:
+            raise ValueError(f'Invalid job style: {v}. Expected one of {JobDepth}.')
 
         common.settings.setValue(ServerAPI.job_style_settings_key, v.value)
         self._job_style = v.value

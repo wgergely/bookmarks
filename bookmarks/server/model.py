@@ -340,10 +340,12 @@ class ServerModel(QtCore.QAbstractItemModel):
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
-                return 'Servers'
-            else:
-                return f'Row {section}'
-
+                if section == 0:
+                    return 'Name'
+                elif section == 1:
+                    return 'Type'
+                elif section == 2:
+                    return 'Count'
         return None
 
     def data(self, index, role=QtCore.Qt.DisplayRole):

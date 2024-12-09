@@ -783,7 +783,7 @@ class ServerView(QtWidgets.QTreeView):
 
         # Enable dragging
         self.setDragEnabled(True)
-        self.setWordWrap(True)
+        self.setWordWrap(False)
 
         if not parent:
             common.set_stylesheet(self)
@@ -818,18 +818,24 @@ class ServerView(QtWidgets.QTreeView):
 
         self.header().setStretchLastSection(False)
         self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        self.header().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
+        self.header().setCascadingSectionResizes(True)
 
-        # self.header().resizeSection(1, common.Size.DefaultWidth(0.2))
+        self.resize_to_contents()
 
     def _connect_signals(self):
         self.expanded.connect(self.add_expanded)
         self.collapsed.connect(self.remove_expanded)
+
         self.expanded.connect(self.model().invalidateFilter)
         self.model().sourceModel().dataChanged.connect(self.model().invalidateFilter)
-        self.model().dataChanged.connect(lambda x,y: self.expand(x))
+        self.model().dataChanged.connect(lambda x, y: self.expand(x))
 
         self.model().sourceModel().rowsInserted.connect(self.restore_expanded_nodes)
+
+        self.expanded.connect(self.resize_to_contents)
+        self.collapsed.connect(self.resize_to_contents)
 
         self.selectionModel().selectionChanged.connect(self.save_selected_node)
         self.model().modelAboutToBeReset.connect(self.save_selected_node)
@@ -846,6 +852,28 @@ class ServerView(QtWidgets.QTreeView):
         common.signals.jobAdded.connect(self.on_job_added)
         common.signals.bookmarksChanged.connect(self.init_data)
 
+    @QtCore.Slot()
+    def resize_to_contents(self, *args, **kwargs):
+        metrics = self.fontMetrics()
+
+        def _get_longest_name(section):
+            def _it(parent_index, width):
+                for i in range(self.model().sourceModel().rowCount(parent_index)):
+
+                    child_index = self.model().sourceModel().index(i, section, parent_index)
+
+                    name = child_index.data(QtCore.Qt.DisplayRole)
+                    if metrics.horizontalAdvance(name) >= width:
+                        width = metrics.horizontalAdvance(name)
+                    width = _it(child_index, width)
+                return width
+
+            index = self.model().sourceModel().index(0, 0, QtCore.QModelIndex())
+            return _it(index, 0)
+
+        width = _get_longest_name(1)
+        print(width)
+        self.header().resizeSection(1, width * 20.0)
 
     @QtCore.Slot(str, str)
     def on_job_added(self, server, job):

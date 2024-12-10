@@ -3,6 +3,7 @@
 """
 import enum
 import functools
+import logging
 import os
 import re
 import sys
@@ -364,8 +365,8 @@ def error(func):
 
 def debug(func):
     """Function decorator used to log a debug message.
-    No message will be logged, unless :attr:`~bookmarks.common.debug_on` is set to
-    True.
+    No message will be logged, unless :attr:`~bookmarks.log.LOGGING_LEVEL` is set to
+    logging.DEBUG.
 
     """
     debug_message = '{trace}(): Executed in {time} secs.'
@@ -377,7 +378,8 @@ def debug(func):
 
         """
         # If global debugging is turned off, do nothing
-        if not common.debug_on:
+        from .. import log
+        if log.get_logging_level() != logging.DEBUG:
             return func(*args, **kwargs)
 
         # Otherwise, get the callee, and the executing time and info
@@ -393,6 +395,7 @@ def debug(func):
             trace = [name, ]
             from .. import log
             log.debug(
+                __name__,
                 debug_message.format(
                     trace=debug_separator.join(trace),
                     time=time.time() - t

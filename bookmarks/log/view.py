@@ -39,8 +39,53 @@ class LogView(QtWidgets.QTableView):
         self.verticalHeader().setVisible(False)
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+
     def _connect_signals(self):
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
+        self.customContextMenuRequested.connect(self.on_custom_context_menu)
+
+    @QtCore.Slot(QtCore.QPoint)
+    def on_custom_context_menu(self, pos):
+        # Create the context menu
+        menu = QtWidgets.QMenu(self)
+
+        indexes = self.selectionModel().selectedRows()
+        if indexes:
+            copy_action = menu.addAction("Copy")
+            copy_action.triggered.connect(self.copy_selected_row)
+
+        menu.exec_(self.viewport().mapToGlobal(pos))
+
+    @QtCore.Slot()
+    def copy_selected_row(self):
+        indexes = self.selectionModel().selectedRows()
+        if not indexes:
+            return
+
+        row = indexes[0].row()
+        # Retrieve all display data from the row
+        # Assuming columns: Time(0), Level(1), Name(2), Thread(3), Message(4)
+        line_parts = []
+        for col in range(self.model().columnCount()):
+            val = self.model().index(row, col).data(QtCore.Qt.DisplayRole)
+            line_parts.append(val if val else "")
+
+        # Reconstruct a formatted line similar to the output format
+        # "Time [Level] [Name] [thread.ThreadID] >> Message"
+        # line_parts = [time_str, level_str, name_part, thread_part, msg]
+        # We'll mimic the original format:
+        # time [level] [name] [thread.XYZ] >> message
+        if len(line_parts) == 5:
+            time_str, level_str, name_part, thread_part, msg = line_parts
+            formatted_line = f"{time_str} [{level_str}] [{name_part}] [thread.{thread_part}] >> {msg}"
+        else:
+            # Fallback if columns don't match expected format
+            formatted_line = " ".join(line_parts)
+
+        # Copy to clipboard
+        clipboard = QtWidgets.QApplication.clipboard()
+        clipboard.setText(formatted_line)
 
     @QtCore.Slot(QtCore.QItemSelection, QtCore.QItemSelection)
     def on_selection_changed(self, selected, deselected):

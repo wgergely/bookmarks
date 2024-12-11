@@ -18,6 +18,9 @@ class CoreSignals(QtCore.QObject):
     """A utility class used to store application-wide signals.
 
     """
+    #: Signal emitted when a new log message is added
+    logRecordAdded = QtCore.Signal(str, int, str)  # name, level, message
+
     #: Signal emitted by worker threads when the internal data of a model is fully loaded
     internalDataReady = QtCore.Signal(weakref.ref)
 

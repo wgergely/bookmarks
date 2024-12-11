@@ -3,15 +3,19 @@
 """
 import enum
 import functools
+import inspect
+import logging
 import os
 import re
 import sys
 import time
+import traceback
 import uuid
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
+from .. import log
 
 documentation_url = 'https://bookmarks-vfx.com'
 env_key = 'Bookmarks_ROOT'
@@ -310,94 +314,151 @@ def check_type(value, _type):
             )
 
 
-def error(func):
-    """Decorator function used to handle exceptions and report them to the user.
+def error(func=None, *, show_error=True):
+    """Function decorator used to handle errors.
 
+    Usage:
+        @error
+        def foo():
+            ...
+
+        @error(show_error=False)
+        def bar():
+            ...
     """
 
-    @functools.wraps(func)
-    def func_wrapper(*args, **kwargs):
-        """
+    def decorator(func):
+        @functools.wraps(func)
+        def func_wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
 
-        Args:
-            *args:
-            **kwargs:
+                # Trim frames introduced by this and other decorators
+                if exc_traceback:
+                    while exc_traceback and 'wrapper' in exc_traceback.tb_frame.f_code.co_name:
+                        exc_traceback = exc_traceback.tb_next
 
-        Returns:
+                # Introspect caller
+                try:
+                    stack = inspect.stack()
+                    caller_frame = stack[1].frame
+                    try:
+                        module = inspect.getmodule(caller_frame)
+                    except:
+                        module = None
 
-        """
-        try:
-            return func(*args, **kwargs)
-        except:
-            # Remove decorator from the traceback stack
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            if exc_traceback:
-                while 'wrapper' in exc_traceback.tb_frame.f_code.co_name:
-                    tb = exc_traceback.tb_next
-                    if not tb:
-                        break
-                    exc_traceback = exc_traceback.tb_next
+                    if module is not None:
+                        caller_module_name = module.__name__
+                        if caller_module_name == '__main__':
+                            caller_module_name = getattr(module, '__file__', 'unknown_module')
+                    else:
+                        caller_module_name = caller_frame.f_globals.get('__name__', None)
+                        if caller_module_name is None or caller_module_name == '__main__':
+                            caller_module_name = (inspect.getsourcefile(caller_frame) or
+                                                  inspect.getfile(caller_frame) or
+                                                  'unknown_module')
 
-            from .. import log
-            log.error(
-                exc_value.__str__(), exc_info=(
-                    exc_type, exc_value, exc_traceback)
-            )
+                    caller_locals = caller_frame.f_locals
+                    if 'self' in caller_locals:
+                        caller_class = caller_locals['self'].__class__.__name__
+                    elif 'cls' in caller_locals:
+                        caller_class = caller_locals['cls'].__name__
+                    else:
+                        caller_class = None
 
-            # Making sure the ui popup is ignored in non-gui threads
-            app = QtWidgets.QApplication.instance()
-            if app and QtCore.QThread.currentThread() == app.thread():
-                if QtWidgets.QApplication.instance():
-                    common.show_message(
-                        'Error',
-                        body=exc_value.__str__(),
-                        message_type='error'
-                    )
-                common.signals.showStatusTipMessage.emit(
-                    f'Error: {exc_value.__str__()}'
-                )
+                    caller_method_name = stack[1].function
+                except:
+                    caller_module_name = 'unknown_module'
+                    caller_class = None
+                    caller_method_name = None
 
-            raise
+                caller_class = caller_class if caller_class else ''
+                caller_method_name = caller_method_name if caller_method_name else ''
+                trace = [caller_class, caller_method_name]
+                trace = '.'.join([f for f in trace if f])
+                trace = trace + '()' if trace else 'unknown()'
 
-    return func_wrapper
+                # Get full traceback similar to Python's default exception printing
+                tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+                if not tb_str.strip():
+                    tb_str = f'Error occurred at {caller_module_name}:{trace}'
+
+                # Log the full traceback stack, line-by-line if needed
+                for line in tb_str.splitlines():
+                    log.error(caller_module_name, line)
+
+                # Show UI error if allowed
+                if show_error:
+                    app = QtWidgets.QApplication.instance()
+                    # Show the full traceback in the UI message for consistency
+                    if app and QtCore.QThread.currentThread() == app.thread():
+                        common.show_message(
+                            'Error',
+                            body=tb_str,
+                            message_type='error'
+                        )
+                        common.signals.showStatusTipMessage.emit(
+                            f'Error: {str(exc_value)}'
+                        )
+
+                raise
+
+        return func_wrapper
+
+    if func is not None and callable(func):
+        # Decorator used without parentheses
+        return decorator(func)
+    else:
+        # Decorator used with arguments
+        return decorator
 
 
 def debug(func):
     """Function decorator used to log a debug message.
-    No message will be logged, unless :attr:`~bookmarks.common.debug_on` is set to
-    True.
-
+    No message will be logged unless LOGGING_LEVEL is set to logging.DEBUG.
     """
-    debug_message = '{trace}(): Executed in {time} secs.'
-    debug_separator = ' --> '
 
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
-        """Function wrapper.
-
-        """
-        # If global debugging is turned off, do nothing
-        if not common.debug_on:
+        if log.get_logging_level() > logging.DEBUG:
             return func(*args, **kwargs)
 
-        # Otherwise, get the callee, and the executing time and info
+        try:
+            stack = inspect.stack()
+            caller_frame = stack[1].frame
+            try:
+                module = inspect.getmodule(caller_frame)
+            except:
+                module = None
+
+            if module is not None:
+                caller_module_name = module.__name__
+                if caller_module_name == '__main__':
+                    caller_module_name = getattr(module, '__file__', 'unknown_module')
+            else:
+                caller_module_name = caller_frame.f_globals.get('__name__', None)
+                if caller_module_name is None or caller_module_name == '__main__':
+                    caller_module_name = (inspect.getsourcefile(caller_frame) or
+                                          inspect.getfile(caller_frame) or
+                                          'unknown_module')
+
+        except:
+            caller_module_name = 'unknown_module'
+
         t = time.time()
         try:
             return func(*args, **kwargs)
         finally:
-            if args and hasattr(args[0], '__class__'):
-                name = f'{args[0].__class__}.{func.__name__}'
-            else:
-                name = func.__name__
-
-            trace = [name, ]
-            from .. import log
-            log.debug(
-                debug_message.format(
-                    trace=debug_separator.join(trace),
-                    time=time.time() - t
-                )
-            )
+            t = time.time() - t
+            qualname = func.__qualname__
+            # If defined in a class (instance/class/static method),
+            # qualname will be ClassName.method_name
+            # Otherwise, it's a top-level function
+            trace = f'{qualname}()'
+            msg = f'{trace}  --  {int(t * 1000)}ms'
+            log.debug(caller_module_name, msg)
 
     return func_wrapper
 

@@ -164,7 +164,6 @@ class BaseWorker(QtCore.QObject):
         self.queue_timer = None
         self.queue = queue
 
-        # cnx = QtCore.Qt.QueuedConnection
         self.initWorker.connect(self.init_worker)
 
     @common.error

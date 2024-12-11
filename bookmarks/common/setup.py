@@ -62,7 +62,7 @@ class initialize:
             task=None
     ):
         from bookmarks import log
-        log.debug(f'Initializing Bookmarks in {mode} mode...')
+        log.debug(__name__, f'Initializing Bookmarks in {mode} mode...')
         initialize_func(mode=mode, server=server, job=job, root=root, asset=asset, task=task)
         return super().__new__(cls)
 
@@ -97,7 +97,7 @@ class initialize:
             QtWidgets.QApplication.instance().exec_()
 
         from bookmarks import log
-        log.debug(f'Bookmarks is shutting down...')
+        log.debug(__name__, f'Bookmarks is shutting down...')
 
         shutdown()
 
@@ -241,7 +241,7 @@ def initialize_func(
                 break
     except Exception as e:
         from .. import log
-        log.error(f'Error during initialization: {e}')
+        log.error(__name__, f'Error during initialization: {e}')
     finally:
         return io.BytesIO()
 
@@ -277,7 +277,7 @@ def shutdown():
 
     except Exception as e:
         from . import log
-        log.error(f'Error during shutdown: {e}')
+        log.error(__name__, f'Error during shutdown: {e}')
     finally:
         if _init_mode == common.Mode.Standalone and QtWidgets.QApplication.instance():
             QtWidgets.QApplication.instance().exit(0)

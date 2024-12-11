@@ -175,8 +175,7 @@ def status_bar_message(message):
             from .. import log
             from . import signals
 
-            if common.debug_on:
-                log.debug(message)
+            log.debug(message)
             signals.showStatusBarMessage.emit(message)
             result = function(*args, **kwargs)
             signals.showStatusBarMessage.emit('')

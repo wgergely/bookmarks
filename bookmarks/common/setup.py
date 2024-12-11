@@ -61,7 +61,7 @@ class initialize:
             asset=None,
             task=None
     ):
-        from bookmarks import log
+        from .. import log
         log.debug(__name__, f'Initializing Bookmarks in {mode} mode...')
         initialize_func(mode=mode, server=server, job=job, root=root, asset=asset, task=task)
         return super().__new__(cls)
@@ -96,7 +96,7 @@ class initialize:
         if self.mode == common.Mode.Standalone and self.run_app:
             QtWidgets.QApplication.instance().exec_()
 
-        from bookmarks import log
+        from .. import log
         log.debug(__name__, f'Bookmarks is shutting down...')
 
         shutdown()

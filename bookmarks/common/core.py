@@ -15,7 +15,6 @@ import uuid
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
-from .. import log
 
 documentation_url = 'https://bookmarks-vfx.com'
 env_key = 'Bookmarks_ROOT'
@@ -328,6 +327,8 @@ def error(func=None, *, show_error=True):
     """
 
     def decorator(func):
+        from .. import log
+
         @functools.wraps(func)
         def func_wrapper(*args, **kwargs):
             try:
@@ -419,6 +420,7 @@ def debug(func):
     """Function decorator used to log a debug message.
     No message will be logged unless LOGGING_LEVEL is set to logging.DEBUG.
     """
+    from .. import log
 
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):

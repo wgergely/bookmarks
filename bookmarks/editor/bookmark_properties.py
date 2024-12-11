@@ -9,14 +9,14 @@ from .. import application_launcher
 from .. import common
 from .. import database
 from .. import ui
-from ..shotgun import actions as sg_actions
-from ..shotgun import shotgun
 from ..config.editor import (
     FileNameConfigEditor,
     PublishConfigEditor,
     FFMpegTCConfigEditor,
     AssetFolderConfigEditor,
     FileFormatConfigEditor)
+from ..shotgun import actions as sg_actions
+from ..shotgun import shotgun
 
 
 def close():
@@ -512,7 +512,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         if not hasattr(self, f'{k}_editor'):
             raise RuntimeError(f'{k}_editor not found')
 
-        from bookmarks.config.editor import ConfigEditor
+        from ..config.editor import ConfigEditor
         editor = getattr(self, f'{k}_editor')
         w = ConfigEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))
@@ -524,7 +524,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         if not hasattr(self, f'{k}_editor'):
             raise RuntimeError(f'{k}_editor not found')
 
-        from bookmarks.config.editor import ConfigEditor
+        from ..config.editor import ConfigEditor
         editor = getattr(self, f'{k}_editor')
         w = ConfigEditor(self.server, self.job, self.root, parent=editor)
         w.tokenSelected.connect(lambda x: editor.setText(f'{editor.text()}{x}'))

@@ -179,22 +179,6 @@ def strip(s):
     ).strip().rstrip('/')
 
 
-def bookmark_key(server, job, root):
-    """Returns a generic string representation of a bookmark item.
-
-    Args:
-        server (str): `server` path segment.
-        job (str): `job` path segment.
-        root (str): `root` path segment.
-
-    Returns:
-        str: The bookmark item key.
-
-    """
-    k = '/'.join([strip(f) for f in (server, job, root)]).rstrip('/')
-    return k
-
-
 _true = {'True', 'true', '1', True}
 _false = {'False', 'false', 'None', 'none', '0', '', False, None}
 

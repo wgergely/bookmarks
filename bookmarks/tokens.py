@@ -12,9 +12,9 @@ except ImportError:
 
 from PySide2 import QtCore
 
-from bookmarks import common
-from bookmarks import database
-from bookmarks import log
+from . import common
+from . import database
+from . import log
 
 FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'

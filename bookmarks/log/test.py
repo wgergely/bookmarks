@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+import tempfile
 import threading
 import time
 import unittest
@@ -14,7 +16,6 @@ class TestLog(unittest.TestCase):
     """Tests for the logging module."""
 
     def setUp(self):
-        # Re-initialize log at INFO level to ensure consistent test results
         set_logging_level(logging.INFO)
         init_log()
 
@@ -188,6 +189,47 @@ class TestLog(unittest.TestCase):
             for msg in below_threshold:
                 self.assertFalse(any(msg in r for r in recs),
                                  f"Did not expect '{msg}' to appear at global level {logging.getLevelName(global_level)}")
+
+    def test_save_tank_to_file_json(self):
+        """Test saving the memory tank contents to a JSON file."""
+        warning("test_save_json", "Multiline\nWarning Message")
+        error("test_save_json", "Single line error message")
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp_json:
+            tmp_json_path = tmp_json.name
+
+        save_tank_to_file(tmp_json_path)
+
+        with open(tmp_json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # We should have two entries
+        self.assertEqual(len(data), 2)
+        # The messages should be formatted, check presence of keywords
+        self.assertTrue(any("Warning" in entry["message"] for entry in data))
+        self.assertTrue(any("error" in entry["message"] for entry in data))
+
+        os.remove(tmp_json_path)
+
+    def test_save_tank_to_file_text(self):
+        """Test saving the memory tank contents to a .log file with raw messages."""
+        warning("test_save_text", "Multiline\nWarning Message")
+        error("test_save_text", "Single line error message")
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_log:
+            tmp_log_path = tmp_log.name
+
+        save_tank_to_file(tmp_log_path)
+
+        # When reading as text, just read the whole file and check for the substrings
+        with open(tmp_log_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Check that both messages appear in the file content
+        self.assertIn("Multiline\nWarning Message", content)
+        self.assertIn("Single line error message", content)
+
+        os.remove(tmp_log_path)
 
 
 if __name__ == '__main__':

@@ -339,12 +339,6 @@ def error(func):
                         break
                     exc_traceback = exc_traceback.tb_next
 
-            from .. import log
-            log.error(
-                exc_value.__str__(), exc_info=(
-                    exc_type, exc_value, exc_traceback)
-            )
-
             # Making sure the ui popup is ignored in non-gui threads
             app = QtWidgets.QApplication.instance()
             if app and QtCore.QThread.currentThread() == app.thread():

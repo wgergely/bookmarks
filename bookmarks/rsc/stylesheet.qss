@@ -362,6 +362,14 @@ QListView::item {
     background: <Background>;
     border-bottom: <Separator@1.0>px solid <Opaque>;
 }
+QTableWidget::item:alternate,
+QTableView::item:alternate,
+QTreeWidget::item:alternate,
+QTreeView::item:alternate,
+QListWidget::item:alternate,
+QListView::item:alternate {
+    background: <DarkBackground>;
+}
 
 QTableWidget::item:hover,
 QTableView::item:hover,
@@ -1061,11 +1069,6 @@ ActiveTasksView::item:selected {
     background-color: <Opaque>;
     border: <Separator@2.0>px solid <Blue>;
 }
-
-/*SourceTasksView,*/
-/*SourceTasksView QScrollBar {*/
-/*    background-color: <Transparent>;*/
-/*}*/
 
 SourceTasksView,
 ActiveTasksView,

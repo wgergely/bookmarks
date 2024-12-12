@@ -442,6 +442,9 @@ class ServerModel(QtCore.QAbstractItemModel):
         if not node:
             return False
 
+        if not node.exists():
+            return False
+
         if node.type == NodeType.RootNode:
             return node.has_children()
 

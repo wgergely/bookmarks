@@ -11,7 +11,7 @@ from .preview import DictionaryPreview
 from .. import contextmenu, common, shortcuts, ui, actions
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
-from ..templates.lib import TemplateItem, TemplateType
+from ..templates.lib import TemplateType, get_saved_templates
 from ..templates.view import TemplatesEditor
 
 
@@ -590,7 +590,7 @@ class AddJobDialog(QtWidgets.QDialog):
             pass
 
     def _init_templates(self):
-        templates = TemplateItem.get_saved_templates(TemplateType.UserTemplate)
+        templates = get_saved_templates(TemplateType.UserTemplate)
         templates = [f for f in templates]
         if not templates:
             self.asset_template_combobox.addItem('No templates found.', userData=None)

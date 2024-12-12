@@ -1,3 +1,15 @@
+"""Logging module for the app.
+
+The module provides a logging system that can be used to log messages to the console, a file, and an in-memory tank.
+The main logging functions are available from the parent module, `bookmarks.log`. For example:
+
+.. code-block:: python
+
+    import bookmarks.log as log
+    log.debug('MyModule', 'This is a debug message')
+
+
+"""
 import enum
 import json
 import logging
@@ -29,14 +41,32 @@ __all__ = [
     'save_tank_to_file'
 ]
 
+#: The current app logging level
+LOGGING_LEVEL = logging.INFO
+
+#: The format string for log messages.
 LOG_FORMAT = '%(asctime)s,%(msecs)03d [%(levelname)s] [%(name)s] [thread.%(thread)d] >> %(message)s'
+#: The date format string for log messages.
 LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
+#: The regular expression pattern for parsing formatted log lines.
+LOG_LINE_REGEX = re.compile(
+    r"^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) "
+    r"\[(?P<level>[A-Za-z]+)\] "
+    r"\[(?P<name>.*?)\] "
+    r"\[thread\.(?P<thread>\d+)\] >> "
+    r"(?P<message>[\s\S]*)$",
+    re.MULTILINE | re.DOTALL
+)
+
+#: The directory where log files are stored.
 LOG_DIR = f"{QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)}/{common.product}/log"
+#: The path to the error log file.
 ERR_LOG_PATH = f"{LOG_DIR}/error.log"
 
 
 class HandlerType(enum.Enum):
+    """Enumeration of the different types of log handlers."""
     Console = 1
     File = 2
     Memory = 3
@@ -49,7 +79,6 @@ HANDLERS = {
 }
 
 LOGGERS = {}
-LOGGING_LEVEL = logging.INFO
 
 
 class TankHandler(logging.Handler):
@@ -77,6 +106,9 @@ class TankHandler(logging.Handler):
 
 
 def init_log_handlers(max_bytes, maxlen, backup_count, init_memory=True, init_console=False, init_file=False):
+    """Initialize the log handlers.
+
+    """
     if not os.path.exists(LOG_DIR):
         os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -109,6 +141,7 @@ def init_log_handlers(max_bytes, maxlen, backup_count, init_memory=True, init_co
 
 
 def qt_message_handler(mode, context, message):
+    """Custom message handler for Qt messages."""
     if mode == QtCore.QtDebugMsg:
         debug('Qt', message)
     elif mode == QtCore.QtInfoMsg:
@@ -122,6 +155,9 @@ def qt_message_handler(mode, context, message):
 
 
 def init_log(max_bytes=5 * 1024 * 1024, maxlen=1000, backup_count=3):
+    """Initialize the logging system.
+
+    """
     init_log_handlers(max_bytes=max_bytes, maxlen=maxlen, backup_count=backup_count)
     logger = get_logger('Qt')
     logger.setLevel(LOGGING_LEVEL)
@@ -129,6 +165,7 @@ def init_log(max_bytes=5 * 1024 * 1024, maxlen=1000, backup_count=3):
 
 
 def teardown_log():
+    """Teardown the logging system."""
     global HANDLERS, LOGGERS
     for logger in LOGGERS.values():
         for handler in logger.handlers[:]:
@@ -143,6 +180,9 @@ def teardown_log():
 
 
 def get_logger(name):
+    """Get a logger with the specified name.
+
+    """
     if HANDLERS[HandlerType.Memory] is None:
         raise RuntimeError('Log handlers not initialized')
     if name not in LOGGERS:
@@ -155,18 +195,27 @@ def get_logger(name):
 
 
 def get_records(level=logging.WARNING, remove=False):
+    """Get all log records at or above the specified level from the memory tank.
+
+    """
     if HANDLERS[HandlerType.Memory] is None:
         raise RuntimeError('Log handlers not initialized')
     return HANDLERS[HandlerType.Memory].get_records(level=level, remove=remove)
 
 
 def clear_records():
+    """Clear all log records from the memory tank.
+
+    """
     if HANDLERS[HandlerType.Memory] is None:
         raise RuntimeError('Log handlers not initialized')
     HANDLERS[HandlerType.Memory].records.clear()
 
 
 def get_handler(handler_type):
+    """Get the handler for the specified handler type.
+
+    """
     if handler_type not in HANDLERS:
         raise ValueError(f'Invalid handler type: {handler_type}')
     return HANDLERS[handler_type]
@@ -182,6 +231,9 @@ def _thread_save_log(name, level, msg):
 
 
 def set_logging_level(level):
+    """Set the logging level for the app.
+
+    """
     global LOGGING_LEVEL
     if level == LOGGING_LEVEL:
         return
@@ -191,38 +243,35 @@ def set_logging_level(level):
 
 
 def get_logging_level():
+    """Get the current logging level for the app.
+
+    """
     return LOGGING_LEVEL
 
 
 def debug(name, msg):
+    """Log a debug message."""
     _thread_save_log(name, logging.DEBUG, msg)
 
 
 def info(name, msg):
+    """Log an info message."""
     _thread_save_log(name, logging.INFO, msg)
 
 
 def warning(name, msg):
+    """Log a warning message."""
     _thread_save_log(name, logging.WARNING, msg)
 
 
 def error(name, msg):
+    """Log an error message."""
     _thread_save_log(name, logging.ERROR, msg)
 
 
 def critical(name, msg):
+    """Log a critical message."""
     _thread_save_log(name, logging.CRITICAL, msg)
-
-
-# Reuse the same regex from model or define here for parsing
-LOG_LINE_REGEX = re.compile(
-    r"^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) "
-    r"\[(?P<level>[A-Za-z]+)\] "
-    r"\[(?P<name>.*?)\] "
-    r"\[thread\.(?P<thread>\d+)\] >> "
-    r"(?P<message>[\s\S]*)$",
-    re.MULTILINE | re.DOTALL
-)
 
 
 def _parse_formatted_line(formatted_line):
@@ -275,6 +324,12 @@ def _save_as_text(filepath, log_entries):
 
 
 def save_tank_to_file(filepath):
+    """Save the in-memory tank to a file.
+
+    Args:
+        filepath (str): The path to the file to save.
+
+    """
     if HANDLERS[HandlerType.Memory] is None:
         raise RuntimeError('Log handlers not initialized')
 

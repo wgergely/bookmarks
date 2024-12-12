@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtWidgets
 from .. import common, ui
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
-from ..templates.lib import TemplateItem, TemplateType
+from ..templates.lib import TemplateType, get_saved_templates
 
 
 def show():
@@ -127,7 +127,7 @@ class AddJobDialog(QtWidgets.QDialog):
         self.layout().addWidget(widget, 1)
 
     def _init_templates(self):
-        templates = TemplateItem.get_saved_templates(TemplateType.DatabaseTemplate)
+        templates = get_saved_templates(TemplateType.DatabaseTemplate)
         templates = [f for f in templates]
         if not templates:
             self.asset_template_combobox.addItem('No templates found.', userData=None)

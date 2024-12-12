@@ -17,13 +17,27 @@ from .. import images
 from .. import log
 from ..links.lib import LinksAPI
 
+__all__ = [
+    'TemplateType',
+    'TemplateItem',
+    'is_default_template_created',
+    'get_saved_templates'
+]
+
 
 class TemplateType(Enum):
+    """Template type enum.
+
+    DatabaseTemplate: Template saved in the active root item database.
+    UserTemplate: Template saved in the user template folder.
+
+    """
     DatabaseTemplate = 0
     UserTemplate = 1
 
 
-template_blacklist = {
+#: Blacklist of system files and folders
+template_file_blacklist = {
     'Thumbs.db',
     '.DS_Store',
     'desktop.ini',
@@ -49,6 +63,7 @@ template_blacklist = {
     '.apdisk',
 }
 
+#: Blacklist of characters that aren't allowed in filenames
 filename_char_blacklist = {
     '<',
     '>',
@@ -61,12 +76,99 @@ filename_char_blacklist = {
     '*',
 }
 
+#: Default extension for the template file
+default_extension = 'template'
+#: Default storage folder for user templates
+default_user_folder = (
+    f'{QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)}/'
+    f'{common.product}/templates'
+)
+
+#: Metadata keys
+metadata_keys = (
+    'name',
+    'description',
+    'author',
+    'date',
+)
+
+#: Default template name
+default_template_name = '!Default Template!'
+#: Empty template name
+empty_template_name = '!Empty Template!'
+
+#: Default compression method
+compression = zipfile.ZIP_STORED
+
+
+def get_saved_templates(cls, _type):
+    """Yields :class:`TemplateItem` instances saved of the specified type.
+
+    Args:
+        _type (TemplateType): Type of template to get.
+
+    """
+
+    if _type == TemplateType.DatabaseTemplate:
+        args = common.active('root', args=True)
+        if not args:
+            raise RuntimeError('A root item must be active to get the database templates')
+
+        db = database.get(*args)
+        _values = db.get_column('data', database.TemplateDataTable)
+        if not _values:
+            return
+
+        for _value in _values:
+            yield cls(data=_value)
+
+    if _type == TemplateType.UserTemplate:
+        if not os.path.exists(cls.default_user_folder):
+            return
+        with os.scandir(cls.default_user_folder) as it:
+            for entry in it:
+                if not entry.name.endswith(f'.{cls.default_extension}'):
+                    continue
+
+            yield cls(path=f'{cls.default_user_folder}/{entry.name}')
+
+
+def is_default_template_created(_type=TemplateType.DatabaseTemplate):
+    """Check if the default templates exist.
+
+    Args:
+        _type (TemplateType, Optional): Type of template to check, defaults to TemplateType.DatabaseTemplate
+
+    Returns:
+        bool: True if the default templates exist.
+
+    """
+    if _type == TemplateType.DatabaseTemplate:
+        args = common.active('root', args=True)
+        if not args:
+            raise RuntimeError('A root item must be active to check the database templates')
+
+        db = database.get(*args)
+        return (
+                common.get_hash(default_template_name) in
+                db.get_column('id', database.TemplateDataTable))
+
+    if _type == TemplateType.UserTemplate:
+        if not os.path.exists(default_user_folder):
+            log.warning(f'User template folder not found: {default_user_folder}')
+            return False
+
+        with os.scandir(default_user_folder) as it:
+            for entry in it:
+                if entry.name.endswith(f'.{default_extension}'):
+                    return True
+
 
 class TemplateItem(object):
     """Interface for template files.
 
     The template file is a zip file that contains a JSON file with metadata, a thumbnail.png
-    and a zip archive with the actual template.
+    and a zip archive with the actual template.o
 
     Example:
 
@@ -77,28 +179,6 @@ class TemplateItem(object):
             └── <custom files and folders>
 
     """
-
-    #: Default extension for the template file
-    default_extension = 'template'
-    #: Default storage folder for user templates
-    default_user_folder = (
-        f'{QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)}/'
-        f'{common.product}/templates'
-    )
-
-    #: Metadata keys
-    metadata_keys = (
-        'name',
-        'description',
-        'author',
-        'date',
-    )
-
-    default_template_name = '!Default Template!'
-    empty_template_name = '!Empty Template!'
-
-    #: Default compression method
-    compression = zipfile.ZIP_STORED
 
     def __getitem__(self, key):
         return self.get_metadata(key)
@@ -153,7 +233,7 @@ class TemplateItem(object):
             data (bytes): Binary data of the template file.
 
         Raises:
-            TemplateError: If the template file could not be read.
+            TemplateError: If the template file couldn't be read.
             TemplateMetadataError: If the metadata file is missing or invalid.
 
         """
@@ -187,7 +267,7 @@ class TemplateItem(object):
             try:
                 with z.open('metadata.json') as m:
                     self._metadata = json.load(m)
-                    for key in self.metadata_keys:
+                    for key in metadata_keys:
                         if key not in self._metadata:
                             self._has_error = True
                             raise TemplateMetadataError(f'Missing key in metadata.json: {key}')
@@ -199,7 +279,7 @@ class TemplateItem(object):
                     'date': '',
                 }
                 self._has_error = True
-                log.error(f'Failed to load metadata.json in {self._path}')
+                log.error(__name__, f'Failed to load metadata.json in {self._path}')
 
             try:
                 with z.open('thumbnail.png') as t:
@@ -209,7 +289,7 @@ class TemplateItem(object):
                         self._qimage = QtGui.QImage()
             except (ValueError, zipfile.BadZipFile, RuntimeError):
                 self._qimage = QtGui.QImage()
-                log.debug(f'Failed to load thumbnail.png in {self._path}')
+                log.error(__name__, f'Failed to load thumbnail.png in {self._path}')
 
             try:
                 with z.open('template.zip') as t:
@@ -218,7 +298,7 @@ class TemplateItem(object):
                         if '.links' in tz.namelist():
                             self._has_links = True
             except (zipfile.BadZipFile, RuntimeError) as e:
-                log.error(f'Failed to read embedded template.zip: {e}')
+                log.error(__name__, f'Failed to read embedded template.zip: {e}')
 
                 # Write empty template
                 zp = io.BytesIO()
@@ -271,7 +351,7 @@ class TemplateItem(object):
 
         zp = io.BytesIO()
 
-        with zipfile.ZipFile(zp, 'w', compression=self.compression) as z:
+        with zipfile.ZipFile(zp, 'w', compression=compression) as z:
             json_data = json.dumps(self._metadata)
             z.writestr('metadata.json', json_data)
             z.writestr('thumbnail.png', self.get_thumbnail(binary=True))
@@ -309,8 +389,8 @@ class TemplateItem(object):
         if self.type != TemplateType.UserTemplate:
             raise ValueError('Can\'t save a database template to disk')
 
-        if not os.path.exists(self.default_user_folder):
-            os.makedirs(self.default_user_folder, exist_ok=True)
+        if not os.path.exists(default_user_folder):
+            os.makedirs(default_user_folder, exist_ok=True)
 
         _chars = ''.join(filename_char_blacklist)
         sanitized_name = re.sub(
@@ -323,7 +403,7 @@ class TemplateItem(object):
         if sanitized_name != current_name:
             self._update_data()
 
-        p = f'{self.default_user_folder}/{sanitized_name}.{self.default_extension}'
+        p = f'{default_user_folder}/{sanitized_name}.{default_extension}'
         if os.path.exists(p) and not force:
             raise FileExistsError(f'Template already exists: {p}')
 
@@ -348,8 +428,8 @@ class TemplateItem(object):
         if exclude_files is None:
             exclude_files = set()
 
-        # Add template_blacklist to exclude_files
-        exclude_files.update(template_blacklist)
+        # Add template_file_blacklist to exclude_files
+        exclude_files.update(template_file_blacklist)
 
         extracted_files = []
 
@@ -472,8 +552,8 @@ class TemplateItem(object):
             value (str): Metadata value.
 
         """
-        if key not in self.metadata_keys:
-            raise KeyError(f'Invalid metadata key: {key}, expected one of {self.metadata_keys}')
+        if key not in metadata_keys:
+            raise KeyError(f'Invalid metadata key: {key}, expected one of {metadata_keys}')
         self._metadata[key] = value
 
     def get_metadata(self, key):
@@ -486,8 +566,8 @@ class TemplateItem(object):
             str: Metadata value.
 
         """
-        if key not in self.metadata_keys:
-            raise KeyError(f'Invalid metadata key: {key}, expected one of {self.metadata_keys}')
+        if key not in metadata_keys:
+            raise KeyError(f'Invalid metadata key: {key}, expected one of {metadata_keys}')
         return self._metadata[key]
 
     def clear_metadata(self):
@@ -605,7 +685,7 @@ class TemplateItem(object):
             return
 
         if self.type == TemplateType.UserTemplate:
-            p = f'{self.default_user_folder}/{self._metadata["name"]}.{self.default_extension}'
+            p = f'{default_user_folder}/{self._metadata["name"]}.{default_extension}'
 
             if not os.path.exists(p):
                 raise FileNotFoundError(f'Template not found: {p}')
@@ -649,8 +729,8 @@ class TemplateItem(object):
             data = self._update_data()
             self._save_to_disk(True, data)
 
-            # Delete old file
-            p = f'{self.default_user_folder}/{current_name}.{self.default_extension}'
+            # Delete the old file
+            p = f'{default_user_folder}/{current_name}.{default_extension}'
             if not os.path.exists(p):
                 raise FileNotFoundError(f'Template not found: {p}')
             os.remove(p)
@@ -677,6 +757,7 @@ class TemplateItem(object):
 
         Args:
             preset (str): Name of the preset.
+            force (bool, Optional): Override existing .links file if True, defaults to False.
 
         """
         presets = LinksAPI.presets()
@@ -703,7 +784,7 @@ class TemplateItem(object):
         try:
             zp = io.BytesIO(self._template)
 
-            with zipfile.ZipFile(zp, 'a', compression=self.compression) as z:
+            with zipfile.ZipFile(zp, 'a', compression=compression) as z:
                 nl = z.namelist()
                 if '.links' in nl:
                     raise TemplateLinkExistsError('Template already contains a .links file!')
@@ -726,7 +807,7 @@ class TemplateItem(object):
         new_zp = io.BytesIO()
 
         with zipfile.ZipFile(old_zp, 'r') as old_zip, \
-                zipfile.ZipFile(new_zp, 'w', compression=self.compression) as new_zip:
+                zipfile.ZipFile(new_zp, 'w', compression=compression) as new_zip:
 
             # Safely extract files into memory, excluding '.links'
             extracted_files = self._safe_extract(old_zip, exclude_files={'.links'})
@@ -747,7 +828,7 @@ class TemplateItem(object):
                     v = f.read()
             return v.decode('utf-8').strip().splitlines()
         except (zipfile.BadZipFile, KeyError) as e:
-            log.error(f'Failed to read .links file: {e}')
+            log.error(__name__, f'Failed to read .links file.')
             link_paths = []
 
         return link_paths
@@ -842,7 +923,7 @@ class TemplateItem(object):
                 os.makedirs(parent_dir, exist_ok=True)
 
                 if os.path.exists(file_path):
-                    log.error(f'File already exists: {file_path}')
+                    log.error(__name__, f'File already exists: {file_path}')
                     skipped_files.append(file_path)
                     continue
 
@@ -880,19 +961,19 @@ class TemplateItem(object):
         max_size_bytes = max_size_mb * 1024 * 1024
         total_size = 0
 
-        blacklist = {f.lower() for f in template_blacklist}
+        blacklist = {f.lower() for f in template_file_blacklist}
 
         files = []
         folders = []
         skipped = []
 
         zp = io.BytesIO()
-        with zipfile.ZipFile(zp, 'w', compression=self.compression) as zf:
+        with zipfile.ZipFile(zp, 'w', compression=compression) as zf:
 
             def _it(path, _total_size, _files, _folders, _skipped):
 
                 if not os.access(path, os.R_OK):
-                    log.error(f'No read access to the folder: {path}')
+                    log.error(__name__, f'No read access to the folder: {path}')
                     return
 
                 with os.scandir(path) as it:
@@ -904,7 +985,7 @@ class TemplateItem(object):
                         rp = p[len(source_folder) + 1:]
 
                         if skip_system_files and entry.name.lower() in blacklist:
-                            log.debug(f'Skipping system file: {p}')
+                            log.debug(__name__, f'Skipping system file: {p}')
                             _skipped.append(entry.path)
                             continue
 
@@ -954,12 +1035,12 @@ class TemplateItem(object):
         if args:
             config = tokens.get(*args).data(force=True)
         else:
-            log.error('No active root item found, using the default token config')
+            log.error(__name__, 'No active root item found, using the default token config')
             config = tokens.DEFAULT_TOKEN_CONFIG.copy()
 
         # Populate template with the default token config
         zp = io.BytesIO()
-        with zipfile.ZipFile(zp, 'w', compression=self.compression) as zf:
+        with zipfile.ZipFile(zp, 'w', compression=compression) as zf:
             for v in config[tokens.AssetFolderConfig].values():
                 p = f'{v["value"]}/'
                 if p not in zf.namelist():
@@ -995,65 +1076,9 @@ class TemplateItem(object):
 
         # Populate template with the default token config
         zp = io.BytesIO()
-        with zipfile.ZipFile(zp, 'w', compression=self.compression) as zf:
+        with zipfile.ZipFile(zp, 'w', compression=compression) as zf:
             pass
 
         zp.seek(0)
         self._template = zp.getvalue()
 
-    @classmethod
-    def get_saved_templates(cls, _type):
-        """Yields :class:`TemplateItem` instances saved in the database or on disk."""
-
-        if _type == TemplateType.DatabaseTemplate:
-            args = common.active('root', args=True)
-            if not args:
-                raise RuntimeError('A root item must be active to get the database templates')
-
-            db = database.get(*args)
-            _values = db.get_column('data', database.TemplateDataTable)
-            if not _values:
-                return
-
-            for _value in _values:
-                yield cls(data=_value)
-
-        if _type == TemplateType.UserTemplate:
-            if not os.path.exists(cls.default_user_folder):
-                return
-            with os.scandir(cls.default_user_folder) as it:
-                for entry in it:
-                    if not entry.name.endswith(f'.{cls.default_extension}'):
-                        continue
-
-                yield cls(path=f'{cls.default_user_folder}/{entry.name}')
-
-    @staticmethod
-    def is_default_template_created(_type=TemplateType.DatabaseTemplate):
-        """Check if the default template is saved in the database or on disk.
-
-        Args:
-            _type (TemplateType, Optional): Type of template to check, defaults to TemplateType.DatabaseTemplate
-
-        Returns:
-            bool: True if the default template is saved.
-
-        """
-        if _type == TemplateType.DatabaseTemplate:
-            args = common.active('root', args=True)
-            if not args:
-                raise RuntimeError('A root item must be active to check the database templates')
-
-            db = database.get(*args)
-            return (
-                    common.get_hash(TemplateItem.default_template_name) in
-                    db.get_column('id', database.TemplateDataTable))
-
-        if _type == TemplateType.UserTemplate:
-            if not os.path.exists(TemplateItem.default_user_folder):
-                return False
-
-            with os.scandir(TemplateItem.default_user_folder) as it:
-                for entry in it:
-                    if entry.name.endswith(f'.{TemplateItem.default_extension}'):
-                        return True

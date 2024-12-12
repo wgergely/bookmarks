@@ -216,8 +216,8 @@ class TestServerLib(unittest.TestCase):
 
         # Check if templates are available. If not, skip this test.
         # The code attempts to load templates and raises TemplateError otherwise.
-        from ..templates.lib import TemplateItem, TemplateType
-        templates = TemplateItem.get_saved_templates(TemplateType.UserTemplate)
+        from ..templates.lib import TemplateType, get_saved_templates
+        templates = get_saved_templates(TemplateType.UserTemplate)
         if not templates:
             self.skipTest("No templates available, skipping invalid template test.")
 

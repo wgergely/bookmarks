@@ -12,7 +12,7 @@ import threading
 
 from .. import common, log, actions
 from ..links.lib import LinksAPI
-from ..templates.lib import TemplateItem, TemplateType
+from ..templates.lib import TemplateType, get_saved_templates
 
 
 class JobDepth(enum.IntEnum):
@@ -223,7 +223,7 @@ class ServerAPI:
         if template is None:
             return
 
-        templates = TemplateItem.get_saved_templates(TemplateType.UserTemplate)
+        templates = get_saved_templates(TemplateType.UserTemplate)
         if not templates:
             raise FileNotFoundError('No templates found')
 

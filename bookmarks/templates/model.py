@@ -1,6 +1,6 @@
 from PySide2 import QtCore
 
-from . import lib
+from .lib import *
 from .. import common, log
 
 
@@ -29,7 +29,7 @@ class Node:
         Returns:
             The data.
         """
-        if not isinstance(self._api, lib.TemplateItem):
+        if not isinstance(self._api, TemplateItem):
             return None
         return self._api
 
@@ -102,6 +102,7 @@ class Node:
         if self._parent:
             return self._parent._children.index(self)
         return 0  # Root node
+
 
 class TemplatesModel(QtCore.QAbstractItemModel):
 
@@ -289,7 +290,7 @@ class TemplatesModel(QtCore.QAbstractItemModel):
         self._root_node.append_child(node1)
 
         try:
-            templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.DatabaseTemplate)
+            templates = get_saved_templates(TemplateType.DatabaseTemplate)
             templates = sorted(templates, key=lambda x: x['name'].lower())
             for template in templates:
                 node = Node(template, parent=node1)
@@ -301,7 +302,7 @@ class TemplatesModel(QtCore.QAbstractItemModel):
         self._root_node.append_child(node2)
 
         try:
-            templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.UserTemplate)
+            templates = get_saved_templates(TemplateType.UserTemplate)
             templates = sorted(templates, key=lambda x: x['name'].lower())
             for template in templates:
                 node = Node(template, parent=node2)

@@ -5,7 +5,7 @@ import os
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from .error import *
-from .lib import TemplateItem, TemplateType
+from .lib import *
 from .model import TemplatesModel
 from .preview import TemplatePreviewView
 from .. import actions
@@ -1862,7 +1862,7 @@ class TemplatesMainWidget(QtWidgets.QDialog):
             raise ValueError('This widget requires a root item to be active prior to initialization.')
 
         # Let's make sure the default database template is created automatically
-        if not TemplateItem.is_default_template_created(_type=TemplateType.DatabaseTemplate):
+        if not is_default_template_created(_type=TemplateType.DatabaseTemplate):
             item = TemplateItem()
             item.type = TemplateType.DatabaseTemplate
             item.save(force=True)

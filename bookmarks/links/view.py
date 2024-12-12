@@ -12,7 +12,7 @@ from .. import common
 from .. import contextmenu
 from .. import shortcuts
 from .. import ui
-from ..templates.lib import TemplateType, TemplateItem
+from ..templates.lib import TemplateType, get_saved_templates
 
 
 class LinksContextMenu(contextmenu.BaseContextMenu):
@@ -1130,7 +1130,7 @@ class AssetTemplatesComboBox(QtWidgets.QComboBox):
         self.addItem('Select an asset template...')
         self.setCurrentIndex(0)
 
-        templates = lib.TemplateItem.get_saved_templates(lib.TemplateType.DatabaseTemplate)
+        templates = get_saved_templates(lib.TemplateType.DatabaseTemplate)
         if not templates:
             return
 
@@ -1252,7 +1252,7 @@ class LinksEditor(QtWidgets.QWidget):
         ) == QtWidgets.QDialog.Rejected:
             return
 
-        templates = TemplateItem.get_saved_templates(TemplateType.DatabaseTemplate)
+        templates = get_saved_templates(TemplateType.DatabaseTemplate)
         if not templates:
             raise ValueError('No asset templates found.')
         template = next((f for f in templates if f['name'] == template_name), None)

@@ -112,11 +112,11 @@ __initial_values__ = {
     locals().copy().items() if not k.startswith('__')
 }
 
+# Make submodules available from this top module
+from .core import *
 from .active import *
 from .clipboard import *
 from .color import *
-# Make submodules available from this top module
-from .core import *
 from .data import *
 from .dcc import *
 from .env import *

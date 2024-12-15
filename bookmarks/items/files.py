@@ -23,7 +23,7 @@ The relative file path segment is what :class:`FileItemView` displays.
 This segment often includes a series of subdirectories the view represents as
 interactive labels. These labels can be used to filter the list view.
 
-Note:
+.. note:
     In summary , :class:`FileItemModel` will **not** load file items from the root
     of an asset item, but from subdirectories called ``task`` items. It will load
     all files from all subdirectories from this folder but provides filter options in the
@@ -185,7 +185,7 @@ class FileItemModel(models.ItemModel):
     Switching between `FileItems` and `SequenceItems` is done by emitting the
     :attr:`dataTypeChanged` signal.
 
-    Note:
+    .. note:
 
         The model won't necessarily load all files it encounters. If the parent
         bookmark item has a valid token config set, certain file extension might be
@@ -673,7 +673,7 @@ class FileItemModel(models.ItemModel):
         regarding what mime types have to be defined exactly for fully
         supporting drag and drop on all platforms.
 
-        Note:
+        .. note:
             On Windows, ``application/x-qt-windows-mime;value="FileName"`` and
             ``application/x-qt-windows-mime;value="FileNameW"`` types seems to be
             necessary, but on macOS a simple uri list seem to suffice.

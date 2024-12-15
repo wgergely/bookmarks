@@ -5,6 +5,7 @@ from PySide2 import QtCore, QtWidgets
 from .. import common, ui
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
+from ..server.view import EditAssetTemplatesWrapper
 from ..templates.lib import TemplateType, get_saved_templates
 
 
@@ -46,6 +47,8 @@ class AddJobDialog(QtWidgets.QDialog):
 
         self.asset_template_combobox = None
         self.edit_asset_templates_button = None
+
+        self.template_editor = None
 
         self.summary_label = None
 
@@ -115,6 +118,10 @@ class AddJobDialog(QtWidgets.QDialog):
         self.edit_asset_templates_button = ui.PaintedButton('Edit Templates', parent=self)
         row.layout().addWidget(self.edit_asset_templates_button)
 
+        self.template_editor = EditAssetTemplatesWrapper(parent=self)
+        row.layout().addWidget(self.template_editor)
+        self.template_editor.hide()
+
         widget.layout().addStretch(10)
 
         row = ui.add_row(None, height=None, parent=widget)
@@ -127,7 +134,7 @@ class AddJobDialog(QtWidgets.QDialog):
         self.layout().addWidget(widget, 1)
 
     def _init_templates(self):
-        templates = get_saved_templates(TemplateType.DatabaseTemplate)
+        templates = get_saved_templates(TemplateType.UserTemplate)
         templates = [f for f in templates]
         if not templates:
             self.asset_template_combobox.addItem('No templates found.', userData=None)
@@ -234,7 +241,7 @@ class AddJobDialog(QtWidgets.QDialog):
 
         if self.asset_template_combobox.currentData():
             template = self.asset_template_combobox.currentData()
-            template.extract_template(
+            template.template_to_folder(
                 path,
                 extract_contents_to_links=False,
                 ignore_existing_folders=False
@@ -248,6 +255,4 @@ class AddJobDialog(QtWidgets.QDialog):
     @common.debug
     @QtCore.Slot()
     def edit_asset_templates(self):
-        from ..server.view import EditAssetTemplatesDialog
-        dialog = EditAssetTemplatesDialog(parent=self)
-        dialog.open()
+        self.template_editor.setVisible(self.template_editor.isHidden())

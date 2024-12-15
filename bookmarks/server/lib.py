@@ -231,7 +231,7 @@ class ServerAPI:
             raise ValueError(f'Invalid template name: {template}')
 
         template_item = next(f for f in templates if f['name'] == template)
-        template_item.extract_template(
+        template_item.template_to_folder(
             root_path,
             ignore_existing_folders=False,
             extract_contents_to_links=False,

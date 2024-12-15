@@ -2,6 +2,10 @@
 
 pushd %~dp0
 
+REM Command for rst generation
+python rst_generator.py
+
+
 REM Command file for Sphinx documentation
 
 if "%SPHINXBUILD%" == "" (

@@ -1534,7 +1534,7 @@ def toggle_active_mode():
     """Toggle the active path mode.
 
     """
-    if common.active_mode == common.ActiveMode.Overridden:
+    if common.active_mode == common.ActiveMode.Explicit:
         raise RuntimeError('The current active values are overridden and cannot be toggled.')
 
     common.active_mode = int(not bool(common.active_mode))

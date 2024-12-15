@@ -1,8 +1,4 @@
-"""Collection of common utility methods used by UI elements.
-
-The app has some DPI awareness, although, I'm pretty confident it wasn't implemented
-correctly. Still, all size values must be queried using :func:`.size()` to get a DPI
-dependent pixel value.
+"""Collection of common utility methods used by the ui.
 
 """
 import os

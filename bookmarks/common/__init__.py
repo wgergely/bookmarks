@@ -1,6 +1,5 @@
-"""This module, bookmarks, serves as the core of the Bookmarks app, defining key attributes, classes,
-and methods that shape the app's capability and aesthetics. This module also houses the app's configurable
-properties and default settings.
+""":mod:`This module<bookmarks.common>` contains key attributes, classes,
+and methods used across the app.
 
 Initialization methods for the app can be found in :mod:`~bookmarks.common.setup`. Hard-coded default
 properties are contained within :mod:`~bookmarks.common.core`.
@@ -23,7 +22,7 @@ are initialized using:
     from bookmarks import common
     common.initialize(mode=common.Mode.Embedded)
 
-To start Bookmarks in :attr:`~bookmarks.common.Mode.Standalone`, use :func:`bookmarks.exec_()`. The
+To start the app in :meth:`~bookmarks.common.Mode.Standalone`, use :func:`bookmarks.exec_()`. The
 :attr:`~bookmarks.common.Mode.Embedded` is designed for running the app within a host DCC, a feature
 currently used only by the Maya plugin. Refer to :mod:bookmarks.maya and :mod:`bookmarks.common` for related
 methods.
@@ -42,12 +41,6 @@ init_mode = None
 active_mode = None
 signals = None
 settings = None
-
-active_server_override = None
-active_job_override = None
-active_root_override = None
-active_asset_override = None
-active_task_override = None
 
 ui_scale_factor = 1.0  # Global ui scaling factor
 dpi = 72.0
@@ -118,22 +111,22 @@ __initial_values__ = {
     locals().copy().items() if not k.startswith('__')
 }
 
+from .active import *
+from .clipboard import *
+from .color import *
 # Make submodules available from this top module
 from .core import *
-from .hash import *
 from .data import *
-from .parser import *
+from .dcc import *
 from .env import *
+from .filter import *
 from .font import *
+from .hash import *
 from .monitor import *
+from .parser import *
+from .seqshot import *
 from .sequence import *
-from .clipboard import *
 from .settings import *
-from .active import *
 from .setup import *
 from .signals import *
-from .filter import *
 from .ui import *
-from .color import *
-from .seqshot import *
-from .dcc import *

@@ -5,7 +5,7 @@ Use the high-level :func:`get_thumbnail` to get an item's thumbnail. This relies
 :class:`ImageCache` to retrieve data and will return an existing thumbnail image or a
 suitable placeholder image. See  :func:`get_placeholder_path`.
 
-Note:
+.. note:
     The thumbnail files are stored in the bookmark item cache folder (see
     ``common.bookmark_item_data_dir``).
 
@@ -712,7 +712,7 @@ class ImageCache(QtCore.QObject):
         :attr:`common.image_cache[PixmapType][hash]`. The hash value is generated using
         ``source`` but this can be overwritten by explicitly setting ``hash``.
 
-        Note:
+        .. note:
             It is not possible to call this method outside the main gui thread.
             Use :meth:`get_image` instead. This method is backed by :meth:`get_image`
             anyway.

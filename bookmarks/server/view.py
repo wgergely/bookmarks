@@ -421,42 +421,6 @@ class AddServerDialog(QtWidgets.QDialog):
         )
 
 
-class EditAssetTemplatesDialog(QtWidgets.QDialog):
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setWindowTitle('Edit Asset Templates')
-
-        self._templates_editor = None
-        self.ok_button = None
-        self.cancel_button = None
-
-        self._create_ui()
-        self._connect_signals()
-
-        QtCore.QTimer.singleShot(100, self._templates_editor.init_data)
-
-    def _create_ui(self):
-        QtWidgets.QVBoxLayout(self)
-        o = common.Size.Indicator(6.0)
-        self.layout().setContentsMargins(o, o, o, o)
-        self.layout().setSpacing(o * 0.5)
-
-        self._templates_editor = TemplatesEditor(parent=self)
-        self.layout().addWidget(self._templates_editor)
-
-        row = ui.add_row(None, height=None, parent=self)
-
-        self.ok_button = ui.PaintedButton('Save', parent=self)
-        row.layout().addWidget(self.ok_button, 1)
-
-        self.cancel_button = ui.PaintedButton('Cancel', parent=self)
-        row.layout().addWidget(self.cancel_button)
-
-    def _connect_signals(self):
-        self.ok_button.clicked.connect(self.accept)
-        self.cancel_button.clicked.connect(self.reject)
-
 
 class AddJobDialog(QtWidgets.QDialog):
 
@@ -498,6 +462,7 @@ class AddJobDialog(QtWidgets.QDialog):
         self.update_timer.start()
 
         QtCore.QTimer.singleShot(100, self._init_templates)
+
 
     def _init_job_style(self):
         v = common.settings.value(ServerAPI.job_style_settings_key)
@@ -569,6 +534,11 @@ class AddJobDialog(QtWidgets.QDialog):
         self.edit_asset_templates_button = ui.PaintedButton('Edit Templates', parent=self)
         row.layout().addWidget(self.edit_asset_templates_button)
 
+        row = ui.add_row(None, height=None, parent=grp)
+        self.template_editor = TemplatesEditor(mode=TemplateType.UserTemplate, parent=self)
+        self.template_editor.setVisible(False)
+        row.layout().addWidget(self.template_editor)
+
         widget.layout().addStretch(10)
 
         row = ui.add_row(None, height=None, parent=widget)
@@ -590,6 +560,8 @@ class AddJobDialog(QtWidgets.QDialog):
             pass
 
     def _init_templates(self):
+        self.template_editor.init_data()
+
         templates = get_saved_templates(TemplateType.UserTemplate)
         templates = [f for f in templates]
         if not templates:
@@ -751,7 +723,7 @@ class AddJobDialog(QtWidgets.QDialog):
 
         if self.asset_template_combobox.currentData():
             template = self.asset_template_combobox.currentData()
-            template.extract_template(
+            template.template_to_folder(
                 path,
                 extract_contents_to_links=False,
                 ignore_existing_folders=False
@@ -765,8 +737,7 @@ class AddJobDialog(QtWidgets.QDialog):
     @common.debug
     @QtCore.Slot()
     def edit_asset_templates(self):
-        dialog = EditAssetTemplatesDialog(parent=self)
-        dialog.open()
+        self.template_editor.setVisible(self.template_editor.isHidden())
 
 
 class ServerView(QtWidgets.QTreeView):
@@ -1451,7 +1422,7 @@ class ServerEditor(QtWidgets.QSplitter):
         self.addWidget(self.preview_widget)
 
         self.setStretchFactor(0, 0.5)
-        self.setStretchFactor(1, 0.5)
+        self.setStretchFactor(1, 1)
 
     @common.error
     @common.debug

@@ -10,14 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-import os
-import sys
-
 print('\n\n#####################################################################\n\n')
 
 from bookmarks import common
-with common.initialize(mode=common.Mode.Standalone, run_app=False) as app:
 
+with common.initialize(mode=common.Mode.Standalone, run_app=False) as app:
     try:
         from maya import standalone
         standalone.initialize(name='python')

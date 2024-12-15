@@ -11,6 +11,7 @@ from PySide2 import QtWidgets, QtCore
 
 from .. import common
 
+#: Required dependencies for the app to run
 dependencies = (
     'PySide2',
     'OpenImageIO',
@@ -24,7 +25,7 @@ class initialize:
     """
     Initializes the components required to run Bookmarks.
 
-    This function must be called before any other Bookmarks functions. It is responsible for loading resource variables
+    This function must be called before any other Bookmarks functions. It's responsible for loading resource variables
     and starting helper threads that item models use to load information. When using Bookmarks inside a compatible DCC,
     the mode should be :attr:`~bookmarks.common.Mode.Embedded`. For running as a standalone app,
     use :attr:`~bookmarks.common.Mode.Standalone`. Remember to call :func:`shutdown` before terminating the app to
@@ -104,23 +105,6 @@ class initialize:
         return False
 
 
-def get_active_overrides_from_env():
-    """Get active overrides from the environment."""
-    # Check and verify that the active overrides are set and are pointing to a valid path
-    overrides = {}
-
-    for k in common.ActivePathSegmentTypes:
-        v = os.environ.get(f'Bookmarks_ACTIVE_{k.upper()}', None)
-        overrides[k] = v
-
-        # Check if the path exists
-        path = '/'.join([v for v in overrides.values() if v])
-        if path and not os.path.exists(path):
-            continue
-
-    return overrides
-
-
 def initialize_func(
         mode=common.Mode.Standalone,
         server=None,
@@ -132,6 +116,17 @@ def initialize_func(
     """Initializes all app components.
 
     """
+    if server:
+        os.environ['Bookmarks_ACTIVE_SERVER'] = server
+    if job:
+        os.environ['Bookmarks_ACTIVE_JOB'] = job
+    if root:
+        os.environ['Bookmarks_ACTIVE_ROOT'] = root
+    if asset:
+        os.environ['Bookmarks_ACTIVE_ASSET'] = asset
+    if task:
+        os.environ['Bookmarks_ACTIVE_TASK'] = task
+
     if common.init_mode is not None:
         raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
 
@@ -140,15 +135,6 @@ def initialize_func(
             f'Invalid initialization mode. Got "{mode}", '
             f'expected one of {", ".join([f"{m}" for m in common.Mode])}.'
         )
-
-    # Set active overrides if they're provided and/or available from the environment
-    # Explicitly passed overrides take precedence over environment variables
-    env_overrides = get_active_overrides_from_env()
-    common.active_server_override = server or env_overrides.get('server', None) or None
-    common.active_job_override = job or env_overrides.get('job', None) or None
-    common.active_root_override = root or env_overrides.get('root', None) or None
-    common.active_asset_override = asset or env_overrides.get('asset', None) or None
-    common.active_task_override = task or env_overrides.get('task', None) or None
 
     try:
         common.init_mode = mode

@@ -48,7 +48,7 @@ import functools
 import json
 import sqlite3
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore
 
 from . import common
 from . import log
@@ -328,7 +328,7 @@ def remove_db(server, job, root):
             common.db_connections[k].deleteLater()
             del common.db_connections[k]
         except:
-            log.error('Error removing the database.')
+            log.error(__name__, 'Error removing the database.')
 
 
 def remove_all_connections():
@@ -410,7 +410,7 @@ def load_json(value):
             object_hook=common.int_key
         )
     except UnicodeDecodeError as e:
-        log.error(e)
+        log.error(__name__, e)
         return {}
 
 
@@ -439,7 +439,7 @@ def convert_return_values(table, key, value):
         try:
             value = load_json(value)
         except Exception as e:
-            log.debug(e)
+            log.debug(__name__, e)
             value = None
     elif _type is str:
         try:
@@ -450,13 +450,13 @@ def convert_return_values(table, key, value):
         try:
             value = float(value)
         except Exception as e:
-            log.debug(e)
+            log.debug(__name__, e)
             value = None
     elif _type is int:
         try:
             value = int(value)
         except Exception as e:
-            log.debug(e)
+            log.debug(__name__, e)
             value = None
     elif _type is bytes:
         pass
@@ -510,7 +510,7 @@ class BookmarkDB(QtCore.QObject):
             self._is_valid = True
         except sqlite3.Error as e:
             self._is_valid = False
-            log.error(e)
+            log.error(__name__, e)
             self.connect_to_db(memory=True)
             _init()
 
@@ -535,10 +535,10 @@ class BookmarkDB(QtCore.QObject):
                 self._is_valid = True
             except sqlite3.Error as e:
                 self._is_valid = False
-                log.error(e)
+                log.error(__name__, e)
 
         if memory or not self._is_valid:
-            log.debug('Switching to in-memory database mode due to persistent failure.')
+            log.debug(__name__, 'Switching to in-memory database mode due to persistent failure.')
             self._connection = sqlite3.connect(
                 ':memory:',
                 isolation_level=None,
@@ -562,17 +562,17 @@ class BookmarkDB(QtCore.QObject):
         """
         _root_dir = QtCore.QDir(self._bookmark)
         if not _root_dir.exists():
-            log.error(f'Could not create {_root_dir.path()}')
+            log.error(__name__, f'Could not create {_root_dir.path()}')
             return False
 
         _cache_dir = QtCore.QDir(self._bookmark_root)
         if not _cache_dir.exists() and not _cache_dir.mkpath('.'):
-            log.error(f'Could not create {_cache_dir.path()}')
+            log.error(__name__, f'Could not create {_cache_dir.path()}')
             return False
 
         _thumb_dir = QtCore.QDir(f'{self._bookmark_root}/thumbnails')
         if not _thumb_dir.exists() and not _thumb_dir.mkpath('.'):
-            log.error(f'Could not create {_thumb_dir.path()}')
+            log.error(__name__, f'Could not create {_thumb_dir.path()}')
             return False
 
         return True
@@ -594,17 +594,17 @@ class BookmarkDB(QtCore.QObject):
             except sqlite3.OperationalError as e:
                 if 'database is locked' in str(e):
                     attempt += 1
-                    log.debug(f'Database is locked during table check, retrying {attempt}/{self.retries}...')
+                    log.debug(__name__, f'Database is locked during table check, retrying {attempt}/{self.retries}...')
                     sleep(attempt=attempt)
                     continue
                 else:
-                    log.error(f'OperationalError during table check:\n{e}')
+                    log.error(__name__, f'OperationalError during table check:\n{e}')
                     raise
             except sqlite3.Error as e:
-                log.error(f'Error during table check:\n{e}')
+                log.error(__name__, f'Error during table check:\n{e}')
                 raise
         else:
-            log.error('Failed to check table existence after multiple retries due to database lock.')
+            log.error(__name__, 'Failed to check table existence after multiple retries due to database lock.')
             raise sqlite3.OperationalError('Failed to check table existence due to database lock.')
 
         args = []
@@ -633,20 +633,20 @@ class BookmarkDB(QtCore.QObject):
             except sqlite3.OperationalError as e:
                 if 'database is locked' in str(e):
                     attempt += 1
-                    log.debug(
+                    log.debug(__name__,
                         f'Database is locked during table patching (PRAGMA table_info), '
                         f'retrying {attempt}/{self.retries}...'
                     )
                     sleep(attempt=attempt)
                     continue
                 else:
-                    log.error(f'OperationalError during table patching (PRAGMA table_info):\n{e}')
+                    log.error(__name__, f'OperationalError during table patching (PRAGMA table_info):\n{e}')
                     raise
             except sqlite3.Error as e:
-                log.error(f'Error during table patching (PRAGMA table_info):\n{e}')
+                log.error(__name__, f'Error during table patching (PRAGMA table_info):\n{e}')
                 raise
         else:
-            log.error('Failed to get table info after multiple retries due to database lock.')
+            log.error(__name__, 'Failed to get table info after multiple retries due to database lock.')
             raise sqlite3.OperationalError('Failed to get table info due to database lock.')
 
         columns = [c[1] for c in res]  # Direct iteration over the cursor without fetchall
@@ -660,25 +660,25 @@ class BookmarkDB(QtCore.QObject):
             while attempt <= self.retries:
                 try:
                     self._connection.execute(sql_alter)
-                    log.success(f'Added missing column "{column}"')
+                    log.debug(__name__, f'Added missing column "{column}"')
                     break
                 except sqlite3.OperationalError as e:
                     if 'database is locked' in str(e):
                         attempt += 1
-                        log.debug(
+                        log.debug(__name__,
                             f'Database is locked during adding column "{column}", '
                             f'retrying {attempt}/{self.retries}...'
                         )
                         sleep(attempt=attempt)
                         continue
                     else:
-                        log.error(f'OperationalError adding column "{column}":\n{e}')
+                        log.error(__name__, f'OperationalError adding column "{column}":\n{e}')
                         raise
                 except sqlite3.Error as e:
-                    log.error(f'Error adding column "{column}":\n{e}')
+                    log.error(__name__, f'Error adding column "{column}":\n{e}')
                     raise
             else:
-                log.error(f'Failed to add column "{column}" after multiple retries due to database lock.')
+                log.error(__name__, f'Failed to add column "{column}" after multiple retries due to database lock.')
                 raise sqlite3.OperationalError(f'Failed to add column "{column}" due to database lock.')
 
     def connection(self):
@@ -701,7 +701,7 @@ class BookmarkDB(QtCore.QObject):
             self._connection.commit()
             self._connection.close()
         except sqlite3.Error as e:
-            log.error(e)
+            log.error(__name__, e)
             self._is_valid = False
         finally:
             self._connection = None
@@ -742,7 +742,7 @@ class BookmarkDB(QtCore.QObject):
             self._is_valid = True
         except sqlite3.Error as e:
             self._is_valid = False
-            log.error(e)
+            log.error(__name__, e)
             return
 
         for row in res:
@@ -779,7 +779,7 @@ class BookmarkDB(QtCore.QObject):
             self._is_valid = True
         except sqlite3.Error as e:
             self._is_valid = False
-            log.error(e)
+            log.error(__name__, e)
             return _get_empty_row()
 
         columns = [f[0] for f in res.description]
@@ -815,7 +815,7 @@ class BookmarkDB(QtCore.QObject):
             self._is_valid = True
         except sqlite3.Error as e:
             self._is_valid = False
-            log.error(e)
+            log.error(__name__, e)
 
     def get_rows(self, table):
         """Retrieve all rows from the database.
@@ -837,7 +837,7 @@ class BookmarkDB(QtCore.QObject):
             self._is_valid = True
         except sqlite3.Error as e:
             self._is_valid = False
-            log.error(e)
+            log.error(__name__, e)
             return
 
         columns = [f[0] for f in res.description]
@@ -885,22 +885,22 @@ class BookmarkDB(QtCore.QObject):
             except sqlite3.OperationalError as e:
                 if 'database is locked' in str(e):
                     attempt += 1
-                    log.debug(f'Database is locked, retrying {attempt}/{self.retries}...')
+                    log.debug(__name__, f'Database is locked, retrying {attempt}/{self.retries}...')
                     sleep(attempt=attempt)
                     continue  # Retry
                 else:
                     value = None
                     self._is_valid = False
-                    log.error(e)
+                    log.error(__name__, e)
                     break
             except sqlite3.Error as e:
                 value = None
                 self._is_valid = False
-                log.error(e)
+                log.error(__name__, e)
                 break
         else:
             # If we exhausted all retries
-            log.error('Failed to retrieve value after multiple retries due to database lock.')
+            log.error(__name__, 'Failed to retrieve value after multiple retries due to database lock.')
             value = None
 
         return convert_return_values(table, key, value)
@@ -940,7 +940,7 @@ class BookmarkDB(QtCore.QObject):
                 )
                 value = b64encode(value)
             except Exception as e:
-                log.error(e)
+                log.error(__name__, e)
                 value = None
         elif isinstance(value, str):
             value = b64encode(value)
@@ -948,7 +948,7 @@ class BookmarkDB(QtCore.QObject):
             try:
                 value = str(value)
             except Exception as e:
-                log.error(e)
+                log.error(__name__, e)
                 value = None
         elif isinstance(value, bytes):
             # Binary type is natively supported via BLOBs.
@@ -1010,17 +1010,17 @@ class BookmarkDB(QtCore.QObject):
             except sqlite3.OperationalError as e:
                 if 'database is locked' in str(e):
                     attempt += 1
-                    log.debug(f'Database is locked, retrying {attempt}/{self.retries}...')
+                    log.debug(__name__, f'Database is locked, retrying {attempt}/{self.retries}...')
                     sleep(attempt=attempt)
                     continue  # Retry
                 else:
-                    log.error(f'OperationalError setting value:\n{e}')
+                    log.error(__name__, f'OperationalError setting value:\n{e}')
                     self._is_valid = False
                     break
             except sqlite3.Error as e:
-                log.error(f'Error setting value:\n{e}')
+                log.error(__name__, f'Error setting value:\n{e}')
                 self._is_valid = False
                 break
         else:
             # If we exhausted all retries
-            log.error('Failed to set value after multiple retries due to database lock.')
+            log.error(__name__, 'Failed to set value after multiple retries due to database lock.')

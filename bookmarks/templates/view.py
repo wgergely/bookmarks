@@ -38,7 +38,7 @@ def close():
         common.templates_editor.deleteLater()
         common.templates_editor = None
     except Exception as e:
-        log.error(e)
+        log.error(__name__, e)
 
 
 class TemplatesContextMenu(contextmenu.BaseContextMenu):
@@ -51,7 +51,7 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
         """
         self.new_template_menu()
         self.separator()
-        self.extract_template_menu()
+        self.template_to_folder_menu()
         self.rename_template_menu()
         self.separator()
         self.thumbnail_menu()
@@ -233,7 +233,7 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
             'help': 'Clear the link preset from the template.',
         }
 
-    def extract_template_menu(self):
+    def template_to_folder_menu(self):
         """Add the extract template menu.
 
         """
@@ -250,7 +250,7 @@ class TemplatesContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Extract Template...',
             'icon': ui.get_icon('add_folder', color=common.Color.Green()),
-            'action': self.parent().extract_template,
+            'action': self.parent().template_to_folder,
             'help': 'Extract the template contents to a folder.',
         }
 
@@ -433,7 +433,7 @@ class AddLinkPresetEditor(QtWidgets.QDialog):
 class AddTemplateDialog(QtWidgets.QDialog):
     """Dialog for adding a new template."""
 
-    def __init__(self, parent=None):
+    def __init__(self, mode=None, parent=None):
         super().__init__(parent=parent)
 
         self.thumbnail_editor = None
@@ -441,6 +441,8 @@ class AddTemplateDialog(QtWidgets.QDialog):
         self.description_editor = None
         self.folder_editor = None
         self.links_editor = None
+
+        self._mode = mode
 
         self.ok_button = None
         self.cancel_button = None
@@ -521,12 +523,17 @@ class AddTemplateDialog(QtWidgets.QDialog):
         row = ui.add_row('Type', height=None, parent=grp)
         self.type_editor = QtWidgets.QComboBox(parent=grp)
         self.type_editor.setView(QtWidgets.QListView(self.type_editor))
-        self.type_editor.addItem('Project Template', TemplateType.DatabaseTemplate)
-        self.type_editor.addItem('My Template', TemplateType.UserTemplate)
+
+        if self._mode == TemplateType.DatabaseTemplate or self._mode is None:
+            self.type_editor.addItem(TemplateType.DatabaseTemplate, userData=TemplateType.DatabaseTemplate)
+
+        if self._mode == TemplateType.UserTemplate or self._mode is None:
+            self.type_editor.addItem(TemplateType.UserTemplate, userData=TemplateType.UserTemplate)
+
         ui.add_description(
             f'Select the template\'s type. '
-            f'<span style="color: {common.Color.Text(qss=True)};">Project templates</span> '
-            f'are shared across all users. <span style="color: {common.Color.Text(qss=True)};">My templates</span> '
+            f'<span style="color: {common.Color.Text(qss=True)};">{TemplateType.DatabaseTemplate.value}</span> '
+            f'are shared across all users. <span style="color: {common.Color.Text(qss=True)};">{TemplateType.UserTemplate.value}</span> '
             'are private to you.',
             parent=grp
         )
@@ -554,12 +561,19 @@ class AddTemplateDialog(QtWidgets.QDialog):
         )
 
     def get_data(self):
+        _type = self.type_editor.currentData()
+
+        if _type == TemplateType.DatabaseTemplate.value:
+            _type = TemplateType.DatabaseTemplate
+        if _type == TemplateType.UserTemplate.value:
+            _type = TemplateType.UserTemplate
+
         return {
             'name': self.name_editor.text(),
             'description': self.description_editor.text(),
             'folder': self.folder_editor.text(),
             'links': self.links_editor.currentData(),
-            'type': self.type_editor.currentData(),
+            'type': _type,
             'image': self.thumbnail_editor.image()
         }
 
@@ -941,8 +955,8 @@ class TemplatesViewDelegate(QtWidgets.QStyledItemDelegate):
             return
 
         is_default = (
-                TemplateItem.default_template_name in index.data(QtCore.Qt.DisplayRole) or
-                TemplateItem.empty_template_name in index.data(QtCore.Qt.DisplayRole)
+                BuiltInTemplate.TokenConfig.value in index.data(QtCore.Qt.DisplayRole) or
+                BuiltInTemplate.Empty.value in index.data(QtCore.Qt.DisplayRole)
         )
 
         # Paint left gradient
@@ -1180,7 +1194,7 @@ class TemplatesView(QtWidgets.QTreeView):
     templateChanged = QtCore.Signal(str, int)
     templateDataChanged = QtCore.Signal(bytes)
 
-    def __init__(self, parent=None):
+    def __init__(self, mode=None, parent=None):
 
         super().__init__(parent=parent)
         self.setWindowTitle('Templates')
@@ -1202,6 +1216,7 @@ class TemplatesView(QtWidgets.QTreeView):
         self.setItemDelegate(TemplatesViewDelegate(self))
 
         self._selected_node = (None, None)
+        self._mode = mode
 
         self._init_shortcuts()
         self._init_model()
@@ -1222,7 +1237,7 @@ class TemplatesView(QtWidgets.QTreeView):
         connect(shortcuts.ReloadTemplates, self.init_data)
 
     def _init_model(self):
-        self.setModel(TemplatesModel(parent=self))
+        self.setModel(TemplatesModel(mode=self._mode, parent=self))
 
     def _connect_signals(self):
         self.selectionModel().selectionChanged.connect(self.emit_template_file_changed)
@@ -1287,10 +1302,10 @@ class TemplatesView(QtWidgets.QTreeView):
             return None
 
         _type = None
-        p_parent_index = self.model().index(0, 0, self.rootIndex())
-        m_parent_index = self.model().index(1, 0, self.rootIndex())
+        p_parent_index = self.model().index(0, 0, QtCore.QModelIndex())
+        m_parent_index = self.model().index(1, 0, QtCore.QModelIndex())
 
-        if index.parent() == self.rootIndex():
+        if index.parent() == QtCore.QModelIndex():
             if index.row() == 0:
                 _type = TemplateType.DatabaseTemplate
             elif index.row() == 1:
@@ -1357,7 +1372,7 @@ class TemplatesView(QtWidgets.QTreeView):
                 yield _index
                 yield from _it_children(_index)
 
-        for index in _it_children(self.rootIndex()):
+        for index in _it_children(QtCore.QModelIndex()):
             node = index.internalPointer()
             if not node:
                 continue
@@ -1365,7 +1380,7 @@ class TemplatesView(QtWidgets.QTreeView):
             if not node.is_leaf():
                 continue
 
-            if self._selected_node == (node.api['name'], node.api.type):
+            if self._selected_node == (node.api['name'], node.api.type if hasattr(node.api, 'type') else None):
                 self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
                 self.setCurrentIndex(index)
                 self.scrollTo(index)
@@ -1379,8 +1394,8 @@ class TemplatesView(QtWidgets.QTreeView):
         if not self.model():
             return
 
-        self.setFirstColumnSpanned(0, self.rootIndex(), True)
-        self.setFirstColumnSpanned(1, self.rootIndex(), True)
+        self.setFirstColumnSpanned(0, QtCore.QModelIndex(), True)
+        self.setFirstColumnSpanned(1, QtCore.QModelIndex(), True)
 
         self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
         self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
@@ -1389,7 +1404,7 @@ class TemplatesView(QtWidgets.QTreeView):
 
         self.header().resizeSection(0, common.Size.RowHeight(1.5))
 
-        root_index = self.rootIndex()
+        root_index = QtCore.QModelIndex()
         model = self.model()
         if model.hasChildren(root_index):
             parent_index = model.index(0, 0, root_index)
@@ -1426,8 +1441,8 @@ class TemplatesView(QtWidgets.QTreeView):
         if _type is None:
             return
 
-        d_parent_index = self.model().index(0, 0, self.rootIndex())
-        m_parent_index = self.model().index(1, 0, self.rootIndex())
+        d_parent_index = self.model().index(0, 0, QtCore.QModelIndex())
+        m_parent_index = self.model().index(1, 0, QtCore.QModelIndex())
         parent_index = d_parent_index if _type == TemplateType.DatabaseTemplate else m_parent_index
 
         for i in range(self.model().rowCount(parent=parent_index)):
@@ -1442,7 +1457,7 @@ class TemplatesView(QtWidgets.QTreeView):
             if not node.is_leaf():
                 continue
 
-            if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
+            if node.api.is_builtin():
                 if common.show_message(
                         'Default Template Exists',
                         body='The default template already exists. Do you want to update/overwrite it?',
@@ -1470,25 +1485,25 @@ class TemplatesView(QtWidgets.QTreeView):
         Add a new template.
 
         """
-        dialog = AddTemplateDialog(parent=self)
+        dialog = AddTemplateDialog(mode=self._mode, parent=self)
         if dialog.exec_() == QtWidgets.QDialog.Rejected:
             return
 
         data = dialog.get_data()
+        if data['type'] == TemplateType.UserTemplate:
+            path = TemplateItem.get_save_path(data['name'])
 
-        item = TemplateItem()
+        item = TemplateItem(path=path)
 
         if not data['name']:
             raise ValueError('Name cannot be empty.')
 
         if data['type'] == TemplateType.DatabaseTemplate:
-            parent_index = self.model().index(0, 0, self.rootIndex())
+            parent_index = self.model().index(0, 0, QtCore.QModelIndex())
         elif data['type'] == TemplateType.UserTemplate:
-            parent_index = self.model().index(1, 0, self.rootIndex())
+            parent_index = self.model().index(1, 0, QtCore.QModelIndex())
         else:
             raise ValueError('Invalid template type.')
-
-        item.type = data['type']
 
         # Check uniqueness
         for i in range(self.model().rowCount(parent=parent_index)):
@@ -1513,7 +1528,7 @@ class TemplatesView(QtWidgets.QTreeView):
 
         if not data['folder'] or not os.path.exists(data['folder']):
             raise ValueError('Folder path cannot be empty.')
-        item.folder_to_template(data['folder'])
+        item.template_from_folder(data['folder'])
 
         if data['links']:
             try:
@@ -1528,7 +1543,17 @@ class TemplatesView(QtWidgets.QTreeView):
                     item.set_link_preset(data['links'], force=True)
 
         # Save
-        item.save()
+        try:
+            item.save()
+        except:
+            if common.show_message(
+                    'Template Exists',
+                    body='The template already exists. Do you want to update/overwrite it?',
+                    buttons=[common.YesButton, common.NoButton],
+                    modal=True,
+            ) == QtWidgets.QDialog.Rejected:
+                return
+            item.save(force=True)
 
         # Reload the model
         self.init_data()
@@ -1567,18 +1592,16 @@ class TemplatesView(QtWidgets.QTreeView):
         if not index.isValid():
             return
 
-        p_parent_index = self.model().index(0, 0, self.rootIndex())
-        m_parent_index = self.model().index(1, 0, self.rootIndex())
+        p_parent_index = self.model().index(0, 0, QtCore.QModelIndex())
+        m_parent_index = self.model().index(1, 0, QtCore.QModelIndex())
 
         _type = self.get_selection_node_type()
         if _type is None:
             return
 
-        type_name = 'Project' if _type == TemplateType.DatabaseTemplate else 'Custom'
-
         if common.show_message(
                 'Delete All Templates',
-                body=f'Are you sure you want to delete all  {type_name} templates? This action cannot be undone.',
+                body=f'Are you sure you want to delete all  {_type.value}s? This action cannot be undone.',
                 buttons=[common.YesButton, common.NoButton],
                 modal=True,
         ) == QtWidgets.QDialog.Rejected:
@@ -1597,7 +1620,7 @@ class TemplatesView(QtWidgets.QTreeView):
             try:
                 node.api.delete()
             except Exception as e:
-                log.error(f'Error deleting template: {e}')
+                log.error(__name__, f'Error deleting template: {e}')
 
                 pass
 
@@ -1659,8 +1682,8 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
-            raise ValueError('Cannot add link preset to the default template.')
+        if node.api.is_builtin():
+            raise ValueError('Cannot modify built-in template')
 
         try:
             node.api.set_link_preset(preset)
@@ -1689,7 +1712,7 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
+        if node.api.is_builtin():
             raise ValueError('Cannot remove link preset from the default template.')
 
         if common.show_message(
@@ -1707,7 +1730,7 @@ class TemplatesView(QtWidgets.QTreeView):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def extract_template(self):
+    def template_to_folder(self):
         """Extract the selected template."""
         node = self.get_node_from_selection()
         if not node:
@@ -1721,7 +1744,7 @@ class TemplatesView(QtWidgets.QTreeView):
             return
 
         data = dialog.get_data()
-        node.api.extract_template(data['path'], data['extract_to_links'])
+        node.api.template_to_folder(data['path'], data['extract_to_links'])
         actions.reveal(data['path'])
 
     @common.error
@@ -1736,8 +1759,8 @@ class TemplatesView(QtWidgets.QTreeView):
         if not node.is_leaf():
             return
 
-        if node.api['name'] == node.api.default_template_name or node.api['name'] == node.api.empty_template_name:
-            raise ValueError('Cannot rename the default template.')
+        if node.api.is_builtin():
+            raise ValueError('Cannot modify built-in template')
 
         dialog = RenameTemplateDialog(node.api['name'], parent=self)
         if dialog.exec_() == QtWidgets.QDialog.Rejected:
@@ -1751,7 +1774,7 @@ class TemplatesView(QtWidgets.QTreeView):
 class TemplatesEditor(QtWidgets.QSplitter):
     """The widget containing :class:`TemplatesView` and :class:`TemplatePreviewView`."""
 
-    def __init__(self, parent=None):
+    def __init__(self, mode=TemplateType.UserTemplate, parent=None):
         super().__init__(parent=parent)
 
         if not parent:
@@ -1761,6 +1784,7 @@ class TemplatesEditor(QtWidgets.QSplitter):
 
         self._templates_view_widget = None
         self._templates_editor_widget = None
+        self._mode = mode
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -1781,7 +1805,7 @@ class TemplatesEditor(QtWidgets.QSplitter):
 
         self.addWidget(widget)
 
-        self._templates_view_widget = TemplatesView(parent=self)
+        self._templates_view_widget = TemplatesView(mode=self._mode, parent=self)
         widget.layout().addWidget(self._templates_view_widget)
 
         self._templates_editor_widget = TemplatePreviewView(parent=self)
@@ -1862,7 +1886,7 @@ class TemplatesMainWidget(QtWidgets.QDialog):
             raise ValueError('This widget requires a root item to be active prior to initialization.')
 
         # Let's make sure the default database template is created automatically
-        if not is_default_template_created(_type=TemplateType.DatabaseTemplate):
+        if not builtin_template_exists(_type=TemplateType.DatabaseTemplate):
             item = TemplateItem()
             item.type = TemplateType.DatabaseTemplate
             item.save(force=True)

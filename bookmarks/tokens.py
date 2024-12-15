@@ -596,7 +596,7 @@ class TokenConfig(QtCore.QObject):
 
             return self._data
         except (RuntimeError, ValueError, TypeError):
-            log.error('Failed to get token config from the database.')
+            log.error(__name__, 'Failed to get token config from the database.')
             return self._data
         finally:
             self._initialized = True
@@ -642,16 +642,12 @@ class TokenConfig(QtCore.QObject):
         try:
             json_data = json.dumps(data, sort_keys=True, indent=4)
         except (RuntimeError, ValueError, TypeError):
-            log.error('Failed to convert data to JSON.')
+            log.error(__name__, 'Failed to convert data to JSON.')
             raise
 
         with open(file_info.filePath(), 'w') as f:
             f.write(json_data)
-            log.success(
-                'Asset folder configuration saved to {}'.format(
-                    file_info.filePath()
-                )
-            )
+            log.info(__name__, f'Asset folder configuration saved to {file_info.filePath()}')
 
     def get_description(self, token, force=False):
         """Utility method used to get the description of a token.

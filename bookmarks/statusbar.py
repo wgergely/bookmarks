@@ -93,7 +93,7 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
                 common.Color.Red(),
                 self._size
             )
-        elif common.active_mode == common.ActiveMode.Overridden:
+        elif common.active_mode == common.ActiveMode.Explicit:
             return images.rsc_pixmap(
                 'check',
                 common.Color.Yellow(),
@@ -114,7 +114,7 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
             return 'This session sets active paths. Click to toggle.'
         elif common.active_mode == common.ActiveMode.Private:
             return 'This session does not permanently save active paths. Click to toggle.'
-        elif common.active_mode == common.ActiveMode.Overridden:
+        elif common.active_mode == common.ActiveMode.Explicit:
             return 'This session has overridden active paths.'
         else:
             return 'Invalid active mode.'

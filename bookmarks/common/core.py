@@ -16,19 +16,32 @@ from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
 
+#: The app's official url
 documentation_url = 'https://bookmarks-vfx.com'
+
+#: The environment variable key used to check for the app's distribution root.
 env_key = 'Bookmarks_ROOT'
+
+#: The app's name
 product = 'bookmarks'
+
+#: The app's organization name
 organization = 'bookmarks'
+
+#: The app's organization domain
 organization_domain = 'bookmarks-vfx.com'
+
 link_file = '.links'
 bookmark_item_data_dir = '.bookmark'
 bookmark_item_database = 'bookmark.db'
 favorite_file_ext = 'bfav'
 user_settings = 'user_settings.ini'
 stylesheet_file = 'stylesheet.qss'
+
+#: Hardcoded maximum number of items to display in a list
 max_list_items = 999999
 
+#: Supported ui scale factors
 ui_scale_factors = [
     0.5,
     0.6,
@@ -44,11 +57,12 @@ ui_scale_factors = [
     3.0
 ]
 
+#: The default thumbnail format
 thumbnail_format = 'png'
 
 
 class Mode(enum.IntEnum):
-    """Startup mode used to initialize the app.
+    """Startup mode enums used by :class:`~bookmarks.common.setup.initialize`
 
     """
     #: Startup mode when bookmarks is called as a library

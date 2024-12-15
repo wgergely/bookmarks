@@ -3,7 +3,8 @@ import shutil
 import tempfile
 import unittest
 
-from .. import common
+from . import common
+
 
 class TestStringParser(unittest.TestCase):
     def setUp(self):

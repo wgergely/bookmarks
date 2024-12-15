@@ -29,8 +29,6 @@ class Node:
         Returns:
             The data.
         """
-        if not isinstance(self._api, TemplateItem):
-            return None
         return self._api
 
     def append_child(self, child):
@@ -90,7 +88,7 @@ class Node:
         Returns:
             bool: True if this node is a leaf node.
         """
-        return self.api is not None
+        return isinstance(self._api, TemplateItem)
 
     def row(self):
         """
@@ -106,7 +104,7 @@ class Node:
 
 class TemplatesModel(QtCore.QAbstractItemModel):
 
-    def __init__(self, parent=None):
+    def __init__(self, mode=None, parent=None):
         """
         Initialize the model.
 
@@ -117,6 +115,7 @@ class TemplatesModel(QtCore.QAbstractItemModel):
         """
         super().__init__(parent)
         self._root_node = None
+        self._mode = mode
 
     def root_node(self):
         """
@@ -168,10 +167,9 @@ class TemplatesModel(QtCore.QAbstractItemModel):
 
     def _col0_data(self, index, node, role):
         if not node.is_leaf():
-            if role == QtCore.Qt.DisplayRole and index.row() == 0:
-                return 'Project Templates'
-            if role == QtCore.Qt.DisplayRole and index.row() == 1:
-                return 'My Templates'
+            if role == QtCore.Qt.DisplayRole:
+                return node.api['name']
+
             return None
 
         if role == QtCore.Qt.DisplayRole:
@@ -286,28 +284,41 @@ class TemplatesModel(QtCore.QAbstractItemModel):
 
         self._root_node = Node(None)
 
-        node1 = Node(None, parent=self._root_node)
-        self._root_node.append_child(node1)
+        if self._mode == TemplateType.DatabaseTemplate or self._mode == None:
+            item = {
+                'name': TemplateType.DatabaseTemplate.value,
+                'description': TemplateType.DatabaseTemplate.value,
+            }
 
-        try:
-            templates = get_saved_templates(TemplateType.DatabaseTemplate)
-            templates = sorted(templates, key=lambda x: x['name'].lower())
-            for template in templates:
-                node = Node(template, parent=node1)
-                node1.append_child(node)
-        except Exception as e:
-            log.error(f'Error loading database templates: {e}')
+            item = TemplateItem(item)
+            node1 = Node(item, parent=self._root_node)
+            self._root_node.append_child(node1)
 
-        node2 = Node(None, parent=self._root_node)
-        self._root_node.append_child(node2)
+            try:
+                templates = get_saved_templates(TemplateType.DatabaseTemplate)
+                templates = sorted(templates, key=lambda x: x['name'].lower())
+                for template in templates:
+                    node = Node(template, parent=node1)
+                    node1.append_child(node)
+            except Exception as e:
+                log.error(__name__, f'Error loading database templates: {e}')
 
-        try:
-            templates = get_saved_templates(TemplateType.UserTemplate)
-            templates = sorted(templates, key=lambda x: x['name'].lower())
-            for template in templates:
-                node = Node(template, parent=node2)
-                node2.append_child(node)
-        except Exception as e:
-            log.error(f'Error loading user templates: {e}')
+        if self._mode == TemplateType.UserTemplate or self._mode == None:
+            item = {
+                'name': TemplateType.UserTemplate.value,
+                'description': TemplateType.UserTemplate.value,
+            }
+
+            node2 = Node(item, parent=self._root_node)
+            self._root_node.append_child(node2)
+
+            try:
+                templates = get_saved_templates(TemplateType.UserTemplate)
+                templates = sorted(templates, key=lambda x: x['name'].lower())
+                for template in templates:
+                    node = Node(template, parent=node2)
+                    node2.append_child(node)
+            except Exception as e:
+                log.error(__name__, f'Error loading user templates: {e}')
 
         self.endResetModel()

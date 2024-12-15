@@ -7,7 +7,6 @@ def init_color_manager():
     from . import common
     common.color_manager = ColorManager()
 
-
 import colorsys
 import hashlib
 
@@ -124,3 +123,6 @@ class ColorManager:
         hash_int = int(hash_object.hexdigest(), 16)
         index = hash_int % palette_size
         return index
+
+
+init_color_manager()

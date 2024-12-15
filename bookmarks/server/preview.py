@@ -126,7 +126,7 @@ class DictionaryPreviewContextMenu(contextmenu.BaseContextMenu):
 
 class DictionaryModel(QtCore.QAbstractItemModel):
     #: Custom signal to emit data changes
-    dataChangedSignal = QtCore.Signal(dict, dict) # previous, current
+    dataChangedSignal = QtCore.Signal(dict, dict)  # previous, current
 
     def __init__(self, data_dict, parent=None):
         super().__init__(parent)
@@ -370,11 +370,6 @@ class DictionaryPreview(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.data_dict = common.bookmarks.copy()
 
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding
-        )
-
         # Set up the layout
         self._create_ui()
         self._connect_signals()
@@ -387,6 +382,10 @@ class DictionaryPreview(QtWidgets.QWidget):
 
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
+        self.tree_view.setRootIsDecorated(False)
+        self.tree_view.setAlternatingRowColors(True)
+        self.tree_view.setSortingEnabled(True)
+        self.tree_view.setHeaderHidden(True)
         self.tree_view.setObjectName('dictionary_preview')
 
         self.tree_view.setAcceptDrops(True)

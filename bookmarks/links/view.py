@@ -1290,7 +1290,7 @@ class LinksEditor(QtWidgets.QWidget):
                 os.makedirs(abs_path, exist_ok=True)
 
                 try:
-                    template.extract_template(
+                    template.template_to_folder(
                         abs_path,
                         extract_contents_to_links=False,
                         ignore_existing_folders=True,

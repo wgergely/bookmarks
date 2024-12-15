@@ -8,7 +8,6 @@ from .. import database
 from .. import log
 
 
-
 def close():
     """Closes the :class:`AssetPropertyEditor` editor.
 
@@ -145,12 +144,12 @@ class CopyClipboardEditor(base.BasePropertyEditor):
 
         if self._db_table == database.BookmarkTable:
             common.CLIPBOARD[common.BookmarkPropertyClipboard] = data
-            log.success('Copied bookmark properties to clipboard')
+            log.info(__name__, 'Copied bookmark properties to clipboard')
         elif self._db_table == database.AssetTable:
             common.CLIPBOARD[common.AssetPropertyClipboard] = data
-            log.success('Copied asset properties to clipboard')
+            log.info(__name__, 'Copied asset properties to clipboard')
         else:
-            log.error(f'Unknown db_table: {self._db_table}')
+            log.error(__name__, f'Unknown db_table: {self._db_table}')
         return True
 
     @QtCore.Slot()

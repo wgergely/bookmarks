@@ -742,7 +742,7 @@ def refresh(idx=None):
         cache = f'{assets_cache_dir.path()}/{assets_cache_name}.cache'
 
         if assets_cache_dir.exists() and os.path.exists(cache):
-            log.debug('Removing asset cache:', cache)
+            log.debug(__name__, 'Removing asset cache {cache}')
             os.remove(cache)
 
     model.reset_data(force=True)
@@ -1525,7 +1525,7 @@ def paste_properties(index):
     for k in common.CLIPBOARD[clipboard]:
         v = common.CLIPBOARD[clipboard][k]
         database.get(*pp[0:3]).set_value(source, k, v, table)
-        log.success(f'Pasted {k} = {v} to {source}')
+        log.info(f'Pasted {k} = {v} to {source}')
 
 
 @common.debug

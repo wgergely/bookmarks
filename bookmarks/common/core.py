@@ -432,7 +432,7 @@ def error(func=None, *, show_error=True):
 
 def debug(func):
     """Function decorator used to log a debug message.
-    No message will be logged unless LOGGING_LEVEL is set to logging.DEBUG.
+
     """
     from .. import log
 

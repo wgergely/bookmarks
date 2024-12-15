@@ -101,7 +101,7 @@ def init_pixel_ratio():
     """
     app = QtWidgets.QApplication.instance()
     if not app:
-        log.error(
+        log.error(__name__,
             '`init_pixel_ratio()` was called before a QApplication was created.'
         )
 

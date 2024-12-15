@@ -614,7 +614,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.thumbnailUpdated.emit(self.db_source())
         self._file_path = self.db_source()
 
-        log.success(f'File saved to {self._file_path} successfully')
+        log.info(f'File saved to {self._file_path} successfully')
 
         return True
 

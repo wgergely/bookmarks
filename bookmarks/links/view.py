@@ -1298,7 +1298,7 @@ class LinksEditor(QtWidgets.QWidget):
                     )
                     success.append(abs_path)
                 except Exception as e:
-                    log.error(f'Failed to create missing folders: {abs_path} - {e}')
+                    log.error(__name__, f'Failed to create missing folders: {abs_path} - {e}')
                     failed.append(abs_path)
                     continue
 

@@ -6,11 +6,12 @@ The main logging functions are available from the parent module, `bookmarks.log`
 .. code-block:: python
 
     import bookmarks.log as log
-    log.debug('MyModule', 'This is a debug message')
+    log.debug(__name__, 'This is a debug message')
 
 
 """
 import enum
+import functools
 import json
 import logging
 import os
@@ -21,10 +22,9 @@ from logging.handlers import RotatingFileHandler
 
 from PySide2 import QtCore
 
-from .. import common
-
 __all__ = [
     'init_log',
+    'init_log_handlers',
     'teardown_log',
     'HandlerType',
     'get_logging_level',
@@ -38,7 +38,9 @@ __all__ = [
     'warning',
     'error',
     'critical',
-    'save_tank_to_file'
+    'save_tank_to_file',
+    'get_log_dir',
+    'get_err_log_path'
 ]
 
 #: The current app logging level
@@ -59,26 +61,34 @@ LOG_LINE_REGEX = re.compile(
     re.MULTILINE | re.DOTALL
 )
 
-#: The directory where log files are stored.
-LOG_DIR = f"{QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)}/{common.product}/log"
-#: The path to the error log file.
-ERR_LOG_PATH = f"{LOG_DIR}/error.log"
-
 
 class HandlerType(enum.Enum):
-    """Enumeration of the different types of log handlers."""
+    """Logging handler types."""
     Console = 1
     File = 2
     Memory = 3
 
 
+#: The log handler instances
 HANDLERS = {
     HandlerType.Console: None,
     HandlerType.File: None,
     HandlerType.Memory: None,
 }
 
+#: The logger instances
 LOGGERS = {}
+
+
+@functools.lru_cache
+def get_log_dir():
+    from .. import common
+    return f"{QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)}/{common.product}/log"
+
+
+@functools.lru_cache
+def get_err_log_path():
+    return f"{get_log_dir()}/error.log"
 
 
 class TankHandler(logging.Handler):
@@ -109,8 +119,11 @@ def init_log_handlers(max_bytes, maxlen, backup_count, init_memory=True, init_co
     """Initialize the log handlers.
 
     """
-    if not os.path.exists(LOG_DIR):
-        os.makedirs(LOG_DIR, exist_ok=True)
+    log_dir = get_log_dir()
+    err_log_path = get_err_log_path()
+
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
 
     if any(h is not None for h in HANDLERS.values()):
         raise RuntimeError('Log handlers already initialized')
@@ -132,7 +145,7 @@ def init_log_handlers(max_bytes, maxlen, backup_count, init_memory=True, init_co
         HANDLERS[HandlerType.Console] = logging.NullHandler()
 
     if init_file:
-        file_handler = RotatingFileHandler(ERR_LOG_PATH, maxBytes=max_bytes, backupCount=backup_count)
+        file_handler = RotatingFileHandler(err_log_path, maxBytes=max_bytes, backupCount=backup_count)
         file_handler.setLevel(logging.ERROR)
         file_handler.setFormatter(logging.Formatter(LOG_FORMAT, LOG_DATEFMT))
         HANDLERS[HandlerType.File] = file_handler
@@ -154,14 +167,45 @@ def qt_message_handler(mode, context, message):
         critical('Qt', message)
 
 
-def init_log(max_bytes=5 * 1024 * 1024, maxlen=1000, backup_count=3):
+def init_log(
+        max_bytes=5 * 1024 * 1024,
+        maxlen=1000,
+        backup_count=3,
+        log_level=logging.INFO,
+        init_memory=True,
+        init_console=False,
+        init_file=False,
+        init_qt=True
+):
     """Initialize the logging system.
 
+    Args:
+        max_bytes (int): The maximum size of the log file in bytes.
+        maxlen (int): The maximum number of log records to store in memory.
+        backup_count (int): The number of backup log files to keep.
+        log_level (int): The logging level.
+        init_memory (bool): Initialize the memory log handler.
+        init_console (bool): Initialize the console log handler.
+        init_file (bool): Initialize the file log handler.
+        init_qt (bool): Initialize the Qt message handler.
+
     """
-    init_log_handlers(max_bytes=max_bytes, maxlen=maxlen, backup_count=backup_count)
-    logger = get_logger('Qt')
-    logger.setLevel(LOGGING_LEVEL)
-    QtCore.qInstallMessageHandler(qt_message_handler)
+    init_log_handlers(
+        max_bytes=max_bytes,
+        maxlen=maxlen,
+        backup_count=backup_count,
+        init_memory=init_memory,
+        init_console=init_console,
+        init_file=init_file
+    )
+
+    global LOGGING_LEVEL
+    LOGGING_LEVEL = log_level
+
+    if init_qt:
+        logger = get_logger('Qt')
+        logger.setLevel(log_level)
+        QtCore.qInstallMessageHandler(qt_message_handler)
 
 
 def teardown_log():
@@ -222,6 +266,8 @@ def get_handler(handler_type):
 
 
 def _thread_save_log(name, level, msg):
+    from .. import common
+
     logger = get_logger(name)
     logger.log(level, msg, exc_info=(level >= logging.ERROR))
     try:

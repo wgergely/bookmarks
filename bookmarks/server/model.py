@@ -496,10 +496,10 @@ class ServerModel(QtCore.QAbstractItemModel):
                             continue
                         if entry.name[0] in {'.', '$'}:
                             continue
-                        if entry.name in templates_lib.template_blacklist:
+                        if entry.name in templates_lib.template_file_blacklist:
                             continue
                         if not os.access(entry.path, os.R_OK | os.W_OK):
-                            log.error(f'No access to {entry.path}')
+                            log.error(__name__, f'No access to {entry.path}')
                             continue
                         p = entry.path.replace('\\', '/')
 

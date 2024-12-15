@@ -80,11 +80,12 @@ def asset_item_generator(path, interrupt_requested=False):
                 try:
                     common_path = os.path.commonpath([path, asset_root])
                 except ValueError:
-                    log.error(f'Asset {asset_root} is on a different drive than the source path {path}. Skipping.')
+                    log.error(__name__,
+                              f'Asset {asset_root} is on a different drive than the source path {path}. Skipping.')
                     common_path = None
 
                 if common_path != path:
-                    log.error(
+                    log.error(__name__,
                         f'Asset {asset_root} is outside the source path {path}. Please verify if this is intentional')
 
                 api = LinksAPI(asset_root)
@@ -98,7 +99,7 @@ def asset_item_generator(path, interrupt_requested=False):
                 else:
                     yield asset_root, None
     except OSError as e:
-        log.error(e)
+        log.error(__name__, e)
         return
 
 
@@ -268,7 +269,7 @@ class AssetItemModel(models.ItemModel):
                 common_path = None
 
             if common_path != source:
-                log.error(
+                log.error(__name__,
                     f'Asset {filepath} is outside the source path {source}. Please verify if this is intentional.')
 
             # Compute the relative path

@@ -3,6 +3,7 @@
 
 """
 import io
+import logging
 import os
 import sys
 import time
@@ -43,7 +44,7 @@ class initialize:
 
             # or as a context manager
 
-            with common.initialize(common.Mode.Standalone) as app:  # automatically calls exec_() on exit
+            with common.initialize(mode=common.Mode.Standalone) as app:  # automatically calls exec_() on exit
                 asset = common.active('asset')
 
     Args:
@@ -56,21 +57,39 @@ class initialize:
             cls,
             mode=common.Mode.Standalone,
             run_app=False,
+            log_level=logging.INFO,
+            log_to_console=False,
+            log_to_file=False,
+            show_ui_logs=False,
             server=None,
             job=None,
             root=None,
             asset=None,
             task=None
     ):
-        from .. import log
-        log.debug(__name__, f'Initializing Bookmarks in {mode} mode...')
-        initialize_func(mode=mode, server=server, job=job, root=root, asset=asset, task=task)
+        initialize_func(
+            mode=mode,
+            log_level=log_level,
+            log_to_console=log_to_console,
+            log_to_file=log_to_file,
+            show_ui_logs=show_ui_logs,
+            server=server,
+            job=job,
+            root=root,
+            asset=asset,
+            task=task
+        )
+
         return super().__new__(cls)
 
     def __init__(
             self,
             mode=common.Mode.Standalone,
             run_app=False,
+            log_level=logging.INFO,
+            log_to_console=False,
+            log_to_file=False,
+            show_ui_logs=False,
             server=None,
             job=None,
             root=None,
@@ -79,6 +98,11 @@ class initialize:
     ):
         self.mode = mode
         self.run_app = run_app
+
+        self.log_level = log_level
+        self.log_to_console = log_to_console
+        self.log_to_file = log_to_file
+        self.show_ui_logs = show_ui_logs
 
         self.server = server
         self.job = job
@@ -97,9 +121,6 @@ class initialize:
         if self.mode == common.Mode.Standalone and self.run_app:
             QtWidgets.QApplication.instance().exec_()
 
-        from .. import log
-        log.debug(__name__, f'Bookmarks is shutting down...')
-
         shutdown()
 
         return False
@@ -107,6 +128,10 @@ class initialize:
 
 def initialize_func(
         mode=common.Mode.Standalone,
+        log_level=logging.INFO,
+        log_to_console=False,
+        log_to_file=False,
+        show_ui_logs=False,
         server=None,
         job=None,
         root=None,
@@ -116,6 +141,13 @@ def initialize_func(
     """Initializes all app components.
 
     """
+    from .. import log
+    log.init_log(
+        log_level=log_level,
+        init_console=log_to_console,
+        init_file=log_to_file,
+    )
+
     if server:
         os.environ['Bookmarks_ACTIVE_SERVER'] = server
     if job:
@@ -225,6 +257,10 @@ def initialize_func(
             time.sleep(i)
             if n >= timeout:
                 break
+
+        if show_ui_logs:
+            from ..log import view as editor
+            editor.show()
     except Exception as e:
         from .. import log
         log.error(__name__, f'Error during initialization: {e}')
@@ -261,9 +297,10 @@ def shutdown():
         for k, v in common.__initial_values__.items():
             setattr(common, k, v)
 
+        from .. import log
+        log.teardown_log()
     except Exception as e:
-        from . import log
-        log.error(__name__, f'Error during shutdown: {e}')
+        print(f'Error during shutdown: {e}')
     finally:
         if _init_mode == common.Mode.Standalone and QtWidgets.QApplication.instance():
             QtWidgets.QApplication.instance().exit(0)

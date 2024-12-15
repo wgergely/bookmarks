@@ -17,7 +17,7 @@ try:
 
     oiio_extensions = OpenImageIO.get_string_attribute('extension_list')
 except ImportError:
-    log.error('OpenImageIO not found. Cannot get extensions list.')
+    log.error(__name__, 'OpenImageIO not found. Cannot get extensions list.')
     oiio_extensions = ''
 
 MOVIE_FORMATS = {

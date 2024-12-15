@@ -1297,6 +1297,9 @@ class TemplatesView(QtWidgets.QTreeView):
         )
 
     def get_selection_node_type(self):
+        if not self.selectionModel().hasSelection():
+            return None
+
         index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
         if not index.isValid():
             return None
@@ -1620,7 +1623,7 @@ class TemplatesView(QtWidgets.QTreeView):
             try:
                 node.api.delete()
             except Exception as e:
-                log.error(__name__, f'Error deleting template: {e}')
+                log.error(f'Error deleting template: {e}')
 
                 pass
 

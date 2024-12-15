@@ -8,6 +8,29 @@ from .. import common
 from .. import ui
 
 
+def show():
+    from .. import common
+    if common.log_widget is not None:
+        close()
+
+    common.log_widget = LogWidget()
+    common.log_widget.show()
+
+
+def close():
+    from .. import common
+
+    if common.log_widget is None:
+        return
+
+    try:
+        common.log_widget.close()
+        common.log_widget.deleteLater()
+        common.log_widget = None
+    except Exception:
+        pass
+
+
 class LogView(QtWidgets.QTableView):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -124,7 +147,8 @@ class LogWidget(QtWidgets.QWidget):
         self.toolbar = None
         self._paused = False
 
-        self.setWindowTitle("Log Viewer")
+        self.setWindowTitle('Log Viewer')
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         self._create_ui()
         self._connect_signals()

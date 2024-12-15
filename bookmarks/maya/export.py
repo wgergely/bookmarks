@@ -27,7 +27,7 @@ def close():
         common.maya_export_widget.close()
         common.maya_export_widget.deleteLater()
     except:
-        log.error('Could not close the editor')
+        log.error(__name__, 'Could not close the editor')
     common.maya_export_widget = None
 
 
@@ -141,7 +141,7 @@ def export_alembic(
                 s = f'"{shape}" does not have a unique name. This is not ' \
                     f'usually allowed for alembic exports and might cause the ' \
                     f'export to fail.'
-                log.error(s)
+                log.error(__name__, s)
 
             # Cameras don't have mesh nodes, but we still want to export them!
             if cmds.nodeType(shape) != 'camera':
@@ -263,11 +263,11 @@ def export_alembic(
             ro='-renderableOnly'
         )
         s = f'Alembic Export Job Arguments:\n{cmd}'
-        log.success(s)
+        log.info(__name__, s)
         cmds.AbcExport(jobArg=cmd)
-        log.success(f'{destination} exported successfully.')
+        log.info(__name__, f'{destination} exported successfully.')
     except Exception:
-        log.error('The alembic export failed.')
+        log.error(__name__, 'The alembic export failed.')
         raise
     finally:
         teardown()

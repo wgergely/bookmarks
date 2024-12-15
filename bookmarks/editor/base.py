@@ -699,7 +699,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                             try:
                                 v = _type(v)
                             except Exception as e:
-                                log.error(e)
+                                log.error(__name__, e)
 
             # Add value to `current_data`
             if k not in self.current_data:
@@ -793,7 +793,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             try:
                 v = _type(v)
             except:
-                log.error('Type conversion failed.')
+                log.error(__name__, 'Type conversion failed.')
 
         if key not in self.current_data:
             self.current_data[key] = v

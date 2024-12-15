@@ -223,16 +223,16 @@ class BaseTasksModel(QtCore.QAbstractItemModel):
         node = self.node_from_value(task_value)
 
         if node is None:
-            log.error(f'Could not find task node with value: {task_value}')
+            log.error(__name__, f'Could not find task node with value: {task_value}')
             return
 
         # Check source and destination bounds
         if source_idx < 0 or source_idx >= len(self.root_node.children):
-            log.error(f'Invalid source index: {source_idx}')
+            log.error(__name__, f'Invalid source index: {source_idx}')
             return
 
         if destination_idx < 0 or destination_idx > len(self.root_node.children):
-            log.error(f'Invalid destination index: {destination_idx}')
+            log.error(__name__, f'Invalid destination index: {destination_idx}')
             return
 
         self.layoutAboutToBeChanged.emit()

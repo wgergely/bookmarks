@@ -554,7 +554,7 @@ class EdlWidget(base.BasePropertyEditor):
         # Check that the required environment values are set
         if adapter == 'rv_session':
             if 'OTIO_RV_PYTHON_BIN' not in os.environ or 'OTIO_RV_PYTHON_LIB' not in os.environ:
-                log.error('RV environment variables not set.')
+                log.error(__name__, 'RV environment variables not set.')
 
                 bin_path = common.get_binary('rv')
                 if not bin_path:

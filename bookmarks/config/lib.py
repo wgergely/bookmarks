@@ -268,13 +268,13 @@ class BaseConfig:
 
             # If the data structure differs from default values, return default values
             if not v.keys() == self._data[section].keys():
-                log.error('Malformed data, data structure differs from default values.')
+                log.error(__name__, 'Malformed data, data structure differs from default values.')
                 return self._data[section]
 
             self._data[section] = v
 
         except (RuntimeError, ValueError, TypeError):
-            log.error('Failed to get token config from the database.')
+            log.error(__name__, 'Failed to get token config from the database.')
         finally:
             self._initialized[section] = True
 
@@ -304,7 +304,7 @@ class BaseConfig:
                 database.BookmarkTable
             )
         except Exception as e:
-            log.error(f'Failed to save token config to the database: {e}')
+            log.error(__name__, f'Failed to save token config to the database: {e}')
 
         self._data[section].update(copy.deepcopy(data))
 
@@ -452,7 +452,7 @@ class BaseConfig:
     #         if v['value'].lower() == folder.lower():
     #             flag = v['flag']
     #             if flag not in Format:
-    #                 log.error(f'Invalid flag: {flag}. Expected one of {Format}. Skipping...')
+    #                 log.error(__name__, f'Invalid flag: {flag}. Expected one of {Format}. Skipping...')
     #                 continue
     #             return set(self.get_extensions(flag, force=force))
     #     return set()
@@ -571,7 +571,7 @@ class TaskConfig(BaseConfig):
 
         """
         if not self.is_valid():
-            log.error('Invalid database connection.')
+            log.error(__name__, 'Invalid database connection.')
             return
 
         self.set_data(Section.TaskConfig, self.data(Section.TaskConfig))
@@ -587,7 +587,7 @@ class TaskConfig(BaseConfig):
 
         """
         if not self.is_valid():
-            log.error('Using default task values, database connection is invalid.')
+            log.error(__name__, 'Using default task values, database connection is invalid.')
             default = self.default_data()
             return default[Section.TaskConfig]
 
@@ -603,7 +603,7 @@ class TaskConfig(BaseConfig):
 
         """
         if not self.is_valid():
-            log.error('Cannot set task state, invalid database connection.')
+            log.error(__name__, 'Cannot set task state, invalid database connection.')
             return
 
         task = self.task(task_value, force=force)
@@ -635,7 +635,7 @@ class TaskConfig(BaseConfig):
 
         """
         if not self.is_valid():
-            log.error('Cannot get task state, invalid database connection.')
+            log.error(__name__, 'Cannot get task state, invalid database connection.')
             return State(0)
 
         task = self.task(task_value, force=False)
@@ -657,7 +657,7 @@ class TaskConfig(BaseConfig):
 
         """
         if not self.is_valid():
-            log.error('Cannot set task state, invalid database connection.')
+            log.error(__name__, 'Cannot set task state, invalid database connection.')
             return
 
         if state not in State:

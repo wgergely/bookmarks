@@ -352,7 +352,7 @@ class ItemModel(QtCore.QAbstractTableModel):
                 prompt=False
             )
             if not QtCore.QFile(temp_path).remove():
-                log.error('Could not remove temp file.')
+                log.error(__name__, 'Could not remove temp file.')
             return
 
     def item_generator(self, path):
@@ -552,7 +552,7 @@ class ItemModel(QtCore.QAbstractTableModel):
                 d = common.sort_data(ref, sort_by, sort_order)
                 common.set_data(p, k, t, d)
         except:
-            log.error('Sorting error')
+            log.error(__name__, 'Sorting error')
         finally:
             self.endResetModel()
 

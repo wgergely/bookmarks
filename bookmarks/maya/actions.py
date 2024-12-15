@@ -81,13 +81,13 @@ def set_sg_context(*args, **kwargs):
     sg_properties.init()
 
     if not sg_properties.verify(task=True):
-        log.debug('No valid ShotGrid context found.')
+        log.debug(__name__, 'No valid ShotGrid context found.')
         return
 
     try:
         import sgtk
     except:
-        log.debug('sgtk could not be imported')
+        log.debug(__name__, 'sgtk could not be imported')
         return
 
     try:
@@ -102,7 +102,7 @@ def set_sg_context(*args, **kwargs):
         engine.change_context(context)
 
     except Exception as e:
-        log.debug(f'Could not set the ShotGrid context:\n{e}')
+        log.debug(__name__, f'Could not set the ShotGrid context:\n{e}')
         return
 
 
@@ -124,37 +124,37 @@ def apply_settings(*args, **kwargs):
     try:
         base.patch_workspace_file_rules()
     except Exception as e:
-        log.error(f'Could not patch workspace.mel:\n{e}')
+        log.error(__name__, f'Could not patch workspace.mel:\n{e}')
         return
 
     try:
         base.set_framerate(props.framerate)
     except Exception as e:
-        log.error(f'Could not set framerate:\n{e}')
+        log.error(__name__, f'Could not set framerate:\n{e}')
         return
 
     try:
         base.set_startframe(props.startframe)
     except Exception as e:
-        log.error(f'Could not set startframe:\n{e}')
+        log.error(__name__, f'Could not set startframe:\n{e}')
         return
 
     try:
         base.set_endframe(props.endframe)
     except Exception as e:
-        log.error(f'Could not set endframe:\n{e}')
+        log.error(__name__, f'Could not set endframe:\n{e}')
         return
 
     try:
         base.apply_default_render_values()
     except Exception as e:
-        log.error(f'Could not apply default render values:\n{e}')
+        log.error(__name__, f'Could not apply default render values:\n{e}')
         return
 
     try:
         base.set_render_resolution(props.width, props.height)
     except Exception as e:
-        log.error(f'Could not set render resolution:\n{e}')
+        log.error(__name__, f'Could not set render resolution:\n{e}')
         return
 
 
@@ -357,7 +357,7 @@ def open_scene(path):
         return
     cmds.file(file_info.filePath(), open=True, force=True)
     s = 'Scene opened {}\n'.format(file_info.filePath())
-    log.success(s)
+    log.info(__name__, s)
     return file_info.filePath()
 
 
@@ -439,7 +439,7 @@ def import_scene(path, reference=False):
         base._add_suffix_attribute(ns, suffix, reference=reference)
 
     s = f'{file_info.filePath()} was imported.'
-    log.success(s)
+    log.info(__name__, s)
     return file_info.filePath()
 
 
@@ -505,7 +505,7 @@ def capture_viewport(size=1.0):
             if panel_widget:
                 panel_widget.hide()
         except:
-            log.error(f'# An error occurred hiding {panel}')
+            log.error(__name__, f'# An error occurred hiding {panel}')
 
     width = int(cmds.getAttr('defaultResolution.width') * size)
     height = int(cmds.getAttr('defaultResolution.height') * size)
@@ -525,7 +525,7 @@ def capture_viewport(size=1.0):
             overwrite=True,
             viewer=False
         )
-        log.success(f'Capture saved to {_dir.path()}')
+        log.info(__name__, f'Capture saved to {_dir.path()}')
     except:
         raise
     finally:

@@ -245,7 +245,7 @@ class FileItemModel(models.ItemModel):
                     elif entry.is_dir(follow_symlinks=False):
                         yield from self.item_generator(entry.path)
         except OSError as e:
-            log.error(f"Error scanning {path}: {e}")
+            log.error(__name__, f"Error scanning {path}: {e}")
 
     @common.status_bar_message('Loading Files...')
     @models.initdata
@@ -326,7 +326,7 @@ class FileItemModel(models.ItemModel):
                 common_path = None
 
             if common_path != source_path:
-                log.error(
+                log.error(__name__,
                     f'File {filepath} is outside the source path {source_path}. Verify if this is intentional.')
 
             # Compute relative path from task folder to file without relative denominators
@@ -412,7 +412,7 @@ class FileItemModel(models.ItemModel):
                         seq_common_path = None
 
                     if seq_common_path != source_path:
-                        log.error(
+                        log.error(__name__,
                             f'Sequence {sequence_path} is outside the source path {source_path}. Verify if this is intentional.')
                         seq = None  # Treat as an individual file
                     else:

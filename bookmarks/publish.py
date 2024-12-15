@@ -604,7 +604,7 @@ class PublishWidget(base.BasePropertyEditor):
                 ):
                     log.error(f'Could not remove {file_info.filePath()}')
 
-        log.success('Previous publish archived successfully.')
+        log.info('Previous publish archived successfully.')
 
     def copy_payload_files(self, payload=None):
         """Copy files based on the given payload.
@@ -627,7 +627,7 @@ class PublishWidget(base.BasePropertyEditor):
             if not QtCore.QFile(source).copy(destination):
                 raise RuntimeError(f'Could not copy {source} to {destination}.')
 
-        log.success('Files copied successfully.')
+        log.info('Files copied successfully.')
 
     def make_jpegs(self, payload):
         """Convert the source image files to a jpeg sequence.
@@ -677,7 +677,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         payload['jpgs'] = files
 
-        log.success('Jpegs created successfully.')
+        log.info('Jpegs created successfully.')
         return files
 
     def make_videos(self, destination, jpegs, payload=None):
@@ -749,7 +749,7 @@ class PublishWidget(base.BasePropertyEditor):
         except:
             log.error('Could not convert DNxHD video.')
 
-        log.success('Videos converted successfully.')
+        log.info('Videos converted successfully.')
 
     def write_manifest(self, destination, payload=None):
         """Write an informative manifest file with information about this publish.
@@ -775,7 +775,7 @@ class PublishWidget(base.BasePropertyEditor):
             kwargs (dict, optional): Optional. Dictionary of payload data.
 
         """
-        log.success('Publish done.')
+        log.info('Publish done.')
         common.show_message('Publish finished.', message_type='success')
 
         if kwargs['publish_reveal']:

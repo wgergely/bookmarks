@@ -69,7 +69,7 @@ def process_image(source):
 
     images.ImageCache.flush(destination)
     if not QtCore.QFile(destination).remove():
-        log.error('Could not remove temp image.')
+        log.error(__name__, 'Could not remove temp image.')
 
     return image
 
@@ -483,7 +483,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             else:
                 self._paint_proposed_thumbnail(painter)
         except:
-            log.error('Error painting.')
+            log.error(__name__, 'Error painting.')
         finally:
             painter.end()
 

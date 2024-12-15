@@ -61,7 +61,6 @@ import datetime
 import io
 import json
 import os
-import re
 import tempfile
 import zipfile
 from enum import Enum, StrEnum
@@ -260,20 +259,32 @@ class TemplateItem(object):
         self._qimage = None
         self._size = 0
 
+        # If we're given a path (user template), store it and normalize
         if path:
             self._path = os.path.normpath(path).replace('\\', '/')
             self._original_path = self._path
 
         if empty:
             self.new_empty_template()
+            # If user template and path is given, set metadata name from filename
+            if self.type == TemplateType.UserTemplate and self._path:
+                base_name = os.path.splitext(os.path.basename(self._path))[0]
+                self._metadata['name'] = base_name
             return
 
-        if not empty and not data:
-            log.debug(__name__, 'No data was provided, creating a new database from tokens...')
+        if not path and not empty and not data:
             self.new_template_from_tokens()
+            # If user template and path is given, set metadata name from filename
+            if self.type == TemplateType.UserTemplate and self._path:
+                base_name = os.path.splitext(os.path.basename(self._path))[0]
+                self._metadata['name'] = base_name
             return
 
         self._load_zip_file(path, data)
+        # If user template and path is given, ensure metadata['name'] matches filename if not set
+        if self.type == TemplateType.UserTemplate and self._path:
+            base_name = os.path.splitext(os.path.basename(self._path))[0]
+            self._metadata['name'] = base_name
 
     @staticmethod
     def get_save_path(name):
@@ -286,7 +297,7 @@ class TemplateItem(object):
             return
 
         try:
-            if path:
+            if path and os.path.exists(path):
                 self._size = os.path.getsize(path)
                 zf = zipfile.ZipFile(path, 'r')
             elif data:
@@ -294,8 +305,9 @@ class TemplateItem(object):
                 self._size = common.get_py_obj_size(data)
             else:
                 raise ValueError('No path or data provided')
-        except:
+        except (zipfile.BadZipFile, FileNotFoundError, ValueError):
             self._has_error = True
+            log.error(__name__, f'Failed to read template: {path}')
             raise TemplateError('Could not read template')
 
         with zf as z:
@@ -416,26 +428,19 @@ class TemplateItem(object):
         if self.type != TemplateType.UserTemplate:
             raise ValueError('Can\'t save a database template to disk')
 
-        if not os.path.exists(default_user_folder):
-            os.makedirs(default_user_folder, exist_ok=True)
+        # If _path not set yet (user template created without a path), derive from metadata['name']
+        if not self._path:
+            self._path = self.get_save_path(self._metadata['name'])
 
-        _chars = ''.join(filename_char_blacklist)
-        pattern = f"[{re.escape(_chars)}]"
-        sanitized_name = re.sub(pattern, '_', self._metadata['name'])
-        current_name = self._metadata['name']
-        self._metadata['name'] = sanitized_name
+        if os.path.exists(self._path) and not force:
+            raise FileExistsError(f'Template already exists: {self._path}')
 
-        if sanitized_name != current_name:
-            data = self._get_save_data()
+        folder = os.path.dirname(self._path)
+        if not os.path.exists(folder):
+            os.makedirs(folder, exist_ok=True)
 
-        p = f'{default_user_folder}/{sanitized_name}.{default_extension}'
-        if os.path.exists(p) and not force:
-            raise FileExistsError(f'Template already exists: {p}')
-
-        with open(p, 'wb') as f:
+        with open(self._path, 'wb') as f:
             f.write(data)
-
-        return p
 
     def _safe_extract(self, z, exclude_files=None):
         if exclude_files is None:
@@ -506,6 +511,7 @@ class TemplateItem(object):
     def has_links(self):
         return self._has_links
 
+    @common.debug
     def get_links(self):
         link_paths = []
         try:
@@ -518,6 +524,7 @@ class TemplateItem(object):
             log.debug(__name__, f'No .links file found.')
         return link_paths
 
+    @common.debug
     def set_link_preset(self, preset, force=False):
         presets = LinksAPI.presets()
         if preset not in presets:
@@ -591,6 +598,8 @@ class TemplateItem(object):
             'date': '',
         }
 
+    @common.debug
+    @common.error(show_error=False)
     def set_thumbnail(self, source):
         if not os.path.exists(source):
             raise FileNotFoundError(f'File not found: {source}')
@@ -634,6 +643,8 @@ class TemplateItem(object):
     def clear_thumbnail(self):
         self._qimage = self._default_qimage(binary=False)
 
+    @common.debug
+    @common.error(show_error=False)
     def save(self, force=False):
         if not self._metadata['name']:
             raise ValueError('Cannot save a template without a name')
@@ -648,6 +659,8 @@ class TemplateItem(object):
         elif self.type == TemplateType.UserTemplate:
             self._save_to_disk(force, data)
 
+    @common.debug
+    @common.error(show_error=False)
     def delete(self):
         if not self._metadata['name']:
             raise ValueError('Name must be set')
@@ -675,6 +688,7 @@ class TemplateItem(object):
 
         current_name = self._metadata['name']
         if self.type == TemplateType.DatabaseTemplate:
+            # Database template rename logic unchanged...
             args = common.active('root', args=True)
             if not args:
                 raise RuntimeError('A root item must be active to rename the template in the database')
@@ -689,14 +703,25 @@ class TemplateItem(object):
             db.delete_row(current_name, database.TemplateDataTable)
             return
 
-        self._metadata['name'] = name
-        data = self._get_save_data()
-        self._save_to_disk(False, data)
+        # User template rename logic
+        new_path = self.get_save_path(name)
 
-        p = f'{default_user_folder}/{current_name}.{default_extension}'
-        if not os.path.exists(p):
-            raise FileNotFoundError(f'Template not found: {p}')
-        os.remove(p)
+        # If the template file already exists under the old path, rename it on disk
+        old_path = self._path
+        if os.path.exists(old_path):
+            if os.path.exists(new_path):
+                raise FileExistsError(f'Template already exists: {new_path}')
+            os.rename(old_path, new_path)
+
+        self._metadata['name'] = name
+        self._path = new_path
+
+        # Save again to update metadata.json inside the template zip
+        data = self._get_save_data()
+        self._save_to_disk(force=True, data=data)
+
+        # If old_path existed and differs from new_path, the file was already moved
+        # No need to remove old_path as os.rename took care of that
 
     def contains_file(self, rel_path):
         if not self._template:
@@ -705,6 +730,8 @@ class TemplateItem(object):
         with zipfile.ZipFile(zp, 'r') as z:
             return rel_path in z.namelist()
 
+    @common.debug
+    @common.error(show_error=False)
     def template_to_folder(
             self,
             root_path,
@@ -768,8 +795,7 @@ class TemplateItem(object):
             extracted_files = self._safe_extract(inner_zf)
             links_data = None
             skipped_files = []
-            log.info(__name__,
-                     f'Extracting {len(extracted_files)} files from template.zip to {len(abs_paths)} paths')
+            log.info(__name__, f'Extracting {len(extracted_files)} files from template.zip to {len(abs_paths)} paths')
 
             for filename, data in extracted_files:
                 is_dir = filename.endswith('/')
@@ -822,6 +848,8 @@ class TemplateItem(object):
 
         log.info(__name__, f'Successfully extracted template files to {root_path}')
 
+    @common.debug
+    @common.error(show_error=False)
     def template_from_folder(self, source_folder, skip_system_files=True, max_size_mb=100):
         if not os.path.isdir(source_folder):
             raise NotADirectoryError(f'The source must be a directory: {source_folder}')
@@ -879,6 +907,7 @@ class TemplateItem(object):
         self._template = zp.getvalue()
         return files, folders
 
+    @common.debug
     def new_template_from_tokens(self):
         self.clear_metadata()
         # If no path, it's a built-in db template. If path is given, keep name from path?
@@ -913,15 +942,11 @@ class TemplateItem(object):
         zp.seek(0)
         self._template = zp.getvalue()
 
+    @common.debug
     def new_empty_template(self):
         self.clear_metadata()
-        # If path given, derive template name from the path
-        if self.path:
-            base = os.path.basename(self.path)
-            name = os.path.splitext(base)[0]
-        else:
-            name = BuiltInTemplate.Empty.value
-        self._metadata['name'] = name
+
+        self._metadata['name'] = BuiltInTemplate.Empty.value
         self._metadata['description'] = 'Built-in empty template'
         self._metadata['author'] = common.get_username()
         self._metadata['date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

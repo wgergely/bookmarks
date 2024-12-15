@@ -242,7 +242,7 @@ def export_item_properties(index, destination=None):
         log.error(f'Failed to remove {temp_file}')
 
     if QtCore.QFileInfo(destination).exists():
-        log.success(f'Properties saved to {destination}')
+        log.info(f'Properties saved to {destination}')
 
 
 def import_item_properties(index, source=None, prompt=True):

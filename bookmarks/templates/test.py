@@ -452,6 +452,80 @@ class TestTemplatesLib(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(dest_folder, 'dirB', 'a.txt')))
         self.assertTrue(os.path.exists(os.path.join(dest_folder, 'dirB', 'b.txt')))
 
+    def test_templateitem_user_template_read_back(self):
+        # Create a source folder with files and subfolders
+        source_folder = os.path.join(self.temp_dir, 'user_template_source')
+        os.makedirs(source_folder, exist_ok=True)
+
+        # Create a file in the source folder
+        file_path = os.path.join(source_folder, 'readme.txt')
+        with open(file_path, 'w') as f:
+            f.write('User template test file')
+
+        # Create a subfolder and another file
+        subfolder = os.path.join(source_folder, 'docs')
+        os.makedirs(subfolder, exist_ok=True)
+        doc_file_path = os.path.join(subfolder, 'manual.txt')
+        with open(doc_file_path, 'w') as f:
+            f.write('User template manual')
+
+        # Create a thumbnail image file
+        valid_png = (
+            b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01'
+            b'\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0bIDATx\x9cc`\x00\x00\x00\x02'
+            b'\x00\x01M\xa2\x15\x17\x00\x00\x00\x00IEND\xaeB`\x82'
+        )
+        thumb_path = os.path.join(self.temp_dir, 'thumb.png')
+        with open(thumb_path, 'wb') as f:
+            f.write(valid_png)
+
+        # Create a user template and set metadata, thumbnail
+        user_template_path = TemplateItem.get_save_path('UserReadbackTest')
+        t = TemplateItem(path=user_template_path, empty=True)
+        self._assert_type_user_template(t)
+
+        t['name'] = 'User Readback Template'  # This will be changed to 'UserReadbackTemplate' when saved
+        t['description'] = 'A template created from files on disk and read back again.'
+        t['author'] = 'Tester'
+        t['date'] = '2025-01-01'
+
+        # Set thumbnail
+        t.set_thumbnail(thumb_path)
+
+        # Add files from the source folder
+        files, folders = t.template_from_folder(source_folder)
+        self.assertIn('readme.txt', files, "The returned list of files should include 'readme.txt'")
+        self.assertIn('docs/manual.txt', files, "The returned list of files should include 'docs/manual.txt'")
+
+        # Save the template to disk
+        t.save(force=True)
+        self.assertTrue(os.path.exists(user_template_path), "The user template should be saved on disk")
+
+        # Now read it back from disk using path-only (no empty=True)
+        t2 = TemplateItem(path=user_template_path)
+        self._assert_type_user_template(t2)
+
+        # Check metadata
+        self.assertEqual(t2['name'], 'UserReadbackTest')
+        self.assertEqual(t2['description'], 'A template created from files on disk and read back again.')
+        self.assertEqual(t2['author'], 'Tester')
+        self.assertEqual(t2['date'], '2025-01-01')
+
+        # Check thumbnail
+        self.assertFalse(t2.qimage.isNull(), "The thumbnail image should be loaded successfully")
+
+        # Check that the files are present inside t2._template
+        self.assertTrue(t2.contains_file('readme.txt'), "t2 should contain 'readme.txt'")
+        self.assertTrue(t2.contains_file('docs/manual.txt'), "t2 should contain 'docs/manual.txt'")
+
+        # Additionally, open t2._template as a zip and verify files
+        self.assertIsNotNone(t2._template, "t2._template should not be None after reading from disk")
+        inner_zp = io.BytesIO(t2._template)
+        with zipfile.ZipFile(inner_zp, 'r') as zf:
+            namelist = zf.namelist()
+            self.assertIn('readme.txt', namelist, "'readme.txt' should be inside the template zip")
+            self.assertIn('docs/manual.txt', namelist, "'docs/manual.txt' should be inside the template zip")
+
 
 if __name__ == '__main__':
     unittest.main()

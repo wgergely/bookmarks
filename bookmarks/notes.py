@@ -99,7 +99,7 @@ class Lockfile(QtCore.QSettings):
 
         self.deleteLater()
         if not QtCore.QFile(self.config_path).remove():
-            log.error('Could not remove the lock file.')
+            log.error(__name__, 'Could not remove the lock file.')
 
     def is_locked(self):
         file_info = QtCore.QFileInfo(self.config_path)

@@ -124,7 +124,7 @@ class LinksAPI:
                 links = [self._normalize_link(line.strip()) for line in lines if line.strip()]
                 return sorted(set(links), key=lambda s: s.lower())
         except IOError as e:
-            log.error(f'Failed to read from {self.links_file}: {e}')
+            log.error(__name__, f'Failed to read from {self.links_file}: {e}')
             return []
 
     def _write_links_to_file(self, links):

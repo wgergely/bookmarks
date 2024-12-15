@@ -9,7 +9,6 @@ import unittest
 from PySide2 import QtCore
 
 from .lib import *
-from .lib import ERR_LOG_PATH, init_log_handlers
 
 
 class TestLog(unittest.TestCase):
@@ -30,10 +29,10 @@ class TestLog(unittest.TestCase):
 
     def test_logging_messages_and_retrieval(self):
         """Test logging messages and retrieval from memory tank."""
-        debug("test", "Debug message")  # Below INFO, should not be recorded
-        info("test", "Info message")  # At INFO level, should be recorded
-        warning("test", "Warning message")
-        error("test", "Error message")
+        debug("Debug message")  # Below INFO, should not be recorded
+        info("Info message")  # At INFO level, should be recorded
+        warning("Warning message")
+        error("Error message")
 
         # Retrieve and remove warnings/errors
         records = get_records(remove=True)
@@ -52,7 +51,7 @@ class TestLog(unittest.TestCase):
 
     def test_clear_records(self):
         """Test clearing records from memory tank."""
-        warning("test", "Some warning")
+        warning("Some warning")
         self.assertEqual(len(get_records(level=logging.WARNING)), 1)
         # Remove the warning and check again
         self.assertEqual(len(get_records(level=logging.WARNING, remove=True)), 1)
@@ -73,9 +72,9 @@ class TestLog(unittest.TestCase):
     def test_set_logging_level(self):
         """Test updating the global logging level."""
         set_logging_level(logging.WARNING)
-        debug("test", "Debug message")  # below WARNING
-        info("test", "Info message")  # below WARNING
-        warning("test", "Warning message")
+        debug("Debug message")  # below WARNING
+        info("Info message")  # below WARNING
+        warning("Warning message")
 
         # Retrieve warnings/errors without removing first
         records = get_records(level=logging.WARNING, remove=True)
@@ -88,16 +87,16 @@ class TestLog(unittest.TestCase):
     def test_concurrent_logging(self):
         """Test concurrent logging from multiple threads."""
 
-        def log_messages(name, msg_prefix, count):
+        def log_messages(msg_prefix, count):
             for i in range(count):
-                info(name, f"{msg_prefix} {i}")
+                info(f"{msg_prefix} {i}")
 
         threads = []
         thread_count = 5
         messages_per_thread = 50
 
         for i in range(thread_count):
-            t = threading.Thread(target=log_messages, args=("test_thread", f"Thread-{i}", messages_per_thread))
+            t = threading.Thread(target=log_messages, args=(f"Thread-{i}", messages_per_thread))
             threads.append(t)
             t.start()
 
@@ -127,7 +126,8 @@ class TestLog(unittest.TestCase):
 
         # Wait a moment for filesystem writes
         time.sleep(0.5)
-        files = [f for f in os.listdir(os.path.dirname(ERR_LOG_PATH)) if "error.log" in f]
+        err_log_path = get_err_log_path()
+        files = [f for f in os.listdir(os.path.dirname(err_log_path)) if "error.log" in f]
         self.assertTrue(len(files) > 1, "No rotated files found.")
 
     def test_qt_message_handler(self):
@@ -151,11 +151,11 @@ class TestLog(unittest.TestCase):
             set_logging_level(global_level)
 
             # Log one message at each level
-            debug("test_levels", "Debug level message")
-            info("test_levels", "Info level message")
-            warning("test_levels", "Warning level message")
-            error("test_levels", "Error level message")
-            critical("test_levels", "Critical level message")
+            debug("Debug level message")
+            info("Info level message")
+            warning("Warning level message")
+            error("Error level message")
+            critical("Critical level message")
 
             # Retrieve all logs at the lowest threshold (DEBUG) to see what was recorded
             recs = get_records(level=logging.DEBUG, remove=True)
@@ -192,8 +192,8 @@ class TestLog(unittest.TestCase):
 
     def test_save_tank_to_file_json(self):
         """Test saving the memory tank contents to a JSON file."""
-        warning("test_save_json", "Multiline\nWarning Message")
-        error("test_save_json", "Single line error message")
+        warning("Multiline\nWarning Message")
+        error("Single line error message")
 
         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp_json:
             tmp_json_path = tmp_json.name
@@ -213,8 +213,8 @@ class TestLog(unittest.TestCase):
 
     def test_save_tank_to_file_text(self):
         """Test saving the memory tank contents to a .log file with raw messages."""
-        warning("test_save_text", "Multiline\nWarning Message")
-        error("test_save_text", "Single line error message")
+        warning("Multiline\nWarning Message")
+        error("Single line error message")
 
         with tempfile.NamedTemporaryFile(delete=False, suffix=".log") as tmp_log:
             tmp_log_path = tmp_log.name

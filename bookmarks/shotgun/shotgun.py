@@ -182,10 +182,8 @@ class SG(shotgun_api3.Shotgun):
             missing_fields = list(set(fields) - set(entity.keys()))
             if missing_fields:
                 _f = '", "'.join(missing_fields)
-                log.error(
-                    f'Missing fields: "{_f}" in return data. Check if you have permission to access these '
-                    f'fields.'
-                    )
+                msg = f'Missing fields: "{_f}" in return data. Check if you have permission to access these fields.'
+                log.error(__name__, msg)
         return entities
 
     def find_one(self, entity_type, filters, fields=None, **kwargs):

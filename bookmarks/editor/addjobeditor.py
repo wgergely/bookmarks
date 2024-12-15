@@ -5,7 +5,6 @@ from PySide2 import QtCore, QtWidgets
 from .. import common, ui
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
-from ..server.view import EditAssetTemplatesWrapper
 from ..templates.lib import TemplateType, get_saved_templates
 
 

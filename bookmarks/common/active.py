@@ -43,7 +43,7 @@ import threading
 import psutil
 from PySide2 import QtCore
 
-from .. import common, log
+from .. import common
 
 __all__ = [
     'ActiveMode',
@@ -154,43 +154,42 @@ def init_active(clear_all=True, load_settings=True, load_private=True, load_over
     Raises:
         ValueError: If user settings are requested but not initialized.
     """
-    with _lock:
-        if clear_all or common.active_paths is None:
-            common.active_paths = {}
-            for mode in ActiveMode:
-                common.active_paths[mode] = collections.OrderedDict()
-            for mode in ActiveMode:
-                for k in ActivePathSegmentTypes:
-                    common.active_paths[mode][k] = None
-
-        if load_overrides:
-            env_overrides = get_active_overrides_from_env()
-            for k, v in env_overrides.items():
-                common.active_paths[ActiveMode.Explicit][k] = v
-            verify_path(ActiveMode.Explicit)
-
-        if load_settings:
-            if not common.settings:
-                raise ValueError('User settings not initialized')
-            common.settings.sync()
+    if clear_all or common.active_paths is None:
+        common.active_paths = {}
+        for mode in ActiveMode:
+            common.active_paths[mode] = collections.OrderedDict()
+        for mode in ActiveMode:
             for k in ActivePathSegmentTypes:
-                v = common.settings.value(f'active/{k}')
-                v = v if isinstance(v, str) and v else None
-                common.active_paths[ActiveMode.Synchronized][k] = v
-            verify_path(ActiveMode.Synchronized)
+                common.active_paths[mode][k] = None
 
-        if load_private:
-            for k in ActivePathSegmentTypes:
-                common.active_paths[ActiveMode.Private][k] = common.active_paths[ActiveMode.Synchronized][k]
-            verify_path(ActiveMode.Private)
+    if load_overrides:
+        env_overrides = get_active_overrides_from_env()
+        for k, v in env_overrides.items():
+            common.active_paths[ActiveMode.Explicit][k] = v
+        verify_path(ActiveMode.Explicit)
 
-        # Apply explicit overrides
+    if load_settings:
+        if not common.settings:
+            raise ValueError('User settings not initialized')
+        common.settings.sync()
         for k in ActivePathSegmentTypes:
-            if common.active_paths[ActiveMode.Explicit][k]:
-                common.active_paths[ActiveMode.Synchronized][k] = common.active_paths[ActiveMode.Explicit][k]
-                common.active_paths[ActiveMode.Private][k] = common.active_paths[ActiveMode.Explicit][k]
+            v = common.settings.value(f'active/{k}')
+            v = v if isinstance(v, str) and v else None
+            common.active_paths[ActiveMode.Synchronized][k] = v
         verify_path(ActiveMode.Synchronized)
+
+    if load_private:
+        for k in ActivePathSegmentTypes:
+            common.active_paths[ActiveMode.Private][k] = common.active_paths[ActiveMode.Synchronized][k]
         verify_path(ActiveMode.Private)
+
+    # Apply explicit overrides
+    for k in ActivePathSegmentTypes:
+        if common.active_paths[ActiveMode.Explicit][k]:
+            common.active_paths[ActiveMode.Synchronized][k] = common.active_paths[ActiveMode.Explicit][k]
+            common.active_paths[ActiveMode.Private][k] = common.active_paths[ActiveMode.Explicit][k]
+    verify_path(ActiveMode.Synchronized)
+    verify_path(ActiveMode.Private)
 
 
 def verify_path(mode):
@@ -198,8 +197,8 @@ def verify_path(mode):
     Verify the active path segments of the given mode, ensuring they form a valid path.
 
     For each segment in the specified mode, this function checks whether the partial path exists.
-    If it does not, the invalid segment is cleared (set to None), ensuring that partial or incorrect paths
-    do not persist.
+    If it doesn't, the invalid segment is cleared, ensuring that partial or incorrect paths
+    don't persist.
 
     Args:
         mode (ActiveMode): The active mode to verify.
@@ -228,7 +227,7 @@ def active(k, path=False, args=False, mode=None):
     This function returns the currently active path segment for the given key. It can also return
     the full path up to that segment (if `path=True`) or all segments leading up to it (if `args=True`).
 
-    When explicit overrides (environment variables) are set, they take precedence over synchronized or private values.
+    When explicit overrides via environment variables are set, they take precedence over synchronized or private values.
 
     Args:
         k (str): One of 'server', 'job', 'root', 'asset', 'task', 'file'.
@@ -251,20 +250,21 @@ def active(k, path=False, args=False, mode=None):
     """
     if k not in _ActivePathSegmentTypes:
         raise KeyError(f'Invalid active key "{k}", must be one of "{ActivePathSegmentTypes}"')
-    with _lock:
-        mode = mode or common.active_mode
+    mode = mode or common.active_mode
 
-        if path or args:
-            idx = ActivePathSegmentTypes.index(k)
+    if path or args:
+        idx = ActivePathSegmentTypes.index(k)
+        with _lock:
             v = tuple(
                 common.active_paths[ActiveMode.Explicit][seg] or common.active_paths[mode][seg]
                 for seg in ActivePathSegmentTypes[:idx + 1]
             )
-            if path:
-                return '/'.join(v) if all(v) else None
-            if args:
-                return v if all(v) else None
+        if path:
+            return '/'.join(v) if all(v) else None
+        if args:
+            return v if all(v) else None
 
+    with _lock:
         return common.active_paths[ActiveMode.Explicit][k] or common.active_paths[mode][k]
 
 
@@ -292,33 +292,34 @@ def set_active(seg, v, mode=None, force=False):
         - :func:`active`
         - :func:`init_active`
     """
+
     if seg not in _ActivePathSegmentTypes:
         raise KeyError(f'Invalid active key "{seg}", must be one of "{ActivePathSegmentTypes}"')
 
+    mode = mode or common.active_mode
+    if mode == ActiveMode.Explicit and not force:
+        from .. import log
+        log.warning(__name__, f'Cannot set active path segment in explicit mode')
+        return
+
+    if common.active_paths[ActiveMode.Explicit][seg] and not force:
+        from .. import log
+        log.warning(__name__, f'Cannot set active path segment "{seg}" when an explicit override is set')
+        return
+
     with _lock:
-        mode = mode or common.active_mode
-        if mode == ActiveMode.Explicit and not force:
-            log.warning(__name__, 'Cannot set __name__, active path segment in explicit mode')
-            return
-
-        if common.active_paths[ActiveMode.Explicit][seg] and not force:
-            log.warning(__name__, f'Cannot set active path segment "{seg}" when an explicit override is set')
-            return
-
-        # Remove the explicit override
         if force and common.active_paths[ActiveMode.Explicit][seg]:
             common.active_paths[ActiveMode.Explicit][seg] = None
 
-        common.active_paths[mode][seg] = v
-        verify_path(mode)
+    common.active_paths[mode][seg] = v
+    verify_path(mode)
 
     # Emit signals outside lock to avoid deadlocks
     common.signals.activeChanged.emit()
 
     # Save to settings if synchronized mode
     if mode == ActiveMode.Synchronized:
-        with _lock:
-            common.settings.setValue(f'active/{seg}', v)
+        common.settings.setValue(f'active/{seg}', v)
 
 
 def prune_lock():
@@ -346,6 +347,7 @@ def prune_lock():
             f = QtCore.QFile(path)
             if pid not in pids and f.exists():
                 if not f.remove():
+                    from .. import log
                     log.error(__name__, f'Failed to remove lockfile: {path}')
                     raise RuntimeError(f'Failed to remove lockfile: {path}')
 
@@ -378,29 +380,28 @@ def init_active_mode():
 
     prune_lock()
 
-    with _lock:
-        with os.scandir(LOCK_DIR) as it:
-            for entry in it:
-                if entry.is_dir():
-                    continue
-                if not entry.name.endswith('.lock'):
-                    continue
-                with open(entry.path, 'r', encoding='utf8') as f:
-                    data = f.read().strip()
-                try:
-                    data = int(data)
-                except ValueError:
-                    data = common.ActiveMode.Private
+    with os.scandir(LOCK_DIR) as it:
+        for entry in it:
+            if entry.is_dir():
+                continue
+            if not entry.name.endswith('.lock'):
+                continue
+            with open(entry.path, 'r', encoding='utf8') as f:
+                data = f.read().strip()
+            try:
+                data = int(data)
+            except ValueError:
+                data = common.ActiveMode.Private
 
-                if data == common.ActiveMode.Synchronized:
-                    common.active_mode = common.ActiveMode.Private
-                    break
-                elif data == common.ActiveMode.Private:
-                    # If you want invalid lock contents to always force Private mode:
-                    common.active_mode = common.ActiveMode.Private
-                    break
-            else:
-                common.active_mode = common.ActiveMode.Synchronized
+            if data == common.ActiveMode.Synchronized:
+                common.active_mode = common.ActiveMode.Private
+                break
+            elif data == common.ActiveMode.Private:
+                # If you want invalid lock contents to always force Private mode:
+                common.active_mode = common.ActiveMode.Private
+                break
+        else:
+            common.active_mode = common.ActiveMode.Synchronized
 
     return write_current_mode_to_lock()
 
@@ -419,6 +420,7 @@ def remove_lock():
     f = QtCore.QFile(path)
     if f.exists():
         if not f.remove():
+            from .. import log
             log.error(__name__, 'Failed to remove lock file')
 
 
@@ -440,8 +442,7 @@ def write_current_mode_to_lock(*args, **kwargs):
         - :func:`remove_lock`
         - :func:`prune_lock`
     """
-    with _lock:
-        mode_value = common.active_mode
+    mode_value = common.active_mode
 
     path = LOCK_PATH.format(pid=os.getpid())
 
@@ -450,6 +451,7 @@ def write_current_mode_to_lock(*args, **kwargs):
         if not os.path.exists(basedir):
             os.makedirs(basedir)
     except OSError as e:
+        from .. import log
         log.error(__name__, f"Failed to create directories for lockfile: {basedir}\nError: {e}")
         return
 
@@ -457,6 +459,7 @@ def write_current_mode_to_lock(*args, **kwargs):
         with open(path, 'w+', encoding='utf8') as f:
             f.write(str(mode_value))
     except IOError as e:
+        from .. import log
         log.error(__name__, f"Failed to write lockfile: {path}\nError: {e}")
         return
 

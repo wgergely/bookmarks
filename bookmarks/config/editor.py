@@ -11,7 +11,6 @@ from .. import common, tokens
 from .. import log
 from .. import ui
 from ..common import TokenLineEdit
-from ..editor import base
 
 MoveUp = 0
 MoveDown = 1
@@ -611,20 +610,6 @@ class ConfigSectionEditor(QtWidgets.QWidget):
         )
         self._original_data = copy.deepcopy(config.data(self.section, force=True))
 
-        # data = self.tokens.data(force=True)
-        # if self.section not in data:
-        #     common.log.error(f'Section {self.section} not found in data.')
-        #     return
-        #
-        # section_data = data[self.section]
-        #
-        # # Create control row
-        # self.create_control_row()
-        #
-        # # Add items
-        # for k, v in section_data.items():
-        #     self.create_item(k, v)
-
     def _create_ui(self):
         o = common.Size.Margin()
         QtWidgets.QVBoxLayout(self)
@@ -665,10 +650,10 @@ class ConfigSectionEditor(QtWidgets.QWidget):
         data = self.tokens.data(force=True)
 
         if self.section not in data:
-            common.log.error(f'Invalid section: {self.section}. Skipping.')
+            log.error(__name__, f'Invalid section: {self.section}. Skipping.')
             return
         if self.section not in tokens.DEFAULT_TOKEN_CONFIG:
-            common.log.error(f'Invalid section: {self.section}. Skipping.')
+            log.error(__name__, f'Invalid section: {self.section}. Skipping.')
             return
 
         default_section = copy.deepcopy(tokens.DEFAULT_TOKEN_CONFIG[self.section])

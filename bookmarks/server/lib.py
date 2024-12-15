@@ -113,7 +113,7 @@ class ServerAPI:
             values = common.settings.value(cls.server_settings_key) or {}
             for k in list(values.keys()):
                 if k in {v['server'] for v in common.bookmarks.values()}:
-                    log.error(f'Cannot remove server {k} as it is in use by a bookmark item')
+                    log.error(__name__, f'Cannot remove server {k} as it is in use by a bookmark item')
                     continue
                 del values[k]
                 if k in common.servers:
@@ -161,7 +161,7 @@ class ServerAPI:
                             unc_path = f'{unc_path}/'
                         mapped_drives[drive] = unc_path
                     except:
-                        log.error(f'Failed to convert drive letter {drive} to UNC path')
+                        log.error(__name__, f'Failed to convert drive letter {drive} to UNC path')
                         pass
             return mapped_drives
         return {}
@@ -179,7 +179,7 @@ class ServerAPI:
                 result = subprocess.run(['net', 'use'], capture_output=True, text=True, check=True)
                 output = result.stdout
             except subprocess.CalledProcessError as e:
-                log.error(f'Failed to get mapped drives: {e}')
+                log.error(__name__, f'Failed to get mapped drives: {e}')
                 return path
             for line in output.splitlines():
                 v = re.split(r'\s{3,}', line)

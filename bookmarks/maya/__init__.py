@@ -29,7 +29,7 @@ def initialize():
 
     """
     from .. import common
-    common.initialize(common.Mode.Embedded)
+    common.initialize(mode=common.Mode.Embedded)
 
     from . import main
     main.init_maya_widget()

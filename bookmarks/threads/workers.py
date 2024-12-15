@@ -457,7 +457,7 @@ def get_bookmark_description(bookmark_row_data):
         s = s.strip(sep).strip()
         return s
     except:
-        log.error('Could not get description.')
+        log.error(__name__, 'Could not get description.')
         return ''
 
 

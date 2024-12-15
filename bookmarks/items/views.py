@@ -1859,7 +1859,7 @@ class BaseItemView(QtWidgets.QTableView):
             cache = f'{assets_cache_dir.path()}/{assets_cache_name}.cache'
 
             if assets_cache_dir.exists() and os.path.exists(cache):
-                log.debug('Removing asset cache:', cache)
+                log.debug(__name__, 'Removing asset cache:', cache)
                 os.remove(cache)
 
             if update and model.rowCount() < limit:

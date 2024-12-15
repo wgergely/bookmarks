@@ -251,7 +251,7 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
                     _v = v['type'](_v)
                 except:
                     from .. import log
-                    log.error('Type conversion failed.')
+                    log.error(__name__, 'Type conversion failed.')
                     continue
 
             # If 'overwrite' is `True`, no matter what, we'll overwrite the

@@ -10,7 +10,6 @@ import re
 from PySide2 import QtCore
 
 from .. import common
-from .. import log
 
 #: section/key definitions
 SECTIONS = {
@@ -224,7 +223,8 @@ class UserSettings(QtCore.QSettings):
         try:
             v = super().value(key, default)
         except:
-            log.error(f'Could not get value for {key}: {self.status()}')
+            from .. import log
+            log.error(__name__, f'Could not get value for {key}: {self.status()}')
             super().setValue(key, default)
             super().setValue(f'{key}_type', default)
             return default
@@ -247,7 +247,8 @@ class UserSettings(QtCore.QSettings):
             elif t == 'dict' and not isinstance(v, dict):
                 v = json.loads(v)
         except:
-            log.error(f'Could not convert {type(v)} to {t}')
+            from .. import log
+            log.error(__name__, f'Could not convert {type(v)} to {t}')
 
         return v
 

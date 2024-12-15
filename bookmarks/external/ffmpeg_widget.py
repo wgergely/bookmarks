@@ -640,10 +640,10 @@ class FFMpegWidget(base.BasePropertyEditor):
             try:
                 rv.execute_rvpush_command(destination, rv.PushAndClear)
             except:
-                log.error('Failed to push to RV.')
+                log.error(__name__, 'Failed to push to RV.')
 
         common.show_message('Success', f'Movie saved to {destination}', message_type='success')
-        log.success(f'Movie saved to {destination}')
+        log.info(f'Movie saved to {destination}')
         return True
 
     def preprocess_sequence(self, source_color_space='', target_color_space='sRGB', preconversion_format='jpg'):

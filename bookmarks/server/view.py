@@ -1298,21 +1298,18 @@ class ProgressBar(QtWidgets.QWidget):
         self._message = 'Please wait...'
         self._progress = 0
         self.update()
-        QtWidgets.QApplication.instance().setOverrideCursor(QtCore.Qt.WaitCursor)
 
     @QtCore.Slot()
     def stop(self):
         self._message = ''
         self._progress = 0
         self.update()
-        QtWidgets.QApplication.instance().restoreOverrideCursor()
 
     @QtCore.Slot(str)
     def progress(self, msg):
         self._message = msg
         self._progress += 1
         self.update()
-        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
 
 
@@ -1461,7 +1458,6 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.ok_button.clicked.connect(self.accept)
 
         cnx = QtCore.Qt.QueuedConnection
-        cnx = QtCore.Qt.DirectConnection
         self.server_view.model().sourceModel().fetchAboutToStart.connect(self.fetch_progress_bar.start, type=cnx)
         self.server_view.model().sourceModel().fetchInProgress.connect(self.fetch_progress_bar.progress, type=cnx)
         self.server_view.model().sourceModel().fetchFinished.connect(self.fetch_progress_bar.stop, type=cnx)

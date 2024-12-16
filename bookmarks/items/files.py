@@ -63,8 +63,6 @@ def _add_path_to_mime(mime, path):
     """Utility function adds a path to the mime data.
 
     """
-    common.check_type(path, str)
-
     path = QtCore.QFileInfo(path).absoluteFilePath()
     mime.setUrls(mime.urls() + [QtCore.QUrl.fromLocalFile(path), ])
 

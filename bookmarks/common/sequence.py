@@ -93,7 +93,6 @@ def is_collapsed(s):
             * group(3) - All characters **after** the sequence marker.
 
     """
-    common.check_type(s, str)
     return IsSequenceRegex.search(s)
 
 
@@ -135,7 +134,6 @@ def get_sequence(s):
             group 4 (SRE_Match): The file extension without the '.' dot.
 
     """
-    common.check_type(s, str)
     if is_collapsed(s):
         raise RuntimeError(
             'Cannot extract sequence numbers from collapsed items.'
@@ -201,8 +199,6 @@ def get_sequence_start_path(path):
         str: The path to the first file of the sequence.
 
     """
-    common.check_type(path, str)
-
     if not is_collapsed(path):
         return path
 
@@ -224,7 +220,6 @@ def get_sequence_end_path(path):
         str: The path to the last file of the sequence.
 
     """
-    common.check_type(path, str)
     if not is_collapsed(path):
         return path
 

@@ -296,36 +296,6 @@ class Color(enum.Enum):
         return f'rgba({",".join(rgb)})'
 
 
-def check_type(value, _type):
-    """Verify the type of object.
-
-    Args:
-        value (object): An object of invalid type.
-        _type (type or tuple or types): The valid type.
-
-    Raises:
-        TypeError: When ``value`` is not of ``_type``.
-
-    """
-    if not common.typecheck_on:
-        return
-
-    if isinstance(_type, tuple):
-        _type = [type(f) if f is None else f for f in _type]
-        _types = [isinstance(value, type(f) if f is None else f) for f in _type]
-        if not any(_types):
-            _types = '" or "'.join([f.__name__ for f in _type])
-            raise TypeError(
-                f'Invalid type. Expected "{_types}", got "{type(value).__name__}" >>\n{value}'
-            )
-    else:
-        _type = type(_type) if _type is None else _type
-        if not isinstance(value, _type):
-            raise TypeError(
-                f'Invalid type. Expected "{_type.__name__}", got "'
-                f'{type(value).__name__}"'
-            )
-
 
 def error(func=None, *, show_error=True):
     """Function decorator used to handle errors.

@@ -17,16 +17,16 @@ from ..templates.lib import TemplateType, get_saved_templates
 
 class JobDepth(enum.IntEnum):
     """Represents the depth of a job directory hierarchy."""
-    NoParent = 0
-    HasParent = 1
-    HasGrandparent = 2
+    Job = 0
+    ClientAndJob = 1
+    ClientJobAndDepartment = 2
 
 
 class ServerAPI:
     """API for managing servers, bookmarks, and related job paths."""
 
     server_settings_key = 'servers/value'
-    job_style_settings_key = 'servers/JobDepth'
+    job_style_settings_key = 'servers/job_style'
     bookmark_settings_key = 'user/bookmarks'
 
     _lock = threading.RLock()
@@ -397,7 +397,7 @@ class ServerAPI:
 
             # Validate and ensure servers exist
             for k in list(v.keys()):
-                if ('server' not in v[k] or 'job' not in v[k] or 'root' not in v[k]):
+                if 'server' not in v[k] or 'job' not in v[k] or 'root' not in v[k]:
                     del v[k]
                     continue
                 common.servers[v[k]['server']] = v[k]['server']

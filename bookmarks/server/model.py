@@ -1,3 +1,6 @@
+"""Contains the model for interacting with server, job, and link items and bookmarking them for use.
+
+"""
 import enum
 import json
 import os
@@ -11,13 +14,17 @@ from ..templates import lib as templates_lib
 
 
 class NodeType(enum.IntEnum):
+    """Node types for the server model."""
     RootNode = -1
     ServerNode = 0
     JobNode = 1
-    BookmarkNode = 2
+    LinkNode = 2
 
 
 class Node:
+    """
+    Represents a node in the server model tree.
+    """
 
     def __init__(self, server, job=None, root=None, parent=None):
         self._server = server
@@ -33,112 +40,47 @@ class Node:
         self._exists = None
 
     def insert_child(self, row, child):
-        """
-        Insert a child node at the specified row.
-
-        Args:
-            row (int): The row index.
-            child (Node): The child node to insert.
-
-        """
         self._children.insert(row, child)
 
     def append_child(self, child):
-        """
-        Add a child node.
-
-        Args:
-            child (Node): The child node to add.
-        """
         self._children.append(child)
 
     def remove_child(self, row):
-        """
-        Remove the child node at the specified row.
-
-        Args:
-            row (int): The row index.
-
-        """
         if len(self._children) - 1 < row:
             return
-
         del self._children[row]
 
     def children(self):
-        """
-        Get the children of this node.
-
-        Returns:
-            list: The list of child nodes.
-        """
         return self._children
 
     def child(self, row):
-        """
-        Get the child at the specified row.
-
-        Args:
-            row (int): The row index.
-
-        Returns:
-            Node: The child node.
-        """
         if 0 <= row < len(self._children):
             return self._children[row]
         return None
 
     def child_count(self):
-        """
-        Get the number of children.
-
-        Returns:
-            int: The number of child nodes.
-        """
         return len(self._children)
 
     def has_children(self):
         return bool(self._children)
 
     def parent(self):
-        """
-        Get the parent node.
-
-        Returns:
-            Node: The parent node.
-        """
         return self._parent
 
     def exists(self):
         if self._exists is None:
-            self._exists = os.path.exists(self.path())
+            p = self.path()
+            self._exists = os.path.exists(p) if p else False
         return self._exists
 
     def is_bookmarked(self):
-        """
-        Check if this node is bookmarked.
-
-        Returns:
-            bool: True if this node is bookmarked.
-
-        """
-
-        paths = common.bookmarks.keys()
-        if not paths:
+        if not common.bookmarks:
             return False
 
-        if self.server not in {f['server'] for f in common.bookmarks.values()}:
-            return False
-        if self.type == NodeType.ServerNode:
+        p = self.path()
+        if [f for f in common.bookmarks.keys() if p in f]:
             return True
-        if self.job not in {f['job'] for f in common.bookmarks.values()}:
-            return False
-        if self.type == NodeType.JobNode:
-            return True
-        if self.root not in {f['root'] for f in common.bookmarks.values()}:
-            return False
-        if self.type == NodeType.BookmarkNode:
-            return True
+
         return False
 
     @property
@@ -155,14 +97,15 @@ class Node:
 
     @property
     def type(self):
-        if all([self._server, self._job, self._root]):
-            return NodeType.BookmarkNode
+        if self._server is None and self._job is None and self._root is None:
+            return NodeType.RootNode
+        elif all([self._server, self._job, self._root]):
+            return NodeType.LinkNode
         elif all([self._server, self._job]):
             return NodeType.JobNode
         elif self._server:
             return NodeType.ServerNode
-        else:
-            return NodeType.BookmarkNode
+        return NodeType.RootNode
 
     @property
     def children_fetched(self):
@@ -187,8 +130,7 @@ class Node:
             return f'{self._server}/{self._job}'
         elif self._server:
             return self._server
-        else:
-            return None
+        return None
 
     @staticmethod
     def api():
@@ -196,14 +138,16 @@ class Node:
 
 
 class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
+    """
+    Filters server model based on text queries, bookmarked nodes, and candidate states.
+    Now also filters server and link nodes by their name/path if text_filter is set.
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.text_filter = ''
         self.show_bookmarked = False
         self.hide_non_candidates = False
-
         self.setDynamicSortFilter(True)
         self.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
 
@@ -237,28 +181,47 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
         if self.show_bookmarked and not node.is_bookmarked():
             return False
 
-        if node.type == NodeType.JobNode:
-            if self.hide_non_candidates and not node.job_candidate:
-                return False
+        if node.type == NodeType.JobNode and self.hide_non_candidates and not node.job_candidate:
+            return False
 
         if not self.text_filter:
             return True
 
-        if node.type == NodeType.JobNode:
-            if self.text_filter.lower() not in node.job.lower():
-                return False
+        tf = self.text_filter.lower()
+        if node.type == NodeType.ServerNode:
+            children = [child for grandchild in node.children() for child in grandchild.children()]
+            candidates = [f.path().lower() for f in children]
+            candidates += [' / '.join(f.path().lower().split('/')) for f in children]
 
-        return True
+            if tf in node.path().lower() or any([tf in c for c in candidates]):
+                return True
+
+        if node.type == NodeType.JobNode:
+            children = [child for child in node.children()]
+            candidates = [f.path().lower() for f in children]
+            candidates += [' / '.join(f.path().lower().split('/')) for f in children]
+
+            if tf in node.path().lower() or any([tf in c for c in candidates]):
+                return True
+
+        if node.type == NodeType.LinkNode:
+            candidates = [node.root.lower(), node.path().lower(), ' / '.join(node.path().lower().split('/'))]
+            if tf in node.path().lower() or any([tf in c for c in candidates]):
+                return True
+
+        return False
 
 
 class ServerModel(QtCore.QAbstractItemModel):
+    """
+    QAbstractItemModel implementation for displaying servers, jobs, and links.
+    """
     row_size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._root_node = None
         self._job_style = None
-
         self._init_job_style()
 
     def _init_job_style(self):
@@ -266,37 +229,24 @@ class ServerModel(QtCore.QAbstractItemModel):
         if isinstance(v, int):
             e = JobDepth(v)
         else:
-            e = JobDepth.NoParent
+            e = JobDepth.Job
         self._job_style = int(e)
 
     def clear(self):
-        """
-        Clear all children of the root node.
-
-        """
         if not self.root_node():
             return
-
         self.beginResetModel()
         self.root_node().children().clear()
         self.endResetModel()
 
     def root_node(self):
-        """
-        Get the root node.
-
-        Returns:
-            Node: The root node.
-
-        """
         return self._root_node
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         if self.root_node() is None:
             return 0
         if not parent.isValid():
-            parent_node = self.root_node()
-            return parent_node.child_count()
+            return self.root_node().child_count()
         node = parent.internalPointer()
         if node is None:
             return 0
@@ -317,8 +267,7 @@ class ServerModel(QtCore.QAbstractItemModel):
         child_node = parent_node.child(row)
         if child_node:
             return self.createIndex(row, column, child_node)
-        else:
-            return QtCore.QModelIndex()
+        return QtCore.QModelIndex()
 
     def parent(self, index):
         if not index.isValid():
@@ -332,20 +281,18 @@ class ServerModel(QtCore.QAbstractItemModel):
 
         grandparent_node = parent_node.parent()
         if grandparent_node and parent_node in grandparent_node.children():
-            row = grandparent_node.children().index(parent_node, )
+            row = grandparent_node.children().index(parent_node)
             return self.createIndex(row, 0, parent_node)
-        else:
-            return QtCore.QModelIndex()
+        return QtCore.QModelIndex()
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
-        if role == QtCore.Qt.DisplayRole:
-            if orientation == QtCore.Qt.Horizontal:
-                if section == 0:
-                    return 'Name'
-                elif section == 1:
-                    return 'Type'
-                elif section == 2:
-                    return 'Count'
+        if role == QtCore.Qt.DisplayRole and orientation == QtCore.Qt.Horizontal:
+            if section == 0:
+                return 'Name'
+            elif section == 1:
+                return 'Type'
+            elif section == 2:
+                return 'Count'
         return None
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
@@ -356,92 +303,82 @@ class ServerModel(QtCore.QAbstractItemModel):
         if not node:
             return None
 
-        if index.column() == 1:
+        if role == QtCore.Qt.FontRole and index.column() > 0:
+            font, _ = common.Font.ThinFont(common.Size.SmallText())
+            return font
+
+        if index.column() == 0:
             if role == QtCore.Qt.DisplayRole:
                 if node.type == NodeType.ServerNode:
-                    return 'Server'
+                    return '/'.join(node.server.split('/'))
                 elif node.type == NodeType.JobNode:
-                    return 'Job'
-                elif node.type == NodeType.BookmarkNode:
-                    return 'Bookmark'
+                    return ' / '.join(node.job.split('/'))
+                elif node.type == NodeType.LinkNode:
+                    return ' / '.join(node.root.split('/'))
+            if role == QtCore.Qt.UserRole:
+                if node.type == NodeType.ServerNode:
+                    return node.server
+                elif node.type == NodeType.JobNode:
+                    return f'{node.server}/{node.job}'
+                elif node.type == NodeType.LinkNode:
+                    return f'{node.server}/{node.job}/{node.root}'
+            if role in (QtCore.Qt.ToolTipRole, QtCore.Qt.StatusTipRole, QtCore.Qt.WhatsThisRole):
+                return node.path()
+            if role == QtCore.Qt.FontRole:
+                font, _ = common.Font.LightFont(common.Size.MediumText())
+                return font
+            if role == QtCore.Qt.DecorationRole:
+                if not node.exists():
+                    if node.is_bookmarked():
+                        return ui.get_icon('alert', color=common.Color.Yellow())
+                    return ui.get_icon('alert', color=common.Color.Red())
+                if node.type == NodeType.ServerNode:
+                    return ui.get_icon('server', active_brightness=100)
+                elif node.type == NodeType.JobNode:
+                    return ui.get_icon('asset', color=common.Color.Yellow(), active_brightness=100)
+                elif node.type == NodeType.LinkNode:
+                    return ui.get_icon('link', color=common.Color.Blue(), active_brightness=100)
 
-        if index.column() == 2:
-            if role == QtCore.Qt.DisplayRole:
-                if not self.canFetchMore(index):
-                    return ''
-                if not node.children_fetched:
-                    return '...'
-                if len(node.children()) == 0:
-                    return ''
-                if len(node.children()) == 1:
-                    return '1 item'
-                return f'{len(node.children())} items'
+        if index.column() == 1 and role == QtCore.Qt.DisplayRole:
+            if node.type == NodeType.ServerNode:
+                return 'Server'
+            elif node.type == NodeType.JobNode:
+                return 'Job'
+            elif node.type == NodeType.LinkNode:
+                return 'Link'
+
+        if index.column() == 2 and role == QtCore.Qt.DisplayRole:
+            if not self.canFetchMore(index):
+                return ''
+            if not node.children_fetched:
+                return '...'
+            c = len(node.children())
+            if c == 0:
+                return ''
+            if c == 1:
+                return '1 item'
+            return f'{c} items'
 
         if index.column() in (1, 2):
             if role == QtCore.Qt.FontRole:
                 font, _ = common.Font.LightFont(common.Size.MediumText(0.8))
                 return font
             if role == QtCore.Qt.ForegroundRole:
-                brush = QtGui.QBrush(common.Color.DisabledText())
-                return brush
+                return QtGui.QBrush(common.Color.DisabledText())
             if role == QtCore.Qt.BackgroundRole:
-                brush = QtGui.QBrush(common.Color.Transparent())
-                return brush
+                return QtGui.QBrush(common.Color.Transparent())
             if role == QtCore.Qt.DecorationRole:
                 return None
-
-        if index.column() == 0:
-            if role == QtCore.Qt.DisplayRole:
-                if node.type == NodeType.ServerNode:
-                    v = node.server
-                elif node.type == NodeType.JobNode:
-                    v = ' / '.join(node.job.split('/'))
-                elif node.type == NodeType.BookmarkNode:
-                    v = node.root
-                return v
-            if role == QtCore.Qt.UserRole:
-                if node.type == NodeType.ServerNode:
-                    return node.server
-                elif node.type == NodeType.JobNode:
-                    return f'{node.server}/{node.job}'
-                elif node.type == NodeType.BookmarkNode:
-                    return f'{node.server}/{node.job}/{node.root}'
-            if role == QtCore.Qt.ToolTipRole:
-                return node.path()
-            if role == QtCore.Qt.StatusTipRole:
-                return node.path()
-            if role == QtCore.Qt.WhatsThisRole:
-                return node.path()
-            if role == QtCore.Qt.FontRole:
-                font, _ = common.Font.LightFont(common.Size.MediumText())
-                return font
-            if role == QtCore.Qt.DecorationRole:
-
-                # Indicate error state
-                if not node.exists():
-                    return ui.get_icon('alert', color=common.Color.Red())
-                if not node.exists() and node.is_bookmarked():
-                    return ui.get_icon('alert', color=common.Color.Yellow())
-
-                if node.type == NodeType.ServerNode:
-                    return ui.get_icon('server', active_brightness=100)
-                elif node.type == NodeType.JobNode:
-                    return ui.get_icon('asset', color=common.Color.Yellow(), active_brightness=100)
-                elif node.type == NodeType.BookmarkNode:
-                    return ui.get_icon('link', color=common.Color.Blue(), active_brightness=100)
 
         if role == QtCore.Qt.SizeHintRole:
             return self.row_size
 
     def canFetchMore(self, parent):
-        """The model fetches data on demand when a given node has subfolders."""
         if not parent.isValid():
             return True
-
         node = parent.internalPointer()
         if not node:
             return False
-
         if not node.exists():
             return False
 
@@ -453,41 +390,36 @@ class ServerModel(QtCore.QAbstractItemModel):
                 for entry in it:
                     if entry.is_dir():
                         return True
+
         if node.type == NodeType.JobNode:
-            bookmarks = [v['root'] for v in common.bookmarks.values() if
-                         v['server'] == node.server and v['job'] == node.job]
+            bookmarks = [v['root'] for v in common.bookmarks.values()
+                         if v['server'] == node.server and v['job'] == node.job]
             if bookmarks:
                 return True
             if LinksAPI(node.path()).has_links():
                 return True
             node.job_candidate = False
 
-        if node.type == NodeType.BookmarkNode:
+        if node.type == NodeType.LinkNode:
             return False
 
         return False
 
     def fetchMore(self, parent):
         node = parent.internalPointer()
-        if not node:
+        if not node or (node.type != NodeType.LinkNode and node.children_fetched):
             return
-
-        if node.type != NodeType.BookmarkNode and node.children_fetched:
-            return
-
         if not self.canFetchMore(parent):
             return
 
         if node.type == NodeType.RootNode:
-            return  # data should have been fetched already
+            return
 
         if node.type == NodeType.ServerNode:  # fetch jobs
             root_path = node.path()
 
-            # recursively iterate through all folders up until the job style level
             def _it(path, depth):
                 depth += 1
-
                 if depth > self._job_style:
                     return
                 with os.scandir(path) as it:
@@ -502,9 +434,7 @@ class ServerModel(QtCore.QAbstractItemModel):
                             log.error(__name__, f'No access to {entry.path}')
                             continue
                         p = entry.path.replace('\\', '/')
-
                         rel_path = p.replace(root_path, '').strip('/')
-
                         if depth == self._job_style:
                             yield rel_path
                         abs_path = entry.path.replace('\\', '/')
@@ -518,16 +448,13 @@ class ServerModel(QtCore.QAbstractItemModel):
             for job_path in missing_job_names:
                 if job_path in [f.job for f in node.children()]:
                     continue
-
                 current_job_names.append(job_path)
                 current_job_names = sorted(current_job_names, key=lambda s: s.lower())
                 idx = current_job_names.index(job_path)
-
                 self.beginInsertRows(parent, idx, idx)
                 job_node = Node(server=node.server, job=job_path, parent=node)
                 node.insert_child(idx, job_node)
                 self.endInsertRows()
-
                 if os.path.exists(f'{node.server}/{job_path}/.links'):
                     job_node.job_candidate = True
 
@@ -535,10 +462,8 @@ class ServerModel(QtCore.QAbstractItemModel):
             if node.job_candidate:
                 api = LinksAPI(node.path())
                 links = api.get(force=True)
-
-                # Add bookmark items
-                bookmarks = [v['root'] for v in common.bookmarks.values() if
-                             v['server'] == node.server and v['job'] == node.job]
+                bookmarks = [v['root'] for v in common.bookmarks.values()
+                             if v['server'] == node.server and v['job'] == node.job]
                 links += bookmarks
                 links = sorted(set(links), key=lambda s: s.lower())
 
@@ -557,33 +482,24 @@ class ServerModel(QtCore.QAbstractItemModel):
                 self.endInsertRows()
 
         node.children_fetched = True
-
-        # Emit dataChanged signal to update views and filters
         self.dataChanged.emit(parent, parent)
 
     def hasChildren(self, parent):
         if not parent.isValid():
             return True
         node = parent.internalPointer()
-        if node.type == NodeType.BookmarkNode:
+        if node.type == NodeType.LinkNode:
             return False
         return self.canFetchMore(parent)
 
     def flags(self, index):
         if not index.isValid():
             return QtCore.Qt.NoItemFlags
-
         node = index.internalPointer()
         if not node:
             return QtCore.Qt.NoItemFlags
-
-        if node.type == NodeType.ServerNode:
-            return super().flags(index)
-        if node.type == NodeType.JobNode:
-            return super().flags(index)
-        if node.type == NodeType.BookmarkNode:
+        if node.type == NodeType.LinkNode:
             return super().flags(index) | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemNeverHasChildren
-
         return super().flags(index)
 
     def supportedDropActions(self):
@@ -605,9 +521,9 @@ class ServerModel(QtCore.QAbstractItemModel):
         if not node:
             return None
 
-        server = node.server
-        job = node.job
-        root = node.root
+        server = node.server or ''
+        job = node.job or ''
+        root = node.root or ''
 
         data = {
             f'{server}/{job}/{root}': {
@@ -618,33 +534,15 @@ class ServerModel(QtCore.QAbstractItemModel):
         }
 
         json_data = json.dumps(data)
-
         mime_data = QtCore.QMimeData()
         mime_data.setData('text/plain', json_data.encode())
         return mime_data
 
     def set_job_style(self, v):
-        """Set the job style.
-
-        The job style is used to determine how deep to traverse into folders in a server when fetching jobs.
-        Depending on how job folders are stored on the server, they _usually_ follow a pattern, for example,
-        - `server/job`
-        - `server/department/job`
-        - `server/client/job
-        - `server/department/client/job`
-        - etc.
-
-        Args:
-            v (int): The job style enum.
-
-        """
         if v not in JobDepth:
-            raise ValueError(f'Invalid job style: {v}. Expected one of {JobDepth}.')
-
+            raise ValueError(f'Invalid job style: {v}. Expected one of {list(JobDepth)}.')
         common.settings.setValue(ServerAPI.job_style_settings_key, v.value)
         self._job_style = v.value
-
-        # Reset the model
         self.init_data()
 
     @QtCore.Slot()
@@ -654,6 +552,8 @@ class ServerModel(QtCore.QAbstractItemModel):
         self.endResetModel()
 
         servers = ServerAPI.get_servers(force=True)
+        servers = servers if servers else {}
+        servers = sorted(servers.keys(), key=lambda s: s.lower())
         self.beginInsertRows(QtCore.QModelIndex(), 0, len(servers) - 1)
         for server in servers:
             if server in [f.server for f in self._root_node.children()]:
@@ -667,46 +567,37 @@ class ServerModel(QtCore.QAbstractItemModel):
         current_servers = ServerAPI.get_servers(force=True)
         current_servers = current_servers if current_servers else {}
         current_servers = list(current_servers.keys())
-        all_servers = sorted(current_servers + [server, ], key=lambda s: s.lower())
-
+        all_servers = sorted(current_servers + [server], key=lambda s: s.lower())
         idx = all_servers.index(server)
-
         if server in [f.server for f in self._root_node.children()]:
             return
-
         self.beginInsertRows(QtCore.QModelIndex(), idx, idx)
         ServerAPI.add_server(server)
         node = Node(server=server, parent=self._root_node)
         self._root_node.insert_child(idx, node)
         self.endInsertRows()
-        self.dataChanged.emit(
-            self.index(0, 0, QtCore.QModelIndex()),
-            self.index(0, 0, QtCore.QModelIndex())
-        )
+        self.dataChanged.emit(self.index(0, 0), self.index(0, 0))
 
     @QtCore.Slot(str)
     def remove_server(self, server):
         current_servers = ServerAPI.get_servers()
         current_servers = current_servers if current_servers else {}
-        current_servers = list(current_servers.keys())
-        current_servers = sorted(current_servers, key=lambda s: s.lower())
-
+        current_servers = sorted(current_servers.keys(), key=lambda s: s.lower())
+        if server not in current_servers:
+            return
         idx = current_servers.index(server)
-
         ServerAPI.remove_server(server)
-
         self.beginRemoveRows(QtCore.QModelIndex(), idx, idx)
         self._root_node.remove_child(idx)
         self.endRemoveRows()
-        self.dataChanged.emit(
-            self.index(0, 0, QtCore.QModelIndex()),
-            self.index(0, 0, QtCore.QModelIndex())
-        )
+        self.dataChanged.emit(self.index(0, 0), self.index(0, 0))
 
     @QtCore.Slot()
     def remove_servers(self):
         servers = ServerAPI.get_servers()
-        for server in servers:
+        if not servers:
+            return
+        for server in list(servers.keys()):
             self.remove_server(server)
 
     @QtCore.Slot()

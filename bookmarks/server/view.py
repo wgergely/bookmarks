@@ -3,7 +3,7 @@ import functools
 import os
 import re
 
-from PySide2 import QtWidgets, QtCore
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from .lib import ServerAPI, JobDepth
 from .model import ServerModel, NodeType, Node, ServerFilterProxyModel
@@ -16,9 +16,6 @@ from ..templates.view import TemplatesEditor
 
 
 def show():
-    """Show the server view.
-
-    """
     if common.server_editor:
         close()
 
@@ -30,9 +27,6 @@ def show():
 
 
 def close():
-    """Close the server view.
-
-    """
     if not common.server_editor:
         return
     try:
@@ -48,10 +42,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
-        """Creates the context menu.
-
-        """
-
         self.bookmark_job_folder_menu()
         self.separator()
         self.add_link_menu()
@@ -70,9 +60,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         self.add_view_menu()
 
     def add_server_menu(self):
-        """Add the server menu.
-
-        """
         self.menu[contextmenu.key()] = {
             'text': 'Add Server...',
             'icon': ui.get_icon('add', color=common.Color.Green()),
@@ -88,9 +75,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         }
 
     def add_job_menu(self):
-        """Add the job menu.
-
-        """
         if not self.index.isValid():
             return
 
@@ -114,9 +98,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             }
 
     def add_link_menu(self):
-        """Add the root folder menu.
-
-        """
         if not self.index.isValid():
             return
 
@@ -133,17 +114,12 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             }
 
     def bookmark_job_folder_menu(self):
-        """Add the root folder menu.
-
-        """
         if not self.index.isValid():
             return
-
         node = self.index.internalPointer()
         if not node:
             return
-
-        if node.type == NodeType.BookmarkNode:
+        if node.type == NodeType.LinkNode:
             self.menu[contextmenu.key()] = {
                 'text': 'Bookmark Job Folder',
                 'icon': ui.get_icon('add_link', color=common.Color.Green()),
@@ -152,9 +128,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             }
 
     def remove_link_menu(self):
-        """Remove the root folder menu.
-
-        """
         if not self.index.isValid():
             return
 
@@ -162,7 +135,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         if not node:
             return
 
-        if node.type == NodeType.BookmarkNode:
+        if node.type == NodeType.LinkNode:
             self.menu[contextmenu.key()] = {
                 'text': 'Remove Link',
                 'action': self.parent().remove_link,
@@ -170,16 +143,12 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             }
 
     def set_job_style_menu(self):
-        """Set the job style menu.
-
-        """
         k = 'Job Style'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon('icon_bw_sm')
 
         for style in JobDepth:
             name = style.name
-            # split name by capital letters
             name_split = re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', name)
             display_name = ' '.join(name_split)
 
@@ -195,9 +164,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             }
 
     def add_reveal_menu(self):
-        """Add reveal menu.
-
-        """
         if not self.index.isValid():
             return
 
@@ -221,9 +187,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             }
 
     def remove_server_menu(self):
-        """Remove server menu.
-
-        """
         node = self.parent().get_node_from_selection()
 
         if node and node.type == NodeType.ServerNode:
@@ -255,7 +218,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
                 ),
             }
 
-        # Remove all
         self.menu[contextmenu.key()] = {
             'text': 'Clear Servers',
             'icon': ui.get_icon('close'),
@@ -271,9 +233,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         }
 
     def add_view_menu(self):
-        """Add view menu.
-
-        """
         self.menu[contextmenu.key()] = {
             'text': 'Refresh',
             'icon': ui.get_icon('refresh'),
@@ -421,12 +380,12 @@ class AddServerDialog(QtWidgets.QDialog):
         )
 
 
-
 class AddJobDialog(QtWidgets.QDialog):
 
     def __init__(self, root_path, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('Add Job')
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Maximum)
 
         self._root_path = root_path
 
@@ -463,10 +422,9 @@ class AddJobDialog(QtWidgets.QDialog):
 
         QtCore.QTimer.singleShot(100, self._init_templates)
 
-
     def _init_job_style(self):
         v = common.settings.value(ServerAPI.job_style_settings_key)
-        v = JobDepth(v) if isinstance(v, int) else JobDepth.NoParent.value
+        v = JobDepth(v) if isinstance(v, int) else JobDepth.Job.value
         self.job_style = v
 
     def _create_ui(self):
@@ -551,12 +509,12 @@ class AddJobDialog(QtWidgets.QDialog):
         self.layout().addWidget(widget, 1)
 
     def _apply_job_style(self):
-        if self.job_style == JobDepth.NoParent:
+        if self.job_style == JobDepth.Job:
             self.client_row.hide()
             self.department_row.hide()
-        elif self.job_style == JobDepth.HasParent:
+        elif self.job_style == JobDepth.ClientAndJob:
             self.department_row.hide()
-        elif self.job_style == JobDepth.HasGrandparent:
+        elif self.job_style == JobDepth.ClientJobAndDepartment:
             pass
 
     def _init_templates(self):
@@ -622,11 +580,11 @@ class AddJobDialog(QtWidgets.QDialog):
 
             editor.setCompleter(completer)
 
-        if self.job_style == JobDepth.NoParent:
+        if self.job_style == JobDepth.Job:
             values = sorted([f for f in _it(self._root_path, -1, 1)])
             _add_completer(self.job_editor, set(values))
 
-        elif self.job_style == JobDepth.HasParent:
+        elif self.job_style == JobDepth.ClientAndJob:
             values = sorted([f for f in _it(self._root_path, -1, 2)])
             client_values = [f.split('/')[0] for f in values if len(f.split('/')) >= 1]
             job_values = [f.split('/')[1] for f in values if len(f.split('/')) >= 2]
@@ -634,7 +592,7 @@ class AddJobDialog(QtWidgets.QDialog):
             _add_completer(self.client_editor, set(client_values))
             _add_completer(self.job_editor, set(job_values))
 
-        elif self.job_style == JobDepth.HasGrandparent:
+        elif self.job_style == JobDepth.ClientJobAndDepartment:
             values = sorted([f for f in _it(self._root_path, -1, 3)])
             client_values = [f.split('/')[0] for f in values if len(f.split('/')) >= 1]
             job_values = [f.split('/')[1] for f in values if len(f.split('/')) >= 2]
@@ -659,17 +617,17 @@ class AddJobDialog(QtWidgets.QDialog):
         ct = self.client_editor.text()
         dt = self.department_editor.text()
 
-        if self.job_style == JobDepth.NoParent:
+        if self.job_style == JobDepth.Job:
             if not jt:
                 self.summary_label.setText(invalid_label)
                 return
             summary = f'{summary}/{jt}'
-        elif self.job_style == JobDepth.HasParent:
+        elif self.job_style == JobDepth.ClientAndJob:
             if not all((ct, jt)):
                 self.summary_label.setText(invalid_label)
                 return
             summary = f'{summary}/{ct}/{jt}'
-        elif self.job_style == JobDepth.HasGrandparent:
+        elif self.job_style == JobDepth.ClientJobAndDepartment:
             if not all((ct, jt, dt)):
                 self.summary_label.setText(invalid_label)
                 return
@@ -701,15 +659,15 @@ class AddJobDialog(QtWidgets.QDialog):
         ct = self.client_editor.text()
         dt = self.department_editor.text()
 
-        if self.job_style == JobDepth.NoParent:
+        if self.job_style == JobDepth.Job:
             if not jt:
                 raise ValueError('Job name is required.')
             rel_path = jt
-        elif self.job_style == JobDepth.HasParent:
+        elif self.job_style == JobDepth.ClientAndJob:
             if not all((ct, jt)):
                 raise ValueError('Client and job name are required.')
             rel_path = f'{ct}/{jt}'
-        elif self.job_style == JobDepth.HasGrandparent:
+        elif self.job_style == JobDepth.ClientJobAndDepartment:
             if not all((ct, jt, dt)):
                 raise ValueError('Client, job, and department are required.')
             rel_path = f'{ct}/{jt}/{dt}'
@@ -747,14 +705,17 @@ class ServerView(QtWidgets.QTreeView):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('Servers')
-
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
 
-        # Enable dragging
         self.setDragEnabled(True)
         self.setWordWrap(False)
+
+        self.resize_timer = common.Timer(parent=self)
+        self.resize_timer.setSingleShot(True)
+        self.resize_timer.setInterval(100)
+        self.resize_timer.timeout.connect(self.resize_to_contents)
 
         if not parent:
             common.set_stylesheet(self)
@@ -771,9 +732,7 @@ class ServerView(QtWidgets.QTreeView):
 
     def _init_shortcuts(self):
         shortcuts.add_shortcuts(self, shortcuts.ServerViewShortcuts)
-        connect = functools.partial(
-            shortcuts.connect, shortcuts.ServerViewShortcuts
-        )
+        connect = functools.partial(shortcuts.connect, shortcuts.ServerViewShortcuts)
         connect(shortcuts.AddServer, self.add_server)
         connect(shortcuts.RemoveServer, self.remove_server)
         connect(shortcuts.RemoveAllServers, self.remove_all_servers)
@@ -784,14 +743,15 @@ class ServerView(QtWidgets.QTreeView):
 
     def _init_model(self):
         proxy = ServerFilterProxyModel(parent=self)
+        # Ensure the proxy checks indexes carefully
+        # (No special code needed here, but we rely on safe checks)
         proxy.setSourceModel(ServerModel(parent=self))
         self.setModel(proxy)
 
         self.header().setStretchLastSection(False)
-        self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        self.header().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
-        self.header().setCascadingSectionResizes(True)
+        self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Interactive)
+        self.header().setSectionResizeMode(2, QtWidgets.QHeaderView.Interactive)
 
     def _connect_signals(self):
         self.expanded.connect(self.add_expanded)
@@ -803,28 +763,79 @@ class ServerView(QtWidgets.QTreeView):
 
         self.model().sourceModel().rowsInserted.connect(self.restore_expanded_nodes)
 
-        self.selectionModel().selectionChanged.connect(self.save_selected_node)
-        self.model().modelAboutToBeReset.connect(self.save_selected_node)
-        self.model().sourceModel().rowsAboutToBeInserted.connect(self.save_selected_node)
+        self.expanded.connect(self.start_resize_timer)
+        self.collapsed.connect(self.start_resize_timer)
 
+        self.model().modelReset.connect(self.start_resize_timer)
+        self.model().layoutChanged.connect(self.start_resize_timer)
+
+        # Before the model resets, save current selection and expanded
         self.model().modelAboutToBeReset.connect(self.save_expanded_nodes)
+        self.model().modelAboutToBeReset.connect(self.save_selected_node)
 
+        # After reset, restore them
         self.model().modelReset.connect(self.restore_expanded_nodes)
         self.model().modelReset.connect(self.restore_selected_node)
 
+        self.selectionModel().selectionChanged.connect(self.save_selected_node)
         self.selectionModel().selectionChanged.connect(self.emit_root_folder_selected)
         self.model().modelAboutToBeReset.connect(self.emit_root_folder_selected)
 
         common.signals.jobAdded.connect(self.on_job_added)
         common.signals.bookmarksChanged.connect(self.init_data)
 
+    @QtCore.Slot()
+    def start_resize_timer(self):
+        self.resize_timer.start(self.resize_timer.interval())
+
+    def measure_column_width(self, column):
+        model = self.model()
+        if model is None:
+            return 0
+
+        font = self.font()
+        fm = QtGui.QFontMetrics(font)
+        max_width = 0
+
+        def recurse_index(index, level=0):
+            nonlocal max_width
+            if not index.isValid():
+                return
+
+            if level == 0 or self.isExpanded(index.parent()):
+                data_index = index if column == 0 else index.sibling(index.row(), column)
+                text = model.data(data_index, QtCore.Qt.DisplayRole) or ""
+                text_width = fm.width(text)
+                icon = model.data(index, QtCore.Qt.DecorationRole)
+                icon_width = icon.availableSizes()[0].width() if icon else 0
+                total_width = text_width + icon_width + common.Size.Indicator(2.0)
+                if total_width > max_width:
+                    max_width = total_width
+
+                if self.isExpanded(index):
+                    rows = model.rowCount(index)
+                    for r in range(rows):
+                        child = model.index(r, 0, index)
+                        recurse_index(child, level + 1)
+
+        top_count = model.rowCount(QtCore.QModelIndex())
+        for i in range(top_count):
+            top_index = model.index(i, 0, QtCore.QModelIndex())
+            recurse_index(top_index, 0)
+
+        return max_width
+
+    @QtCore.Slot()
+    def resize_to_contents(self, *args, **kwargs):
+        for column in range(self.model().columnCount()):
+            if self.header().sectionResizeMode(column) == QtWidgets.QHeaderView.Stretch:
+                continue
+            width = self.measure_column_width(column)
+            self.header().resizeSection(column, width)
+
     @QtCore.Slot(str, str)
     def on_job_added(self, server, job):
-        """Handle the job added signal.
-
-        """
         self.init_data()
-
         model = self.model().sourceModel()
 
         def _it(parent_index):
@@ -836,6 +847,9 @@ class ServerView(QtWidgets.QTreeView):
                 if not node:
                     continue
                 index = self.model().mapFromSource(_index)
+                if not index.isValid():
+                    continue
+
                 if node.server == server:
                     node.children_fetched = False
                     model.fetchMore(_index)
@@ -855,7 +869,6 @@ class ServerView(QtWidgets.QTreeView):
 
     @QtCore.Slot(str, str, str)
     def on_link_added(self, server, job, root):
-
         model = self.model().sourceModel()
 
         def _it(parent_index):
@@ -868,6 +881,9 @@ class ServerView(QtWidgets.QTreeView):
                     continue
 
                 index = self.model().mapFromSource(_index)
+                if not index.isValid():
+                    continue
+
                 if node.server == server:
                     node.children_fetched = False
                     model.fetchMore(_index)
@@ -891,29 +907,21 @@ class ServerView(QtWidgets.QTreeView):
         _it(self.rootIndex())
 
     def contextMenuEvent(self, event):
-        """Context menu event.
-
-        """
         index = self.indexAt(event.pos())
         source_index = self.model().mapToSource(index)
-        persistent_index = QtCore.QPersistentModelIndex(source_index)
 
+        # Use a safe persistent index only for this menu session
+        persistent_index = QtCore.QPersistentModelIndex(source_index)
         menu = ServerContextMenu(persistent_index, parent=self)
         menu.move(event.globalPos())
         menu.exec_()
-
-    def sizeHint(self):
-        return QtCore.QSize(
-            common.Size.DefaultWidth(),
-            common.Size.DefaultHeight()
-        )
 
     def mouseDoubleClickEvent(self, event):
         node = self.get_node_from_selection()
         if not node:
             return super().mouseDoubleClickEvent(event)
 
-        if not node.type == NodeType.BookmarkNode:
+        if node.type != NodeType.LinkNode:
             return super().mouseDoubleClickEvent(event)
 
         event.accept()
@@ -923,6 +931,8 @@ class ServerView(QtWidgets.QTreeView):
         if not index.isValid():
             return
         source_index = self.model().mapToSource(index)
+        if not source_index.isValid():
+            return
         node = source_index.internalPointer()
         if not node:
             return
@@ -934,20 +944,16 @@ class ServerView(QtWidgets.QTreeView):
         if not index.isValid():
             return
         source_index = self.model().mapToSource(index)
+        if not source_index.isValid():
+            return
         node = source_index.internalPointer()
         if not node:
             return
-
-        idx = self._expanded_nodes.index(node.path())
-        if idx != -1:
-            self._expanded_nodes.pop(idx)
+        if node.path() in self._expanded_nodes:
+            self._expanded_nodes.remove(node.path())
 
     @QtCore.Slot()
     def save_expanded_nodes(self):
-        """
-        Save the expanded nodes.
-
-        """
         self._expanded_nodes = []
 
         def _it(parent_index):
@@ -958,8 +964,10 @@ class ServerView(QtWidgets.QTreeView):
                 if not node:
                     continue
 
-                if self.isExpanded(self.model().mapFromSource(index)):
-                    self._expanded_nodes.append(node.path())
+                if index.isValid():
+                    proxy_index = self.model().mapFromSource(index)
+                    if proxy_index.isValid() and self.isExpanded(proxy_index):
+                        self._expanded_nodes.append(node.path())
                 _it(index)
 
         _it(QtCore.QModelIndex())
@@ -967,43 +975,27 @@ class ServerView(QtWidgets.QTreeView):
     @QtCore.Slot()
     def emit_root_folder_selected(self, *args, **kwargs):
         node = self.get_node_from_selection()
-        if not node:
+        if not node or node.type != NodeType.LinkNode:
             self.bookmarkNodeSelected.emit('')
             return
-
-        if node.type != NodeType.BookmarkNode:
-            self.bookmarkNodeSelected.emit('')
-            return
-
         self.bookmarkNodeSelected.emit(node.path())
 
     def get_node_from_selection(self):
-        """
-        Get the internal node from the current selection.
-
-        """
         if not self.selectionModel().hasSelection():
             return None
-
         index = next((f for f in self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
         if not index.isValid():
             return None
-
-        node = self.model().mapToSource(index).internalPointer()
-        if not node:
+        source_index = self.model().mapToSource(index)
+        if not source_index.isValid():
             return None
-
+        node = source_index.internalPointer()
         return node
 
     @QtCore.Slot()
     def restore_expanded_nodes(self, *args, **kwargs):
-        """
-        Restore the expanded nodes.
-
-        """
         if not self._expanded_nodes:
             return
-
         model = self.model().sourceModel()
 
         def _it(parent_index):
@@ -1011,52 +1003,39 @@ class ServerView(QtWidgets.QTreeView):
                 _index = model.index(i, 0, parent_index)
                 if not _index.isValid():
                     continue
+                node = _index.internalPointer()
+                if not node:
+                    continue
+
+                proxy_index = self.model().mapFromSource(_index)
+                if proxy_index.isValid() and node.path() in self._expanded_nodes:
+                    if model.hasChildren(_index):
+                        self.expand(proxy_index)
+
                 yield _index
                 yield from _it(_index)
 
-        for source_index in _it(self.rootIndex()):
-            node = source_index.internalPointer()
-            if not node:
-                continue
-
-            index = self.model().mapFromSource(source_index)
-            if not index.isValid():
-                continue
-
-            if node.path() in self._expanded_nodes:
-                if model.hasChildren(source_index):
-                    self.expand(index)
+        list(_it(self.rootIndex()))
 
     @QtCore.Slot()
     def save_selected_node(self, *args, **kwargs):
-        """
-        Save the selected node.
-
-        """
-        if not self.model() or not self.model().sourceModel():
-            return
-
         node = self.get_node_from_selection()
-        if not node:
-            return
-
-        self._selected_node = node.path()
+        self._selected_node = node.path() if node else None
 
     @QtCore.Slot()
     def restore_selected_node(self, *args, **kwargs):
         if not self._selected_node:
             return
 
-        # Start from the root and expand nodes recursively to load data
+        model = self.model().sourceModel()
+
         def _expand_and_find(parent_index):
-            model = self.model().sourceModel()
             for i in range(model.rowCount(parent_index)):
                 index = model.index(i, 0, parent_index)
                 node = index.internalPointer()
                 if not node:
                     continue
 
-                # Expand the node to trigger data loading
                 proxy_index = self.model().mapFromSource(index)
                 if not proxy_index.isValid():
                     continue
@@ -1072,19 +1051,14 @@ class ServerView(QtWidgets.QTreeView):
 
                 if _expand_and_find(index):
                     return True
-
             return False
 
-        # Start the recursive search from the root index
         _expand_and_find(QtCore.QModelIndex())
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def add_server(self):
-        """Add a server.
-
-        """
         dialog = AddServerDialog(parent=self)
         dialog.exec_()
 
@@ -1097,9 +1071,6 @@ class ServerView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def remove_server(self):
-        """Remove a server.
-
-        """
         node = self.get_node_from_selection()
         if not node:
             return
@@ -1114,16 +1085,12 @@ class ServerView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def remove_all_servers(self):
-        """Remove all servers.
-
-        """
         if common.show_message(
-                'Are you sure you want to remove all servers?',
-                body='This action cannot be undone.',
-                message_type='error',
-                buttons=[common.YesButton, common.NoButton],
-                modal=True,
-
+            'Are you sure you want to remove all servers?',
+            body='This action cannot be undone.',
+            message_type='error',
+            buttons=[common.YesButton, common.NoButton],
+            modal=True,
         ) == QtWidgets.QDialog.Rejected:
             return
 
@@ -1133,26 +1100,12 @@ class ServerView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def init_data(self):
-        """Initialize the data.
-
-        """
         self.model().sourceModel().init_data()
 
     @common.error
     @common.debug
     @QtCore.Slot()
-    def remove_all_bookmarks(self):
-        """Remove all bookmarks.
-
-        """
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
     def reveal(self):
-        """
-        Reveal the link in the file explorer.
-        """
         node = self.get_node_from_selection()
         if not node:
             return
@@ -1166,20 +1119,12 @@ class ServerView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def set_job_style(self, style):
-        """
-        Set the job style.
-
-        """
         self.model().sourceModel().set_job_style(style)
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def add_job(self):
-        """
-        Add a job.
-
-        """
         node = self.get_node_from_selection()
         if not node:
             return
@@ -1194,10 +1139,6 @@ class ServerView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def add_link(self):
-        """
-        Add a root folder to a job folder's link file.
-
-        """
         node = self.get_node_from_selection()
         if not node:
             return
@@ -1205,7 +1146,7 @@ class ServerView(QtWidgets.QTreeView):
         if node.type != NodeType.JobNode:
             return
 
-        abs_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a root folder', node.path())
+        abs_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a link', node.path())
         if not abs_path:
             return
         if not os.path.exists(abs_path):
@@ -1218,7 +1159,6 @@ class ServerView(QtWidgets.QTreeView):
         if not source_index.isValid():
             return
 
-        # Calculate row idx
         rel_path = abs_path.replace(f'{node.server}/{node.job}', '').strip('/')
         current_roots = [f.root for f in node.children()]
         all_roots = sorted(current_roots + [rel_path], key=lambda s: s.lower())
@@ -1240,7 +1180,7 @@ class ServerView(QtWidgets.QTreeView):
         if not node:
             return
 
-        if node.type != NodeType.BookmarkNode:
+        if node.type != NodeType.LinkNode:
             return
 
         if node.is_bookmarked():
@@ -1255,7 +1195,7 @@ class ServerView(QtWidgets.QTreeView):
 
         node.api().remove_link(node.server, node.job, node.root)
 
-        idx = node.parent().children().index(node, )
+        idx = node.parent().children().index(node)
         self.model().sourceModel().beginRemoveRows(source_index.parent(), idx, idx)
         node.parent().remove_child(idx)
         self.model().sourceModel().endRemoveRows()
@@ -1268,7 +1208,7 @@ class ServerView(QtWidgets.QTreeView):
         if not node:
             return
 
-        if node.type != NodeType.BookmarkNode:
+        if node.type != NodeType.LinkNode:
             return
 
         node.api().bookmark_job_folder(
@@ -1278,30 +1218,43 @@ class ServerView(QtWidgets.QTreeView):
         )
 
 
-class ServerEditor(QtWidgets.QSplitter):
-
+class ServerEditorDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
+        super().__init__(
+            parent=parent,
+            f = (
+                    QtCore.Qt.CustomizeWindowHint |
+                    QtCore.Qt.WindowTitleHint |
+                    QtCore.Qt.WindowSystemMenuHint |
+                    QtCore.Qt.WindowMinMaxButtonsHint |
+                    QtCore.Qt.WindowCloseButtonHint
+            )
+        )
         if not self.parent():
             common.set_stylesheet(self)
 
         self.filter_toolbar = None
         self.text_filter_editor = None
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.server_view = None
-
         self.preview_widget = None
+
+        self.setWindowTitle('Servers')
+
+        if not self.parent():
+            common.set_stylesheet(self)
 
         self._create_ui()
         self._connect_signals()
 
     def _create_ui(self):
+        QtWidgets.QVBoxLayout(self)
+        o = common.Size.Indicator(2.0)
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(o)
 
-        widget = QtWidgets.QWidget(parent=self)
-        widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        widget.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        QtWidgets.QVBoxLayout(widget)
-        widget.layout().setContentsMargins(0, 0, 0, 0)
+        self.server_view = ServerView(parent=self)
+        self.preview_widget = DictionaryPreview(parent=self)
 
         self.filter_toolbar = QtWidgets.QToolBar('Filters', parent=self)
         self.filter_toolbar.setIconSize(QtCore.QSize(
@@ -1309,9 +1262,6 @@ class ServerEditor(QtWidgets.QSplitter):
             common.Size.Margin(1.0)
         ))
 
-        self.server_view = ServerView(parent=self)
-
-        # Add action
         action = QtWidgets.QAction('Add', parent=self)
         action.setIcon(ui.get_icon('add', color=common.Color.Green()))
         action.setToolTip('Add a server, job, or bookmark folder.')
@@ -1320,7 +1270,6 @@ class ServerEditor(QtWidgets.QSplitter):
 
         self.filter_toolbar.addSeparator()
 
-        # Filters
         action_grp = QtWidgets.QActionGroup(self)
         action_grp.setExclusive(True)
 
@@ -1365,7 +1314,6 @@ class ServerEditor(QtWidgets.QSplitter):
         action_grp.setExclusive(True)
         for style in JobDepth:
             name = style.name
-            # split name by capital letters
             name_split = re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', name)
             display_name = ' '.join(name_split)
 
@@ -1378,31 +1326,35 @@ class ServerEditor(QtWidgets.QSplitter):
         self.filter_toolbar.addWidget(button)
 
         self.text_filter_editor = ui.LineEdit(parent=self)
-        self.text_filter_editor.setPlaceholderText('Search jobs...')
+        self.text_filter_editor.setPlaceholderText('Search...')
         self.text_filter_editor.textChanged.connect(self.server_view.model().set_text_filter)
         action = QtWidgets.QAction(self.text_filter_editor)
         icon = ui.get_icon('filter', color=common.Color.DisabledText())
         action.setIcon(icon)
         self.text_filter_editor.addAction(action, QtWidgets.QLineEdit.LeadingPosition)
 
-        widget.layout().addWidget(self.filter_toolbar, 0)
-        widget.layout().addWidget(self.text_filter_editor, 0)
-        widget.layout().addWidget(self.server_view, 100)
-        self.addWidget(widget)
+        self.filter_toolbar.addSeparator()
+        self.filter_toolbar.addWidget(self.text_filter_editor)
+        self.layout().addWidget(self.filter_toolbar, 1)
 
-        self.preview_widget = DictionaryPreview(parent=self)
-        self.addWidget(self.preview_widget)
+        splitter = QtWidgets.QSplitter(parent=self)
+        splitter.setOrientation(QtCore.Qt.Horizontal)
+        splitter.addWidget(self.server_view)
+        splitter.addWidget(self.preview_widget)
+        splitter.setStretchFactor(0, 0.5)
+        splitter.setStretchFactor(1, 0.5)
+        splitter.setAttribute(QtCore.Qt.WA_NoSystemBackground)
 
-        self.setStretchFactor(0, 0.5)
-        self.setStretchFactor(1, 1)
+        self.layout().addWidget(splitter, 100)
+
+        row = ui.add_row(None, height=common.Size.RowHeight(), parent=self)
+        self.ok_button = ui.PaintedButton('Done', parent=self)
+        row.layout().addWidget(self.ok_button, 1)
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def add(self):
-        """Add a server.
-
-        """
         node = self.server_view.get_node_from_selection()
         if not node:
             self.server_view.add_server()
@@ -1415,43 +1367,10 @@ class ServerEditor(QtWidgets.QSplitter):
     def _connect_signals(self):
         self.server_view.bookmarkNodeSelected.connect(self.preview_widget.bookmark_node_changed)
         self.preview_widget.selectionChanged.connect(self.server_view.on_link_added)
+        self.ok_button.clicked.connect(self.accept)
 
     def sizeHint(self):
         return QtCore.QSize(
             common.Size.DefaultWidth(2.0),
             common.Size.DefaultHeight(1.5)
         )
-
-
-class ServerEditorDialog(QtWidgets.QDialog):
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setWindowTitle('Manage Servers, Jobs, and Bookmarks')
-
-        self.server_editor = None
-        self.ok_button = None
-        self.cancel_button = None
-
-        if not self.parent():
-            common.set_stylesheet(self)
-
-        self._create_ui()
-        self._connect_signals()
-
-    def _create_ui(self):
-        QtWidgets.QVBoxLayout(self)
-        o = common.Size.Indicator(2.0)
-        self.layout().setContentsMargins(o, o, o, o)
-        self.layout().setSpacing(o * 0.5)
-
-        self.server_editor = ServerEditor(parent=self)
-        self.layout().addWidget(self.server_editor, 100)
-
-        row = ui.add_row(None, height=None, parent=self)
-
-        self.ok_button = ui.PaintedButton('Done', parent=self)
-        row.layout().addWidget(self.ok_button, 1)
-
-    def _connect_signals(self):
-        self.ok_button.clicked.connect(self.accept)

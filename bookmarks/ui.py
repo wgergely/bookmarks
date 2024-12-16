@@ -1160,11 +1160,6 @@ class GalleryItem(QtWidgets.QLabel):
     ):
         super().__init__(parent=parent)
 
-        common.check_type(label, str)
-        common.check_type(data, str)
-        common.check_type(thumbnail, str)
-        common.check_type(height, (int, float))
-
         self._pixmap = None
         self._label = label
         self._data = data

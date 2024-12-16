@@ -106,7 +106,6 @@ def process(func):
 
             # Call process_data
             result = func(self, ref)
-            common.check_type(result, bool)
 
             # Let the models/views know the data has been processed ok and
             # request a row repaint

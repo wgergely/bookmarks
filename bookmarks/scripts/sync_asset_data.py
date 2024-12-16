@@ -536,11 +536,6 @@ class SyncWidget(base.BasePropertyEditor):
 
     def process_entities(
             self, sg, sgproperties, source_entity_type, prefix, asset_data, task_mapping, asset_template_path, ):
-        common.check_type(asset_data, dict)
-        common.check_type(task_mapping, dict)
-        common.check_type(source_entity_type, str)
-        common.check_type(prefix, str)
-
         common.show_message(
             'Processing entities',
             body='This may take a while, please wait...',

@@ -201,8 +201,6 @@ class UserSettings(QtCore.QSettings):
             v (dict): The favourite item values.
 
         """
-        common.check_type(v, dict)
-        common.favourites = v
         self.setValue('user/favourites', v)
         common.signals.favouritesChanged.emit()
 

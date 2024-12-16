@@ -169,8 +169,6 @@ class BookmarkItemModel(models.ItemModel):
             }
 
         for k, v in bookmarks.items():
-            common.check_type(v, dict)
-
             if not all(v.values()):
                 continue
             if not len(v.values()) == 3:

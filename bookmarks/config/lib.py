@@ -288,7 +288,6 @@ class BaseConfig:
             data (dict): The token config data to save.
 
         """
-        common.check_type(data, dict)
         if section not in Section:
             raise ValueError(f'Invalid section: {section}. Expected one of {Section}')
 
@@ -327,8 +326,6 @@ class BaseConfig:
     #         str: The description of the token.
     #
     #     """
-    #     common.check_type(token, str)
-    #
     #     if section not in Section:
     #         raise ValueError(f'Invalid section: {section}. Expected one of {Section}')
     #
@@ -400,8 +397,6 @@ class BaseConfig:
     #         bool: True if the folder is an asset folder.
     #
     #     """
-    #     common.check_type(folder, str)
-    #
     #     if not folder or not isinstance(folder, str):
     #         return False
     #
@@ -435,8 +430,6 @@ class BaseConfig:
     #         set: A set of file format extensions.
     #
     #     """
-    #     common.check_type(folder, str)
-    #
     #     if not folder or not isinstance(folder, str):
     #         return set()
     #
@@ -501,8 +494,6 @@ class BaseConfig:
     #     """
     #     if asset_folder not in AssetFolder:
     #         raise ValueError(f'Invalid asset folder: {asset_folder}. Expected one of {AssetFolder}')
-    #
-    #     common.check_type(subfolder, str)
     #
     #     if not subfolder or not isinstance(subfolder, str):
     #         return None

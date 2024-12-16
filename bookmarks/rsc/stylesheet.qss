@@ -346,6 +346,7 @@ QListView {
     border-radius: <Indicator@1.5>px;
     padding: <Separator@1.0>px;
     background: <DarkBackground>;
+    alternate-background-color: <DarkBackground>;
     border: <Separator@1.0>px solid <Opaque>;
 }
 
@@ -1008,7 +1009,9 @@ BaseFilterButton QAbstractItemView::item:hover {
     background-color: <LightBackground>;
 }
 
-
+ServerEditorDialog {
+    background-color: <VeryDarkBackground>;
+}
 ServerView {
     background-image: url(<ServerViewBackground>);
     background-repeat: no-repeat;
@@ -1022,6 +1025,7 @@ QTreeView#dictionary_preview {
 
 DictionaryPreview,
 QTreeView#dictionary_preview {
+    alternate-background-color: <VeryDarkBackground>;
     background-color: <VeryDarkBackground>;
 }
 

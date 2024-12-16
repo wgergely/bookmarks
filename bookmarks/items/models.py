@@ -399,9 +399,6 @@ class ItemModel(QtCore.QAbstractTableModel):
             emit_active (bool): Whether to emit the active index changed signal.
 
         """
-        common.check_type(force, bool)
-        common.check_type(emit_active, bool)
-
         p = self.parent_path()
         k = self.task()
         if not p or not all(p) or not k:

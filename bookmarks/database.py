@@ -293,9 +293,6 @@ def get(server, job, root, force=False):
         RuntimeError: If the database is locked.
         OSError: If the database is missing.
     """
-    for k in (server, job, root):
-        common.check_type(k, str)
-
     key = common.get_thread_key(server, job, root)
 
     if key in common.db_connections:
@@ -343,14 +340,12 @@ def remove_all_connections():
 @functools.lru_cache(maxsize=4194304)
 def b64encode(v):
     """Encode a string using Base64."""
-    common.check_type(v, str)
     return base64.b64encode(v.encode('utf-8')).decode('utf-8')
 
 
 @functools.lru_cache(maxsize=4194304)
 def b64decode(v):
     """Decode a Base64-encoded string."""
-    common.check_type(v, bytes)
     return base64.b64decode(v).decode('utf-8')
 
 
@@ -369,7 +364,8 @@ def set_flag(server, job, root, k, mode, flag):
 
 def _verify_args(source, key, table, value=None):
     """Verify the input arguments for database operations."""
-    common.check_type(source, (str, tuple))
+    if not isinstance(source, str):
+        raise TypeError(f'Source "{source}" is not of type str.')
 
     if isinstance(key, str) and key not in TABLES[table]:
         t = ', '.join(TABLES[table])
@@ -385,10 +381,12 @@ def _verify_args(source, key, table, value=None):
         return
 
     if isinstance(key, str):
-        common.check_type(value, TABLES[table][key]['type'])
+        if not isinstance(value, TABLES[table][key]['type']):
+            raise TypeError(f'Value "{value}" is not of type {TABLES[table][key]["type"]}.')
     elif isinstance(key, tuple):
         for k in key:
-            common.check_type(value, TABLES[table][k]['type'])
+            if not isinstance(value, TABLES[table][k]['type']):
+                raise TypeError(f'Value "{value}" is not of type {TABLES[table][k]["type"]}.')
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -469,9 +467,6 @@ class BookmarkDB(QtCore.QObject):
 
     def __init__(self, server, job, root, parent=None):
         super().__init__(parent=parent)
-
-        for arg in (server, job, root):
-            common.check_type(arg, str)
 
         self._is_valid = False
         self._is_memory = False
@@ -756,9 +751,6 @@ class BookmarkDB(QtCore.QObject):
         Returns:
             dict: A dictionary containing column-value pairs.
         """
-        common.check_type(source, str)
-        common.check_type(table, str)
-
         if table not in TABLES:
             raise ValueError(f'Table "{table}" not found in TABLES.')
 
@@ -800,9 +792,6 @@ class BookmarkDB(QtCore.QObject):
             table (str): The name of the database table.
 
         """
-        common.check_type(source, str)
-        common.check_type(table, str)
-
         if table not in TABLES:
             raise ValueError(f'Table "{table}" not found in TABLES.')
 

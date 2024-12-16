@@ -36,9 +36,6 @@ def execute_rvpush_command(source, command):
         command (str): An RV command enum.
 
     """
-    common.check_type(source, str)
-    common.check_type(command, int)
-
     if command not in RV_COMMANDS:
         raise ValueError(f'Invalid RV command: {command}')
 

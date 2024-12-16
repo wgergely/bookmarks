@@ -1190,9 +1190,7 @@ class TemplatesView(QtWidgets.QTreeView):
     """
     A view class for displaying and interacting with asset links.
     """
-
-    templateChanged = QtCore.Signal(str, int)
-    templateDataChanged = QtCore.Signal(bytes)
+    templateDataSelected = QtCore.Signal(bytes)
 
     def __init__(self, mode=None, parent=None):
 
@@ -1240,9 +1238,9 @@ class TemplatesView(QtWidgets.QTreeView):
         self.setModel(TemplatesModel(mode=self._mode, parent=self))
 
     def _connect_signals(self):
-        self.selectionModel().selectionChanged.connect(self.emit_template_file_changed)
+        self.selectionModel().selectionChanged.connect(self.emit_template_data_selected)
         self.model().modelAboutToBeReset.connect(
-            lambda: self.emit_template_file_changed(QtCore.QModelIndex(), QtCore.QModelIndex())
+            lambda: self.emit_template_data_selected(QtCore.QModelIndex(), QtCore.QModelIndex())
         )
 
         self.selectionModel().selectionChanged.connect(self.save_selected_node)
@@ -1252,8 +1250,7 @@ class TemplatesView(QtWidgets.QTreeView):
         self.expanded.connect(self.restore_selected_node)
 
     @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex)
-    def emit_template_file_changed(self, current, previous, *args, **kwargs):
-        """Emit the templateChanged signal."""
+    def emit_template_data_selected(self, current, previous, *args, **kwargs):
         if isinstance(current, QtCore.QItemSelection):
             index = next(iter(current.indexes()), QtCore.QModelIndex())
         elif isinstance(current, QtCore.QModelIndex):
@@ -1262,24 +1259,19 @@ class TemplatesView(QtWidgets.QTreeView):
             index = QtCore.QModelIndex()
 
         if not index.isValid():
-            self.templateChanged.emit('', -1)
-            self.templateDataChanged.emit(b'')
+            self.templateDataSelected.emit(b'')
             return
 
         node = index.internalPointer()
         if not node:
-            self.templateChanged.emit('', -1)
-            self.templateDataChanged.emit(b'')
+            self.templateDataSelected.emit(b'')
             return
 
         if not node.is_leaf():
-            self.templateChanged.emit('', -1)
-            self.templateDataChanged.emit(b'')
+            self.templateDataSelected.emit(b'')
             return
 
-        path = node.api['name']
-        self.templateChanged.emit(path, node.api.type)
-        self.templateDataChanged.emit(node.api.template)
+        self.templateDataSelected.emit(node.api.template)
 
     def contextMenuEvent(self, event):
         """Context menu event."""
@@ -1815,7 +1807,7 @@ class TemplatesEditor(QtWidgets.QSplitter):
         self.addWidget(self._templates_editor_widget)
 
     def _connect_signals(self):
-        self._templates_view_widget.templateDataChanged.connect(
+        self._templates_view_widget.templateDataSelected.connect(
             self._templates_editor_widget.model().init_data)
 
     def init_data(self):

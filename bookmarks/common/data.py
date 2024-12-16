@@ -148,10 +148,6 @@ def sort_data(ref, sort_by, sort_order):
         common.DataDict: A sorted copy of the source data.
 
     """
-    common.check_type(ref, weakref.ref)
-    common.check_type(sort_by, (int, QtCore.Qt.ItemDataRole))
-    common.check_type(sort_order, bool)
-
     def sort_key(_idx):
         """Returns the sort key of the given item.
 
@@ -193,10 +189,6 @@ def get_data(key, task, data_type):
         common.DataDict: The cached data.
 
     """
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-    common.check_type(data_type, int)
-
     if key not in common.item_data:
         reset_data(key, task)
     elif task not in common.item_data[key]:
@@ -249,9 +241,6 @@ def get_task_data(key, task):
         common.DataDict: The cached data.
 
     """
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-
     if key not in common.item_data:
         reset_data(key, task)
     elif task not in common.item_data[key]:
@@ -271,10 +260,6 @@ def data_count(key, task, data_type):
         int: The number of items in the data dictionary.
 
     """
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-    common.check_type(data_type, int)
-
     d = get_data(key, task, data_type)
     return len(d)
 
@@ -291,10 +276,6 @@ def is_data_loaded(key, task, data_type):
         bool:   True if loaded, false otherwise.
 
     """
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-    common.check_type(data_type, int)
-
     d = get_data(key, task, data_type)
     if d and d.loaded:
         return True
@@ -317,10 +298,6 @@ def get_data_ref(key, task, data_type):
     """
     if not key or not task:
         return None
-
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-    common.check_type(data_type, int)
 
     return weakref.ref(
         get_data(key, task, data_type)
@@ -350,9 +327,6 @@ def reset_data(key, task):
         task (str): A task folder.
 
     """
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-
     if key not in common.item_data:
         common.item_data[key] = common.DataDict()
     common.item_data[key][task] = common.DataDict()
@@ -374,10 +348,6 @@ def set_data(key, task, data_type, data):
         common.DataDict: The cached data.
 
     """
-    common.check_type(key, tuple)
-    common.check_type(task, str)
-    common.check_type(data_type, int)
-
     if key not in common.item_data:
         reset_data(key, task)
     elif task not in common.item_data[key]:

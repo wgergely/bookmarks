@@ -55,12 +55,6 @@ def export_maya(
         step (float): Frame step.
 
     """
-    common.check_type(destination, str)
-    common.check_type(outliner_set, (tuple, list))
-    common.check_type(start_frame, (int, float))
-    common.check_type(end_frame, (int, float))
-    common.check_type(step, (float, int))
-
     _destination = str(destination)
 
     cmds.select(outliner_set, replace=True)
@@ -92,12 +86,6 @@ def export_alembic(
         step (int, float): Frame step.
 
     """
-    common.check_type(destination, str)
-    common.check_type(outliner_set, (tuple, list))
-    common.check_type(start_frame, (int, float))
-    common.check_type(end_frame, (int, float))
-    common.check_type(step, (float, int))
-
     def _is_intermediate(s):
         return cmds.getAttr(f'{s}.intermediateObject')
 
@@ -286,12 +274,6 @@ def export_ass(
         step (float, int): Frame step.
 
     """
-    common.check_type(destination, str)
-    common.check_type(outliner_set, (tuple, list))
-    common.check_type(start_frame, (int, float))
-    common.check_type(end_frame, (int, float))
-    common.check_type(step, (float, int))
-
     try:
         import arnold
     except ImportError:
@@ -350,12 +332,6 @@ def export_obj(
         step (float, int): Frame step.
 
     """
-    common.check_type(destination, str)
-    common.check_type(outliner_set, (tuple, list))
-    common.check_type(start_frame, (int, float))
-    common.check_type(end_frame, (int, float))
-    common.check_type(step, (float, int))
-
     ext = destination.split('.')[-1]
     _destination = str(destination)
     start_time = time.time()

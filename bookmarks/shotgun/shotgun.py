@@ -87,9 +87,6 @@ def sanitize_path(path, separator):
         str: The sanitized path.
 
     """
-    common.check_type(path, str)
-    common.check_type(separator, str)
-
     path = path.strip()
     return path.replace('/', separator).replace('\\', separator)
 
@@ -105,10 +102,6 @@ def get_sg(domain, script, key, auth_as_user=False):
         auth_as_user (bool): Whether to authenticate as a user. Defaults to False.
 
     """
-    common.check_type(auth_as_user, bool)
-    for arg in (domain, script, key):
-        common.check_type(arg, str)
-
     k = _get_thread_key(domain, script, key, str(auth_as_user))
 
     if k in SG_CONNECTIONS and SG_CONNECTIONS[k]:
@@ -720,7 +713,6 @@ class EntityComboBox(QtWidgets.QComboBox):
         """Sets a new EntityModel for the combobox.
 
         """
-        common.check_type(model, EntityModel)
         self.setModel(EntityFilterModel(model))
         self.model().sourceModel().entityDataRequested.connect(self.select_first)
         self.model().sourceModel().entityDataReceived.connect(self.model().invalidate)

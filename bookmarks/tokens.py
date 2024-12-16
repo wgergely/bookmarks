@@ -429,9 +429,6 @@ def get(server, job, root, force=False):
         TokenConfig: The token config controller instance.
 
     """
-    for arg in (server, job, root):
-        common.check_type(arg, str)
-
     key = common.get_thread_key(server, job, root)
     if key in common.token_configs:
         if force:
@@ -609,8 +606,6 @@ class TokenConfig(QtCore.QObject):
             data (dict): The token config data to save.
 
         """
-        common.check_type(data, dict)
-
         db = database.get(self.server, self.job, self.root)
         db.set_value(
             db.source(),
@@ -660,8 +655,6 @@ class TokenConfig(QtCore.QObject):
             str: The description of the token.
 
         """
-        common.check_type(token, str)
-
         data = self.data(force=force)
         if not data:
             return ''
@@ -708,8 +701,6 @@ class TokenConfig(QtCore.QObject):
         return tuple(sorted(set(extensions)))
 
     def check_task(self, task, force=False):
-        common.check_type(task, str)
-
         data = self.data(force=force)
         if AssetFolderConfig not in data:
             raise KeyError('Malformed data, `AssetFolderConfig` not found.')
@@ -730,8 +721,6 @@ class TokenConfig(QtCore.QObject):
             set: A set of file format extensions.
 
         """
-        common.check_type(task, str)
-
         data = self.data(force=force)
         if AssetFolderConfig not in data:
             raise KeyError('Malformed data, `AssetFolderConfig` not found.')

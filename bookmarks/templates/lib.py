@@ -421,8 +421,8 @@ class TemplateItem(object):
         if not force and _hash in _hashes:
             raise ValueError(f'Template already exists: {self._metadata["name"]}')
 
-        db.set_value(self._metadata['name'], 'id', _hash, database.TemplateDataTable)
         db.set_value(self._metadata['name'], 'data', data, database.TemplateDataTable)
+        common.signals.templatesChanged.emit()
 
     def _save_to_disk(self, force, data):
         if self.type != TemplateType.UserTemplate:
@@ -441,6 +441,8 @@ class TemplateItem(object):
 
         with open(self._path, 'wb') as f:
             f.write(data)
+
+        common.signals.templatesChanged.emit()
 
     def _safe_extract(self, z, exclude_files=None):
         if exclude_files is None:
@@ -658,6 +660,7 @@ class TemplateItem(object):
             self._save_to_database(force, data)
         elif self.type == TemplateType.UserTemplate:
             self._save_to_disk(force, data)
+
 
     @common.debug
     @common.error(show_error=False)

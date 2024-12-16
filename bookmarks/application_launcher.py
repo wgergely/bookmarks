@@ -423,8 +423,6 @@ class ApplicationLauncherListWidget(ui.ListWidget):
         """
         self.clear()
 
-        common.check_type(data, dict)
-
         # Sort the data by name
         data = {k: v for k, v in sorted(data.items(), key=lambda item: item[1]['name'])}
 

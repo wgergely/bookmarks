@@ -347,16 +347,6 @@ def convert(
         RuntimeError: If the input path is not a sequence or not found.
 
     """
-    common.check_type(path, str)
-    common.check_type(preset, str)
-    common.check_type(server, (str, None))
-    common.check_type(job, (str, None))
-    common.check_type(root, (str, None))
-    common.check_type(asset, (str, None))
-    common.check_type(task, (str, None))
-    common.check_type(size, (tuple, None))
-    common.check_type(output_path, (str, None))
-
     # First, let's check if FFMPEG is available.
     ffmpeg_bin = common.get_binary('ffmpeg')
     if not ffmpeg_bin:

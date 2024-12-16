@@ -167,11 +167,14 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
         node = self.get_node(index)
+
         if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
             return node.get_data(index.column())
+
         if role == QtCore.Qt.DecorationRole:
             if not index.column() == 0:
                 return None
+
             if not node.parent == self.root_node:
                 return None
 
@@ -185,12 +188,11 @@ class DictionaryModel(QtCore.QAbstractItemModel):
             if not node.parent == self.root_node:
                 return None
 
+            font, metrics = common.Font.BoldFont(common.Size.MediumText())
             if not os.path.exists(node.data[0]):
-                font, metrics = common.Font.LightFont(common.Size.MediumText())
-                font.setStrikeOut(True)
-                font.setItalic(True)
+                font, metrics = common.Font.ThinFont(common.Size.MediumText())
                 return font
-            font, metrics = common.Font.LightFont(common.Size.MediumText())
+
             return font
 
         if role == QtCore.Qt.SizeHintRole:
@@ -207,7 +209,7 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         return None
 
     def headerData(self, section, orientation, role):
-        headers = ['Key', 'Value']
+        headers = ['Bookmarks', '']
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             return headers[section]
         return None
@@ -383,9 +385,7 @@ class DictionaryPreview(QtWidgets.QWidget):
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
         self.tree_view.setRootIsDecorated(False)
-        self.tree_view.setAlternatingRowColors(True)
         self.tree_view.setSortingEnabled(True)
-        self.tree_view.setHeaderHidden(True)
         self.tree_view.setObjectName('dictionary_preview')
 
         self.tree_view.setAcceptDrops(True)
@@ -394,7 +394,6 @@ class DictionaryPreview(QtWidgets.QWidget):
         self.tree_view.dragMoveEvent = self.dragMoveEvent
 
         self.tree_view.setModel(DictionaryModel(self.data_dict, parent=self.tree_view))
-        self.tree_view.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
         self.layout().addWidget(self.tree_view, 1)
 
@@ -513,9 +512,3 @@ class DictionaryPreview(QtWidgets.QWidget):
             return
 
         ServerAPI.save_bookmarks(current_data)
-
-    def sizeHint(self):
-        return QtCore.QSize(
-            common.Size.DefaultWidth(0.33),
-            common.Size.DefaultHeight()
-        )

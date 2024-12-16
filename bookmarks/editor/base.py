@@ -67,11 +67,6 @@ def add_section(icon, label, parent, color=None):
         QWidget:            A widget to add editors to.
 
     """
-    common.check_type(icon, (None, str))
-    common.check_type(label, (None, str))
-    common.check_type(parent, QtWidgets.QWidget)
-    common.check_type(color, (QtGui.QColor, None))
-
     h = common.Size.RowHeight()
     parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
@@ -150,19 +145,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     QtCore.Qt.WindowCloseButtonHint
             )
         )
-
-        common.check_type(server, (str, None))
-        common.check_type(job, (str, None))
-        common.check_type(root, (str, None))
-        common.check_type(asset, (str, None))
-        common.check_type(db_table, (str, None))
-        common.check_type(buttons, (tuple, list))
-        common.check_type(alignment, int)
-        common.check_type(fallback_thumb, str)
-        common.check_type(hide_thumbnail_editor, bool)
-        common.check_type(section_buttons, bool)
-        common.check_type(frameless, bool)
-        common.check_type(parent, (QtWidgets.QWidget, None))
 
         if len(buttons) > 2:
             raise ValueError('`buttons` must be a tuple of 1 or 2 items.')

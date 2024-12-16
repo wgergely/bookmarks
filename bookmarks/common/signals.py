@@ -101,8 +101,9 @@ class CoreSignals(QtCore.QObject):
     #: Signal called when an item was unarchived
     itemUnarchived = QtCore.Signal(tuple, str)
 
-    #: Signal when saved templates change
+    #: Signal when templates have changed
     templatesChanged = QtCore.Signal()
+
     #: Signal emitted after a template is expanded
     templateExpanded = QtCore.Signal(str)
 

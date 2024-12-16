@@ -336,9 +336,6 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
         str: The resolved thumbnail path.
 
     """
-    for arg in (server, job, root, source):
-        common.check_type(arg, str)
-
     if proxy or common.is_collapsed(source):
         source = common.proxy_path(source)
     name = common.get_hash(source) + '.' + common.thumbnail_format
@@ -360,8 +357,6 @@ def get_placeholder_path(file_path, fallback):
         str: Path to the placeholder image.
 
     """
-    common.check_type(file_path, str)
-
     def _path(r, n):
         return common.rsc(f'{r}/{n}.{common.thumbnail_format}')
 
@@ -508,9 +503,6 @@ def resize_image(image, size):
         QImage: The resized copy of the original image.
 
     """
-    common.check_type(size, (int, float))
-    common.check_type(image, QtGui.QImage)
-
     w = image.width()
     h = image.height()
     factor = float(size) / max(w, h)
@@ -538,11 +530,6 @@ def rsc_pixmap(
         None if the resource couldn't be found.
 
     """
-    common.check_type(name, str)
-    common.check_type(color, (None, QtGui.QColor))
-    common.check_type(size, (None, float, int))
-    common.check_type(opacity, float)
-
     source = common.rsc(f'{resource}/{name}.{common.thumbnail_format}')
 
     if get_path:
@@ -668,8 +655,6 @@ class ImageCache(QtCore.QObject):
             ImageBuf: An `ImageBuf` instance or `None` if the image cannot be read.
 
         """
-        common.check_type(source, str)
-
         if hash is None:
             hash = common.get_hash(source)
         if not force:
@@ -732,8 +717,6 @@ class ImageCache(QtCore.QObject):
             raise RuntimeError(
                 'Cannot create QPixmaps without a gui application.'
             )
-
-        common.check_type(source, str)
 
         app = QtWidgets.QApplication.instance()
         if app and app.thread() != QtCore.QThread.currentThread():
@@ -801,8 +784,6 @@ class ImageCache(QtCore.QObject):
             QImage: The loaded and resized QImage, or `None` if loading fails.
 
         """
-        common.check_type(source, str)
-
         if isinstance(size, float):
             size = int(round(size))
 
@@ -857,8 +838,6 @@ class ImageCache(QtCore.QObject):
             QColor: The cached color, or `None` if not found.
 
         """
-        common.check_type(source, str)
-
         # Check the cache and return the previously stored value if exists
         if hash is None:
             hash = common.get_hash(source)
@@ -925,13 +904,15 @@ class ImageCache(QtCore.QObject):
                 common.image_cache[cache_type][hash] = {}
 
             if cache_type == BufferType:
-                common.check_type(value, OpenImageIO.ImageBuf)
+                if not isinstance(value, OpenImageIO.ImageBuf):
+                    raise TypeError(f'Invalid value type: {type(value)}, expected {type(OpenImageIO.ImageBuf)}.')
 
                 common.image_cache[BufferType][hash] = value
                 return common.image_cache[BufferType][hash]
 
             elif cache_type == ImageType:
-                common.check_type(value, QtGui.QImage)
+                if not isinstance(value, QtGui.QImage):
+                    raise TypeError(f'Invalid value type: {type(value)}, expected {type(QtGui.QImage)}.')
 
                 if size is None:
                     raise ValueError('Invalid size value.')
@@ -943,7 +924,8 @@ class ImageCache(QtCore.QObject):
                 return common.image_cache[cache_type][hash][size]
 
             elif cache_type in (PixmapType, ResourcePixmapType):
-                common.check_type(value, QtGui.QPixmap)
+                if not isinstance(value, QtGui.QPixmap):
+                    raise TypeError(f'Invalid value type: {type(value)}, expected {type(QtGui.QPixmap)}.')
 
                 if not isinstance(size, int):
                     size = int(size)
@@ -952,7 +934,8 @@ class ImageCache(QtCore.QObject):
                 return common.image_cache[cache_type][hash][size]
 
             elif cache_type == ColorType:
-                common.check_type(value, QtGui.QColor)
+                if not isinstance(value, QtGui.QColor):
+                    raise TypeError(f'Invalid value type: {type(value)}, expected {type(QtGui.QColor)}.')
 
                 common.image_cache[ColorType][hash] = value
                 return common.image_cache[ColorType][hash]

@@ -67,9 +67,6 @@ def add_favourite(source_paths, source):
     if not source_paths or not source:
         return
 
-    common.check_type(source_paths, (tuple, list))
-    common.check_type(source, str)
-
     common.favourites[source] = source_paths
     common.settings.set_favourites(common.favourites)
     common.signals.favouriteAdded.emit(source_paths, source)
@@ -85,9 +82,6 @@ def remove_favourite(source_paths, source):
     """
     if not source_paths or not source:
         return
-
-    common.check_type(source_paths, (tuple, list))
-    common.check_type(source, str)
 
     if source not in common.favourites:
         return
@@ -171,8 +165,6 @@ def export_favourites(*args, destination=None):
         destination (str): The path to save the zip file to. Optional.
 
     """
-    common.check_type(destination, (None, str))
-
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
             caption='Save Favourites', filter=f'*.{common.favorite_file_ext}',
@@ -231,7 +223,6 @@ def import_favourites(*args, source=None):
         source (str): Path to a file. Defaults to `None`.
 
     """
-    common.check_type(source, (None, str))
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
             caption='Import Favourites', filter=f'*.{common.favorite_file_ext}'
@@ -1245,8 +1236,6 @@ def execute(index, first=False):
         first (bool): Execute the first item of a collapsed sequence.
 
     """
-    common.check_type(index, (QtCore.QModelIndex, str))
-
     if isinstance(index, str):
         url = QtCore.QUrl.fromLocalFile(index)
         QtGui.QDesktopServices.openUrl(url)

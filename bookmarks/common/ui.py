@@ -618,8 +618,6 @@ def widget(idx=None):
         BaseItemView: A list widget.
 
     """
-    common.check_type(idx, (int, None))
-
     if common.init_mode is None or not common.main_widget:
         raise RuntimeError('Not yet initialized!')
 
@@ -643,8 +641,6 @@ def model(idx=None):
     """
     if common.init_mode is None or not common.main_widget:
         raise RuntimeError('Not yet initialized!')
-
-    common.check_type(idx, (int, None))
     return widget(idx=idx).model()
 
 
@@ -661,7 +657,6 @@ def source_model(idx=None):
         ItemModel: A list widget's source model.
 
     """
-    common.check_type(idx, (int, None))
     return model(idx=idx).sourceModel()
 
 
@@ -675,7 +670,6 @@ def active_index(idx=None):
         QtCore.QModelIndex: The active index.
 
     """
-    common.check_type(idx, (int, None))
     return source_model(idx=idx).active_index()
 
 
@@ -691,8 +685,6 @@ def selected_index(idx=None):
     """
     if common.init_mode is None or not common.main_widget:
         raise RuntimeError('Not yet initialized!')
-
-    common.check_type(idx, (int, None))
     return get_selected_index(widget(idx=idx))
 
 

@@ -134,14 +134,23 @@ class LogView(QtWidgets.QTableView):
             self.setRowHeight(row, self.verticalHeader().defaultSectionSize())
 
 
-class LogWidget(QtWidgets.QWidget):
+class LogWidget(QtWidgets.QDialog):
     """
     Main widget containing a toolbar, and the LogView below.
     Handles timers for automatic updates, filtering, and refresh/clear actions.
     """
 
     def __init__(self, parent=None):
-        super().__init__(parent=parent)
+        super().__init__(
+            parent=parent,
+            f=(
+                    QtCore.Qt.CustomizeWindowHint |
+                    QtCore.Qt.WindowTitleHint |
+                    QtCore.Qt.WindowSystemMenuHint |
+                    QtCore.Qt.WindowMinMaxButtonsHint |
+                    QtCore.Qt.WindowCloseButtonHint
+            )
+        )
 
         self.log_view = None
         self.toolbar = None

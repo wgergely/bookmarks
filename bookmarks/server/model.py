@@ -303,8 +303,11 @@ class ServerModel(QtCore.QAbstractItemModel):
         if not node:
             return None
 
-        if role == QtCore.Qt.FontRole and index.column() > 0:
-            font, _ = common.Font.ThinFont(common.Size.SmallText())
+        if role == QtCore.Qt.FontRole:
+            if index.column() == 0:
+                font, _ = common.Font.BoldFont(common.Size.MediumText())
+            elif index.column() > 0:
+                font, _ = common.Font.ThinFont(common.Size.SmallText())
             return font
 
         if index.column() == 0:

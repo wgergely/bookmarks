@@ -743,15 +743,18 @@ class ServerView(QtWidgets.QTreeView):
 
     def _init_model(self):
         proxy = ServerFilterProxyModel(parent=self)
-        # Ensure the proxy checks indexes carefully
-        # (No special code needed here, but we rely on safe checks)
         proxy.setSourceModel(ServerModel(parent=self))
         self.setModel(proxy)
 
-        self.header().setStretchLastSection(False)
-        self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.header().setStretchLastSection(True)
+        self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Interactive)
         self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Interactive)
         self.header().setSectionResizeMode(2, QtWidgets.QHeaderView.Interactive)
+
+        # Limit section sizes
+        self.header().setMinimumSectionSize(common.Size.Margin(2.0))
+
+        self.header().setSectionsMovable(False)
 
     def _connect_signals(self):
         self.expanded.connect(self.add_expanded)
@@ -784,54 +787,72 @@ class ServerView(QtWidgets.QTreeView):
         common.signals.jobAdded.connect(self.on_job_added)
         common.signals.bookmarksChanged.connect(self.init_data)
 
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.start_resize_timer()
+
     @QtCore.Slot()
     def start_resize_timer(self):
         self.resize_timer.start(self.resize_timer.interval())
 
-    def measure_column_width(self, column):
-        model = self.model()
-        if model is None:
-            return 0
-
-        font = self.font()
-        fm = QtGui.QFontMetrics(font)
-        max_width = 0
-
-        def recurse_index(index, level=0):
-            nonlocal max_width
-            if not index.isValid():
-                return
-
-            if level == 0 or self.isExpanded(index.parent()):
-                data_index = index if column == 0 else index.sibling(index.row(), column)
-                text = model.data(data_index, QtCore.Qt.DisplayRole) or ""
-                text_width = fm.width(text)
-                icon = model.data(index, QtCore.Qt.DecorationRole)
-                icon_width = icon.availableSizes()[0].width() if icon else 0
-                total_width = text_width + icon_width + common.Size.Indicator(2.0)
-                if total_width > max_width:
-                    max_width = total_width
-
-                if self.isExpanded(index):
-                    rows = model.rowCount(index)
-                    for r in range(rows):
-                        child = model.index(r, 0, index)
-                        recurse_index(child, level + 1)
-
-        top_count = model.rowCount(QtCore.QModelIndex())
-        for i in range(top_count):
-            top_index = model.index(i, 0, QtCore.QModelIndex())
-            recurse_index(top_index, 0)
-
-        return max_width
-
     @QtCore.Slot()
     def resize_to_contents(self, *args, **kwargs):
+        max_section_width = self.rect().width() - common.Size.Margin(1.0)
+        self.header().setMaximumSectionSize(max_section_width)
+
+        fonts = {
+            0: self.model().data(self.model().index(0, 0), QtCore.Qt.FontRole),
+            1: self.model().data(self.model().index(0, 1), QtCore.Qt.FontRole),
+            2: self.model().data(self.model().index(0, 2), QtCore.Qt.FontRole),
+        }
+        _metrics = {k: QtGui.QFontMetrics(v) for k, v in fonts.items()}
+
         for column in range(self.model().columnCount()):
-            if self.header().sectionResizeMode(column) == QtWidgets.QHeaderView.Stretch:
-                continue
-            width = self.measure_column_width(column)
-            self.header().resizeSection(column, width)
+            indent = 0
+            max_width = 0
+
+            metrics = _metrics[column]
+
+            server_indexes = [self.model().index(i, column) for i in range(self.model().rowCount()) if
+                              self.model().index(i, 0).isValid()]
+
+            _max_width = [metrics.width(self.model().data(i, QtCore.Qt.DisplayRole)) for i in server_indexes]
+            _max_width = max(_max_width) if _max_width else 0
+            if column == 0:
+                max_width = max(max_width, _max_width + common.Size.Margin(1.0))
+            else:
+                max_width = max(max_width, _max_width)
+
+            for server_index in server_indexes:
+                count = self.model().rowCount(server_index)
+                job_indexes = [self.model().index(i, column, server_index) for i in range(count) if
+                               self.model().index(i, 0, server_index).isValid() and self.isExpanded(server_index)]
+
+                _max_width = [metrics.width(self.model().data(i, QtCore.Qt.DisplayRole)) for i in job_indexes]
+                _max_width = max(_max_width) if _max_width else 0
+                if column == 0:
+                    max_width = max(max_width, _max_width + common.Size.Margin(1.0))
+                else:
+                    max_width = max(max_width, _max_width)
+
+                for job_index in job_indexes:
+                    count = self.model().rowCount(job_index)
+                    link_indexes = [self.model().index(i, column, job_index) for i in range(count) if
+                                    self.model().index(i, 0, job_index).isValid() and self.isExpanded(job_index)]
+
+                    _max_width = [metrics.width(self.model().data(i, QtCore.Qt.DisplayRole)) for i in link_indexes]
+                    _max_width = max(_max_width) if _max_width else 0
+                    if column == 0:
+                        max_width = max(max_width, _max_width + common.Size.Margin(1.0))
+                    else:
+                        max_width = max(max_width, _max_width)
+
+            max_width += common.Size.Margin(1.0)
+            max_width += common.Size.Indicator(4.0)
+            if column == 0:
+                max_width += common.Size.Margin(2.0)
+
+            self.setColumnWidth(column, max_width)
 
     @QtCore.Slot(str, str)
     def on_job_added(self, server, job):
@@ -1086,11 +1107,11 @@ class ServerView(QtWidgets.QTreeView):
     @QtCore.Slot()
     def remove_all_servers(self):
         if common.show_message(
-            'Are you sure you want to remove all servers?',
-            body='This action cannot be undone.',
-            message_type='error',
-            buttons=[common.YesButton, common.NoButton],
-            modal=True,
+                'Are you sure you want to remove all servers?',
+                body='This action cannot be undone.',
+                message_type='error',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True,
         ) == QtWidgets.QDialog.Rejected:
             return
 
@@ -1222,7 +1243,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(
             parent=parent,
-            f = (
+            f=(
                     QtCore.Qt.CustomizeWindowHint |
                     QtCore.Qt.WindowTitleHint |
                     QtCore.Qt.WindowSystemMenuHint |

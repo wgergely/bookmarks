@@ -525,16 +525,29 @@ QHeaderView {
 
 QHeaderView::section {
     padding-left: <Margin@1.0>px;
+    height: <RowHeight@0.6>px;
     background-color: <Transparent>;
-    color: <Background>;
+    color: <DisabledText>;
+    font-size: <SmallText@1.0>px;
+    font-family: "<LightFont>";
     border: none;
     border-right: <Separator@1.0>px solid <Transparent>;
 }
 
-QHeaderView::section:down-arrow,
+QHeaderView::section:down-arrow {
+    image: none;
+}
 QHeaderView::section:up-arrow {
     image: none;
 }
+
+QHeaderView::up-arrow {
+    image: none;
+}
+QHeaderView::down-arrow {
+    image: none;
+}
+
 
 QLabel {
     font-size: <MediumText@1.0>px;

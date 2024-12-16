@@ -102,7 +102,8 @@ def _init_stylesheet():
             # Image path
             kwargs[key] = images.rsc_pixmap(key, None, None, get_path=True)
 
-    # Custom Image Data
+    # ==============================================================================================================
+    # Custom Icons
     pixmap = images.rsc_pixmap(
         'server',
         QtGui.QColor(0, 0, 0, 255),
@@ -120,6 +121,26 @@ def _init_stylesheet():
     )
     pixmap.save(f'{common.temp_path()}/BookmarkItemView.png')
     kwargs[f'BookmarkItemView'] = f'{common.temp_path()}/BookmarkItemView.png'
+
+    pixmap = images.rsc_pixmap(
+        'branch_up',
+        common.Color.SecondaryText(),
+        common.Size.Margin(0.4),
+        opacity=0.8
+    )
+    pixmap.save(f'{common.temp_path()}/ArrowDown.png')
+    kwargs[f'ArrowDown'] = f'{common.temp_path()}/ArrowDown.png'
+
+    pixmap = images.rsc_pixmap(
+        'branch_open',
+        common.Color.SecondaryText(),
+        common.Size.Margin(0.4),
+        opacity=0.8
+    )
+    pixmap.save(f'{common.temp_path()}/ArrowUp.png')
+    kwargs[f'ArrowUp'] = f'{common.temp_path()}/ArrowUp.png'
+
+    # ==============================================================================================================
 
     # Tokens are defined as "<token>" in the stylesheet file
     for match in re.finditer(r'<(.*?)>', qss):

@@ -218,6 +218,11 @@ class ServerModel(QtCore.QAbstractItemModel):
     """
     row_size = QtCore.QSize(1, common.Size.RowHeight(0.8))
 
+    #: Fetch signals
+    fetchAboutToStart = QtCore.Signal()
+    fetchInProgress = QtCore.Signal(str)
+    fetchFinished = QtCore.Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._root_node = None
@@ -306,7 +311,7 @@ class ServerModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.FontRole:
             if index.column() == 0:
                 font, _ = common.Font.BoldFont(common.Size.MediumText())
-            elif index.column() > 0:
+            else:
                 font, _ = common.Font.ThinFont(common.Size.SmallText())
             return font
 
@@ -410,6 +415,9 @@ class ServerModel(QtCore.QAbstractItemModel):
 
     def fetchMore(self, parent):
         node = parent.internalPointer()
+        nth = 13
+        n = 0
+
         if not node or (node.type != NodeType.LinkNode and node.children_fetched):
             return
         if not self.canFetchMore(parent):
@@ -417,72 +425,86 @@ class ServerModel(QtCore.QAbstractItemModel):
 
         if node.type == NodeType.RootNode:
             return
+        try:
+            self.fetchAboutToStart.emit()
 
-        if node.type == NodeType.ServerNode:  # fetch jobs
-            root_path = node.path()
+            if node.type == NodeType.ServerNode:  # fetch jobs
+                root_path = node.path()
 
-            def _it(path, depth):
-                depth += 1
-                if depth > self._job_style:
-                    return
-                with os.scandir(path) as it:
-                    for entry in it:
-                        if not entry.is_dir():
-                            continue
-                        if entry.name[0] in {'.', '$'}:
-                            continue
-                        if entry.name in templates_lib.template_file_blacklist:
-                            continue
-                        if not os.access(entry.path, os.R_OK | os.W_OK):
-                            log.error(__name__, f'No access to {entry.path}')
-                            continue
-                        p = entry.path.replace('\\', '/')
-                        rel_path = p.replace(root_path, '').strip('/')
-                        if depth == self._job_style:
-                            yield rel_path
-                        abs_path = entry.path.replace('\\', '/')
-                        images.ImageCache.flush(abs_path)
-                        yield from _it(entry.path, depth)
+                def _it(path, depth):
+                    nonlocal n
+                    n = n + 1
+                    depth += 1
 
-            current_job_names = [child.job for child in node.children()]
-            new_job_names = sorted([job_path for job_path in _it(root_path, -1)], key=lambda s: s.lower())
-            missing_job_names = set(new_job_names) - set(current_job_names)
+                    if depth > self._job_style:
+                        return
+                    with os.scandir(path) as it:
+                        for entry in it:
+                            if not entry.is_dir():
+                                continue
+                            if entry.name[0] in {'.', '$'}:
+                                continue
+                            if entry.name in templates_lib.template_file_blacklist:
+                                continue
+                            if not os.access(entry.path, os.R_OK | os.W_OK):
+                                log.error(__name__, f'No access to {entry.path}')
+                                continue
+                            p = entry.path.replace('\\', '/')
+                            rel_path = p.replace(root_path, '').strip('/')
+                            if depth == self._job_style:
+                                yield rel_path
+                            abs_path = entry.path.replace('\\', '/')
+                            images.ImageCache.flush(abs_path)
 
-            for job_path in missing_job_names:
-                if job_path in [f.job for f in node.children()]:
-                    continue
-                current_job_names.append(job_path)
-                current_job_names = sorted(current_job_names, key=lambda s: s.lower())
-                idx = current_job_names.index(job_path)
-                self.beginInsertRows(parent, idx, idx)
-                job_node = Node(server=node.server, job=job_path, parent=node)
-                node.insert_child(idx, job_node)
-                self.endInsertRows()
-                if os.path.exists(f'{node.server}/{job_path}/.links'):
-                    job_node.job_candidate = True
+                            if n % nth == 0:
+                                self.fetchInProgress.emit(f'Parsing...')
 
-        if node.type == NodeType.JobNode:  # fetch links
-            if node.job_candidate:
-                api = LinksAPI(node.path())
-                links = api.get(force=True)
-                bookmarks = [v['root'] for v in common.bookmarks.values()
-                             if v['server'] == node.server and v['job'] == node.job]
-                links += bookmarks
-                links = sorted(set(links), key=lambda s: s.lower())
+                            yield from _it(entry.path, depth)
 
-                if node.children():
-                    self.beginRemoveRows(parent, 0, len(node.children()) - 1)
-                    node.children().clear()
-                    self.endRemoveRows()
+                current_job_names = [child.job for child in node.children()]
+                new_job_names = sorted([job_path for job_path in _it(root_path, -1)], key=lambda s: s.lower())
+                missing_job_names = set(new_job_names) - set(current_job_names)
 
-                self.beginInsertRows(parent, 0, len(links) - 1)
-                for link in links:
-                    if link in [f.root for f in node.children()]:
+                for job_path in missing_job_names:
+                    if job_path in [f.job for f in node.children()]:
                         continue
-                    link_node = Node(server=node.server, job=node.job, root=link, parent=node)
-                    link_node.exists()
-                    node.append_child(link_node)
-                self.endInsertRows()
+
+                    current_job_names.append(job_path)
+                    current_job_names = sorted(current_job_names, key=lambda s: s.lower())
+                    idx = current_job_names.index(job_path)
+                    self.beginInsertRows(parent, idx, idx)
+                    job_node = Node(server=node.server, job=job_path, parent=node)
+                    node.insert_child(idx, job_node)
+                    self.endInsertRows()
+                    if os.path.exists(f'{node.server}/{job_path}/.links'):
+                        job_node.job_candidate = True
+
+            if node.type == NodeType.JobNode:  # fetch links
+                if node.job_candidate:
+                    api = LinksAPI(node.path())
+                    links = api.get(force=True)
+                    bookmarks = [v['root'] for v in common.bookmarks.values()
+                                 if v['server'] == node.server and v['job'] == node.job]
+                    links += bookmarks
+                    links = sorted(set(links), key=lambda s: s.lower())
+
+                    if node.children():
+                        self.beginRemoveRows(parent, 0, len(node.children()) - 1)
+                        node.children().clear()
+                        self.endRemoveRows()
+
+                    self.beginInsertRows(parent, 0, len(links) - 1)
+                    for link in links:
+                        if link in [f.root for f in node.children()]:
+                            continue
+
+                        link_node = Node(server=node.server, job=node.job, root=link, parent=node)
+                        link_node.exists()
+                        node.append_child(link_node)
+
+                    self.endInsertRows()
+        finally:
+            self.fetchFinished.emit()
 
         node.children_fetched = True
         self.dataChanged.emit(parent, parent)

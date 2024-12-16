@@ -1239,6 +1239,83 @@ class ServerView(QtWidgets.QTreeView):
         )
 
 
+class ProgressBar(QtWidgets.QWidget):
+    showProgress = QtCore.Signal()
+    progress = QtCore.Signal(str)
+    hideProgress = QtCore.Signal()
+
+    def __init__(self, show_msg=False, nth=171, parent=None):
+        super().__init__(parent=parent)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+
+        if not show_msg:
+            self.setFixedHeight(common.Size.Indicator(1.0))
+        else:
+            self.setFixedHeight(common.Size.Margin(1.0))
+
+        self._show_msg = show_msg
+        self._nth = nth
+        self._progress = 0
+        self._message = ''
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        pass
+
+    def _connect_signals(self):
+        pass
+
+    def paintEvent(self, event):
+        painter = QtGui.QPainter(self)
+        width = self.width()
+
+        current_progress = self._progress % self._nth
+        progress_width = width * (current_progress / self._nth)
+
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(common.Color.Green())
+
+        opacity = 1.0 * (float(current_progress) / float(self._nth))
+        painter.setOpacity(opacity)
+
+        rect = QtCore.QRect(0, 0, progress_width, self.height())
+        o = common.Size.Indicator(0.5)
+        painter.drawRoundedRect(rect, o, o)
+
+        if self._show_msg:
+            painter.setPen(common.Color.Text())
+            painter.drawText(rect, QtCore.Qt.AlignCenter, self._message)
+
+        painter.end()
+
+    @QtCore.Slot()
+    def start(self):
+        self._message = 'Please wait...'
+        self._progress = 0
+        self.update()
+        QtWidgets.QApplication.instance().setOverrideCursor(QtCore.Qt.WaitCursor)
+
+    @QtCore.Slot()
+    def stop(self):
+        self._message = ''
+        self._progress = 0
+        self.update()
+        QtWidgets.QApplication.instance().restoreOverrideCursor()
+
+    @QtCore.Slot(str)
+    def progress(self, msg):
+        self._message = msg
+        self._progress += 1
+        self.update()
+        QtWidgets.QApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
+
+
+
 class ServerEditorDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(
@@ -1257,6 +1334,8 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.filter_toolbar = None
         self.text_filter_editor = None
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+        self.fetch_progress_bar = None
         self.server_view = None
         self.preview_widget = None
 
@@ -1358,6 +1437,10 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.filter_toolbar.addWidget(self.text_filter_editor)
         self.layout().addWidget(self.filter_toolbar, 1)
 
+        # Fetch progress bar
+        self.fetch_progress_bar = ProgressBar(show_msg=False, parent=self)
+        self.layout().addWidget(self.fetch_progress_bar, 1)
+
         splitter = QtWidgets.QSplitter(parent=self)
         splitter.setOrientation(QtCore.Qt.Horizontal)
         splitter.addWidget(self.server_view)
@@ -1372,6 +1455,23 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.ok_button = ui.PaintedButton('Done', parent=self)
         row.layout().addWidget(self.ok_button, 1)
 
+    def _connect_signals(self):
+        self.server_view.bookmarkNodeSelected.connect(self.preview_widget.bookmark_node_changed)
+        self.preview_widget.selectionChanged.connect(self.server_view.on_link_added)
+        self.ok_button.clicked.connect(self.accept)
+
+        cnx = QtCore.Qt.QueuedConnection
+        cnx = QtCore.Qt.DirectConnection
+        self.server_view.model().sourceModel().fetchAboutToStart.connect(self.fetch_progress_bar.start, type=cnx)
+        self.server_view.model().sourceModel().fetchInProgress.connect(self.fetch_progress_bar.progress, type=cnx)
+        self.server_view.model().sourceModel().fetchFinished.connect(self.fetch_progress_bar.stop, type=cnx)
+
+    def sizeHint(self):
+        return QtCore.QSize(
+            common.Size.DefaultWidth(2.0),
+            common.Size.DefaultHeight(1.5)
+        )
+
     @common.error
     @common.debug
     @QtCore.Slot()
@@ -1384,14 +1484,3 @@ class ServerEditorDialog(QtWidgets.QDialog):
             self.server_view.add_job()
         elif node.type == NodeType.JobNode:
             self.server_view.add_link()
-
-    def _connect_signals(self):
-        self.server_view.bookmarkNodeSelected.connect(self.preview_widget.bookmark_node_changed)
-        self.preview_widget.selectionChanged.connect(self.server_view.on_link_added)
-        self.ok_button.clicked.connect(self.accept)
-
-    def sizeHint(self):
-        return QtCore.QSize(
-            common.Size.DefaultWidth(2.0),
-            common.Size.DefaultHeight(1.5)
-        )

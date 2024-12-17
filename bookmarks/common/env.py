@@ -1,7 +1,16 @@
 """Utility methods and classes used to parse environment values.
 
-Mainly used to get binary paths, such as ffmpeg.
+These utilities are mainly used to determine the paths of external binaries
+needed by the app (for example, ffmpeg, rv, oiiotool). The resolution order
+for binary paths is as follows:
 
+1. Active bookmark item settings, if available
+2. User settings as set by the user preferences
+3. Distribution folder's `bin` directory
+4. Environment variables in the `BOOKMARKS_<BINARY_NAME>` format
+5. System PATH lookup, via `shutil.which`
+
+If a binary can't be found using any of these methods, `None` is returned.
 """
 import functools
 import os
@@ -9,6 +18,15 @@ import re
 import shutil
 
 from PySide2 import QtCore, QtWidgets
+
+from . import common
+
+__all__ = [
+    'external_binaries',
+    'get_binary',
+    'get_user_setting',
+    'EnvPathEditor',
+]
 
 external_binaries = (
     'ffmpeg',
@@ -18,162 +36,151 @@ external_binaries = (
 )
 
 
+def _to_forward_slashes(path):
+    if not path:
+        return None
+    return path.replace('\\', '/')
+
+
 def get_binary(binary_name):
-    """Binary path getter.
+    """Get a path to an external binary used by the app.
 
-    The paths are resolved from the following sources and order:
-        - active bookmark item's app launcher items
-        - distribution folder's bin directory
-        - user settings
-        - environment variables in a ``{PREFIX}_{BINARY_NAME}`` format,
-        for example, ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
-        should point to an appropriate executable, for example
-        ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
+    The binary name is sanitized (lowercased, spaces removed) before searching.
 
-        If the environment variable is absent, look at the PATH environment to
-        see if the binary is available there.
+    Resolution order:
+        1. Active bookmark item's app settings.
+        2. User settings (`bin_<binary_name>`).
+        3. Distribution folder's `bin` directory (if `Bookmarks_ROOT` is set).
+        4. Environment variable `BOOKMARKS_<BINARY_NAME>`.
+        5. System PATH lookup.
 
     Args:
-        binary_name (str): Name of a binary, lower-case, without spaces. For example, `aftereffects`, `oiiotool`.
+        binary_name (str): Name of the binary, for example, 'ffmpeg' or 'oiiotool'.
 
     Returns:
-        str: Path to an executable binary, or `None` if the binary isn't found in any of the sources.
-
+        str or None: The absolute path to the binary if found, otherwise None.
     """
-    # Sanitize the binary name
+    from .. import database
+    from . import common
+
+    # Normalize the binary name
     binary_name = re.sub(r'\s+', '', binary_name).lower().strip()
 
-    # Check the active bookmark item's database for possible values
-    from .. import database
-    from .. import common
-
+    # Check active bookmark DB
     args = common.active('root', args=True)
-
     if args:
         db = database.get(*args)
         applications = db.value(db.source(), 'applications', database.BookmarkTable)
         if applications:
-            # Sanitize names, so they're all lower-case and without spaces
             names = [re.sub(r'\s+', '', v['name']).lower().strip() for v in applications.values()]
             if binary_name in names:
-                v = applications[names.index(binary_name)]['path']
-                if v and QtCore.QFileInfo(v).exists():
-                    return v
+                idx = names.index(binary_name)
+                path_from_db = applications[idx]['path']
+                if path_from_db and QtCore.QFileInfo(path_from_db).exists():
+                    return _to_forward_slashes(path_from_db)
 
-    # Check the user settings for possible values
-    v = get_user_setting(binary_name)
-    if v and QtCore.QFileInfo(v).exists():
-        return v
+    # Check user settings
+    user_path = get_user_setting(binary_name)
+    if user_path and QtCore.QFileInfo(user_path).exists():
+        return _to_forward_slashes(user_path)
 
-
-    # Check the distribution folder for possible values
+    # Check distribution folder
     root = os.environ.get('Bookmarks_ROOT', None)
-
     if root and QtCore.QFileInfo(root).exists():
-        bin_dir = QtCore.QFileInfo(f'{root}/bin')
+        bin_dir = QtCore.QFileInfo(os.path.join(root, 'bin'))
         if bin_dir.exists():
             with os.scandir(bin_dir.filePath()) as it:
                 for entry in it:
                     try:
                         if not entry.is_file():
                             continue
-                    except:
+                    except OSError:
                         continue
+                    pattern = rf'^{binary_name}$|{binary_name}\..+'
+                    if re.match(pattern, entry.name, flags=re.IGNORECASE):
+                        return _to_forward_slashes(QtCore.QFileInfo(entry.path).filePath())
 
-                    match = re.match(
-                        rf'^{binary_name}$|{binary_name}\..+',
-                        entry.name,
-                        flags=re.IGNORECASE
-                    )
-                    if match:
-                        return QtCore.QFileInfo(entry.path).filePath()
-
-    # Check the environment variables for possible values
+    # Check environment variable
+    from . import common
     key = f'{common.product}_{binary_name}'.upper()
-    v = os.environ.get(key, None)
-    if v and QtCore.QFileInfo(v).exists():
-        return QtCore.QFileInfo(v).filePath()
+    env_path = os.environ.get(key, None)
+    if env_path and QtCore.QFileInfo(env_path).exists():
+        return _to_forward_slashes(QtCore.QFileInfo(env_path).filePath())
 
-    # Check the PATH environment for possible values
-    v = shutil.which(binary_name)
-    return v
+    # Check system PATH
+    found = shutil.which(binary_name)
+    if found:
+        return _to_forward_slashes(found)
+    return None
 
 
 def get_user_setting(binary_name):
-    """Check if there's a corresponding user setting for the given binary name.
+    """Retrieve a user-defined binary path from the application settings.
 
-    The user settings are stored using the binary name prefixed with a 'bin',
-    like so: `bin_ffmpeg`.
+    The setting key is expected in the format: 'settings/bin_<binary_name>'.
 
     Args:
-        binary_name (str): The name of the binary.
+        binary_name (str): Name of the binary.
 
     Returns:
-        str: Path to a binary or None if there's no value found.
-
+        str or None: The stored path if found and valid, otherwise None.
     """
     from . import common
     key = f'settings/bin_{binary_name}'
     v = common.settings.value(key)
     if not v:
-        return
-
-    file_info = QtCore.QFileInfo(v)
-    if isinstance(v, str) and v and file_info.exists():
-        return file_info.filePath()
+        return None
+    if isinstance(v, str) and v and QtCore.QFileInfo(v).exists():
+        return _to_forward_slashes(QtCore.QFileInfo(v).filePath())
     return None
 
 
 class EnvPathEditor(QtWidgets.QWidget):
-    """Utility widget used to edit the binary paths.
+    """A widget that allows users to edit and set paths for external binaries.
 
+    This widget dynamically creates a row per external binary, consisting of:
+    - A line edit for the binary path
+    - A "Pick" button to choose a path via file dialog
+    - A "Reveal" button to show the binary location in the system's file explorer
     """
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum,
         )
-
         self._create_ui()
         self._connect_signals()
-
         self.init_data()
 
     def _create_ui(self):
-        """Create ui.
-
-        """
+        """Create the user interface elements."""
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
         from .. import ui
-        from .. import common
+        from . import common
         common.set_stylesheet(self)
 
         for name in external_binaries:
             row = ui.add_row(name, parent=self)
-
             editor = ui.LineEdit(parent=row)
-            editor.setPlaceholderText(f'Path to {name}.exe...')
+            editor.setPlaceholderText(f'Path to {name}...')
             row.layout().addWidget(editor, 1)
 
-            button1 = ui.PaintedButton('Pick', parent=row)
-            row.layout().addWidget(button1, 0)
-            button2 = ui.PaintedButton('Reveal', parent=row)
-            row.layout().addWidget(button2, 0)
+            button_pick = ui.PaintedButton('Pick', parent=row)
+            row.layout().addWidget(button_pick, 0)
+            button_reveal = ui.PaintedButton('Reveal', parent=row)
+            row.layout().addWidget(button_reveal, 0)
 
             setattr(self, f'{name}_editor', editor)
-            setattr(self, f'{name}_button1', button1)
-            setattr(self, f'{name}_button2', button2)
+            setattr(self, f'{name}_button1', button_pick)
+            setattr(self, f'{name}_button2', button_reveal)
 
     def _connect_signals(self):
-        """Connect signals.
-
-        """
+        """Connect widget signals to their handlers."""
         from . import common
         for name in external_binaries:
             if not name:
@@ -183,57 +190,55 @@ class EnvPathEditor(QtWidgets.QWidget):
                 functools.partial(common.settings.setValue, f'settings/bin_{name}')
             )
 
-            button1 = getattr(self, f'{name}_button1')
-            button1.clicked.connect(functools.partial(self.pick, name))
-            button2 = getattr(self, f'{name}_button2')
-            button2.clicked.connect(functools.partial(self.reveal, name))
+            button_pick = getattr(self, f'{name}_button1')
+            button_pick.clicked.connect(functools.partial(self.pick, name))
+
+            button_reveal = getattr(self, f'{name}_button2')
+            button_reveal.clicked.connect(functools.partial(self.reveal, name))
 
     @QtCore.Slot(str)
+    @common.error(show_error=True)
     def pick(self, name):
-        """Pick a binary file from the file explorer.
+        """Open a file dialog to select a binary file.
 
-        """
-        from . import common
-
-        editor = getattr(self, f'{name}_editor')
-        f = f'{name}.exe' if common.get_platform() == common.PlatformWindows else \
-            '*.*'
-        res = QtWidgets.QFileDialog.getOpenFileName(
-            caption=f'Select {name} executable...',
-            filter=f,
-            dir='/'
-        )
-        path, _ = res
-        if not path:
-            return
-        editor.setText(path)
-
-    @QtCore.Slot(str)
-    def reveal(self, name):
-        """Reveal a binary file in the file explorer.
+        If the user cancels the dialog, no changes are made.
 
         Args:
-            name (str): The name of the binary file to be revealed.
+            name (str): The binary name being set.
+        """
+        from . import common
+        editor = getattr(self, f'{name}_editor')
+        file_filter = f'{name}.exe' if common.get_platform() == common.PlatformWindows else '*.*'
+        selected, _ = QtWidgets.QFileDialog.getOpenFileName(
+            caption=f'Select {name} executable...',
+            filter=file_filter,
+            dir='/'
+        )
+        if selected:
+            editor.setText(_to_forward_slashes(selected))
 
+    @QtCore.Slot(str)
+    @common.error(show_error=True)
+    def reveal(self, name):
+        """Show the selected binary in the file explorer if it exists.
+
+        Args:
+            name (str): The binary name being revealed.
         """
         from .. import actions
         editor = getattr(self, f'{name}_editor')
         v = editor.text()
-        if not v:
-            return
-        if not QtCore.QFileInfo(v).exists():
-            return
-        actions.reveal(editor.text())
+        if v and QtCore.QFileInfo(v).exists():
+            actions.reveal(v)
 
+    @common.debug
     def init_data(self):
-        """Initializes data.
-
-        """
+        """Initialize editors with existing binary paths if available."""
         for name in external_binaries:
-            v = get_binary(name)
             if not name:
                 continue
+            current_path = get_binary(name)
             editor = getattr(self, f'{name}_editor')
             editor.blockSignals(True)
-            editor.setText(v)
+            editor.setText(current_path if current_path else '')
             editor.blockSignals(False)

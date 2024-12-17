@@ -1,6 +1,13 @@
 """Common attributes, methods and flag values.
 
+This module provides shared constants, enumerations, and utility functions across the application.
+It includes decorators for error handling and debugging, platform detection, file path helpers,
+and various enumerations for UI scaling, fonts, and colors.
+
+References:
+    :class:`~bookmarks.common.setup.initialize`
 """
+
 import enum
 import functools
 import inspect
@@ -62,14 +69,15 @@ thumbnail_format = 'png'
 
 
 class Mode(enum.IntEnum):
-    """Startup mode enums used by :class:`~bookmarks.common.setup.initialize`
+    """Startup mode enums used by :class:`~bookmarks.common.setup.initialize`.
 
+    Attributes:
+        Core (int): Startup mode when bookmarks is called as a library.
+        Embedded (int): Startup mode used when `Bookmarks` runs embedded in a host DCC.
+        Standalone (int): Startup mode when `Bookmarks` is running as a standalone Qt app.
     """
-    #: Startup mode when bookmarks is called as a library
     Core = 0
-    #: Startup mode used when `Bookmarks` runs embedded in a host DCC.
     Embedded = 1
-    #: Startup mode when `Bookmarks` is running as a standalone Qt app
     Standalone = 2
 
 
@@ -96,6 +104,9 @@ SequenceItem = 1200
 
 def idx_func():
     """A simple number generator similar to itertools.count().
+
+    Returns:
+        function: A closure that returns an incremented integer each time it's called.
     """
     _num = -1
     _start = -1
@@ -106,9 +117,7 @@ def idx_func():
 
         Args:
             reset (bool, optional): If True, reset the counter to the start value.
-                                    Defaults to False.
-            start (int, optional): If provided, set a new start value.
-                                       Defaults to None.
+            start (int, optional): If provided, sets a new start value.
 
         Returns:
             int: The current counter value.
@@ -128,61 +137,33 @@ def idx_func():
 #: The index function used to generate index values across the application.
 idx = idx_func()
 
-#: List item role used to store favourite, archived, etc. flags.
+#: List item roles used across the UI
 FlagsRole = QtCore.Qt.ItemDataRole(idx(reset=True, start=QtCore.Qt.UserRole + 4096))
-#: List item role used to store the item's file path.
 PathRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role used to store the item's parent path.
 ParentPathRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role used to store the item's description.
 DescriptionRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role used to filter against
 FilterTextRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for the number of notes attached to the item.
 NoteCountRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for the number of assets attached to the item.
 AssetCountRole = QtCore.Qt.ItemDataRole(idx())
-
-#: List item role for storing file information.
 FileDetailsRole = QtCore.Qt.ItemDataRole(idx())
-
-#: List item role for getting the get_sequence() regex match results.
 SequenceRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for getting an item's number of frames.
 FramesRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role to indicate if the item has been fully loaded.
 FileInfoLoaded = QtCore.Qt.ItemDataRole(idx())
-#: List item role to indicate if the item's thumbnail has been loaded.
 ThumbnailLoaded = QtCore.Qt.ItemDataRole(idx())
-#: A file item role to indicate a sequence item's first path
 StartPathRole = QtCore.Qt.ItemDataRole(idx())
-#: A file item role to indicate a sequence item's last path
 EndPathRole = QtCore.Qt.ItemDataRole(idx())
-#: A list item role to access the DirEntry instances associated with the item
 EntryRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for getting the item's persistent id.
 IdRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for getting the item's thread queue
 QueueRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for getting the item's data type (sequence or file)
 DataTypeRole = QtCore.Qt.ItemDataRole(idx())
-#: List item role for getting the container data dictionary
 DataDictRole = QtCore.Qt.ItemDataRole(idx())
-#: The view tab associated with the item
 ItemTabRole = QtCore.Qt.ItemDataRole(idx())
-#: Data used to sort the items by name
 SortByNameRole = QtCore.Qt.ItemDataRole(idx())
-#: Data used to sort the items by date
 SortByLastModifiedRole = QtCore.Qt.ItemDataRole(idx())
-#: Data used to sort the items by size
 SortBySizeRole = QtCore.Qt.ItemDataRole(idx())
-#: Data used to sort the items by type
 SortByTypeRole = QtCore.Qt.ItemDataRole(idx())
-#: Item linkage status
 SGLinkedRole = QtCore.Qt.ItemDataRole(idx())
-#: The progress tracking data linked with the item
 AssetProgressRole = QtCore.Qt.ItemDataRole(idx())
-#: The asset link file path
 AssetLinkRole = QtCore.Qt.ItemDataRole(idx())
 
 DEFAULT_SORT_VALUES = {
@@ -199,6 +180,8 @@ TemplateResource = 'templates'
 
 
 class Font(enum.Enum):
+    """Enumeration of font names."""
+
     BlackFont = 'Inter Black'
     BoldFont = 'Inter SemiBold'
     MediumFont = 'Inter'
@@ -206,11 +189,21 @@ class Font(enum.Enum):
     ThinFont = 'Inter Light'
 
     def __call__(self, size):
+        """
+        Returns a QFont object for the given size and this font enum.
+
+        Args:
+            size (float|int): The desired font size.
+
+        Returns:
+            QFont: The font object.
+        """
         from .. import common
         return common.font_db.get(size, self)
 
 
 class Size(enum.Enum):
+    """Enumeration of size values used for UI scaling."""
     SmallText = 11.0
     MediumText = 12.0
     LargeText = 16.0
@@ -234,34 +227,45 @@ class Size(enum.Enum):
         return super().__eq__(other)
 
     def __call__(self, multiplier=1.0, apply_scale=True):
+        """
+        Returns the scaled size value.
+
+        Args:
+            multiplier (float): A multiplier to apply to the size.
+            apply_scale (bool): If True, applies UI scaling factors.
+
+        Returns:
+            int: The scaled size.
+        """
         if apply_scale:
             return round(self.value * float(multiplier))
         return round(self._value_ * float(multiplier))
 
     @property
     def value(self):
+        """float: The scaled size value."""
         return self.size(self._value_)
 
     @classmethod
     def size(cls, value):
+        """Scale a value by DPI and UI scale factor."""
         from ..common import ui_scale_factor, dpi
         return round(float(value) * (float(dpi) / 72.0)) * float(ui_scale_factor)
 
 
 class Color(enum.Enum):
+    """Enumeration of colors used across the UI."""
+
     Opaque = (0, 0, 0, 30)
     Transparent = (0, 0, 0, 0)
-    #
     VeryDarkBackground = (40, 40, 40)
     DarkBackground = (65, 65, 65)
     Background = (85, 85, 85)
     LightBackground = (120, 120, 120)
-    #
     DisabledText = (145, 145, 145)
     SecondaryText = (185, 185, 185)
     Text = (225, 225, 225)
     SelectedText = (255, 255, 255)
-    #
     Blue = (88, 138, 180)
     LightBlue = (50, 50, 195, 180)
     MediumBlue = (66, 118, 160, 180)
@@ -285,6 +289,15 @@ class Color(enum.Enum):
         return obj
 
     def __call__(self, qss=False):
+        """
+        Returns a QColor or CSS rgba string.
+
+        Args:
+            qss (bool): If True, returns a CSS rgba string suitable for QSS.
+
+        Returns:
+            QColor or str: A QColor instance if qss=False, otherwise a CSS rgba string.
+        """
         v = QtGui.QColor(*self._value_)
         if not qss:
             return v
@@ -292,13 +305,15 @@ class Color(enum.Enum):
 
     @staticmethod
     def rgb(color):
+        """Returns the CSS rgba string for a QColor."""
         rgb = [str(f) for f in color.getRgb()]
         return f'rgba({",".join(rgb)})'
 
 
-
 def error(func=None, *, show_error=True):
     """Function decorator used to handle errors.
+
+    This decorator logs exceptions and optionally shows a UI error dialog.
 
     Usage:
         @error
@@ -317,10 +332,10 @@ def error(func=None, *, show_error=True):
         def func_wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except:
+            except Exception:  # Changed to Exception for safer exception handling
                 exc_type, exc_value, exc_traceback = sys.exc_info()
 
-                # Trim frames introduced by this and other decorators
+                # Trim frames introduced by wrappers
                 if exc_traceback:
                     while exc_traceback and 'wrapper' in exc_traceback.tb_frame.f_code.co_name:
                         exc_traceback = exc_traceback.tb_next
@@ -365,19 +380,15 @@ def error(func=None, *, show_error=True):
                 trace = '.'.join([f for f in trace if f])
                 trace = trace + '()' if trace else 'unknown()'
 
-                # Get full traceback similar to Python's default exception printing
                 tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
                 if not tb_str.strip():
                     tb_str = f'Error occurred at {caller_module_name}:{trace}'
 
-                # Log the full traceback stack, line-by-line if needed
                 for line in tb_str.splitlines():
                     log.error(caller_module_name, line)
 
-                # Show UI error if allowed
                 if show_error:
                     app = QtWidgets.QApplication.instance()
-                    # Show the full traceback in the UI message for consistency
                     if app and QtCore.QThread.currentThread() == app.thread():
                         common.show_message(
                             'Error',
@@ -393,17 +404,13 @@ def error(func=None, *, show_error=True):
         return func_wrapper
 
     if func is not None and callable(func):
-        # Decorator used without parentheses
         return decorator(func)
     else:
-        # Decorator used with arguments
         return decorator
 
 
 def debug(func):
-    """Function decorator used to log a debug message.
-
-    """
+    """Function decorator used to log debug messages and execution time."""
     from .. import log
 
     @functools.wraps(func)
@@ -429,7 +436,6 @@ def debug(func):
                     caller_module_name = (inspect.getsourcefile(caller_frame) or
                                           inspect.getfile(caller_frame) or
                                           'unknown_module')
-
         except:
             caller_module_name = 'unknown_module'
 
@@ -439,9 +445,6 @@ def debug(func):
         finally:
             t = time.time() - t
             qualname = func.__qualname__
-            # If defined in a class (instance/class/static method),
-            # qualname will be ClassName.method_name
-            # Otherwise, it's a top-level function
             trace = f'{qualname}()'
             msg = f'{trace}  --  {int(t * 1000)}ms'
             log.debug(caller_module_name, msg)
@@ -452,11 +455,8 @@ def debug(func):
 def get_platform():
     """Returns the enum of the current platform.
 
-    One of the following values: PlatFormWindows, PlatFormMacOS or PlatFormUnsupported.
-
     Returns:
-        int: The current platform or PlatFormUnsupported.
-
+        int: One of PlatformWindows, PlatformMacOS, or PlatformUnsupported.
     """
     ptype = QtCore.QSysInfo().productType()
     if ptype.lower() in ('osx', 'macos'):
@@ -469,6 +469,11 @@ def get_platform():
 def get_username():
     """Returns the name of the currently logged-in user.
 
+    On Windows, it tries the 'username' or 'USERNAME' environment variable.
+    On MacOS, it tries 'user' or 'USER'.
+
+    Returns:
+        str: The username (with '.' removed) or an empty string if not found.
     """
     v = ''
     if get_platform() == PlatformWindows:
@@ -476,21 +481,19 @@ def get_username():
             v = os.environ['username']
         elif 'USERNAME' in os.environ:
             v = os.environ['USERNAME']
-    if get_platform() == PlatformMacOS:
+    elif get_platform() == PlatformMacOS:
         if 'user' in os.environ:
             v = os.environ['user']
         elif 'USER' in os.environ:
             v = os.environ['USER']
-    v = v.replace('.', '')
-    return v
+    return v.replace('.', '')
 
 
 def temp_path():
-    """Path to the folder to store temporary files.
+    """Path to a folder to store temporary files.
 
     Returns:
-            str: Path to a directory.
-
+        str: A directory path.
     """
     a = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)
     b = common.product
@@ -498,14 +501,13 @@ def temp_path():
 
 
 def get_thread_key(*args):
-    """Returns the key associated with args and the current thread.
+    """Returns a unique key based on given args and the current thread.
 
     Args:
-        *args: `server`, `job`, `root` path segments.
+        *args: Segments such as `server`, `job`, `root`.
 
     Returns:
-        str: The key value.
-
+        str: The concatenated key.
     """
     t = repr(QtCore.QThread.currentThread())
     return '/'.join(args) + t
@@ -513,40 +515,53 @@ def get_thread_key(*args):
 
 @functools.lru_cache(maxsize=1048576)
 def sort_words(s):
-    """Sorts a comma separated list of words found in the given string.
+    """Sorts words found in the string and returns them as a comma-separated list.
+
+    Args:
+        s (str): A string containing words.
 
     Returns:
         str: A comma-separated list of sorted words.
-
     """
     return ', '.join(sorted(re.findall(r"[\w']+", s)))
 
 
 @functools.lru_cache(maxsize=1048576)
 def is_dir(path):
-    """Cache-back type query.
+    """Check if the given path is a directory (cached).
 
+    Args:
+        path (str): The path to check.
+
+    Returns:
+        bool: True if directory, otherwise False.
     """
     return QtCore.QFileInfo(path).isDir()
 
 
 @functools.lru_cache(maxsize=1048576)
 def normalize_path(path):
-    """Normalize the path and replace backslashes with forward slashes."""
+    """Normalize and standardize the given path to forward slashes.
+
+    Args:
+        path (str): The file path.
+
+    Returns:
+        str: Normalized path.
+    """
     return os.path.abspath(os.path.normpath(path)).replace('\\', '/')
 
 
 def get_entry_from_path(path, is_dir=True, force_exists=False):
-    """Returns a scandir entry of the given file path.
+    """Returns a scandir entry for the given path if found.
 
     Args:
-        path (str): Path to directory.
-        is_dir (bool): Is the path a directory or a file.
-        force_exists (bool): Force skip checking the existence of the path if we know path exist.
+        path (str): The path to query.
+        is_dir (bool): True if looking for a directory entry, otherwise False.
+        force_exists (bool): If True, skip existence check (use if you know the path exists).
 
     Returns:
-         scandir.DirEntry: A scandir entry, or None if not found.
-
+        scandir.DirEntry or None: The entry or None if not found.
     """
     file_info = QtCore.QFileInfo(path)
 
@@ -563,15 +578,14 @@ def get_entry_from_path(path, is_dir=True, force_exists=False):
 
 
 def byte_to_pretty_string(num, suffix='B'):
-    """Converts a numeric byte value to a human-readable string.
+    """Converts bytes to a human-readable format.
 
     Args:
-        num (int): the number of bytes.
-        suffix (str): a custom suffix.
+        num (int): Number of bytes.
+        suffix (str): Suffix to append. Default is 'B'.
 
     Returns:
-        str: Human readable byte value.
-
+        str: A human-readable byte string.
     """
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
         if abs(num) < 1024.0:
@@ -581,8 +595,13 @@ def byte_to_pretty_string(num, suffix='B'):
 
 
 def get_py_obj_size(obj):
-    """Sum byte size of an object and its members.
+    """Calculate approximate memory footprint of an object and all its contents.
 
+    Args:
+        obj (object): The Python object.
+
+    Returns:
+        int: The total size in bytes.
     """
     from gc import get_referents
     from types import ModuleType, FunctionType
@@ -593,18 +612,23 @@ def get_py_obj_size(obj):
     objects = [obj]
     while objects:
         need_referents = []
-        for obj in objects:
-            if not isinstance(obj, exclude) and id(obj) not in seen_ids:
-                seen_ids.add(id(obj))
-                size += sys.getsizeof(obj)
-                need_referents.append(obj)
+        for o in objects:
+            if not isinstance(o, exclude) and id(o) not in seen_ids:
+                seen_ids.add(id(o))
+                size += sys.getsizeof(o)
+                need_referents.append(o)
         objects = get_referents(*need_referents)
     return size
 
 
 def int_key(x):
-    """Makes certain we convert int keys back to int values.
+    """Convert dictionary keys to int if possible.
 
+    Args:
+        x (dict or any): The input object.
+
+    Returns:
+        dict or any: The object with int keys if it was a dict.
     """
 
     def _int(v):
@@ -615,73 +639,50 @@ def int_key(x):
 
     if isinstance(x, dict):
         return {_int(k): v for k, v in x.items()}
-
     return x
 
 
 def sanitize_hashtags(s):
-    """Sanitize hashtags in a string.
+    """Normalize and sanitize hashtags in the given string.
+
+    Removes extra spaces, duplicates, and normalizes hashtags.
 
     Args:
-        s (str): String to sanitize.
-
+        s (str): The input string.
 
     Returns:
         str: Sanitized string.
-
     """
     s = s if s else ''
-
-    # Remove trailing spaces
     s = s.strip()
-
-    # Split the string into tokens, remove any empty tokens
     tokens = s.split(' ')
-
-    # Remove instances of ## or # not followed by characters
     tokens = [re.sub(r'##+', '#', token) for token in tokens]
     tokens = [re.sub(r'#\s', '', token) for token in tokens]
 
-    # Filter out the tokens from the non-token text
     hash_tokens = sorted(set([re.sub(r'(?<=\w)#', '_', token) for token in tokens if token.startswith('#')]))
-    non_hash_tokens = [token for token in tokens if not token.startswith('#')]
+    non_hash_tokens = [token for token in tokens if not token.startswith('#') and token]
 
-    # Rejoin the tokens and non-token text into a single string
-    s = ' '.join(non_hash_tokens + hash_tokens)
-
-    return s
+    return ' '.join(non_hash_tokens + hash_tokens)
 
 
 def split_text_and_hashtags(s):
-    """Split a string into regular text and hashtags.
+    """Split a string into regular text and a separate string of hashtags.
 
     Args:
-        s (str): String to split.
+        s (str): The input string.
 
     Returns:
-        str, str: Regular text and hashtags.
-
+        tuple(str, str): (regular_text, hashtags)
     """
     s = s if s else ''
-
-    # Split the string into tokens
     tokens = s.split(' ')
-
-    # Filter out the tokens from the non-token text
     hash_tokens = [token for token in tokens if token.startswith('#')]
     non_hash_tokens = [token for token in tokens if not token.startswith('#')]
-
-    # Join the tokens and non-token text into separate strings
-    regular_text = ' '.join(non_hash_tokens)
-    tokens_text = ' '.join(hash_tokens)
-
-    return regular_text, tokens_text
+    return ' '.join(non_hash_tokens), ' '.join(hash_tokens)
 
 
 class Timer(QtCore.QTimer):
-    """A custom QTimer class used across the app.
-
-    """
+    """A custom QTimer class used across the app to manage timed events."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -689,20 +690,17 @@ class Timer(QtCore.QTimer):
         self.setObjectName(self.__class__.__name__)
 
     def setObjectName(self, v):
-        """Set the instance object name.
+        """Set the instance object name, ensuring uniqueness.
 
         Args:
-            v (str): Object name.
-
+            v (str): Object name prefix.
         """
         v = f'{v}_{uuid.uuid1().hex}'
         super().setObjectName(v)
 
     @classmethod
     def delete_timers(cls):
-        """Delete all cached timers instances.
-
-        """
+        """Delete all cached timer instances associated with the current thread."""
         for k in list(common.timers):
             try:
                 common.timers[k].isActive()
@@ -711,7 +709,6 @@ class Timer(QtCore.QTimer):
                 del common.timers[k]
                 continue
 
-            # Check thread affinity
             if common.timers[k].thread() != QtCore.QThread.currentThread():
                 continue
             common.timers[k].stop()

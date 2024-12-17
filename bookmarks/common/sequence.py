@@ -1,24 +1,30 @@
-"""Common methods used to work with sequentially numbered file items.
+"""Common methods to work with sequentially numbered file items.
 
-A sequence item is a file that has a number component that can be incremented. See
-:func:`get_sequence`. E.g.:
+A sequence item is a file that has a numerical component that can be incremented.
+For example:
 
 .. code-block:: python
     :linenos:
 
     s = 'C:/test/my_image_sequence_0001.png'
-    seq = common.get_sequence(s)
+    seq = get_sequence(s)
 
-
-A collapsed item is a single item that refers to a series of sequence items
-and is marked by the :attr:`.SEQSTART`, sequence range and :attr:`.SEQEND` characters. See
-:func:`is_collapsed`. E.g.:
+A *collapsed item* is a single path that actually represents a series of
+sequence items and is marked by :attr:`SEQSTART`, a sequence range, and
+:attr:`SEQEND`. For example:
 
 .. code-block:: python
     :linenos:
 
     s = 'C:/test/my_image_sequence_{1-200}.png'
-    common.is_collapsed(s) # = True
+    is_collapsed(s) # True
+
+This module provides helper functions to determine if a path is a collapsed
+sequence, extract its first or last file, generate a proxy path for caching and
+preference storage, and retrieve all paths from a collapsed sequence.
+
+All functions perform input validation and raise appropriate exceptions for
+invalid inputs.
 
 """
 import functools
@@ -26,8 +32,19 @@ import re
 import weakref
 
 from PySide2 import QtCore
+from . import common
 
-from .. import common
+__all__ = [
+    'SEQSTART',
+    'SEQEND',
+    'SEQPROXY',
+    'is_collapsed',
+    'get_sequence',
+    'proxy_path',
+    'get_sequence_start_path',
+    'get_sequence_end_path',
+    'get_sequence_paths'
+]
 
 #: Start character used to encapsulate the sequence range of collapsed items.
 SEQSTART = '<<'
@@ -39,169 +56,157 @@ SEQEND = '>>'
 #: with sequence items.
 SEQPROXY = f'{SEQSTART}?{SEQEND}'
 
-#: Regular expression used to find sequence items
+#: Regular expression used to find sequence items.
 IsSequenceRegex = re.compile(
-    rf'^(.+?)({SEQSTART}.*{SEQEND})(.*)$',
+    rf'^(.+?){re.escape(SEQSTART)}(\d+\-\d+){re.escape(SEQEND)}(.*)$',
     flags=re.IGNORECASE
 )
 
-#: Regular expression used to get the first frame of a collapsed sequence
+#: Regular expression used to get the first frame of a collapsed sequence.
 SequenceStartRegex = re.compile(
     rf'^(.*){SEQSTART}(\d+).*{SEQEND}(.*)$',
     flags=re.IGNORECASE
 )
 
-#: Regular expression used to get the last frame of a collapsed sequence
+#: Regular expression used to get the last frame of a collapsed sequence.
 SequenceEndRegex = re.compile(
     rf'^(.*){SEQSTART}.*?(\d+){SEQEND}(.*)$',
     flags=re.IGNORECASE
 )
 
-#: Regular expression used to get the path components of a collapsed sequence
+#: Regular expression used to get the path components of a non-collapsed sequence.
 GetSequenceRegex = re.compile(
-    r'^(.*?)(\d+)([\d\\/]*|[^\d\\/]*(?=.+?))\.([^\.]+)$',
+    r'^(.*?)(\d+)([\d\\/]*|[^\d\\/]*(?=.+?))\.([A-Za-z][^\.]*)$',
     flags=re.IGNORECASE
 )
 
 
 @functools.lru_cache(maxsize=4194304)
 def is_collapsed(s):
-    """Checks the presence :attr:`SEQSTART` and :attr:`SEQEND` markers.
+    """Check if the given path is a collapsed sequence.
 
-    When Bookmarks is displaying a sequence of files as a single item, the item is
-    *collapsed*. Every collapsed item contains the :attr:`SEQEND`, sequence range and
-    :attr:`SEQSTART` elements.
-
-    Example:
-
-        .. code-block:: python
-            :linenos:
-
-            filename = 'job_sh010_animation_{001-299}_gw.png'
-            m = is_collapsed(filename)
-            prefix = match.group(1) # = 'job_sh010_animation_'
-            sequence_string = match.group(2) # = '{001-299}'
-            suffix = match.group(3) # = '_gw.png'
+    A collapsed item contains :attr:`SEQSTART` and :attr:`SEQEND` markers.
+    For example, 'my_image_sequence_{001-200}.exr' is a collapsed sequence.
 
     Args:
         s (str): A file path.
 
-    Returns:
-        SRE_Match:
-            * group(1) - All the characters **before** the sequence marker.
-            * group(2) - The sequence marker, for example, ``{01-50}``.
-            * group(3) - All characters **after** the sequence marker.
+    Raises:
+        TypeError: If `s` is not a string.
 
+    Returns:
+        re.Match or None:
+            If a match is found, returns the regex match object. Groups:
+            * group(1) - Characters before the sequence marker.
+            * group(2) - The sequence marker (e.g. '{001-200}').
+            * group(3) - Characters after the sequence marker.
+            Otherwise returns None.
     """
+    if not isinstance(s, str):
+        raise TypeError("is_collapsed expects a string path.")
     return IsSequenceRegex.search(s)
 
 
 @functools.lru_cache(maxsize=4194304)
 def get_sequence(s):
-    """Checks if the given text contains a sequence element.
+    """Check if the given path contains a sequence number component.
 
-    Strictly speaking, a sequence is any file that has a valid number element.
-    There can only be **one** incremental element - it will always be the
-    number closest to the end.
-
-    The regex will understand sequences with the `v` prefix, eg *v001*, *v002*,
-    but works without the prefix as well. E.g. **001**, **002**. In the case of a
-    filename like ``job_sh010_animation_v002.c4d`` **002** will be the
-    prevailing sequence number, ignoring the number in the extension.
-
-    Likewise, in ``job_sh010_animation_v002.0001.c4d`` the sequence number will
-    be **0001**, and not 010 or 002.
-
-    .. code-block:: python
-        :linenos:
-
-        s = 'job_sh010_animation_v002_username.c4d'
-        m = get_sequence(s)
-        if m:
-            prefix = match.group(1)
-            sequence_number = match.group(2)
-            suffix = match.group(3)
-            extension = match.group(4)
+    A sequence is identified by a numerical component. Only one incremental
+    element is considered the sequence number. For collapsed sequences, this
+    function raises an error.
 
     Args:
         s (str): A file path.
 
-    Returns:
-            group 1 (SRE_Match): All the characters **before** the sequence number.
-            group 2 (SRE_Match): The sequence number, as a string.
-            group 3 (SRE_Match):
-                All the characters after the sequence number up until the file extensions.
-            group 4 (SRE_Match): The file extension without the '.' dot.
+    Raises:
+        TypeError: If `s` is not a string.
+        RuntimeError: If `s` is a collapsed sequence.
 
+    Returns:
+        re.Match or None:
+            If a match is found, returns the regex match object. Groups:
+            * group(1) - Characters before the sequence number.
+            * group(2) - The sequence number (as a string).
+            * group(3) - Characters after the sequence number, before extension.
+            * group(4) - The file extension without '.'.
+            Otherwise returns None.
     """
+    if not isinstance(s, str):
+        raise TypeError("get_sequence expects a string path.")
     if is_collapsed(s):
-        raise RuntimeError(
-            'Cannot extract sequence numbers from collapsed items.'
-        )
+        raise RuntimeError('Cannot extract sequence numbers from collapsed items.')
     return GetSequenceRegex.search(s)
 
 
 def proxy_path(v):
-    """Substitutes range notations (for example, ``{001-099}``) with :attr:`SEQPROXY`.
+    """Generate a proxy path to represent sequences or collapsed items consistently.
 
-    Any non-collapsed items will use their actual file path. Collapsed sequence items
-    however, need to be represented in a manner independent of their actual start,
-    end and length to associate preferences with them consistently.
+    For collapsed sequences, replaces the collapsed notation with :attr:`SEQPROXY`.
+    For non-collapsed sequences, replaces the sequence number with :attr:`SEQPROXY`.
+    Non-sequence items are returned as-is (only backslashes are replaced).
 
     Args:
-        v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath.
+        v (QModelIndex, weakref.ref, dict, str): Item representing a path.
+
+    Raises:
+        TypeError: If `v` is not an expected type or does not provide a valid path string.
 
     Returns:
-        str: The key used to store the item's information in the local
-        preferences and the bookmark item database.
-
+        str: A proxy path string suitable for caching and preferences.
     """
-    if isinstance(v, str):
-        pass
+    if isinstance(v, (QtCore.QModelIndex, QtCore.QPersistentModelIndex)):
+        path_str = v.data(common.PathRole)
+        if not isinstance(path_str, str):
+            raise TypeError("Invalid path data from model index.")
+        v = path_str
     elif isinstance(v, weakref.ref):
-        v = v()[common.PathRole]
+        ref_val = v()
+        if not ref_val or common.PathRole not in ref_val:
+            raise TypeError("Invalid weakref or missing PathRole in referenced object.")
+        v = ref_val[common.PathRole]
     elif isinstance(v, dict):
+        if common.PathRole not in v or not isinstance(v[common.PathRole], str):
+            raise TypeError("Dictionary must contain a valid string PathRole.")
         v = v[common.PathRole]
-    elif isinstance(v, (QtCore.QModelIndex, QtCore.QPersistentModelIndex)):
-        v = v.data(common.PathRole)
-    else:
-        raise TypeError(
-            f'Invalid type, expected one of {weakref.ref}, '
-            f'{QtCore.QModelIndex}, {dict}, got {type(v)}'
-        )
+    elif not isinstance(v, str):
+        raise TypeError("proxy_path expects a string, dict, QModelIndex, or weakref.ref.")
     return _proxy_path(v)
 
 
 @functools.lru_cache(maxsize=4194304)
 def _proxy_path(v):
+    """Internal helper for proxy_path."""
     collapsed = is_collapsed(v)
     if collapsed:
-        v = f'{collapsed.group(1)}{SEQPROXY}{collapsed.group(3)}'
-        return v.replace('\\', '/')
+        return f"{collapsed.group(1)}{SEQPROXY}{collapsed.group(3)}".replace('\\', '/')
 
     seq = get_sequence(v)
     if seq:
-        v = f'{seq.group(1)}{SEQPROXY}{seq.group(3)}.{seq.group(4)}'
-        return v.replace('\\', '/')
+        return f"{seq.group(1)}{SEQPROXY}{seq.group(3)}.{seq.group(4)}".replace('\\', '/')
 
     return v.replace('\\', '/')
 
 
 @functools.lru_cache(maxsize=4194304)
 def get_sequence_start_path(path):
-    """Checks if given string is collapsed, and if so, returns the path of
-    the first item of the sequence.
+    """Get the first file path in a collapsed sequence.
+
+    If the given path is not collapsed, returns it unchanged.
+    If it is collapsed, returns the path with the first frame.
 
     Args:
-        path (str): A collapsed sequence name.
+        path (str): A path string.
+
+    Raises:
+        TypeError: If `path` is not a string.
 
     Returns:
-        str: The path to the first file of the sequence.
-
+        str: The first file in the sequence.
     """
+    if not isinstance(path, str):
+        raise TypeError("get_sequence_start_path expects a string.")
     if not is_collapsed(path):
         return path
-
     match = SequenceStartRegex.search(path)
     if match:
         path = SequenceStartRegex.sub(r'\1\2\3', path)
@@ -210,19 +215,24 @@ def get_sequence_start_path(path):
 
 @functools.lru_cache(maxsize=4194304)
 def get_sequence_end_path(path):
-    """Checks if given string is collapsed, and if so, returns the path of
-    the last item of the sequence.
+    """Get the last file path in a collapsed sequence.
+
+    If the given path is not collapsed, returns it unchanged.
+    If it is collapsed, returns the path with the last frame.
 
     Args:
-        path (str): A collapsed sequence name.
+        path (str): A path string.
+
+    Raises:
+        TypeError: If `path` is not a string.
 
     Returns:
-        str: The path to the last file of the sequence.
-
+        str: The last file in the sequence.
     """
+    if not isinstance(path, str):
+        raise TypeError("get_sequence_end_path expects a string.")
     if not is_collapsed(path):
         return path
-
     match = SequenceEndRegex.search(path)
     if match:
         path = SequenceEndRegex.sub(r'\1\2\3', path)
@@ -230,22 +240,39 @@ def get_sequence_end_path(path):
 
 
 def get_sequence_paths(index):
-    """Return a list of file paths of the individual files that make up the
-    sequence.
+    """Return a list of file paths representing each file in a collapsed sequence.
+
+    If the item is not collapsed, returns a single-element list.
 
     Args:
-        index (QtCore.QModelIndex): A list view index.
+        index (QtCore.QModelIndex): Model index representing the item.
+
+    Raises:
+        TypeError: If `index` is not a `QtCore.QModelIndex` or `QtCore.QPersistentModelIndex`.
+        ValueError: If sequence or frames data is missing or invalid.
 
     Returns:
-        list: A list of file paths.
-
+        list: A list of file paths for each frame in the sequence.
     """
+    if not isinstance(index, (QtCore.QModelIndex, QtCore.QPersistentModelIndex)):
+        raise TypeError("get_sequence_paths expects a QModelIndex or QPersistentModelIndex.")
+
     path = index.data(common.PathRole)
+    if not isinstance(path, str):
+        raise ValueError("Invalid path data from index.")
+
     if not is_collapsed(path):
-        return [path, ]
+        return [path]
+
+    seq = index.data(common.SequenceRole)
+    frames = index.data(common.FramesRole)
+
+    if not seq or not hasattr(seq, 'group') or not frames or not isinstance(frames, list):
+        raise ValueError("Sequence or frames data is missing or invalid.")
 
     v = []
-    seq = index.data(common.SequenceRole)
-    for frame in index.data(common.FramesRole):
+    for frame in frames:
+        if not isinstance(frame, str):
+            raise ValueError("Frame values must be strings.")
         v.append(f'{seq.group(1)}{frame}{seq.group(3)}.{seq.group(4)}')
     return v

@@ -1,10 +1,5 @@
-import unittest
-
-__all__ = [
-    'get_dcc_icon_name',
-    'get_all_known_dcc_formats',
-    'CACHE_FORMATS',
-]
+import functools
+import re
 
 DCC_FILE_FORMATS = {
     # 3D Scene Layout and World Building
@@ -192,10 +187,6 @@ CACHE_FORMATS = {
     'c4d',
     'max',
 }
-
-
-import functools
-import re
 
 
 @functools.cache

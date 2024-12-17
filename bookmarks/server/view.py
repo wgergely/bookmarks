@@ -1314,7 +1314,6 @@ class ProgressBar(QtWidgets.QWidget):
         QtCore.QCoreApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
 
 
-
 class ServerEditorDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(

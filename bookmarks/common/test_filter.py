@@ -1,6 +1,7 @@
 import unittest
 
-from ..common import SyntaxFilter
+from .filter import SyntaxFilter
+
 
 class TestSyntaxFilter(unittest.TestCase):
 

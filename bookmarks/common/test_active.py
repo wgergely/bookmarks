@@ -5,20 +5,8 @@ import threading
 import time
 import unittest
 
-from .active import (
-    ActiveMode,
-    ActivePathSegmentTypes,
-    active,
-    set_active,
-    prune_lock,
-    remove_lock,
-    write_current_mode_to_lock,
-    init_active,
-    init_active_mode,
-    get_lock_dir,
-    get_lock_path
-)
-from .. import common
+from .active import *
+from . import common
 
 
 def clear_env():

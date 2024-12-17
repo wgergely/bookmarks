@@ -8,10 +8,10 @@ from .. import common
 def get_hash(key):
     """Calculates the md5 hash of a string.
 
-    In practice, we use this function to generate hashes for file paths. These
+    Generates unique hashes for file paths. These
     hashes are used by the `ImageCache`, `user_settings` and `BookmarkDB` to
     associate data with the file items. Generated hashes are server agnostic,
-    meaning, if the passed string contains a known server's name, we'll remove it
+    meaning, if the passed string contains a known server's name, it is removed
     before hashing.
 
     Args:
@@ -35,5 +35,5 @@ def get_hash(key):
             key = key.lstrip('/')
             break
 
-    # Otherwise, we calculate, save and return the digest
+    # Otherwise, we calculate, save, and return the digest
     return hashlib.md5(key.encode('utf8')).hexdigest()

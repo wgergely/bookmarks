@@ -1,6 +1,7 @@
 import unittest
 
-from ..common import get_sequence_and_shot
+from .seqshot import get_sequence_and_shot
+
 
 class TestGetSequenceAndShot(unittest.TestCase):
     def test_prefixed_sequence_and_shot(self):

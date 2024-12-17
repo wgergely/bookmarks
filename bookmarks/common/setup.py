@@ -248,14 +248,11 @@ def initialize_func(
         _threads.append(thread)
 
         # Wait for all threads to spin up before continuing
-        n = 0.0
         i = 0.01
-        now = time.time()
-        timeout = now + 10.0
+        timeout = time.time() + 10.0
         while not all(f.isRunning() for f in _threads):
-            n += i
             time.sleep(i)
-            if n >= timeout:
+            if time.time() >= timeout:
                 break
 
         if show_ui_logs:

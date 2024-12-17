@@ -51,7 +51,7 @@ font_db = None
 
 color_manager = None
 
-servers = None
+servers = {}
 env_bookmark_items = {}
 bookmarks = {}
 favourites = {}

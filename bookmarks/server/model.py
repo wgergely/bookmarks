@@ -32,6 +32,7 @@ class Node:
         self._root = root
 
         self._job_candidate = False
+        self._links_api = None
 
         self._parent = parent
         self._children = []
@@ -136,11 +137,23 @@ class Node:
     def api():
         return ServerAPI
 
+    def links_api(self):
+        if self.type == NodeType.ServerNode:
+            return None
+        if self._links_api is None:
+            if self.type == NodeType.JobNode:
+                self._links_api = LinksAPI(self.path())
+            elif self.type == NodeType.LinkNode:
+                _node = self.parent()
+                _path = _node.path()
+                self._links_api = LinksAPI(_path)
+        return self._links_api
+
 
 class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
     """
-    Filters server model based on text queries, bookmarked nodes, and candidate states.
-    Now also filters server and link nodes by their name/path if text_filter is set.
+    Filters the server model so that if any descendant matches the criteria,
+    all ancestors remain visible.
     """
 
     def __init__(self, parent=None):
@@ -152,10 +165,8 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
         self.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
 
     @common.debug
-    @QtCore.Slot(bool)
-    def reset_filters(self, value):
-        if not value:
-            return
+    @QtCore.Slot()
+    def reset_filters(self):
         self.show_bookmarked = False
         self.hide_non_candidates = False
         self.invalidate()
@@ -167,57 +178,82 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
         self.invalidate()
 
     @common.debug
-    @QtCore.Slot(bool)
-    def set_show_bookmarked(self, value):
-        self.show_bookmarked = value
+    @QtCore.Slot()
+    def set_show_bookmarked(self):
+        self.show_bookmarked = True
         self.hide_non_candidates = False
         self.invalidate()
 
     @common.debug
-    @QtCore.Slot(bool)
-    def set_hide_non_candidates(self, value):
-        self.hide_non_candidates = value
+    @QtCore.Slot()
+    def set_hide_non_candidates(self):
         self.show_bookmarked = False
+        self.hide_non_candidates = True
         self.invalidate()
 
-    def filterAcceptsRow(self, source_row, source_parent):
-        index = self.sourceModel().index(source_row, 0, source_parent)
+    def node_matches_text_filter(self, node):
+        if not self.text_filter:
+            return True
+
+        tf = self.text_filter.lower()
+        path_lower = (node.path() or '').lower()
+
+        if node.type == NodeType.ServerNode:
+            # Check path and children paths
+            candidates = []
+            for job_node in node.children():
+                for link_node in job_node.children():
+                    c_path = (link_node.path() or '').lower()
+                    candidates.append(c_path)
+                    candidates.append(' / '.join(c_path.split('/')))
+
+        elif node.type == NodeType.JobNode:
+            candidates = []
+            for link_node in node.children():
+                c_path = (link_node.path() or '').lower()
+                candidates.append(c_path)
+                candidates.append(' / '.join(c_path.split('/')))
+
+        elif node.type == NodeType.LinkNode:
+            candidates = [
+                path_lower,
+                node.root.lower() if node.root else '',
+                ' / '.join(path_lower.split('/'))
+            ]
+        else:
+            candidates = [path_lower]
+
+        if tf in path_lower or any(tf in c for c in candidates):
+            return True
+        return False
+
+    def matches_filter_recursive(self, index):
         node = index.internalPointer()
         if not node:
             return False
 
         if self.show_bookmarked and not node.is_bookmarked():
-            return False
-
-        if node.type == NodeType.JobNode and self.hide_non_candidates and not node.job_candidate:
-            return False
-
-        if not self.text_filter:
-            return True
-
-        tf = self.text_filter.lower()
-        if node.type == NodeType.ServerNode:
-            children = [child for grandchild in node.children() for child in grandchild.children()]
-            candidates = [f.path().lower() for f in children]
-            candidates += [' / '.join(f.path().lower().split('/')) for f in children]
-
-            if tf in node.path().lower() or any([tf in c for c in candidates]):
+            pass
+        elif node.type == NodeType.JobNode and self.hide_non_candidates and not node.job_candidate:
+            pass
+        else:
+            # Check node itself
+            if not self.text_filter or self.node_matches_text_filter(node):
                 return True
 
-        if node.type == NodeType.JobNode:
-            children = [child for child in node.children()]
-            candidates = [f.path().lower() for f in children]
-            candidates += [' / '.join(f.path().lower().split('/')) for f in children]
-
-            if tf in node.path().lower() or any([tf in c for c in candidates]):
-                return True
-
-        if node.type == NodeType.LinkNode:
-            candidates = [node.root.lower(), node.path().lower(), ' / '.join(node.path().lower().split('/'))]
-            if tf in node.path().lower() or any([tf in c for c in candidates]):
+        # Check children if node didn't match
+        source_model = self.sourceModel()
+        for i in range(source_model.rowCount(index)):
+            child_index = source_model.index(i, 0, index)
+            if self.matches_filter_recursive(child_index):
                 return True
 
         return False
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        index = self.sourceModel().index(source_row, 0, source_parent)
+        return self.matches_filter_recursive(index)
+
 
 
 class ServerModel(QtCore.QAbstractItemModel):

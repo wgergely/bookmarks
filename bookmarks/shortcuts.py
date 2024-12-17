@@ -256,6 +256,27 @@ ServerViewShortcuts = {
         'description': 'Reveal in the file explorer...',
         'shortcut': None,
     },
+    CopyLinks: {
+        'value': 'Ctrl+C',
+        'default': 'Ctrl+C',
+        'repeat': False,
+        'description': 'Copy links',
+        'shortcut': None,
+    },
+    PasteLinks: {
+        'value': 'Ctrl+V',
+        'default': 'Ctrl+V',
+        'repeat': False,
+        'description': 'Paste links',
+        'shortcut': None,
+    },
+    RemoveLink: {
+        'value': 'Ctrl+D',
+        'default': 'Ctrl+D',
+        'repeat': False,
+        'description': 'Remove bookmark',
+        'shortcut': None,
+    },
 }
 
 MainWidgetShortcuts = {

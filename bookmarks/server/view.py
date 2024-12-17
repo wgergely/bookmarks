@@ -1311,6 +1311,8 @@ class ProgressBar(QtWidgets.QWidget):
         self._progress += 1
         self.update()
 
+        QtCore.QCoreApplication.instance().processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
+
 
 
 class ServerEditorDialog(QtWidgets.QDialog):
@@ -1457,7 +1459,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.preview_widget.selectionChanged.connect(self.server_view.on_link_added)
         self.ok_button.clicked.connect(self.accept)
 
-        cnx = QtCore.Qt.QueuedConnection
+        cnx = QtCore.Qt.DirectConnection
         self.server_view.model().sourceModel().fetchAboutToStart.connect(self.fetch_progress_bar.start, type=cnx)
         self.server_view.model().sourceModel().fetchInProgress.connect(self.fetch_progress_bar.progress, type=cnx)
         self.server_view.model().sourceModel().fetchFinished.connect(self.fetch_progress_bar.stop, type=cnx)

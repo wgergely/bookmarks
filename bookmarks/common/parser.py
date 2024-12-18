@@ -51,15 +51,13 @@ Example:
 import enum
 import itertools
 import re
-import unittest
-
-__all__ = ['StringParser', 'TokenEditor', 'TokenLineEdit']
-
 from datetime import datetime
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common, database
+from .. import common
+
+__all__ = ['StringParser', 'TokenEditor', 'TokenLineEdit']
 
 
 class StringParser(QtCore.QObject):
@@ -67,7 +65,7 @@ class StringParser(QtCore.QObject):
     _env = {}
 
     db_keys = {
-        database.BookmarkTable: (
+        'BookmarkData': (
             'prefix',
             'width',
             'height',
@@ -75,7 +73,7 @@ class StringParser(QtCore.QObject):
             'startframe',
             'duration'
         ),
-        database.AssetTable: (
+        'AssetData': (
             'cut_duration',
             'cut_in',
             'cut_out',
@@ -873,4 +871,3 @@ class TokenLineEdit(TokenEditor):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent, mode=EditorMode.LineMode)
-

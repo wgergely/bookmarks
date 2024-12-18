@@ -116,17 +116,6 @@ template_file_blacklist = {
     '.apdisk',
 }
 
-filename_char_blacklist = {
-    '<',
-    '>',
-    ':',
-    '"',
-    '/',
-    '\\',
-    '|',
-    '?',
-    '*',
-}
 
 default_extension = 'template'
 default_user_folder = (

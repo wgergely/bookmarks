@@ -141,13 +141,6 @@ def initialize_func(
     """Initializes all app components.
 
     """
-    from .. import log
-    log.init_log(
-        log_level=log_level,
-        init_console=log_to_console,
-        init_file=log_to_file,
-    )
-
     if server:
         os.environ['Bookmarks_ACTIVE_SERVER'] = server
     if job:
@@ -169,6 +162,13 @@ def initialize_func(
         )
 
     try:
+        from .. import log
+        log.init_log(
+            log_level=log_level,
+            init_console=log_to_console,
+            init_file=log_to_file,
+        )
+
         common.init_mode = mode
         common.item_data = common.DataDict()
 
@@ -185,6 +185,9 @@ def initialize_func(
 
         from . import color
         common.init_color_manager()
+
+        from ..server import activebookmarks_presets
+        activebookmarks_presets.init_active_bookmark_presets()
 
         if mode == common.Mode.Core:
             return
@@ -296,6 +299,10 @@ def shutdown():
 
         from .. import log
         log.teardown_log()
+
+        from ..server import activebookmarks_presets
+        activebookmarks_presets.teardown_active_bookmark_presets()
+
     except Exception as e:
         print(f'Error during shutdown: {e}')
     finally:

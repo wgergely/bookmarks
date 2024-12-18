@@ -12,6 +12,8 @@ from .. import common, ui, log, images
 from ..links.lib import LinksAPI
 from ..templates import lib as templates_lib
 
+__all__ = ['NodeType', 'Node', 'ServerFilterProxyModel', 'ServerModel']
+
 
 class NodeType(enum.IntEnum):
     """Node types for the server model."""
@@ -253,7 +255,6 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
     def filterAcceptsRow(self, source_row, source_parent):
         index = self.sourceModel().index(source_row, 0, source_parent)
         return self.matches_filter_recursive(index)
-
 
 
 class ServerModel(QtCore.QAbstractItemModel):

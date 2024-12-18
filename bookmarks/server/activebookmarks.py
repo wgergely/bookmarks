@@ -3,6 +3,7 @@ import os
 
 from PySide2 import QtWidgets, QtCore
 
+from . import activebookmarks_presets
 from .lib import ServerAPI
 from .. import contextmenu, common, ui
 
@@ -128,10 +129,10 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     #: Custom signal to emit data changes
     dataChangedSignal = QtCore.Signal(dict, dict)  # previous, current
 
-    def __init__(self, data_dict, parent=None):
+    def __init__(self, bookmarks, parent=None):
         super().__init__(parent)
         self.root_node = Node()
-        self.data_dict = data_dict
+        self.bookmarks = bookmarks
         self.init_data()
 
         common.signals.bookmarkAdded.connect(self.add_item)
@@ -145,9 +146,9 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     def init_data(self):
         self.beginResetModel()
         self.root_node = Node()
-        for key in sorted(self.data_dict.keys(), key=lambda x: x.lower()):
+        for key in sorted(self.bookmarks.keys(), key=lambda x: x.lower()):
             key_node = Node(key, self.root_node)
-            values = self.data_dict[key]
+            values = self.bookmarks[key]
             for component in ['server', 'job', 'root']:
                 value = values.get(component, '')
                 child_node = Node(component, key_node)
@@ -261,7 +262,7 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
 
     @QtCore.Slot(Node)
     def update_data(self, node):
-        curr_data = self.data_dict.copy()
+        curr_data = self.bookmarks.copy()
 
         if node.parent and node.parent.parent == self.root_node:
             key_node = node.parent
@@ -272,8 +273,8 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
             if '' in components.values():
                 return
 
-            self.data_dict.pop(key, None)
-            self.data_dict[new_key] = components
+            self.bookmarks.pop(key, None)
+            self.bookmarks[new_key] = components
 
             key_node.set_data(0, new_key)
             key_node.data[1] = ''
@@ -282,7 +283,7 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
 
             idx = self.createIndex(key_node.row(), 0, key_node)
             self.dataChanged.emit(idx, idx)
-            self.dataChangedSignal.emit(curr_data, self.data_dict.copy())
+            self.dataChangedSignal.emit(curr_data, self.bookmarks.copy())
         elif node.parent == self.root_node:
             # Do not allow editing of the key column
             pass
@@ -291,12 +292,12 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     @common.debug
     @QtCore.Slot(str, str, str)
     def add_item(self, server, job, root):
-        curr_data = self.data_dict.copy()
+        curr_data = self.bookmarks.copy()
 
         if not all([server, job, root]):
             return False  # Do not add if any component is empty
         new_key = f"{server}/{job}/{root}"
-        if new_key in self.data_dict:
+        if new_key in self.bookmarks:
             return False  # Do not add duplicates
         components = {'server': server, 'job': job, 'root': root}
 
@@ -306,7 +307,7 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
             self.root_node.child_count()
         )
 
-        self.data_dict[new_key] = components
+        self.bookmarks[new_key] = components
         key_node = Node(new_key, self.root_node)
         for component in ['server', 'job', 'root']:
             value = components[component]
@@ -315,11 +316,11 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
         self.root_node.sort_children()
         self.endInsertRows()
 
-        self.dataChangedSignal.emit(curr_data, self.data_dict.copy())
+        self.dataChangedSignal.emit(curr_data, self.bookmarks.copy())
         return True
 
     def removeRows(self, row, count, parent=QtCore.QModelIndex()):
-        curr_data = self.data_dict.copy()
+        curr_data = self.bookmarks.copy()
 
         parent_node = self.get_node(parent)
         if parent_node != self.root_node:
@@ -328,11 +329,11 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
         for i in range(count):
             child_node = parent_node.children.pop(row)
             # Remove from dictionary
-            self.data_dict.pop(child_node.data[0], None)
+            self.bookmarks.pop(child_node.data[0], None)
         self.endRemoveRows()
 
         # Emit the custom signal
-        self.dataChangedSignal.emit(curr_data, self.data_dict.copy())
+        self.dataChangedSignal.emit(curr_data, self.bookmarks.copy())
         return True
 
     def supportedDropActions(self):
@@ -370,7 +371,9 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.data_dict = common.bookmarks.copy()
+        self.bookmarks = common.bookmarks.copy()
+
+        self.toolbar = None
 
         # Set up the layout
         self._create_ui()
@@ -382,18 +385,34 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        # Toolbar
+        self.toolbar = QtWidgets.QToolBar(self)
+
+        # Action group
+        action_group = QtWidgets.QActionGroup(self)
+        action_group.setExclusive(True)
+
+        # Save as preset
+        action = QtWidgets.QAction(ui.get_icon('add_file', color=common.Color.Green()), 'Save as Preset', self)
+        action.triggered.connect(self.save_preset)
+        self.toolbar.addAction(action)
+
+        # Add separator
+
+        # Import
+
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
         self.tree_view.setRootIsDecorated(False)
         self.tree_view.setSortingEnabled(True)
-        self.tree_view.setObjectName('dictionary_preview')
+        self.tree_view.setObjectName('ActiveBookmarksView')
 
         self.tree_view.setAcceptDrops(True)
         self.tree_view.viewport().setAcceptDrops(True)
         self.tree_view.dragEnterEvent = self.dragEnterEvent
         self.tree_view.dragMoveEvent = self.dragMoveEvent
 
-        self.tree_view.setModel(ActiveBookmarksModel(self.data_dict, parent=self.tree_view))
+        self.tree_view.setModel(ActiveBookmarksModel(self.bookmarks, parent=self.tree_view))
 
         self.layout().addWidget(self.tree_view, 1)
 
@@ -497,6 +516,39 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
     @QtCore.Slot()
     def remove_all_items(self):
         self.model().removeRows(0, self.model().rowCount(self.model().root_index()))
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def save_preset(self):
+        """Save the current bookmarks as a preset.
+
+        """
+        if not common.bookmarks:
+            raise ValueError('No bookmarks to save as a preset.')
+
+        # Prompt user for preset name and add a validator to ensure file safe characters
+        from ..editor.base import path_validator
+        dialog = QtWidgets.QInputDialog(self)
+        dialog.setInputMode(QtWidgets.QInputDialog.TextInput)
+        dialog.setLabelText('Enter a name for the preset:')
+        dialog.setOkButtonText('Save')
+        dialog.setCancelButtonText('Cancel')
+        dialog.resize(common.Size.DefaultWidth(), common.Size.DefaultHeight())
+
+        line_edit = dialog.lineEdit()
+        line_edit.setValidator(path_validator())
+
+        if dialog.exec_() != QtWidgets.QDialog.Accepted:
+            return
+
+        preset_name = dialog.textValue()
+        if not preset_name:
+            raise ValueError('Cannot save a preset with an empty name.')
+
+        # Save the preset
+        api = activebookmarks_presets.get_api()
+        api.save_preset(preset_name)
 
     def init_data(self):
         self.model().init_data()

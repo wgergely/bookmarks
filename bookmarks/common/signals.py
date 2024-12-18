@@ -62,6 +62,9 @@ class CoreSignals(QtCore.QObject):
     #: Signal emitted when a bookmark item was removed
     bookmarkRemoved = QtCore.Signal(str, str, str)
 
+    #: Signal emitted when the active bookmark presets have changed
+    activeBookmarksPresetsChanged = QtCore.Signal()
+
     #: Signal emitted when saved favourite items have changed
     favouritesChanged = QtCore.Signal()
     #: Signal emitted when a favourite item was added

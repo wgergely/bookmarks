@@ -1,17 +1,14 @@
+import json
+import os
+import shutil
+import tempfile
 import threading
 import time
 import unittest
 
-from ..server.lib import ServerAPI
-import os
-import shutil
-import tempfile
-import unittest
-
-from PySide2 import QtCore, QtWidgets
-
+from .activebookmarks_presets import *
 from .. import common
-from .model import ServerModel, ServerFilterProxyModel, Node, NodeType, ServerAPI
+from ..server.lib import ServerAPI
 
 
 class TestServerLib(unittest.TestCase):
@@ -262,6 +259,282 @@ class TestServerLib(unittest.TestCase):
         self.assertFalse(bk_key.endswith('/'))
         # Also test that no backslashes remain
         self.assertNotIn('\\', bk_key)
+
+
+class TestActiveBookmarksPresetsAPI(unittest.TestCase):
+
+    def setUp(self):
+        common.initialize(
+            mode=common.Mode.Core,
+            run_app=False
+        )
+        from .activebookmarks_presets import api
+        self.api = api
+
+    def tearDown(self):
+        self.api = None
+
+        _dir = get_presets_dir()
+        shutil.rmtree(_dir, ignore_errors=True)
+        common.shutdown()
+
+    def test_initial_state(self):
+        self.assertEqual(self.api.get_presets(), {}, "No presets should exist initially")
+
+    def test_sanitize_filename(self):
+        self.assertEqual(sanitize_filename(" test:name "), "test_name")
+        self.assertEqual(sanitize_filename("  "), "untitled")
+        self.assertEqual(sanitize_filename("my|preset"), "my_preset")
+        self.assertEqual(sanitize_filename("my/preset"), "my_preset")
+        self.assertEqual(sanitize_filename("日本"), "日本")
+
+        with self.assertRaises(TypeError):
+            sanitize_filename(None)
+
+    def test_save_preset_snapshots_current_bookmarks(self):
+        # Create some bookmarks
+        common.bookmarks = {
+            "//my-server/jobs/my-job/data/shots": {
+                "server": "//my-server",
+                "job": "jobs/my-job",
+                "root": "data/shots"
+            },
+            "//my-server/jobs/my-job/data/assets": {
+                "server": "//my-server",
+                "job": "jobs/my-job",
+                "root": "data/assets"
+            }
+        }
+        self.api.save_preset("MyPreset")
+        self.assertTrue(self.api.exists("MyPreset"))
+        presets = self.api.get_presets()
+        self.assertIn("MyPreset", presets)
+        data = presets["MyPreset"]
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]["job"], "jobs/my-job")
+
+    def test_verify_preset_invalid_data(self):
+        # Test invalid top-level keys
+        with self.assertRaises(ValueError):
+            self.api._verify_preset({"data": []})  # Missing name
+        with self.assertRaises(ValueError):
+            self.api._verify_preset({"name": "Test"})  # Missing data
+
+        # Invalid name
+        with self.assertRaises(ValueError):
+            self.api._verify_preset({"name": " ", "data": []})
+
+        # data not a list
+        with self.assertRaises(TypeError):
+            self.api._verify_preset({"name": "Test", "data": {}})
+
+        # Invalid data item type
+        with self.assertRaises(TypeError):
+            self.api._verify_preset({"name": "Test", "data": ["not a dict"]})
+
+        # Missing keys in data item
+        with self.assertRaises(ValueError):
+            self.api._verify_preset({"name": "Test", "data": [{}]})
+
+        # Empty strings
+        with self.assertRaises(ValueError):
+            self.api._verify_preset({"name": "Test", "data": [{"server": " ", "job": "job", "root": "root"}]})
+
+    def test_import_export_preset(self):
+        _dir = get_presets_dir()
+        data = {
+            "name": "OriginalName",
+            "data": [
+                {"server": "//server", "job": "job", "root": "root"}
+            ]
+        }
+        source_file = os.path.join(_dir, "source.json")
+        with open(source_file, "w") as f:
+            json.dump(data, f)
+
+        # Import with rename
+        self.api.import_preset("Imported", source_file)
+        self.assertTrue(self.api.exists("Imported"))
+        self.assertFalse(self.api.exists("OriginalName"))
+
+        # Export
+        dest_file = os.path.join(_dir, "exported.json")
+        self.api.export_preset("Imported", dest_file)
+        self.assertTrue(os.path.exists(dest_file))
+        with open(dest_file, "r") as f:
+            exported = json.load(f)
+        self.assertEqual(exported["name"], "Imported")
+
+        # Non-existent preset export
+        with self.assertRaises(FileNotFoundError):
+            self.api.export_preset("DoesNotExist", dest_file)
+
+        # Import existing without force
+        with self.assertRaises(FileExistsError):
+            self.api.import_preset("Imported", source_file)
+
+        # With force
+        self.api.import_preset("Imported", source_file, force=True)
+        self.assertTrue(self.api.exists("Imported"))
+
+    def test_exists_method(self):
+        self.assertFalse(self.api.exists("NoPreset"))
+        # Create and save a preset directly
+        data = {
+            "name": "TestExists",
+            "data": [
+                {"server": "//server", "job": "job", "root": "root"}
+            ]
+        }
+        self.api._save_preset_data("TestExists", data)
+        self.assertTrue(self.api.exists("TestExists"))
+
+    def test_preset_to_path(self):
+        data = {
+            "name": "PathTest",
+            "data": [
+                {"server": "//server", "job": "my-job", "root": "some/root"}
+            ]
+        }
+        self.api._save_preset_data("PathTest", data)
+        p = self.api.get_paths_from_preset("PathTest")
+        self.assertEqual(len(p), 1)
+
+        self.assertEqual(p[0], "//server/my-job/some/root")
+
+        # Non-existent
+        self.assertEqual(self.api.get_paths_from_preset("NoSuch"), [])
+
+    def test_delete_preset(self):
+        data = {
+            "name": "DeleteMe",
+            "data": [
+                {"server": "//s", "job": "j", "root": "r"}
+            ]
+        }
+        self.api._save_preset_data("DeleteMe", data)
+        self.assertTrue(self.api.exists("DeleteMe"))
+        self.api.delete_preset("DeleteMe")
+        self.assertFalse(self.api.exists("DeleteMe"))
+        self.api.delete_preset("DeleteMe")  # No error
+
+    def test_activate_preset(self):
+        # Create bookmarks in a preset
+        data = {
+            "name": "ActivateMe",
+            "data": [
+                {"server": "//act-server", "job": "act-job", "root": "act-root"},
+                {"server": "//act-server", "job": "act-job2", "root": "act-root2"}
+            ]
+        }
+        self.api._save_preset_data("ActivateMe", data)
+        self.api.activate_preset("ActivateMe")
+
+        # Check that bookmarks are loaded correctly
+        self.assertTrue([f for f in common.bookmarks.keys() if "//act-server" in f])
+        self.assertTrue([f for f in common.bookmarks.keys() if "act-job" in f])
+        self.assertTrue([f for f in common.bookmarks.keys() if "act-root" in f])
+
+        # Non-existent preset
+        with self.assertRaises(FileNotFoundError):
+            self.api.activate_preset("NoSuchPreset")
+
+    def test_clear_presets(self):
+        data = {
+            "name": "ClearTest",
+            "data": [
+                {"server": "//c", "job": "c", "root": "c"}
+            ]
+        }
+        self.api._save_preset_data("ClearTest", data)
+        self.api.clear_presets()
+        self.assertFalse(self.api.exists("ClearTest"))
+        self.assertEqual(self.api.get_presets(), {})
+
+    def test_is_valid(self):
+        data = {
+            "name": "ValidTest",
+            "data": [
+                {"server": "//valid", "job": "valid-job", "root": "valid-root"}
+            ]
+        }
+        self.api._save_preset_data("ValidTest", data)
+        self.assertTrue(self.api.is_valid("ValidTest"))
+        self.assertFalse(self.api.is_valid("NoSuchPreset"))
+
+        # Create a corrupt file
+        _dir = get_presets_dir()
+        corrupt_path = os.path.join(_dir, "Corrupt.json")
+        with open(corrupt_path, "w") as f:
+            f.write("NOT JSON")
+        self.api.get_presets(force=True)
+        # Corrupt won't appear in _presets, so is_valid should be False
+        self.assertFalse(self.api.is_valid("Corrupt"))
+
+    def test_rename_preset(self):
+        data = {
+            "name": "OldName",
+            "data": [
+                {"server": "//old", "job": "old", "root": "old"}
+            ]
+        }
+        self.api._save_preset_data("OldName", data)
+        self.api.rename_preset("OldName", "NewName")
+        self.assertFalse(self.api.exists("OldName"))
+        self.assertTrue(self.api.exists("NewName"))
+
+        data2 = {
+            "name": "Another",
+            "data": [
+                {"server": "//a", "job": "a", "root": "a"}
+            ]
+        }
+        self.api._save_preset_data("Another", data2)
+        with self.assertRaises(FileExistsError):
+            self.api.rename_preset("NewName", "Another")
+
+        # With force
+        self.api.rename_preset("NewName", "Another", force=True)
+        self.assertFalse(self.api.exists("NewName"))
+        self.assertTrue(self.api.exists("Another"))
+
+    def test_unicode_support(self):
+        data = {
+            "name": "日本語",
+            "data": [
+                {"server": "//サーバー", "job": "クライアント/仕事", "root": "データ/ショット"}
+            ]
+        }
+        self.api._save_preset_data("日本語", data)
+        self.assertTrue(self.api.exists("日本語"))
+
+        paths = self.api.get_paths_from_preset("日本語")
+        self.assertEqual(len(paths), 1)
+
+        self.assertIn("サーバー", paths[0])
+        self.assertIn("クライアント/仕事", paths[0])
+        self.assertIn("データ/ショット", paths[0])
+
+        self.assertTrue(self.api.is_valid("日本語"))
+        self.api.activate_preset("日本語")
+
+        self.assertTrue([f for f in common.bookmarks.keys() if "//サーバー" in f])
+
+    def test_wrong_types_for_methods(self):
+        # Passing non-str preset_name
+        with self.assertRaises(TypeError):
+            self.api.exists(None)
+
+        # Try saving preset with invalid data in common.bookmarks
+        common.bookmarks = {
+            "//my-server/jobs/my-job/data/shots": {
+                "server": "//my-server",
+                "job": 123,  # not a string
+                "root": "data/shots"
+            }
+        }
+        with self.assertRaises(ValueError):
+            self.api.save_preset("BadData")
 
 
 if __name__ == '__main__':

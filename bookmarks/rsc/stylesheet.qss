@@ -1030,14 +1030,14 @@ ServerView {
     background-repeat: no-repeat;
     background-position: center;
 }
-QTreeView#dictionary_preview {
+QTreeView#ActiveBookmarksView {
     background-image: url(<BookmarkItemView>);
     background-repeat: no-repeat;
     background-position: center;
 }
 
 ActiveBookmarksWidget,
-QTreeView#dictionary_preview {
+QTreeView#ActiveBookmarksView {
     alternate-background-color: <VeryDarkBackground>;
     background-color: <VeryDarkBackground>;
 }

@@ -34,7 +34,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 from .lib import ServerAPI, JobDepth
 from .model import ServerModel, NodeType, Node, ServerFilterProxyModel
-from .preview import DictionaryPreview
+from .activebookmarks import ActiveBookmarksWidget
 from .. import contextmenu, common, shortcuts, ui, actions
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
@@ -1362,7 +1362,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
         self.server_view = ServerView(parent=self)
-        self.preview_widget = DictionaryPreview(parent=self)
+        self.preview_widget = ActiveBookmarksWidget(parent=self)
         self.filter_toolbar = QtWidgets.QToolBar('Filters', parent=self)
         self.filter_toolbar.setIconSize(QtCore.QSize(
             common.Size.Margin(1.0),
@@ -1467,6 +1467,15 @@ class ServerEditorDialog(QtWidgets.QDialog):
             common.Size.DefaultWidth(2.0),
             common.Size.DefaultHeight(1.5)
         )
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        common.restore_window_geometry(self)
+        common.restore_window_state(self)
+
+    def hideEvent(self, event):
+        super().hideEvent(event)
+        common.save_window_state(self)
 
     @common.error
     @common.debug

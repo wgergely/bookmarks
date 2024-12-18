@@ -1036,7 +1036,7 @@ QTreeView#dictionary_preview {
     background-position: center;
 }
 
-DictionaryPreview,
+ActiveBookmarksWidget,
 QTreeView#dictionary_preview {
     alternate-background-color: <VeryDarkBackground>;
     background-color: <VeryDarkBackground>;

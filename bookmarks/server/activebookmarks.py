@@ -48,7 +48,7 @@ class Node:
         return None
 
 
-class DictionaryPreviewContextMenu(contextmenu.BaseContextMenu):
+class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
@@ -124,7 +124,7 @@ class DictionaryPreviewContextMenu(contextmenu.BaseContextMenu):
         }
 
 
-class DictionaryModel(QtCore.QAbstractItemModel):
+class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     #: Custom signal to emit data changes
     dataChangedSignal = QtCore.Signal(dict, dict)  # previous, current
 
@@ -365,7 +365,7 @@ class DictionaryModel(QtCore.QAbstractItemModel):
         return True
 
 
-class DictionaryPreview(QtWidgets.QWidget):
+class ActiveBookmarksWidget(QtWidgets.QWidget):
     selectionChanged = QtCore.Signal(str, str, str)
 
     def __init__(self, parent=None):
@@ -393,7 +393,7 @@ class DictionaryPreview(QtWidgets.QWidget):
         self.tree_view.dragEnterEvent = self.dragEnterEvent
         self.tree_view.dragMoveEvent = self.dragMoveEvent
 
-        self.tree_view.setModel(DictionaryModel(self.data_dict, parent=self.tree_view))
+        self.tree_view.setModel(ActiveBookmarksModel(self.data_dict, parent=self.tree_view))
 
         self.layout().addWidget(self.tree_view, 1)
 
@@ -422,7 +422,7 @@ class DictionaryPreview(QtWidgets.QWidget):
         index = next(iter(self.tree_view.selectedIndexes()), QtCore.QModelIndex())
         persistent_index = QtCore.QPersistentModelIndex(index)
 
-        menu = DictionaryPreviewContextMenu(persistent_index, parent=self)
+        menu = ActiveBookmarksContextMenu(persistent_index, parent=self)
         pos = event.pos()
         pos = self.mapToGlobal(pos)
         menu.move(pos)

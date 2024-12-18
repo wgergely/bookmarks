@@ -259,27 +259,37 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
 
         Returns:
             dict: A dict mapping preset_name to its data (list of items).
+
         """
         if not force and self._presets:
             return self._presets
 
         self._presets.clear()
+        self._presets = {}
+
         _dir = get_presets_dir()
-        if os.path.exists(_dir):
-            for fname in os.listdir(_dir):
-                if fname.endswith('.json'):
-                    path = os.path.join(_dir, fname)
-                    try:
-                        with open(path, 'r') as f:
-                            data = json.load(f)
-                        self._verify_preset(data)
-                        preset_name = sanitize_filename(data['name'])
-                        self._presets[preset_name] = data['data']
-                    except (ValueError, TypeError) as e:
-                        log.error(__name__, f'Invalid preset in {fname}: {e}')
-                    except Exception as e:
-                        log.error(__name__, f'Error loading preset from {path}: {e}')
-        return self._presets
+        if not os.path.exists(_dir):
+            log.warning(__name__, f'Presets directory not found: {_dir}')
+            return {}
+
+        for fname in os.listdir(_dir):
+            if not fname.endswith('.json'):
+                log.warning(__name__, f'Skipping non-json file: {fname}')
+                continue
+
+            path = os.path.join(_dir, fname)
+            try:
+                with open(path, 'r') as f:
+                    data = json.load(f)
+                self._verify_preset(data)
+                preset_name = sanitize_filename(data['name'])
+                self._presets[preset_name] = data['data']
+            except (ValueError, TypeError) as e:
+                log.error(__name__, f'Invalid preset in {fname}: {e}')
+            except Exception as e:
+                log.error(__name__, f'Error loading preset from {path}: {e}')
+
+        return self._presets.copy()
 
     def import_preset(self, preset_name, source_file, force=False):
         """Import a preset from a file.
@@ -329,15 +339,18 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
         with open(destination_file, 'w') as f:
             json.dump(out_data, f, indent=4)
 
-    def _save_preset_data(self, preset_name, data):
+    def _save_preset_data(self, preset_name, data, force):
         """Save given preset data to disk and update internal structure.
 
         Args:
             preset_name (str): The preset name.
             data (dict): The full preset structure with 'name' and 'data'.
+            force (bool): If True, overwrite existing preset.
 
         Raises:
             ValueError/TypeError: If data is invalid.
+            FileExistsError: If preset exists and force=False.
+
         """
         preset_name = sanitize_filename(preset_name)
         self._verify_preset(data)
@@ -345,30 +358,33 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             data['name'] = preset_name
         _dir = get_presets_dir()
         if not os.path.exists(_dir):
-            os.makedirs(_dir)
+            os.makedirs(_dir, exist_ok=True)
         path = os.path.join(_dir, f'{preset_name}.json')
+
+        if os.path.exists(path) and not force:
+            raise FileExistsError(f'Preset {preset_name} already exists')
+
         with open(path, 'w') as f:
             json.dump(data, f, indent=4)
         self._presets[preset_name] = data['data']
 
-    def save_preset(self, preset_name):
+    def save_preset(self, preset_name, force=False):
         """Save a preset to disk by snapshotting the current bookmarks.
 
         Args:
             preset_name (str): The preset name.
+            force (bool): If True, overwrite existing preset.
 
         Raises:
             ValueError/TypeError: If data is invalid.
         """
         preset_name = sanitize_filename(preset_name)
-        # Snapshot current bookmarks from common.bookmarks
-        # common.bookmarks structure: { 'server/job/root': { 'server':..., 'job':..., 'root':... }, ...}
         data_items = list(common.bookmarks.values())
         data = {
             'name': preset_name,
             'data': data_items
         }
-        self._save_preset_data(preset_name, data)
+        self._save_preset_data(preset_name, data, force)
 
         common.signals.activeBookmarksPresetsChanged.emit()
 
@@ -417,6 +433,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
 
         lib.ServerAPI.clear_bookmarks()
         lib.ServerAPI.save_bookmarks(bookmarks)
+        lib.ServerAPI.load_bookmarks()
 
         # Verify the current active items against the new preset values
         # Set the first bookmark as active, if any
@@ -428,7 +445,12 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             return
 
         paths = list(bookmarks.keys())
-        preset_paths = [self.preset_to_path(n) for n in self._presets]
+        active_path = common.active('root', path=True)
+        if active_path not in paths:
+            log.warning(__name__, f'Active path {active_path} not in preset paths')
+            common.set_active('root', None)
+            common.set_active('job', None)
+            common.set_active('server', None)
 
     def clear_presets(self):
         """Delete all presets from disk."""
@@ -501,3 +523,5 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
         self._verify_preset(data)
         with open(new_path, 'w') as f:
             json.dump(data, f, indent=4)
+
+        common.signals.activeBookmarksPresetsChanged.emit()

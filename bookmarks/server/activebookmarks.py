@@ -1,7 +1,8 @@
+import functools
 import json
 import os
 
-from PySide2 import QtWidgets, QtCore
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from . import activebookmarks_presets
 from .lib import ServerAPI
@@ -49,6 +50,80 @@ class Node:
         return None
 
 
+class SavePresetDialog(QtWidgets.QDialog):
+    """Custom dialog for saving presets with a validated name."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.setWindowTitle('Save Preset')
+
+        self._editor = None
+        self.save_button = None
+        self.cancel_button = None
+
+        self._create_ui()
+        self._connect_signals()
+
+    @property
+    def editor(self):
+        return self._editor
+
+    def _create_ui(self):
+        QtWidgets.QVBoxLayout(self)
+
+        o = common.Size.Margin()
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(o * 0.5)
+
+        row = ui.add_row('Name', parent=self)
+
+        # Line edit with validator
+        self._editor = ui.LineEdit(required=True, parent=row)
+        self._editor.setPlaceholderText('Enter a name for the preset...')
+
+        values = activebookmarks_presets.get_api().get_presets().keys()
+        completer = QtWidgets.QCompleter(sorted(values), parent=self._editor)
+        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        completer.setFilterMode(QtCore.Qt.MatchContains)
+        common.set_stylesheet(completer.popup())
+        self._editor.setCompleter(completer)
+
+        action = QtWidgets.QAction(self._editor)
+        action.setIcon(ui.get_icon('preset', color=common.Color.Text()))
+        action.triggered.connect(completer.complete)
+        self._editor.addAction(action, QtWidgets.QLineEdit.TrailingPosition)
+
+        validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[^\$\s\\/:*?"<>|]*'))
+        self._editor.setValidator(validator)
+
+        row.layout().addWidget(self._editor)
+
+        # Exclude special characters the filename cannot contain
+
+        row = ui.add_row(None, parent=self)
+
+        self.save_button = ui.PaintedButton('Save', parent=row)
+        self.cancel_button = ui.PaintedButton('Cancel', parent=row)
+        row.layout().addWidget(self.save_button, 1)
+        row.layout().addWidget(self.cancel_button, 0)
+
+    def _connect_signals(self):
+        self.save_button.clicked.connect(self.accept)
+        self.cancel_button.clicked.connect(self.reject)
+
+    def sizeHint(self):
+        return QtCore.QSize(
+            common.Size.DefaultWidth(),
+            common.Size.RowHeight()
+        )
+
+    def get_preset_name(self):
+        """Return the text entered in the line edit."""
+        return self.line_edit.text()
+
+
 class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
@@ -70,7 +145,7 @@ class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
 
         """
         self.menu[contextmenu.key()] = {
-            'text': 'Add new bookmark item...',
+            'text': 'Add Bookmark...',
             'icon': ui.get_icon('add', color=common.Color.Green()),
             'action': self.parent().add_item,
         }
@@ -90,7 +165,7 @@ class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Remove All Bookmarks',
-            'icon': ui.get_icon('bookmark', color=common.Color.Red()),
+            'icon': ui.get_icon('close'),
             'action': self.parent().remove_all_items,
         }
 
@@ -129,22 +204,17 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     #: Custom signal to emit data changes
     dataChangedSignal = QtCore.Signal(dict, dict)  # previous, current
 
-    def __init__(self, bookmarks, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.root_node = Node()
-        self.bookmarks = bookmarks
+        self.bookmarks = {}
         self.init_data()
 
         common.signals.bookmarkAdded.connect(self.add_item)
 
-    @QtCore.Slot(str, str, str)
-    def on_bookmark_added(self, server, job, root):
-        print(f'Bookmark added: {server}/{job}/{root}')
-
-        print(common.bookmarks)
-
     def init_data(self):
         self.beginResetModel()
+        self.bookmarks = common.bookmarks.copy()
         self.root_node = Node()
         for key in sorted(self.bookmarks.keys(), key=lambda x: x.lower()):
             key_node = Node(key, self.root_node)
@@ -371,14 +441,16 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.bookmarks = common.bookmarks.copy()
-
         self.toolbar = None
+        self.apply_preset_action = None
+        self.delete_preset_action = None
 
         # Set up the layout
         self._create_ui()
         self._connect_signals()
+
         self.init_data()
+        self.init_presets()
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
@@ -387,19 +459,48 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
 
         # Toolbar
         self.toolbar = QtWidgets.QToolBar(self)
+        self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.toolbar.setIconSize(QtCore.QSize(common.Size.Margin(), common.Size.Margin()))
 
-        # Action group
-        action_group = QtWidgets.QActionGroup(self)
-        action_group.setExclusive(True)
+        # Add item
+        action = QtWidgets.QAction(ui.get_icon('add', color=common.Color.Green()), 'Add Bookmark', self)
+        action.triggered.connect(self.add_item)
+        self.toolbar.addAction(action)
 
-        # Save as preset
-        action = QtWidgets.QAction(ui.get_icon('add_file', color=common.Color.Green()), 'Save as Preset', self)
+        self.toolbar.addSeparator()
+
+        # Add label "Presets"
+        label = QtWidgets.QLabel('Presets', self)
+        label.setStyleSheet(f'color: {common.Color.DisabledText(qss=True)};')
+        self.toolbar.addWidget(label)
+
+        # Save preset
+        action = QtWidgets.QAction(ui.get_icon('add_preset', color=common.Color.DisabledText()), 'Save', self)
         action.triggered.connect(self.save_preset)
         self.toolbar.addAction(action)
 
-        # Add separator
+        # Load preset
+        action = QtWidgets.QAction(ui.get_icon('preset', color=common.Color.DisabledText()), 'Load', self)
+        menu = QtWidgets.QMenu(self)
+        menu.addAction('No presets...')
+        menu.actions()[0].setEnabled(False)
+        action.setMenu(menu)
+        self.apply_preset_action = action
+        action.triggered.connect(lambda: self.apply_preset_action.menu().exec_(QtGui.QCursor().pos()))
+        self.toolbar.addAction(action)
 
-        # Import
+        # Clear preset
+        action = QtWidgets.QAction(ui.get_icon('close', color=common.Color.Red()), 'Clear', self)
+        menu = QtWidgets.QMenu(self)
+        menu.addAction('No presets...')
+        menu.actions()[0].setEnabled(False)
+        action.setMenu(menu)
+        self.delete_preset_action = action
+        action.triggered.connect(lambda: self.delete_preset_action.menu().exec_(QtGui.QCursor().pos()))
+        self.toolbar.addAction(action)
+
+
+
 
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
@@ -412,12 +513,14 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         self.tree_view.dragEnterEvent = self.dragEnterEvent
         self.tree_view.dragMoveEvent = self.dragMoveEvent
 
-        self.tree_view.setModel(ActiveBookmarksModel(self.bookmarks, parent=self.tree_view))
+        self.tree_view.setModel(ActiveBookmarksModel(parent=self.tree_view))
 
+        self.layout().addWidget(self.toolbar)
         self.layout().addWidget(self.tree_view, 1)
 
     def _connect_signals(self):
         common.signals.bookmarksChanged.connect(self.init_data)
+        common.signals.activeBookmarksPresetsChanged.connect(self.init_presets)
 
         self.model().dataChangedSignal.connect(self.on_data_changed)
 
@@ -427,6 +530,7 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
 
         self.view().selectionModel().selectionChanged.connect(self.emit_selection_changed)
         self.view().selectionModel().currentChanged.connect(self.emit_selection_changed)
+
 
     def dragEnterEvent(self, event):
         event.accept()
@@ -486,13 +590,13 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
     @QtCore.Slot()
     def add_item(self):
         # Prompt user for server, job, and root
-        server, ok1 = QtWidgets.QInputDialog.getText(self, 'Add Item', 'Server:')
+        server, ok1 = QtWidgets.QInputDialog.getText(self, 'Set Server', 'Server:')
         if not ok1 or not server.strip():
             return
-        job, ok2 = QtWidgets.QInputDialog.getText(self, 'Add Item', 'Job:')
+        job, ok2 = QtWidgets.QInputDialog.getText(self, 'Set Job', 'Job:')
         if not ok2 or not job.strip():
             return
-        root, ok3 = QtWidgets.QInputDialog.getText(self, 'Add Item', 'Root:')
+        root, ok3 = QtWidgets.QInputDialog.getText(self, 'Set Root', 'Root:')
         if not ok3 or not root.strip():
             return
         if not self.model().add_item(server.strip(), job.strip(), root.strip()):
@@ -527,32 +631,94 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         if not common.bookmarks:
             raise ValueError('No bookmarks to save as a preset.')
 
-        # Prompt user for preset name and add a validator to ensure file safe characters
-        from ..editor.base import path_validator
-        dialog = QtWidgets.QInputDialog(self)
-        dialog.setInputMode(QtWidgets.QInputDialog.TextInput)
-        dialog.setLabelText('Enter a name for the preset:')
-        dialog.setOkButtonText('Save')
-        dialog.setCancelButtonText('Cancel')
-        dialog.resize(common.Size.DefaultWidth(), common.Size.DefaultHeight())
-
-        line_edit = dialog.lineEdit()
-        line_edit.setValidator(path_validator())
-
+        dialog = SavePresetDialog(parent=self)
         if dialog.exec_() != QtWidgets.QDialog.Accepted:
             return
 
-        preset_name = dialog.textValue()
+        preset_name = dialog.editor.text()
         if not preset_name:
             raise ValueError('Cannot save a preset with an empty name.')
 
         # Save the preset
         api = activebookmarks_presets.get_api()
-        api.save_preset(preset_name)
 
+        try:
+            api.save_preset(preset_name)
+        except FileExistsError:
+            if common.show_message(
+                    'A template with the same name already exists. Overwrite?',
+                    body='This action not undoable.',
+                    buttons=[common.YesButton, common.NoButton],
+                    modal=True
+            ) == QtWidgets.QDialog.Rejected:
+                return
+
+            api.save_preset(preset_name, force=True)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot(str)
+    def activate_preset(self, preset, *args, **kwargs):
+        if common.show_message(
+                f'Are you sure you want to activate the preset "{preset}"?',
+                body='This action will overwrite the current bookmark selection.',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True
+        ) == QtWidgets.QDialog.Rejected:
+            return
+        api = activebookmarks_presets.get_api()
+        api.activate_preset(preset)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot(str)
+    def delete_preset(self, preset_name, *args, **kwargs):
+        """Removes the specified preset.
+
+        """
+        if not common.bookmarks:
+            raise ValueError('No presets to remove.')
+
+        if common.show_message(
+                f'Are you sure you want to remove "{preset_name}"?',
+                body='This action is not undoable.',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True
+        ) == QtWidgets.QDialog.Rejected:
+            return
+
+        api = activebookmarks_presets.get_api()
+        api.delete_preset(preset_name)
+
+        common.signals.activeBookmarksPresetsChanged.emit()
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
     def init_data(self):
         self.model().init_data()
         self.set_spanned()
+
+    @common.error
+    @common.debug
+    def init_presets(self):
+        api = activebookmarks_presets.get_api()
+        presets = api.get_presets(force=True)
+
+        for action in [self.apply_preset_action, self.delete_preset_action]:
+            menu = action.menu()
+            menu.clear()
+            if not presets:
+                menu.addAction('No presets...').setEnabled(False)
+                return
+
+            for preset in sorted(presets.keys(), key=lambda x: x.lower()):
+                _action = menu.addAction(preset)
+                if action == self.apply_preset_action:
+                    _action.triggered.connect(functools.partial(self.activate_preset, preset))
+                elif action == self.delete_preset_action:
+                    _action.triggered.connect(functools.partial(self.delete_preset, preset))
+                menu.addAction(_action)
 
     def set_spanned(self):
         for i in range(self.model().rowCount(self.model().root_index())):
@@ -564,3 +730,4 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
             return
 
         ServerAPI.save_bookmarks(current_data)
+        ServerAPI.load_bookmarks()

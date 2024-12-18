@@ -77,11 +77,12 @@ class Node:
         return self._exists
 
     def is_bookmarked(self):
-        if not common.bookmarks:
+        bookmarks = common.bookmarks.copy()
+        if not bookmarks:
             return False
 
         p = self.path()
-        if [f for f in common.bookmarks.keys() if p in f]:
+        if [f for f in bookmarks.keys() if p in f]:
             return True
 
         return False
@@ -230,6 +231,9 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
         return False
 
     def matches_filter_recursive(self, index):
+        if not index.isValid():
+            return False
+
         node = index.internalPointer()
         if not node:
             return False
@@ -254,6 +258,8 @@ class ServerFilterProxyModel(QtCore.QSortFilterProxyModel):
 
     def filterAcceptsRow(self, source_row, source_parent):
         index = self.sourceModel().index(source_row, 0, source_parent)
+        if not index.isValid():
+            return False
         return self.matches_filter_recursive(index)
 
 
@@ -445,7 +451,7 @@ class ServerModel(QtCore.QAbstractItemModel):
                         return True
 
         if node.type == NodeType.JobNode:
-            bookmarks = [v['root'] for v in common.bookmarks.values()
+            bookmarks = [v['root'] for v in common.bookmarks.copy().values()
                          if v['server'] == node.server and v['job'] == node.job]
             if bookmarks:
                 return True
@@ -619,18 +625,18 @@ class ServerModel(QtCore.QAbstractItemModel):
     def init_data(self, *args, **kwargs):
         self.beginResetModel()
         self._root_node = Node(None)
-        self.endResetModel()
 
         servers = ServerAPI.get_servers(force=True)
         servers = servers if servers else {}
         servers = sorted(servers.keys(), key=lambda s: s.lower())
-        self.beginInsertRows(QtCore.QModelIndex(), 0, len(servers) - 1)
+
         for server in servers:
             if server in [f.server for f in self._root_node.children()]:
                 continue
             node = Node(server=server, parent=self._root_node)
             self._root_node.append_child(node)
-        self.endInsertRows()
+
+        self.endResetModel()
 
     @QtCore.Slot(str)
     def add_server(self, server):

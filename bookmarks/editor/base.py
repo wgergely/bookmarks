@@ -30,7 +30,7 @@ from .. import log
 from .. import ui
 
 path_validator = QtGui.QRegExpValidator()
-path_validator.setRegExp(QtCore.QRegExp(r'[^\\<>"|?*]+'))
+path_validator.setRegExp(QtCore.QRegExp(r'[^\\\$<>"\|?*]*'))
 float_validator = QtGui.QRegExpValidator()
 float_validator.setRegExp(QtCore.QRegExp(r'[0-9]+[\.]?[0-9]*'))
 int_validator = QtGui.QRegExpValidator()

@@ -1041,6 +1041,9 @@ QTreeView#ActiveBookmarksView {
     alternate-background-color: <VeryDarkBackground>;
     background-color: <VeryDarkBackground>;
 }
+ActiveBookmarksWidget QToolBar {
+    background-color: <VeryDarkBackground>;
+}
 
 TokenLineEdit {
     font-family: "Consolas", monospace;

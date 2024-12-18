@@ -808,13 +808,17 @@ class ServerView(QtWidgets.QTreeView):
         self.collapsed.connect(self.start_resize_timer)
         self.model().modelReset.connect(self.start_resize_timer)
         self.model().layoutChanged.connect(self.start_resize_timer)
+
         self.model().modelAboutToBeReset.connect(self.save_expanded_nodes)
         self.model().modelAboutToBeReset.connect(self.save_selected_node)
+
         self.model().modelReset.connect(self.restore_expanded_nodes)
         self.model().modelReset.connect(self.restore_selected_node)
+
         self.selectionModel().selectionChanged.connect(self.save_selected_node)
         self.selectionModel().selectionChanged.connect(self.emit_root_folder_selected)
         self.model().modelAboutToBeReset.connect(self.emit_root_folder_selected)
+
         common.signals.jobAdded.connect(self.on_job_added)
         common.signals.bookmarksChanged.connect(self.init_data)
 
@@ -1349,7 +1353,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.fetch_progress_bar = None
         self.server_view = None
-        self.preview_widget = None
+        self.active_bookmark_view = None
         self.setWindowTitle('Servers')
         if not self.parent():
             common.set_stylesheet(self)
@@ -1362,7 +1366,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
         self.server_view = ServerView(parent=self)
-        self.preview_widget = ActiveBookmarksWidget(parent=self)
+        self.active_bookmark_view = ActiveBookmarksWidget(parent=self)
         self.filter_toolbar = QtWidgets.QToolBar('Filters', parent=self)
         self.filter_toolbar.setIconSize(QtCore.QSize(
             common.Size.Margin(1.0),
@@ -1443,7 +1447,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
         splitter = QtWidgets.QSplitter(parent=self)
         splitter.setOrientation(QtCore.Qt.Horizontal)
         splitter.addWidget(self.server_view)
-        splitter.addWidget(self.preview_widget)
+        splitter.addWidget(self.active_bookmark_view)
         splitter.setStretchFactor(0, 0.5)
         splitter.setStretchFactor(1, 0.5)
         splitter.setAttribute(QtCore.Qt.WA_NoSystemBackground)
@@ -1454,8 +1458,8 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.layout().addWidget(row, 1)
 
     def _connect_signals(self):
-        self.server_view.bookmarkNodeSelected.connect(self.preview_widget.bookmark_node_changed)
-        self.preview_widget.selectionChanged.connect(self.server_view.on_link_added)
+        self.server_view.bookmarkNodeSelected.connect(self.active_bookmark_view.bookmark_node_changed)
+        self.active_bookmark_view.selectionChanged.connect(self.server_view.on_link_added)
         self.ok_button.clicked.connect(self.accept)
         cnx = QtCore.Qt.DirectConnection
         self.server_view.model().sourceModel().fetchAboutToStart.connect(self.fetch_progress_bar.start, type=cnx)

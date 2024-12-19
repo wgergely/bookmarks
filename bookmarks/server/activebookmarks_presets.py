@@ -316,7 +316,8 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             data = json.load(f)
         self._verify_preset(data)
         data['name'] = preset_name
-        self._save_preset_data(preset_name, data)
+
+        self._save_preset_data(preset_name, data, force)
 
     def export_preset(self, preset_name, destination_file):
         """Export a preset to a file.

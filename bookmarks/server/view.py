@@ -1161,24 +1161,38 @@ class ServerView(QtWidgets.QTreeView):
         abs_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a link', node.path())
         if not abs_path:
             return
+
         if not os.path.exists(abs_path):
             raise ValueError(f'Path "{abs_path}" does not exist.')
+
+        abs_path = abs_path.replace('\\', '/')
+        abs_path = abs_path.rstrip('/')
+
         index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
         if not index.isValid():
             return
+
         source_index = self.model().mapToSource(index)
         if not source_index.isValid():
             return
-        rel_path = abs_path.replace(f'{node.server}/{node.job}', '').strip('/')
+
+        # Handle ambiguous slashes in C: vs C:/ paths
+        job_path = os.path.join(node.server, node.job)
+        job_path = os.path.normpath(job_path).replace('\\', '/')
+        job_path = job_path.strip('/')
+
+        rel_path = abs_path.replace(job_path, '').strip('/')
+        print(node.server, node.job, node.root, rel_path)
+
         current_roots = [f.root for f in node.children()]
         all_roots = sorted(current_roots + [rel_path], key=lambda s: s.lower())
         idx = all_roots.index(rel_path)
+
         self.model().sourceModel().beginInsertRows(source_index, idx, idx)
         node.api().add_link(node.server, node.job, rel_path)
         child_node = Node(node.server, job=node.job, root=rel_path, parent=node)
         node.insert_child(idx, child_node)
         self.model().sourceModel().endInsertRows()
-        self.link_selected(node.server, node.job, rel_path)
 
     @common.error
     @common.debug

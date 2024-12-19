@@ -386,7 +386,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//server", "job": "job", "root": "root"}
             ]
         }
-        self.api._save_preset_data("TestExists", data)
+        self.api._save_preset_data("TestExists", data, True)
         self.assertTrue(self.api.exists("TestExists"))
 
     def test_preset_to_path(self):
@@ -396,7 +396,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//server", "job": "my-job", "root": "some/root"}
             ]
         }
-        self.api._save_preset_data("PathTest", data)
+        self.api._save_preset_data("PathTest", data, True)
         p = self.api.get_paths_from_preset("PathTest")
         self.assertEqual(len(p), 1)
 
@@ -412,7 +412,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//s", "job": "j", "root": "r"}
             ]
         }
-        self.api._save_preset_data("DeleteMe", data)
+        self.api._save_preset_data("DeleteMe", data, True)
         self.assertTrue(self.api.exists("DeleteMe"))
         self.api.delete_preset("DeleteMe")
         self.assertFalse(self.api.exists("DeleteMe"))
@@ -427,7 +427,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//act-server", "job": "act-job2", "root": "act-root2"}
             ]
         }
-        self.api._save_preset_data("ActivateMe", data)
+        self.api._save_preset_data("ActivateMe", data, True)
         self.api.activate_preset("ActivateMe")
 
         # Check that bookmarks are loaded correctly
@@ -446,7 +446,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//c", "job": "c", "root": "c"}
             ]
         }
-        self.api._save_preset_data("ClearTest", data)
+        self.api._save_preset_data("ClearTest", data, True)
         self.api.clear_presets()
         self.assertFalse(self.api.exists("ClearTest"))
         self.assertEqual(self.api.get_presets(), {})
@@ -458,7 +458,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//valid", "job": "valid-job", "root": "valid-root"}
             ]
         }
-        self.api._save_preset_data("ValidTest", data)
+        self.api._save_preset_data("ValidTest", data, True)
         self.assertTrue(self.api.is_valid("ValidTest"))
         self.assertFalse(self.api.is_valid("NoSuchPreset"))
 
@@ -478,7 +478,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//old", "job": "old", "root": "old"}
             ]
         }
-        self.api._save_preset_data("OldName", data)
+        self.api._save_preset_data("OldName", data, True)
         self.api.rename_preset("OldName", "NewName")
         self.assertFalse(self.api.exists("OldName"))
         self.assertTrue(self.api.exists("NewName"))
@@ -489,7 +489,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//a", "job": "a", "root": "a"}
             ]
         }
-        self.api._save_preset_data("Another", data2)
+        self.api._save_preset_data("Another", data2, True)
         with self.assertRaises(FileExistsError):
             self.api.rename_preset("NewName", "Another")
 
@@ -505,7 +505,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 {"server": "//サーバー", "job": "クライアント/仕事", "root": "データ/ショット"}
             ]
         }
-        self.api._save_preset_data("日本語", data)
+        self.api._save_preset_data("日本語", data, True)
         self.assertTrue(self.api.exists("日本語"))
 
         paths = self.api.get_paths_from_preset("日本語")

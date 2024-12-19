@@ -494,7 +494,13 @@ class ServerModel(QtCore.QAbstractItemModel):
 
                     if depth > self._job_style:
                         return
-                    with os.scandir(path) as it:
+                    try:
+                        iterator = os.scandir(path)
+                    except PermissionError:
+                        log.error(__name__, f'No access to {path}')
+                        return
+
+                    with iterator as it:
                         for entry in it:
                             if not entry.is_dir():
                                 continue

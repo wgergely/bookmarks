@@ -50,6 +50,262 @@ class Node:
         return None
 
 
+class AddBookmarkDialog(QtWidgets.QDialog):
+    """Dialog to add a new bookmark with server, job, and root.
+    Paths can include forward slashes, and the user can proceed even if paths are invalid.
+    Selecting folders through the pickers will store relative paths, but the default directory
+    used when picking is constructed from the currently entered server/job/root as absolute paths.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle('Add Bookmark')
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Maximum)
+
+        self.server_editor = None
+        self.job_editor = None
+        self.root_editor = None
+        self.ok_button = None
+        self.cancel_button = None
+
+        self._server_completer = None
+        self._job_completer = None
+        self._root_completer = None
+
+        self.bookmarks = ServerAPI.bookmarks()
+
+        self._create_ui()
+        self._connect_signals()
+        self._init_completers()
+        self._validate_inputs()
+
+    def _normalize_path_part(self, part):
+        return part.replace('\\', '/')
+
+    def _create_ui(self):
+        main_layout = QtWidgets.QVBoxLayout(self)
+        main_layout.setContentsMargins(10, 10, 10, 10)
+        main_layout.setSpacing(10)
+
+        # Server field
+        server_row = ui.add_row('Server', parent=self)
+        self.server_editor = ui.LineEdit(required=True, parent=self)
+        self.server_editor.setPlaceholderText('Select or enter a server')
+        server_row.layout().addWidget(self.server_editor)
+        server_action = QtWidgets.QAction(self.server_editor)
+        server_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
+        server_action.triggered.connect(self._pick_server_folder)
+        self.server_editor.addAction(server_action, QtWidgets.QLineEdit.TrailingPosition)
+        main_layout.addWidget(server_row)
+
+        # Job field
+        job_row = ui.add_row('Job', parent=self)
+        self.job_editor = ui.LineEdit(required=True, parent=self)
+        self.job_editor.setPlaceholderText('Select or enter a job under the selected server')
+        job_row.layout().addWidget(self.job_editor)
+        job_action = QtWidgets.QAction(self.job_editor)
+        job_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
+        job_action.triggered.connect(self._pick_job_folder)
+        self.job_editor.addAction(job_action, QtWidgets.QLineEdit.TrailingPosition)
+        main_layout.addWidget(job_row)
+
+        # Root field
+        root_row = ui.add_row('Root', parent=self)
+        self.root_editor = ui.LineEdit(required=True, parent=self)
+        self.root_editor.setPlaceholderText('Select or enter a root folder under the selected job')
+        root_row.layout().addWidget(self.root_editor)
+        root_action = QtWidgets.QAction(self.root_editor)
+        root_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
+        root_action.triggered.connect(self._pick_root_folder)
+        self.root_editor.addAction(root_action, QtWidgets.QLineEdit.TrailingPosition)
+        main_layout.addWidget(root_row)
+
+        # Buttons
+        button_row = ui.add_row(None, parent=self)
+        self.ok_button = ui.PaintedButton('Add', parent=self)
+        button_row.layout().addWidget(self.ok_button, 1)
+        self.cancel_button = ui.PaintedButton('Cancel', parent=self)
+        button_row.layout().addWidget(self.cancel_button)
+        main_layout.addWidget(button_row)
+
+    def _connect_signals(self):
+        self.server_editor.textChanged.connect(self._on_server_changed)
+        self.job_editor.textChanged.connect(self._on_job_changed)
+        self.root_editor.textChanged.connect(self._validate_inputs)
+        self.ok_button.clicked.connect(self.accept)
+        self.cancel_button.clicked.connect(self.reject)
+
+    def _init_completers(self):
+        servers = [v['server'] for v in self.bookmarks.values()]
+        self._server_completer = QtWidgets.QCompleter(sorted(servers), parent=self)
+        self._server_completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self._server_completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.server_editor.setCompleter(self._server_completer)
+
+        jobs = [v['job'] for v in self.bookmarks.values()]
+        self._job_completer = QtWidgets.QCompleter(jobs, parent=self)
+        self._job_completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self._job_completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.job_editor.setCompleter(self._job_completer)
+
+        roots = [v['root'] for v in self.bookmarks.values()]
+        self._root_completer = QtWidgets.QCompleter(roots, parent=self)
+        self._root_completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self._root_completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.root_editor.setCompleter(self._root_completer)
+
+    def _on_server_changed(self):
+        server = self._normalize_path_part(self.server_editor.text())
+        self.server_editor.blockSignals(True)
+        self.server_editor.setText(server)
+        self.server_editor.blockSignals(False)
+
+        self.job_editor.clear()
+        self.root_editor.clear()
+        self._validate_inputs()
+
+    def _on_job_changed(self):
+        job = self._normalize_path_part(self.job_editor.text())
+        self.job_editor.blockSignals(True)
+        self.job_editor.setText(job)
+        self.job_editor.blockSignals(False)
+
+        self.root_editor.clear()
+        self._validate_inputs()
+
+    def _default_directory(self, for_field):
+        """
+        Construct an absolute path to use as the starting directory for the file dialog.
+        For the server field: if server is set, use its absolute path, else desktop
+        For the job field: if server is set, absolute path of server, else desktop
+        For the root field: if server & job set, absolute path of server/job; if only server set, absolute path of server; else desktop
+        """
+        desktop = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DesktopLocation)
+
+        server = self.server_editor.text().strip()
+        job = self.job_editor.text().strip()
+
+        # Normalize
+        server = self._normalize_path_part(server)
+        job = self._normalize_path_part(job)
+
+        if for_field == 'server':
+            # If server set, get abs path of server, else desktop
+            if server:
+                return os.path.abspath(server)
+            return desktop
+
+        elif for_field == 'job':
+            # If server set, abs(server), else desktop
+            if server:
+                return os.path.abspath(server)
+            return desktop
+
+        elif for_field == 'root':
+            # If server & job set: abs(server/job)
+            # If only server set: abs(server)
+            # Else: desktop
+            if server and job:
+                return os.path.abspath(os.path.join(server, job))
+            elif server:
+                return os.path.abspath(server)
+            return desktop
+
+        return desktop
+
+    def _pick_server_folder(self):
+        start_path = self._default_directory('server')
+        chosen = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Server Directory', start_path)
+        if chosen:
+            # Compute relative path from start_path to chosen
+            rel_path = os.path.relpath(chosen, start_path).replace('\\', '/')
+            self.server_editor.setText(self._normalize_path_part(rel_path))
+
+    def _pick_job_folder(self):
+        start_path = self._default_directory('job')
+        chosen = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Job Directory', start_path)
+        if chosen:
+            rel_path = os.path.relpath(chosen, start_path).replace('\\', '/')
+            self.job_editor.setText(self._normalize_path_part(rel_path))
+
+    def _pick_root_folder(self):
+        start_path = self._default_directory('root')
+        chosen = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Root Directory', start_path)
+        if chosen:
+            rel_path = os.path.relpath(chosen, start_path).replace('\\', '/')
+            self.root_editor.setText(self._normalize_path_part(rel_path))
+
+    def _validate_inputs(self):
+        server = self._normalize_path_part(self.server_editor.text())
+        job = self._normalize_path_part(self.job_editor.text())
+        root = self._normalize_path_part(self.root_editor.text())
+
+        def check_path_valid(p):
+            p = p.strip()
+            if not p:
+                return False
+            # If absolute and doesn't exist, invalid. If relative or just a name, consider valid.
+            if os.path.isabs(p):
+                return os.path.isdir(p)
+            return True
+
+        valid_server = check_path_valid(server)
+        valid_job = check_path_valid(job)
+        valid_root = check_path_valid(root)
+
+        self._set_lineedit_state(self.server_editor, valid_server)
+        self._set_lineedit_state(self.job_editor, valid_job)
+        self._set_lineedit_state(self.root_editor, valid_root)
+
+        self.ok_button.setEnabled(True)
+
+    def _set_lineedit_state(self, editor, valid):
+        pal = editor.palette()
+        if not valid and editor.text().strip():
+            pal.setColor(QtGui.QPalette.Base, QtGui.QColor('#FFCCCC'))
+        else:
+            pal.setColor(QtGui.QPalette.Base, QtGui.QColor('#FFFFFF'))
+        editor.setPalette(pal)
+
+    @common.error
+    @common.debug
+    def accept(self):
+        server = self._normalize_path_part(self.server_editor.text())
+        job = self._normalize_path_part(self.job_editor.text())
+        root = self._normalize_path_part(self.root_editor.text())
+
+        if not (server and job and root):
+            res = common.show_message(
+                'Invalid Input',
+                body='All fields are required. Proceed anyway?',
+                message_type='error',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True
+            )
+            if res == QtWidgets.QDialog.Rejected:
+                return
+
+        # Just proceed even if invalid directories, user has the choice
+        if not (os.path.isdir(server) and os.path.isdir(job) and os.path.isdir(root)):
+            res = common.show_message(
+                'Invalid Path',
+                body='The specified paths do not all exist. Proceed anyway?',
+                message_type='error',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True
+            )
+            if res == QtWidgets.QDialog.Rejected:
+                return
+
+        super().accept()
+
+    def get_values(self):
+        server = self._normalize_path_part(self.server_editor.text())
+        job = self._normalize_path_part(self.job_editor.text())
+        root = self._normalize_path_part(self.root_editor.text())
+        return (server, job, root)
+
+
 class SavePresetDialog(QtWidgets.QDialog):
     """Custom dialog for saving presets with a validated name."""
 
@@ -563,18 +819,16 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
     @common.debug
     @QtCore.Slot()
     def add_item(self):
-        # Prompt user for server, job, and root
-        server, ok1 = QtWidgets.QInputDialog.getText(self, 'Set Server', 'Server:')
-        if not ok1 or not server.strip():
+        dialog = AddBookmarkDialog(parent=self)
+        if dialog.exec_() != QtWidgets.QDialog.Accepted:
             return
-        job, ok2 = QtWidgets.QInputDialog.getText(self, 'Set Job', 'Job:')
-        if not ok2 or not job.strip():
-            return
-        root, ok3 = QtWidgets.QInputDialog.getText(self, 'Set Root', 'Root:')
-        if not ok3 or not root.strip():
-            return
+
+        server, job, root = dialog.get_values()
+        if not all([server, job, root]):
+            raise ValueError('All fields are required.')
+
         if not self.model().add_item(server.strip(), job.strip(), root.strip()):
-            QtWidgets.QMessageBox.warning(self, 'Add Item', 'Item already exists or invalid input.')
+            raise ValueError('Failed to add bookmark.')
 
     @common.error
     @common.debug
@@ -583,8 +837,7 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         index = self.tree_view.currentIndex()
         node = self.model().get_node(index)
         if node.parent != self.model().root_node:
-            QtWidgets.QMessageBox.warning(self, 'Remove Item', 'Please select a top-level item to remove.')
-            return
+            raise ValueError('Cannot remove a child node.')
         row = index.row()
         self.model().removeRows(row, 1)
         self.model().dataChanged.emit(index, index)

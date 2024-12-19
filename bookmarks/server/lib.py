@@ -44,8 +44,11 @@ class ServerAPI:
         Returns:
             str: The bookmark item key.
         """
-        k = '/'.join([common.strip(f) for f in (server, job, root)]).rstrip('/')
-        return k
+        _path = os.path.join(server, job, root)
+        _path = os.path.normpath(_path)
+        _path = _path.replace('\\', '/')
+        _path = _path.rstrip('/')
+        return _path
 
     @classmethod
     def add_server(cls, path):
@@ -223,6 +226,10 @@ class ServerAPI:
             raise ValueError('The user settings object is not initialized.')
 
         root_path = os.path.join(server, job)
+        root_path = os.path.normpath(root_path)
+        root_path = root_path.replace('\\', '/')
+        root_path = root_path.rstrip('/')
+
         if os.path.exists(root_path):
             raise FileExistsError(f'Job path {root_path} already exists')
 
@@ -254,15 +261,30 @@ class ServerAPI:
         if common.settings is None:
             raise ValueError('The user settings object is not initialized.')
 
+        server = server.replace('\\', '/')
+        server = server.rstrip('/')
+
+        job = job.replace('\\', '/')
+        job = job.strip('/')
+
+        root = root.replace('\\', '/')
+        root = root.strip('/')
+
         job_path = os.path.join(server, job)
+        job_path = os.path.normpath(job_path)
+        job_path = job_path.replace('\\', '/')
+        job_path = job_path.rstrip('/')
         if not os.path.exists(job_path):
             raise FileNotFoundError(f'Job path {job_path} does not exist')
 
-        root_path = os.path.join(job, root)
-        if os.path.exists(root_path):
-            raise FileExistsError(f'Root path {root_path} already exists')
+        root_path = os.path.join(server, job, root)
+        root_path = os.path.normpath(root_path)
+        root_path = root_path.replace('\\', '/')
+        root_path = root_path.rstrip('/')
 
-        job_path = job_path.replace('\\', '/')
+        if not os.path.exists(root_path):
+            raise FileNotFoundError(f'Root path {root_path} does not exist')
+
         api = LinksAPI(job_path)
         api.add(root, force=True)
         return root_path
@@ -277,11 +299,19 @@ class ServerAPI:
         if common.settings is None:
             raise ValueError('The user settings object is not initialized.')
 
-        job_path = f'{server}/{job}'
+        job_path = os.path.join(server, job)
+        job_path = os.path.normpath(job_path)
+        job_path = job_path.replace('\\', '/')
+        job_path = job_path.rstrip('/')
+
         if not os.path.exists(job_path):
             raise FileNotFoundError(f'Job path {job_path} does not exist')
 
-        root_path = f'{server}/{job}/{root}'
+        root_path = os.path.join(server, job, root)
+        root_path = os.path.normpath(root_path)
+        root_path = root_path.replace('\\', '/')
+        root_path = root_path.rstrip('/')
+
         api = LinksAPI(job_path)
         api.remove(root)
         return root_path
@@ -390,7 +420,12 @@ class ServerAPI:
                 _v = v.split(delim)
                 if len(_v) >= 3:
                     _v = [x.strip() for x in _v]
-                    bookmark_items[f'{_v[0]}/{_v[1]}/{_v[2]}'] = {
+                    _p = os.path.join(_v[0], _v[1], _v[2])
+                    _p = os.path.normpath(_p)
+                    _p = _p.replace('\\', '/')
+                    _p = _p.rstrip('/')
+
+                    bookmark_items[_p] = {
                         'server': _v[0],
                         'job': _v[1],
                         'root': _v[2]

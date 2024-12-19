@@ -83,20 +83,22 @@ class AddBookmarkDialog(QtWidgets.QDialog):
         return part.replace('\\', '/')
 
     def _create_ui(self):
-        main_layout = QtWidgets.QVBoxLayout(self)
-        main_layout.setContentsMargins(10, 10, 10, 10)
-        main_layout.setSpacing(10)
+        QtWidgets.QVBoxLayout(self)
+        o = common.Size.Margin()
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(o * 0.5)
 
         # Server field
         server_row = ui.add_row('Server', parent=self)
         self.server_editor = ui.LineEdit(required=True, parent=self)
         self.server_editor.setPlaceholderText('Select or enter a server')
+
         server_row.layout().addWidget(self.server_editor)
         server_action = QtWidgets.QAction(self.server_editor)
         server_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
         server_action.triggered.connect(self._pick_server_folder)
         self.server_editor.addAction(server_action, QtWidgets.QLineEdit.TrailingPosition)
-        main_layout.addWidget(server_row)
+        self.layout().addWidget(server_row)
 
         # Job field
         job_row = ui.add_row('Job', parent=self)
@@ -107,7 +109,7 @@ class AddBookmarkDialog(QtWidgets.QDialog):
         job_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
         job_action.triggered.connect(self._pick_job_folder)
         self.job_editor.addAction(job_action, QtWidgets.QLineEdit.TrailingPosition)
-        main_layout.addWidget(job_row)
+        self.layout().addWidget(job_row)
 
         # Root field
         root_row = ui.add_row('Root', parent=self)
@@ -118,7 +120,7 @@ class AddBookmarkDialog(QtWidgets.QDialog):
         root_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
         root_action.triggered.connect(self._pick_root_folder)
         self.root_editor.addAction(root_action, QtWidgets.QLineEdit.TrailingPosition)
-        main_layout.addWidget(root_row)
+        self.layout().addWidget(root_row)
 
         # Buttons
         button_row = ui.add_row(None, parent=self)
@@ -126,7 +128,7 @@ class AddBookmarkDialog(QtWidgets.QDialog):
         button_row.layout().addWidget(self.ok_button, 1)
         self.cancel_button = ui.PaintedButton('Cancel', parent=self)
         button_row.layout().addWidget(self.cancel_button)
-        main_layout.addWidget(button_row)
+        self.layout().addWidget(button_row)
 
     def _connect_signals(self):
         self.server_editor.textChanged.connect(self._on_server_changed)
@@ -266,6 +268,12 @@ class AddBookmarkDialog(QtWidgets.QDialog):
         else:
             pal.setColor(QtGui.QPalette.Base, QtGui.QColor('#FFFFFF'))
         editor.setPalette(pal)
+
+    def sizeHint(self):
+        return QtCore.QSize(
+            common.Size.DefaultWidth(),
+            common.Size.DefaultHeight(0.2)
+        )
 
     @common.error
     @common.debug

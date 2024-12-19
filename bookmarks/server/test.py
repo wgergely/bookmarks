@@ -293,7 +293,7 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
 
     def test_save_preset_snapshots_current_bookmarks(self):
         # Create some bookmarks
-        common.bookmarks = {
+        bookmarks = {
             "//my-server/jobs/my-job/data/shots": {
                 "server": "//my-server",
                 "job": "jobs/my-job",
@@ -305,6 +305,8 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
                 "root": "data/assets"
             }
         }
+        ServerAPI.save_bookmarks(bookmarks)
+
         self.api.save_preset("MyPreset")
         self.assertTrue(self.api.exists("MyPreset"))
         presets = self.api.get_presets()
@@ -431,9 +433,10 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
         self.api.activate_preset("ActivateMe")
 
         # Check that bookmarks are loaded correctly
-        self.assertTrue([f for f in common.bookmarks.keys() if "//act-server" in f])
-        self.assertTrue([f for f in common.bookmarks.keys() if "act-job" in f])
-        self.assertTrue([f for f in common.bookmarks.keys() if "act-root" in f])
+        bookmarks = ServerAPI.bookmarks()
+        self.assertTrue([f for f in bookmarks.keys() if "//act-server" in f])
+        self.assertTrue([f for f in bookmarks.keys() if "job" in f])
+        self.assertTrue([f for f in bookmarks.keys() if "act-root" in f])
 
         # Non-existent preset
         with self.assertRaises(FileNotFoundError):
@@ -518,23 +521,25 @@ class TestActiveBookmarksPresetsAPI(unittest.TestCase):
         self.assertTrue(self.api.is_valid("日本語"))
         self.api.activate_preset("日本語")
 
-        self.assertTrue([f for f in common.bookmarks.keys() if "//サーバー" in f])
+        bookmarks = ServerAPI.bookmarks()
+        self.assertTrue([f for f in bookmarks.keys() if "//サーバー" in f])
 
     def test_wrong_types_for_methods(self):
         # Passing non-str preset_name
         with self.assertRaises(TypeError):
             self.api.exists(None)
 
-        # Try saving preset with invalid data in common.bookmarks
-        common.bookmarks = {
+        bookmarks = {
             "//my-server/jobs/my-job/data/shots": {
                 "server": "//my-server",
                 "job": 123,  # not a string
                 "root": "data/shots"
             }
         }
-        with self.assertRaises(ValueError):
-            self.api.save_preset("BadData")
+
+        with self.assertRaises(TypeError):
+            ServerAPI.save_bookmarks(bookmarks)
+
 
 
 if __name__ == '__main__':

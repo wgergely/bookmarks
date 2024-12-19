@@ -201,9 +201,6 @@ class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
 
 
 class ActiveBookmarksModel(QtCore.QAbstractItemModel):
-    #: Custom signal to emit data changes
-    dataChangedSignal = QtCore.Signal(dict, dict)  # previous, current
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.root_node = Node()
@@ -211,10 +208,12 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
         self.init_data()
 
         common.signals.bookmarkAdded.connect(self.add_item)
+        common.signals.bookmarkRemoved.connect(self.remove_item)
 
     def init_data(self):
         self.beginResetModel()
-        self.bookmarks = common.bookmarks.copy()
+        self.bookmarks = ServerAPI.bookmarks(force=True)
+
         self.root_node = Node()
         for key in sorted(self.bookmarks.keys(), key=lambda x: x.lower()):
             key_node = Node(key, self.root_node)
@@ -332,8 +331,6 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
 
     @QtCore.Slot(Node)
     def update_data(self, node):
-        curr_data = self.bookmarks.copy()
-
         if node.parent and node.parent.parent == self.root_node:
             key_node = node.parent
             key = key_node.data[0]
@@ -353,7 +350,8 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
 
             idx = self.createIndex(key_node.row(), 0, key_node)
             self.dataChanged.emit(idx, idx)
-            self.dataChangedSignal.emit(curr_data, self.bookmarks.copy())
+            ServerAPI.save_bookmarks(self.bookmarks)
+
         elif node.parent == self.root_node:
             # Do not allow editing of the key column
             pass
@@ -362,10 +360,8 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     @common.debug
     @QtCore.Slot(str, str, str)
     def add_item(self, server, job, root):
-        curr_data = self.bookmarks.copy()
-
         if not all([server, job, root]):
-            return False  # Do not add if any component is empty
+            return False
         new_key = f"{server}/{job}/{root}"
         if new_key in self.bookmarks:
             return False  # Do not add duplicates
@@ -386,12 +382,25 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
         self.root_node.sort_children()
         self.endInsertRows()
 
-        self.dataChangedSignal.emit(curr_data, self.bookmarks.copy())
+        ServerAPI.save_bookmarks(self.bookmarks)
         return True
 
-    def removeRows(self, row, count, parent=QtCore.QModelIndex()):
-        curr_data = self.bookmarks.copy()
+    @common.debug
+    @QtCore.Slot(str)
+    @QtCore.Slot(str)
+    @QtCore.Slot(str)
+    def remove_item(self, server, job, root):
+        key = f"{server}/{job}/{root}"
+        for i in range(self.rowCount(self.root_index())):
+            index = self.index(i, 0, self.root_index())
+            if not index.isValid():
+                continue
+            node = self.get_node(index)
+            if node.data[0] == key:
+                self.removeRows(i, 1)
+                return
 
+    def removeRows(self, row, count, parent=QtCore.QModelIndex()):
         parent_node = self.get_node(parent)
         if parent_node != self.root_node:
             return False  # Only allow removal of top-level items
@@ -402,8 +411,7 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
             self.bookmarks.pop(child_node.data[0], None)
         self.endRemoveRows()
 
-        # Emit the custom signal
-        self.dataChangedSignal.emit(curr_data, self.bookmarks.copy())
+        ServerAPI.save_bookmarks(self.bookmarks)
         return True
 
     def supportedDropActions(self):
@@ -437,15 +445,14 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
 
 
 class ActiveBookmarksWidget(QtWidgets.QWidget):
-    selectionChanged = QtCore.Signal(str, str, str)
-
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
         self.toolbar = None
+        self.tree_view = None
         self.apply_preset_action = None
         self.delete_preset_action = None
 
-        # Set up the layout
         self._create_ui()
         self._connect_signals()
 
@@ -489,19 +496,6 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         action.triggered.connect(lambda: self.apply_preset_action.menu().exec_(QtGui.QCursor().pos()))
         self.toolbar.addAction(action)
 
-        # Clear preset
-        action = QtWidgets.QAction(ui.get_icon('close', color=common.Color.Red()), 'Clear', self)
-        menu = QtWidgets.QMenu(self)
-        menu.addAction('No presets...')
-        menu.actions()[0].setEnabled(False)
-        action.setMenu(menu)
-        self.delete_preset_action = action
-        action.triggered.connect(lambda: self.delete_preset_action.menu().exec_(QtGui.QCursor().pos()))
-        self.toolbar.addAction(action)
-
-
-
-
         # Create QTreeView
         self.tree_view = QtWidgets.QTreeView(self)
         self.tree_view.setRootIsDecorated(False)
@@ -522,15 +516,9 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         common.signals.bookmarksChanged.connect(self.init_data)
         common.signals.activeBookmarksPresetsChanged.connect(self.init_presets)
 
-        self.model().dataChangedSignal.connect(self.on_data_changed)
-
         self.model().modelReset.connect(self.set_spanned)
         self.model().rowsInserted.connect(self.set_spanned)
         self.model().rowsRemoved.connect(self.set_spanned)
-
-        self.view().selectionModel().selectionChanged.connect(self.emit_selection_changed)
-        self.view().selectionModel().currentChanged.connect(self.emit_selection_changed)
-
 
     def dragEnterEvent(self, event):
         event.accept()
@@ -557,22 +545,8 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
     def model(self):
         return self.tree_view.model()
 
-    @QtCore.Slot()
-    def emit_selection_changed(self):
-        if not self.view().selectionModel().hasSelection():
-            return
-
-        index = next(iter(self.view().selectionModel().selectedIndexes()), QtCore.QModelIndex())
-        if not index.isValid():
-            return
-
-        node = self.model().get_node(index)
-        if node.parent == self.model().root_node:
-            v = common.bookmarks[node.data[0]]
-            self.selectionChanged.emit(v['server'], v['job'], v['root'])
-
     @QtCore.Slot(str)
-    def bookmark_node_changed(self, path):
+    def selection_changed(self, path):
         # Select the item in the tree view
         model = self.model()
 
@@ -705,29 +679,18 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
         api = activebookmarks_presets.get_api()
         presets = api.get_presets(force=True)
 
-        for action in [self.apply_preset_action, self.delete_preset_action]:
-            menu = action.menu()
-            menu.clear()
-            if not presets:
-                menu.addAction('No presets...').setEnabled(False)
-                return
+        action = self.apply_preset_action
+        menu = action.menu()
+        menu.clear()
+        if not presets:
+            menu.addAction('No presets...').setEnabled(False)
+            return
 
-            for preset in sorted(presets.keys(), key=lambda x: x.lower()):
-                _action = menu.addAction(preset)
-                if action == self.apply_preset_action:
-                    _action.triggered.connect(functools.partial(self.activate_preset, preset))
-                elif action == self.delete_preset_action:
-                    _action.triggered.connect(functools.partial(self.delete_preset, preset))
-                menu.addAction(_action)
+        for preset in sorted(presets.keys(), key=lambda x: x.lower()):
+            _action = menu.addAction(preset)
+            _action.triggered.connect(functools.partial(self.activate_preset, preset))
+            menu.addAction(_action)
 
     def set_spanned(self):
         for i in range(self.model().rowCount(self.model().root_index())):
             self.tree_view.setFirstColumnSpanned(i, self.model().root_index(), True)
-
-    @QtCore.Slot(dict)
-    def on_data_changed(self, previous_data, current_data):
-        if previous_data == current_data:
-            return
-
-        ServerAPI.save_bookmarks(current_data)
-        ServerAPI.load_bookmarks()

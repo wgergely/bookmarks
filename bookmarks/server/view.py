@@ -32,9 +32,9 @@ import re
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
+from .activebookmarks import ActiveBookmarksWidget
 from .lib import ServerAPI, JobDepth
 from .model import ServerModel, NodeType, Node, ServerFilterProxyModel
-from .activebookmarks import ActiveBookmarksWidget
 from .. import contextmenu, common, shortcuts, ui, actions
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
@@ -750,7 +750,6 @@ class ServerView(QtWidgets.QTreeView):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('Servers')
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.setDragEnabled(True)
@@ -798,29 +797,24 @@ class ServerView(QtWidgets.QTreeView):
         self.header().setSectionsMovable(False)
 
     def _connect_signals(self):
-        self.expanded.connect(self.add_expanded)
-        self.collapsed.connect(self.remove_expanded)
-        self.expanded.connect(self.model().invalidateFilter)
-        self.model().sourceModel().dataChanged.connect(self.model().invalidateFilter)
-        self.model().dataChanged.connect(lambda x, y: self.expand(x))
-        self.model().sourceModel().rowsInserted.connect(self.restore_expanded_nodes)
+        self.expanded.connect(self.on_expanded)
         self.expanded.connect(self.start_resize_timer)
+
+        self.collapsed.connect(self.on_collapsed)
         self.collapsed.connect(self.start_resize_timer)
+
+        self.model().sourceModel().dataChanged.connect(self.model().invalidateFilter)
+
         self.model().modelReset.connect(self.start_resize_timer)
         self.model().layoutChanged.connect(self.start_resize_timer)
 
-        self.model().modelAboutToBeReset.connect(self.save_expanded_nodes)
-        self.model().modelAboutToBeReset.connect(self.save_selected_node)
-
         self.model().modelReset.connect(self.restore_expanded_nodes)
-        self.model().modelReset.connect(self.restore_selected_node)
+        self.model().modelReset.connect(self.restore_selection)
 
-        self.selectionModel().selectionChanged.connect(self.save_selected_node)
-        self.selectionModel().selectionChanged.connect(self.emit_root_folder_selected)
-        self.model().modelAboutToBeReset.connect(self.emit_root_folder_selected)
+        self.selectionModel().selectionChanged.connect(self.save_selection)
+        self.selectionModel().selectionChanged.connect(self.emit_link_selected)
 
         common.signals.jobAdded.connect(self.on_job_added)
-        common.signals.bookmarksChanged.connect(self.init_data)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -908,8 +902,16 @@ class ServerView(QtWidgets.QTreeView):
 
         _it(self.rootIndex())
 
-    @QtCore.Slot(str, str, str)
-    def on_link_added(self, server, job, root):
+    @QtCore.Slot(QtCore.QItemSelection, QtCore.QItemSelection)
+    def link_selected(self, selected, deselected):
+        if not selected.indexes():
+            return
+
+        index = next(iter(selected.indexes()), QtCore.QModelIndex())
+        if not index.isValid():
+            return
+
+        path = index.data(QtCore.Qt.DisplayRole)
         model = self.model().sourceModel()
 
         def _it(parent_index):
@@ -920,23 +922,10 @@ class ServerView(QtWidgets.QTreeView):
                 node = _index.internalPointer()
                 if not node:
                     continue
-                index = self.model().mapFromSource(_index)
-                if not index.isValid():
-                    continue
-                if node.server == server:
-                    node.children_fetched = False
-                    model.fetchMore(_index)
-                    if model.hasChildren(_index):
-                        self.expand(index)
-                if node.server == server and node.job == job:
-                    node.children_fetched = False
-                    model.fetchMore(_index)
-                    if model.hasChildren(_index):
-                        self.expand(index)
-                if node.server == server and node.job == job and node.root == root:
-                    self.selectionModel().select(index, QtCore.QItemSelectionModel.ClearAndSelect)
-                    self.setCurrentIndex(index)
-                    self.scrollTo(index)
+                if node.path() == path:
+                    self.selectionModel().select(self.model().mapFromSource(_index),
+                                                 QtCore.QItemSelectionModel.ClearAndSelect)
+                    self.setCurrentIndex(self.model().mapFromSource(_index))
                     return
                 _it(_index)
 
@@ -956,8 +945,12 @@ class ServerView(QtWidgets.QTreeView):
             return super().mouseDoubleClickEvent(event)
         if node.type != NodeType.LinkNode:
             return super().mouseDoubleClickEvent(event)
+
         event.accept()
-        self.bookmark_job_folder()
+        if node.is_bookmarked():
+            self.unbookmark_job_folder()
+        else:
+            self.bookmark_job_folder()
 
     def add_expanded(self, index):
         if not index.isValid():
@@ -984,27 +977,40 @@ class ServerView(QtWidgets.QTreeView):
         if node.path() in self._expanded_nodes:
             self._expanded_nodes.remove(node.path())
 
+    @QtCore.Slot(QtCore.QModelIndex)
+    def on_expanded(self, index):
+        if not index.isValid():
+            return
+        source_index = self.model().mapToSource(index)
+        if not source_index.isValid():
+            return
+        node = source_index.internalPointer()
+        if not node:
+            return
+
+        path = node.path()
+        self._expanded_nodes.append(path)
+        self._expanded_nodes = list(set(self._expanded_nodes))
+
+    @QtCore.Slot(QtCore.QModelIndex)
+    def on_collapsed(self, index):
+        if not index.isValid():
+            return
+        source_index = self.model().mapToSource(index)
+        if not source_index.isValid():
+            return
+        node = source_index.internalPointer()
+        if not node:
+            return
+
+        path = node.path()
+        if path in self._expanded_nodes:
+            self._expanded_nodes.remove(path)
+
+        self._expanded_nodes = list(set(self._expanded_nodes))
+
     @QtCore.Slot()
-    def save_expanded_nodes(self):
-        self._expanded_nodes = []
-
-        def _it(parent_index):
-            model = self.model().sourceModel()
-            for i in range(model.rowCount(parent_index)):
-                index = model.index(i, 0, parent_index)
-                node = index.internalPointer()
-                if not node:
-                    continue
-                if index.isValid():
-                    proxy_index = self.model().mapFromSource(index)
-                    if proxy_index.isValid() and self.isExpanded(proxy_index):
-                        self._expanded_nodes.append(node.path())
-                _it(index)
-
-        _it(QtCore.QModelIndex())
-
-    @QtCore.Slot()
-    def emit_root_folder_selected(self, *args, **kwargs):
+    def emit_link_selected(self, *args, **kwargs):
         node = self.get_node_from_selection()
         if not node or node.type != NodeType.LinkNode:
             self.bookmarkNodeSelected.emit('')
@@ -1025,59 +1031,53 @@ class ServerView(QtWidgets.QTreeView):
 
     @QtCore.Slot()
     def restore_expanded_nodes(self, *args, **kwargs):
-        if not self._expanded_nodes:
-            return
+        QtCore.QTimer.singleShot(100, self._restore_expanded_nodes)
+
+    def _restore_expanded_nodes(self):
         model = self.model().sourceModel()
 
-        def _it(parent_index):
-            for i in range(model.rowCount(parent_index)):
-                _index = model.index(i, 0, parent_index)
+        def _it(index):
+            for i in range(model.rowCount(index)):
+                _index = model.index(i, 0, index)
                 if not _index.isValid():
                     continue
                 node = _index.internalPointer()
                 if not node:
                     continue
-                proxy_index = self.model().mapFromSource(_index)
-                if proxy_index.isValid() and node.path() in self._expanded_nodes:
-                    if model.hasChildren(_index):
-                        self.expand(proxy_index)
-                yield _index
-                yield from _it(_index)
+                if node.path() in self._expanded_nodes:
+                    self.expand(self.model().mapFromSource(_index))
+                _it(_index)
 
-        list(_it(self.rootIndex()))
+        _it(QtCore.QModelIndex())
 
     @QtCore.Slot()
-    def save_selected_node(self, *args, **kwargs):
+    def save_selection(self, *args, **kwargs):
         node = self.get_node_from_selection()
         self._selected_node = node.path() if node else None
 
     @QtCore.Slot()
-    def restore_selected_node(self, *args, **kwargs):
-        if not self._selected_node:
-            return
+    def restore_selection(self, *args, **kwargs):
+        QtCore.QTimer.singleShot(150, self._restore_selected_node)
+
+    def _restore_selected_node(self):
         model = self.model().sourceModel()
 
-        def _expand_and_find(parent_index):
-            for i in range(model.rowCount(parent_index)):
-                index = model.index(i, 0, parent_index)
-                node = index.internalPointer()
+        def _it(index):
+            for i in range(model.rowCount(index)):
+                _index = model.index(i, 0, index)
+                if not _index.isValid():
+                    continue
+                node = _index.internalPointer()
                 if not node:
                     continue
-                proxy_index = self.model().mapFromSource(index)
-                if not proxy_index.isValid():
-                    continue
-                model.fetchMore(index)
-                if model.hasChildren(index):
-                    self.expand(proxy_index)
                 if node.path() == self._selected_node:
-                    self.selectionModel().select(proxy_index, QtCore.QItemSelectionModel.ClearAndSelect)
-                    self.setCurrentIndex(proxy_index)
-                    return True
-                if _expand_and_find(index):
-                    return True
-            return False
+                    self.selectionModel().select(self.model().mapFromSource(_index),
+                                                 QtCore.QItemSelectionModel.ClearAndSelect)
+                    self.setCurrentIndex(self.model().mapFromSource(_index))
+                    return
+                _it(_index)
 
-        _expand_and_find(QtCore.QModelIndex())
+        _it(QtCore.QModelIndex())
 
     @common.error
     @common.debug
@@ -1121,7 +1121,7 @@ class ServerView(QtWidgets.QTreeView):
     @common.debug
     @QtCore.Slot()
     def init_data(self):
-        self.model().sourceModel().init_data()
+        QtCore.QTimer.singleShot(100, self.model().sourceModel().init_data)
 
     @common.error
     @common.debug
@@ -1178,7 +1178,7 @@ class ServerView(QtWidgets.QTreeView):
         child_node = Node(node.server, job=node.job, root=rel_path, parent=node)
         node.insert_child(idx, child_node)
         self.model().sourceModel().endInsertRows()
-        self.on_link_added(node.server, node.job, rel_path)
+        self.link_selected(node.server, node.job, rel_path)
 
     @common.error
     @common.debug
@@ -1209,6 +1209,15 @@ class ServerView(QtWidgets.QTreeView):
         if not node or node.type != NodeType.LinkNode:
             return
         node.api().bookmark_job_folder(node.server, node.job, node.root)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def unbookmark_job_folder(self):
+        node = self.get_node_from_selection()
+        if not node or node.type != NodeType.LinkNode:
+            return
+        node.api().unbookmark_job_folder(node.server, node.job, node.root)
 
     # Implementing the link manipulation methods from the reference:
     @common.error
@@ -1458,9 +1467,10 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.layout().addWidget(row, 1)
 
     def _connect_signals(self):
-        self.server_view.bookmarkNodeSelected.connect(self.active_bookmark_view.bookmark_node_changed)
-        self.active_bookmark_view.selectionChanged.connect(self.server_view.on_link_added)
+        self.server_view.bookmarkNodeSelected.connect(self.active_bookmark_view.selection_changed)
+        self.active_bookmark_view.tree_view.selectionModel().selectionChanged.connect(self.server_view.link_selected)
         self.ok_button.clicked.connect(self.accept)
+
         cnx = QtCore.Qt.DirectConnection
         self.server_view.model().sourceModel().fetchAboutToStart.connect(self.fetch_progress_bar.start, type=cnx)
         self.server_view.model().sourceModel().fetchInProgress.connect(self.fetch_progress_bar.progress, type=cnx)

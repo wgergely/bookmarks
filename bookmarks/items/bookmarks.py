@@ -149,10 +149,8 @@ class BookmarkItemModel(models.ItemModel):
 
         data = common.get_data(p, _k, t)
 
-        ServerAPI.load_bookmarks()  # Force fetch bookmarks from the user settings
         database.remove_all_connections()  # force-reset database connections on reload
-
-        bookmarks = common.bookmarks.copy()
+        bookmarks = ServerAPI.bookmarks(force=True)  # reload bookmarks
 
         # Ensure the current active items are added to the list if missing
         if not all(

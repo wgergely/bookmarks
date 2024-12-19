@@ -1,8 +1,9 @@
 """
-This module provides an API for managing servers, bookmarks, and related job paths.
+This module provides the API for managing servers, their jobs, and the bookmarkable links within them.
 
-It allows adding, removing, and listing servers, creating jobs from templates,
-managing bookmarks, and translating between drive letters and UNC paths.
+See also:
+    :mode:`bookmarks.links.lib` - API for managing links.
+
 """
 import enum
 import os
@@ -23,7 +24,7 @@ class JobDepth(enum.IntEnum):
 
 
 class ServerAPI:
-    """API for managing servers, bookmarks, and related job paths."""
+    """API for managing servers, jobs, links and bookmarks."""
 
     server_settings_key = 'servers/value'
     job_style_settings_key = 'servers/job_style'
@@ -70,6 +71,7 @@ class ServerAPI:
 
             values[path] = path
             common.settings.setValue(cls.server_settings_key, values)
+            common.settings.sync()
             common.servers = values
 
         common.signals.serverAdded.emit(path)
@@ -97,11 +99,12 @@ class ServerAPI:
             del values[path]
             values = {k: v for k, v in sorted(values.items(), key=lambda x: x[0].lower())}
             common.settings.setValue(cls.server_settings_key, values)
+            common.settings.sync()
+
             common.servers = values
 
         common.signals.serverRemoved.emit(path)
         common.signals.serversChanged.emit()
-        common.signals.bookmarksChanged.emit()
 
     @classmethod
     def clear_servers(cls):
@@ -119,10 +122,14 @@ class ServerAPI:
                 if k in common.servers:
                     del common.servers[k]
                 common.settings.setValue(cls.server_settings_key, values)
+                common.settings.sync()
+
                 common.signals.serverRemoved.emit(k)
                 common.signals.serversChanged.emit()
 
             common.settings.setValue(cls.server_settings_key, {})
+            common.settings.sync()
+
             if common.settings.value(cls.server_settings_key):
                 raise RuntimeError('Failed to clear servers')
 
@@ -287,9 +294,11 @@ class ServerAPI:
 
         with cls._lock:
             common.settings.setValue(cls.bookmark_settings_key, {})
+            common.settings.sync()
+
             common.bookmarks = {}
 
-        common.signals.bookmarksChanged.emit()
+            common.signals.bookmarksChanged.emit()
 
     @classmethod
     def bookmark_job_folder(cls, server, job, root):
@@ -309,9 +318,11 @@ class ServerAPI:
             data = common.bookmarks.copy()
             data[k] = {'server': server, 'job': job, 'root': root}
             common.bookmarks = data
-            common.settings.setValue(cls.bookmark_settings_key, data)
 
-        common.signals.bookmarkAdded.emit(server, job, root)
+            common.settings.setValue(cls.bookmark_settings_key, data)
+            common.settings.sync()
+
+            common.signals.bookmarkAdded.emit(server, job, root)
 
     @classmethod
     def unbookmark_job_folder(cls, server, job, root):
@@ -337,11 +348,14 @@ class ServerAPI:
 
             del data[k]
             common.settings.setValue(cls.bookmark_settings_key, data)
+            common.settings.sync()
+
             common.bookmarks = data
 
-        common.signals.bookmarkRemoved.emit(server, job, root)
+            common.signals.bookmarkRemoved.emit(server, job, root)
 
     @classmethod
+    @common.debug
     def save_bookmarks(cls, data):
         """Save a dictionary of bookmarks to user settings."""
         if not isinstance(data, dict):
@@ -355,9 +369,10 @@ class ServerAPI:
 
         with cls._lock:
             common.settings.setValue(cls.bookmark_settings_key, data.copy())
-            common.bookmarks = data.copy()
+            common.settings.sync()
 
-        common.signals.bookmarksChanged.emit()
+            common.bookmarks = data.copy()
+            common.signals.bookmarksChanged.emit()
 
     @staticmethod
     def get_env_bookmarks():
@@ -384,12 +399,28 @@ class ServerAPI:
         return bookmark_items
 
     @classmethod
+    def bookmarks(cls, force=False):
+        """Return the current bookmarks."""
+        if not isinstance(common.bookmarks, dict):
+            return {}
+
+        if force:
+            return cls.load_bookmarks()
+
+        with cls._lock:
+            return common.bookmarks.copy()
+
+    @classmethod
+    @common.debug
     def load_bookmarks(cls):
         """Load bookmarks from both user settings and environment variables."""
         with cls._lock:
             _current = common.bookmarks.copy()
             _static = cls.get_env_bookmarks() or {}
             common.env_bookmark_items = _static
+
+            # Force load user settings from disk
+            common.settings.sync()
 
             _user = common.settings.value(cls.bookmark_settings_key) or {}
             v = _static.copy()
@@ -404,7 +435,7 @@ class ServerAPI:
 
             common.bookmarks = v
 
-        if _current != common.bookmarks:
-            common.signals.bookmarksChanged.emit()
+            if _current != common.bookmarks:
+                common.signals.bookmarksChanged.emit()
 
-        return common.bookmarks.copy()
+            return common.bookmarks.copy()

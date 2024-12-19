@@ -54,6 +54,7 @@ import re
 from PySide2 import QtCore
 
 from . import lib
+from .lib import ServerAPI
 from .. import common
 from .. import log
 
@@ -379,7 +380,8 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             ValueError/TypeError: If data is invalid.
         """
         preset_name = sanitize_filename(preset_name)
-        data_items = list(common.bookmarks.values())
+        bookmarks = ServerAPI.bookmarks(force=True)
+        data_items = list(bookmarks.values())
         data = {
             'name': preset_name,
             'data': data_items
@@ -431,9 +433,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
                 'root': item['root']
             }
 
-        lib.ServerAPI.clear_bookmarks()
         lib.ServerAPI.save_bookmarks(bookmarks)
-        lib.ServerAPI.load_bookmarks()
 
         # Verify the current active items against the new preset values
         # Set the first bookmark as active, if any

@@ -77,7 +77,8 @@ class Node:
         return self._exists
 
     def is_bookmarked(self):
-        bookmarks = common.bookmarks.copy()
+
+        bookmarks = ServerAPI.bookmarks()
         if not bookmarks:
             return False
 
@@ -451,12 +452,16 @@ class ServerModel(QtCore.QAbstractItemModel):
                         return True
 
         if node.type == NodeType.JobNode:
-            bookmarks = [v['root'] for v in common.bookmarks.copy().values()
+            _bookmarks = ServerAPI.bookmarks()
+            bookmarks = [v['root'] for v in _bookmarks.values()
                          if v['server'] == node.server and v['job'] == node.job]
+
             if bookmarks:
                 return True
+
             if LinksAPI(node.path()).has_links():
                 return True
+
             node.job_candidate = False
 
         if node.type == NodeType.LinkNode:
@@ -523,10 +528,12 @@ class ServerModel(QtCore.QAbstractItemModel):
                     current_job_names.append(job_path)
                     current_job_names = sorted(current_job_names, key=lambda s: s.lower())
                     idx = current_job_names.index(job_path)
+
                     self.beginInsertRows(parent, idx, idx)
                     job_node = Node(server=node.server, job=job_path, parent=node)
                     node.insert_child(idx, job_node)
                     self.endInsertRows()
+
                     if os.path.exists(f'{node.server}/{job_path}/.links'):
                         job_node.job_candidate = True
 
@@ -534,7 +541,8 @@ class ServerModel(QtCore.QAbstractItemModel):
                 if node.job_candidate:
                     api = LinksAPI(node.path())
                     links = api.get(force=True)
-                    bookmarks = [v['root'] for v in common.bookmarks.values()
+                    _bookmarks = ServerAPI.bookmarks()
+                    bookmarks = [v['root'] for v in _bookmarks.values()
                                  if v['server'] == node.server and v['job'] == node.job]
                     links += bookmarks
                     links = sorted(set(links), key=lambda s: s.lower())
@@ -625,18 +633,18 @@ class ServerModel(QtCore.QAbstractItemModel):
     def init_data(self, *args, **kwargs):
         self.beginResetModel()
         self._root_node = Node(None)
+        self.endResetModel()
 
         servers = ServerAPI.get_servers(force=True)
         servers = servers if servers else {}
         servers = sorted(servers.keys(), key=lambda s: s.lower())
-
+        self.beginInsertRows(QtCore.QModelIndex(), 0, len(servers) - 1)
         for server in servers:
             if server in [f.server for f in self._root_node.children()]:
                 continue
             node = Node(server=server, parent=self._root_node)
             self._root_node.append_child(node)
-
-        self.endResetModel()
+        self.endInsertRows()
 
     @QtCore.Slot(str)
     def add_server(self, server):
@@ -652,7 +660,6 @@ class ServerModel(QtCore.QAbstractItemModel):
         node = Node(server=server, parent=self._root_node)
         self._root_node.insert_child(idx, node)
         self.endInsertRows()
-        self.dataChanged.emit(self.index(0, 0), self.index(0, 0))
 
     @QtCore.Slot(str)
     def remove_server(self, server):
@@ -666,7 +673,6 @@ class ServerModel(QtCore.QAbstractItemModel):
         self.beginRemoveRows(QtCore.QModelIndex(), idx, idx)
         self._root_node.remove_child(idx)
         self.endRemoveRows()
-        self.dataChanged.emit(self.index(0, 0), self.index(0, 0))
 
     @QtCore.Slot()
     def remove_servers(self):

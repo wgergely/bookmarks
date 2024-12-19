@@ -427,7 +427,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
         # The keys in common.bookmarks are 'server/job/root'
         bookmarks = {}
         for item in preset_data:
-            key = f"{item['server'].rstrip('/')}/{item['job'].strip('/')}/{item['root'].strip('/')}"
+            key = ServerAPI.bookmark_key(item)
             bookmarks[key] = {
                 'server': item['server'],
                 'job': item['job'],

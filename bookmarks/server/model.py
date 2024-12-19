@@ -83,7 +83,9 @@ class Node:
             return False
 
         p = self.path()
-        if [f for f in bookmarks.keys() if p in f]:
+        print(p)
+        print([f for f in bookmarks.keys() if f.startswith(p)])
+        if [f for f in bookmarks.keys() if f.startswith(p)]:
             return True
 
         return False
@@ -130,12 +132,20 @@ class Node:
 
     def path(self):
         if all([self._server, self._job, self._root]):
-            return f'{self._server}/{self._job}/{self._root}'
+            path = os.path.join(self._server, self._job, self._root)
+            path = os.path.normpath(path)
+            path = path.replace('\\', '/')
+            path = path.rstrip('/')
         elif all([self._server, self._job]):
-            return f'{self._server}/{self._job}'
+            path = os.path.join(self._server, self._job)
+            path = os.path.normpath(path)
+            path = path.replace('\\', '/')
+            path = path.rstrip('/')
         elif self._server:
-            return self._server
-        return None
+            path = self._server
+        else:
+            path = None
+        return path
 
     @staticmethod
     def api():

@@ -262,13 +262,8 @@ class ServerAPI:
             raise ValueError('The user settings object is not initialized.')
 
         server = server.replace('\\', '/')
-        server = server.rstrip('/')
-
         job = job.replace('\\', '/')
-        job = job.strip('/')
-
         root = root.replace('\\', '/')
-        root = root.strip('/')
 
         job_path = os.path.join(server, job)
         job_path = os.path.normpath(job_path)
@@ -393,9 +388,13 @@ class ServerAPI:
         if common.settings is None:
             raise ValueError('The user settings object is not initialized.')
 
-        for v in data.values():
+        for k, v in data.items():
             if not all(k in v for k in ['server', 'job', 'root']):
-                raise ValueError('Invalid bookmark item')
+                raise ValueError(f'Invalid bookmark item: {v}')
+
+            _k = cls.bookmark_key(v['server'], v['job'], v['root'])
+            if k != _k:
+                raise ValueError(f'The bookmark key {k} does not match the expected key {_k}')
 
         with cls._lock:
             common.settings.setValue(cls.bookmark_settings_key, data.copy())

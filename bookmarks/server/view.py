@@ -1182,7 +1182,6 @@ class ServerView(QtWidgets.QTreeView):
         job_path = job_path.strip('/')
 
         rel_path = abs_path.replace(job_path, '').strip('/')
-        print(node.server, node.job, node.root, rel_path)
 
         current_roots = [f.root for f in node.children()]
         all_roots = sorted(current_roots + [rel_path], key=lambda s: s.lower())

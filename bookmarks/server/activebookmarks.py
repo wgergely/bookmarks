@@ -592,7 +592,11 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
             key = key_node.data[0]
 
             components = {child.data[0]: child.data[1] for child in key_node.children}
-            new_key = f"{components.get('server', '')}/{components.get('job', '')}/{components.get('root', '')}"
+            new_key = ServerAPI.bookmark_key(
+                components.get('server', ''),
+                components.get('job', ''),
+                components.get('root', '')
+            )
             if '' in components.values():
                 return
 
@@ -618,9 +622,9 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     def add_item(self, server, job, root):
         if not all([server, job, root]):
             return False
-        new_key = f"{server}/{job}/{root}"
+        new_key = ServerAPI.bookmark_key(server, job, root)
         if new_key in self.bookmarks:
-            return False  # Do not add duplicates
+            return False
         components = {'server': server, 'job': job, 'root': root}
 
         self.beginInsertRows(
@@ -646,7 +650,7 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
     @QtCore.Slot(str)
     @QtCore.Slot(str)
     def remove_item(self, server, job, root):
-        key = f"{server}/{job}/{root}"
+        key = ServerAPI.bookmark_key(server, job, root)
         for i in range(self.rowCount(self.root_index())):
             index = self.index(i, 0, self.root_index())
             if not index.isValid():
@@ -655,6 +659,7 @@ class ActiveBookmarksModel(QtCore.QAbstractItemModel):
             if node.data[0] == key:
                 self.removeRows(i, 1)
                 return
+        raise ValueError(f'Bookmark "{key}" not found.')
 
     def removeRows(self, row, count, parent=QtCore.QModelIndex()):
         parent_node = self.get_node(parent)

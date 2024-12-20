@@ -2,27 +2,6 @@
 This module implements a Server Editor dialog and related widgets that provide
 a tree view and context menu for managing servers, jobs, and links.
 
-The context menu is organized as follows:
-
-- For a non-valid index (no item selected):
-  The top action (separated by a separator) is "Add Server".
-
-- For a server item:
-  The top action (separated by a separator) is "Add Job...".
-
-- For a job item:
-  The top action (separated by a separator) is "Add Link...".
-  After adding link, a separator, and then link manipulation actions:
-    * Copy
-    * Paste
-    * Apply clipboard to all
-    * Remove links
-    * Remove missing
-
-At the bottom of all context menus (separated by a separator) is the "Refresh" action.
-
-The code also integrates reference logic from a links management module to support
-copying and pasting links for jobs, as well as removing and pruning links.
 """
 
 import collections
@@ -35,7 +14,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from .activebookmarks import ActiveBookmarksWidget
 from .lib import ServerAPI, JobDepth
 from .model import ServerModel, NodeType, Node, ServerFilterProxyModel
-from .. import contextmenu, common, shortcuts, ui, actions
+from .. import contextmenu, common, shortcuts, ui, actions, log
 from ..editor import base
 from ..editor.base_widgets import ThumbnailEditorWidget
 from ..templates.lib import TemplateType, get_saved_templates
@@ -43,6 +22,7 @@ from ..templates.view import TemplatesEditor
 
 
 def show():
+    """Show :class:`ServerEditorDialog`."""
     if common.server_editor:
         close()
 
@@ -54,6 +34,7 @@ def show():
 
 
 def close():
+    """Close the :class:`ServerEditorDialog`."""
     if not common.server_editor:
         return
     try:
@@ -65,39 +46,34 @@ def close():
 
 
 class ServerContextMenu(contextmenu.BaseContextMenu):
+    """Context menu of :class:`ServerView`."""
+
     @common.error
     @common.debug
     def setup(self):
-        """
-        Set up the context menu actions depending on the current selection:
-
-        - If no valid index: top action is Add Server
-        - If Server item: top action is Add Job
-        - If Job item: top action is Add Link, then link manipulation actions
-          (Copy, Paste, Apply clipboard to all, Remove links, Remove missing)
-
-        The bottom action in all menus is Refresh, separated by a separator.
-        """
-
         node = None
         if self.index.isValid():
             node = self.index.internalPointer()
 
-        # Top action
         if not self.index.isValid():
             self.separator()
-            self.add_server_menu()  # Add Server
+            self.add_server_menu()
         elif node and node.type == NodeType.ServerNode:
             self.separator()
-            self.add_job_menu()  # Add Job
+            self.add_job_menu()
         elif node and node.type == NodeType.JobNode:
             self.separator()
-            self.add_link_menu()  # Add Link
+            self.add_link_menu()
             self.separator()
-            self.add_links_copy_paste_actions()  # Copy, Paste, etc.
+            self.add_links_copy_paste_actions()
         elif node and node.type == NodeType.LinkNode:
-            self.bookmark_job_folder_menu()
+            self.bookmark_link_menu()
             self.remove_link_menu()
+
+        self.separator()
+
+        self.create_link_folder_menu()
+        self.create_all_link_folders_menu()
 
         self.separator()
 
@@ -112,7 +88,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
 
         self.add_view_menu()
 
-        # Move refresh to the bottom with a separator
         self.separator()
         self.add_refresh_menu()
 
@@ -120,7 +95,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         """
         Add actions similar to the links module for copying, pasting, and manipulating links.
         """
-        # Copy
         self.menu[contextmenu.key()] = {
             'text': 'Copy Links',
             'icon': ui.get_icon('link'),
@@ -135,7 +109,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             )
         }
 
-        # Paste
         self.menu[contextmenu.key()] = {
             'text': 'Paste Links',
             'icon': ui.get_icon('add_link'),
@@ -153,7 +126,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
 
         self.separator()
 
-        # Remove links
         self.menu[contextmenu.key()] = {
             'text': 'Remove links',
             'icon': ui.get_icon('remove_link', color=common.Color.Red()),
@@ -168,7 +140,6 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             )
         }
 
-        # Remove missing links
         self.menu[contextmenu.key()] = {
             'text': 'Remove missing',
             'action': self.parent().prune_links,
@@ -223,17 +194,27 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
             'description': 'Add a root folder to the job folder\'s link file.'
         }
 
-    def bookmark_job_folder_menu(self):
+    def bookmark_link_menu(self):
         if not self.index.isValid():
             return
         node = self.index.internalPointer()
         if node and node.type == NodeType.LinkNode:
-            self.menu[contextmenu.key()] = {
-                'text': 'Save Link to Bookmarks',
-                'icon': ui.get_icon('add_link', color=common.Color.Green()),
-                'action': self.parent().bookmark_job_folder,
-                'description': 'Add a root folder to the job folder\'s link file.'
-            }
+            if node.is_bookmarked():
+                self.menu[contextmenu.key()] = {
+                    'text': 'Remove Bookmark',
+                    'icon': ui.get_icon('bookmark', color=common.Color.Red()),
+                    'action': self.parent().unbookmark_link,
+                    'description': 'Remove the link from the bookmarks.'
+                }
+            else:
+                self.menu[contextmenu.key()] = {
+                    'text': 'Bookmark Link',
+                    'icon': ui.get_icon('add_link', color=common.Color.Green()),
+                    'action': self.parent().bookmark_link,
+                    'description': 'Add a root folder to the job folder\'s link file.'
+                }
+
+        self.separator()
 
     def remove_link_menu(self):
         if not self.index.isValid():
@@ -347,6 +328,36 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
                 shortcuts.ServerViewShortcuts,
                 shortcuts.ReloadServers
             ),
+        }
+
+    def create_link_folder_menu(self):
+        node = self.index.internalPointer()
+        if not node or node.type != NodeType.LinkNode:
+            return
+
+        if node.exists(force=True):
+            return
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Create Folder',
+            'icon': ui.get_icon('add_folder'),
+            'action': self.parent().create_link_folder,
+            'description': 'Create folder'
+        }
+
+    def create_all_link_folders_menu(self):
+        node = self.index.internalPointer()
+        if not node or node.type == NodeType.ServerNode:
+            return
+
+        if not node.children():
+            return
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Create All Folders',
+            'icon': ui.get_icon('add_folder', color=common.Color.Green()),
+            'action': self.parent().create_all_link_folders,
+            'description': 'Create all folders'
         }
 
 
@@ -778,7 +789,7 @@ class ServerView(QtWidgets.QTreeView):
         connect(shortcuts.RemoveServer, self.remove_server)
         connect(shortcuts.RemoveAllServers, self.remove_all_servers)
         connect(shortcuts.AddJob, self.add_job)
-        connect(shortcuts.AddBookmark, self.bookmark_job_folder)
+        connect(shortcuts.AddBookmark, self.bookmark_link)
         connect(shortcuts.RevealServer, self.reveal)
         connect(shortcuts.ReloadServers, self.init_data)
         connect(shortcuts.CopyLinks, self.copy_links)
@@ -815,6 +826,7 @@ class ServerView(QtWidgets.QTreeView):
         self.selectionModel().selectionChanged.connect(self.emit_link_selected)
 
         common.signals.jobAdded.connect(self.on_job_added)
+        common.signals.bookmarksChanged.connect(self.viewport().update)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -851,7 +863,7 @@ class ServerView(QtWidgets.QTreeView):
                                self.model().index(i, 0, server_index).isValid() and self.isExpanded(server_index)]
                 _max_width = [metrics.width(self.model().data(i, QtCore.Qt.DisplayRole)) for i in job_indexes]
                 _max_width = max(_max_width) if _max_width else 0
-                if column == 0:
+                if column == 0 or column == 1:
                     max_width = max(max_width, _max_width + common.Size.Margin(1.0))
                 else:
                     max_width = max(max_width, _max_width)
@@ -861,13 +873,13 @@ class ServerView(QtWidgets.QTreeView):
                                     self.model().index(i, 0, job_index).isValid() and self.isExpanded(job_index)]
                     _max_width = [metrics.width(self.model().data(i, QtCore.Qt.DisplayRole)) for i in link_indexes]
                     _max_width = max(_max_width) if _max_width else 0
-                    if column == 0:
+                    if column == 0 or column == 1:
                         max_width = max(max_width, _max_width + common.Size.Margin(1.0))
                     else:
                         max_width = max(max_width, _max_width)
             max_width += common.Size.Margin(1.0)
             max_width += common.Size.Indicator(4.0)
-            if column == 0:
+            if column == 0 or column == 1:
                 max_width += common.Size.Margin(2.0)
             self.setColumnWidth(column, max_width)
 
@@ -948,9 +960,9 @@ class ServerView(QtWidgets.QTreeView):
 
         event.accept()
         if node.is_bookmarked():
-            self.unbookmark_job_folder()
+            self.unbookmark_link()
         else:
-            self.bookmark_job_folder()
+            self.bookmark_link()
 
     def add_expanded(self, index):
         if not index.isValid():
@@ -1154,6 +1166,22 @@ class ServerView(QtWidgets.QTreeView):
     @common.error
     @common.debug
     @QtCore.Slot()
+    def bookmark_link(self):
+        node = self.get_node_from_selection()
+        if not node or node.type != NodeType.LinkNode:
+            return
+        node.api().bookmark_link(node.server, node.job, node.root)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def unbookmark_link(self):
+        node = self.get_node_from_selection()
+        if not node or node.type != NodeType.LinkNode:
+            return
+        node.api().unbookmark_link(node.server, node.job, node.root)
+
+    @QtCore.Slot()
     def add_link(self):
         node = self.get_node_from_selection()
         if not node or node.type != NodeType.JobNode:
@@ -1162,39 +1190,12 @@ class ServerView(QtWidgets.QTreeView):
         if not abs_path:
             return
 
-        if not os.path.exists(abs_path):
-            raise ValueError(f'Path "{abs_path}" does not exist.')
+        abs_path = abs_path.replace('\\', '/').rstrip('/')
+        rel_path = abs_path.replace(os.path.join(node.server, node.job).replace('\\', '/').strip('/'), '').strip('/')
+        node.api().add_link(node.server, node.job, rel_path)  # Modify data in backend/API
 
-        abs_path = abs_path.replace('\\', '/')
-        abs_path = abs_path.rstrip('/')
+        self.model().sourceModel().add_link_to_job(node, rel_path)
 
-        index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
-        if not index.isValid():
-            return
-
-        source_index = self.model().mapToSource(index)
-        if not source_index.isValid():
-            return
-
-        # Handle ambiguous slashes in C: vs C:/ paths
-        job_path = os.path.join(node.server, node.job)
-        job_path = os.path.normpath(job_path).replace('\\', '/')
-        job_path = job_path.strip('/')
-
-        rel_path = abs_path.replace(job_path, '').strip('/')
-
-        current_roots = [f.root for f in node.children()]
-        all_roots = sorted(current_roots + [rel_path], key=lambda s: s.lower())
-        idx = all_roots.index(rel_path)
-
-        self.model().sourceModel().beginInsertRows(source_index, idx, idx)
-        node.api().add_link(node.server, node.job, rel_path)
-        child_node = Node(node.server, job=node.job, root=rel_path, parent=node)
-        node.insert_child(idx, child_node)
-        self.model().sourceModel().endInsertRows()
-
-    @common.error
-    @common.debug
     @QtCore.Slot()
     def remove_link(self):
         node = self.get_node_from_selection()
@@ -1202,37 +1203,11 @@ class ServerView(QtWidgets.QTreeView):
             return
         if node.is_bookmarked():
             raise ValueError('Can\'t remove a bookmarked link.')
-        index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
-        if not index.isValid():
-            return
-        source_index = self.model().mapToSource(index)
-        if not source_index.isValid():
-            return
-        node.api().remove_link(node.server, node.job, node.root)
-        idx = node.parent().children().index(node)
-        self.model().sourceModel().beginRemoveRows(source_index.parent(), idx, idx)
-        node.parent().remove_child(idx)
-        self.model().sourceModel().endRemoveRows()
 
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def bookmark_job_folder(self):
-        node = self.get_node_from_selection()
-        if not node or node.type != NodeType.LinkNode:
-            return
-        node.api().bookmark_job_folder(node.server, node.job, node.root)
+        node.api().remove_link(node.server, node.job, node.root)  # Backend removal
 
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def unbookmark_job_folder(self):
-        node = self.get_node_from_selection()
-        if not node or node.type != NodeType.LinkNode:
-            return
-        node.api().unbookmark_job_folder(node.server, node.job, node.root)
+        self.model().sourceModel().remove_link_from_job(node)
 
-    # Implementing the link manipulation methods from the reference:
     @common.error
     @common.debug
     @QtCore.Slot()
@@ -1240,7 +1215,6 @@ class ServerView(QtWidgets.QTreeView):
         node = self.get_node_from_selection()
         if not node or node.type != NodeType.JobNode:
             return
-        # Copy the job's links to clipboard
         node.links_api().copy_to_clipboard()
 
     @common.error
@@ -1250,18 +1224,30 @@ class ServerView(QtWidgets.QTreeView):
         node = self.get_node_from_selection()
         if not node or node.type != NodeType.JobNode:
             return
-        # Paste links from clipboard into this job
+
+        index = next(iter(self.selectionModel().selectedIndexes()), QtCore.QModelIndex())
+        if not index.isValid():
+            return
+
+        old_links = [f.root for f in node.children()]
+
         skipped = node.links_api().paste_from_clipboard()
         if skipped:
-            common.show_message(
-                'Not all links were pasted!',
-                body=f'Skipped {len(skipped)} item(s):\n"{", ".join(skipped)}"',
-                message_type='info'
-            )
-        self.init_data()
+            log.warning(__name__, f'Skipped {len(skipped)} item(s): {", ".join(skipped)}')
 
-    @common.error
-    @common.debug
+        source_index = self.model().mapToSource(index)
+
+        current_links = node.links_api().get(force=True)
+        new_links = set(current_links) - set(old_links)
+
+        for link in new_links:
+            idx = current_links.index(link)
+
+            self.model().sourceModel().beginInsertRows(source_index, idx, idx)
+            child_node = Node(node.server, job=node.job, root=link, parent=node)
+            node.insert_child(idx, child_node)
+            self.model().sourceModel().endInsertRows()
+
     @QtCore.Slot()
     def clear_links(self):
         node = self.get_node_from_selection()
@@ -1269,15 +1255,14 @@ class ServerView(QtWidgets.QTreeView):
             return
         if common.show_message(
                 'Remove links',
-                body='Are you sure you want to remove all links from this job? This action cannot be undone.',
+                body='Are you sure you want to remove all links from this job?',
                 buttons=[common.YesButton, common.NoButton], modal=True, message_type='error'
         ) == QtWidgets.QDialog.Rejected:
             return
-        node.links_api().clear()
-        self.init_data()
 
-    @common.error
-    @common.debug
+        node.links_api().clear()
+        self.model().sourceModel().clear_links_from_job(node)
+
     @QtCore.Slot()
     def prune_links(self):
         node = self.get_node_from_selection()
@@ -1285,14 +1270,47 @@ class ServerView(QtWidgets.QTreeView):
             return
         if common.show_message(
                 'Prune Links',
-                body='This will remove all invalid (missing) links. Continue?',
+                body='This will remove all invalid links. Continue?',
                 buttons=[common.YesButton, common.NoButton], modal=True
         ) == QtWidgets.QDialog.Rejected:
             return
+
         removed = node.links_api().prune()
-        result = f'Pruned: {", ".join(removed)}' if removed else 'No pruning was necessary.'
-        common.show_message('Done.', body=result)
-        self.init_data()
+        if removed:
+            self.model().sourceModel().prune_links_in_job(node, removed)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def create_link_folder(self):
+        node = self.get_node_from_selection()
+        if not node or node.type != NodeType.LinkNode:
+            return
+
+        path = node.path()
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+            log.info(__name__, f'Created link folder: {path}')
+            node.exists(force=True)
+        else:
+            log.warning(__name__, f'Link folder already exists: {path}')
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def create_all_link_folders(self):
+        node = self.get_node_from_selection()
+        if not node or node.type != NodeType.JobNode:
+            return
+
+        for link in node.children():
+            path = link.path()
+            if not os.path.exists(path):
+                os.makedirs(path, exist_ok=True)
+                log.info(__name__, f'Created link folder: {path}')
+                link.exists(force=True)
+            else:
+                log.warning(__name__, f'Link folder already exists: {path}')
 
 
 class ProgressBar(QtWidgets.QWidget):
@@ -1368,8 +1386,10 @@ class ServerEditorDialog(QtWidgets.QDialog):
                     QtCore.Qt.WindowCloseButtonHint
             )
         )
+
         if not self.parent():
             common.set_stylesheet(self)
+
         self.filter_toolbar = None
         self.text_filter_editor = None
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -1379,6 +1399,7 @@ class ServerEditorDialog(QtWidgets.QDialog):
         self.setWindowTitle('Servers')
         if not self.parent():
             common.set_stylesheet(self)
+
         self._create_ui()
         self._connect_signals()
 

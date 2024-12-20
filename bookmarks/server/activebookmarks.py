@@ -1,3 +1,4 @@
+import collections
 import functools
 import json
 import os
@@ -107,7 +108,7 @@ class AddBookmarkDialog(QtWidgets.QDialog):
         job_row.layout().addWidget(self.job_editor)
         job_action = QtWidgets.QAction(self.job_editor)
         job_action.setIcon(ui.get_icon('folder', color=common.Color.Text()))
-        job_action.triggered.connect(self._pick_job_folder)
+        job_action.triggered.connect(self._pick_link)
         self.job_editor.addAction(job_action, QtWidgets.QLineEdit.TrailingPosition)
         self.layout().addWidget(job_row)
 
@@ -223,7 +224,7 @@ class AddBookmarkDialog(QtWidgets.QDialog):
             rel_path = os.path.relpath(chosen, start_path).replace('\\', '/')
             self.server_editor.setText(self._normalize_path_part(rel_path))
 
-    def _pick_job_folder(self):
+    def _pick_link(self):
         start_path = self._default_directory('job')
         chosen = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Job Directory', start_path)
         if chosen:
@@ -359,7 +360,7 @@ class SavePresetDialog(QtWidgets.QDialog):
         action.triggered.connect(completer.complete)
         self._editor.addAction(action, QtWidgets.QLineEdit.TrailingPosition)
 
-        validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[^\$\s\\/:*?"<>|]*'))
+        validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[^\$\\/:*?"<>|]*'))
         self._editor.setValidator(validator)
 
         row.layout().addWidget(self._editor)
@@ -388,6 +389,74 @@ class SavePresetDialog(QtWidgets.QDialog):
         return self.line_edit.text()
 
 
+class ExportTemplateDialog(QtWidgets.QDialog):
+    """A dialog for exporting an existing preset to a JSON file."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle('Export Preset')
+
+        self._create_ui()
+        self._connect_signals()
+        self._init_data()
+
+    def _create_ui(self):
+        layout = QtWidgets.QVBoxLayout(self)
+        o = common.Size.Margin()
+        layout.setContentsMargins(o, o, o, o)
+        layout.setSpacing(o * 0.5)
+
+        self.view = QtWidgets.QListView(self)
+        self.model = QtCore.QStringListModel(self)
+        self.view.setModel(self.model)
+        layout.addWidget(self.view, 1)
+
+        row = ui.add_row(None, parent=self)
+        self.export_button = ui.PaintedButton('Export', parent=row)
+        self.cancel_button = ui.PaintedButton('Cancel', parent=row)
+        row.layout().addWidget(self.export_button, 1)
+        row.layout().addWidget(self.cancel_button, 0)
+        layout.addWidget(row)
+
+    def _connect_signals(self):
+        self.export_button.clicked.connect(self.export_preset)
+        self.cancel_button.clicked.connect(self.reject)
+
+    def _init_data(self):
+        presets = activebookmarks_presets.get_api().get_presets(force=True)
+        self.model.setStringList(list(presets.keys()))
+        if len(presets) > 0:
+            # Select the first preset by default
+            self.view.setCurrentIndex(self.model.index(0, 0))
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def export_preset(self):
+        preset = self.view.currentIndex().data()
+        if not preset:
+            raise ValueError('No preset selected.')
+
+        desktop = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DesktopLocation)
+        initial_path = os.path.join(desktop, f'{preset}.json')
+
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            'Export Preset',
+            initial_path,
+            'JSON Files (*.json)'
+        )
+        if not path:
+            return
+
+        api = activebookmarks_presets.get_api()
+        api.export_preset(preset, path, force=True)
+
+        common.show_message(
+            'Preset Exported',
+            body=f'The preset "{preset}" has been exported to "{path}".',
+        )
+
 class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
@@ -395,14 +464,25 @@ class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-
         self.add_menu()
         self.separator()
         self.remove_menu()
         self.separator()
-        self.refresh_menu()
+        self.save_preset_menu()
+        self.load_preset_menu()
+        self.delete_preset_menu()
+
+        self.separator()
+
+        self.import_preset_menu()
+        self.export_preset_menu()
+
+        self.separator()
+
         self.expand_all_menu()
         self.collapse_all_menu()
+        self.separator()
+        self.refresh_menu()
 
     def add_menu(self):
         """Creates the Add menu.
@@ -425,12 +505,81 @@ class ActiveBookmarksContextMenu(contextmenu.BaseContextMenu):
                 'action': self.parent().remove_item,
             }
 
-            self.separator()
-
         self.menu[contextmenu.key()] = {
             'text': 'Remove All Bookmarks',
             'icon': ui.get_icon('close'),
             'action': self.parent().remove_all_items,
+        }
+
+    def save_preset_menu(self):
+        self.menu[contextmenu.key()] = {
+            'text': 'Save Preset...',
+            'icon': ui.get_icon('add_preset', color=common.Color.Green()),
+            'action': self.parent().save_preset,
+        }
+
+    def load_preset_menu(self):
+        k = 'Load Preset'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('refresh', color=common.Color.Yellow())
+
+        api = activebookmarks_presets.get_api()
+        presets = api.get_presets(force=True)
+        if not presets:
+            self.menu[k][contextmenu.key()] = {
+                'text': 'No presets',
+                'enabled': False,
+            }
+            return
+
+        for preset in sorted(presets.keys(), key=lambda x: x.lower()):
+            self.menu[k][contextmenu.key()] = {
+                'text': preset,
+                'action': functools.partial(self.parent().activate_preset, preset),
+            }
+
+    def delete_preset_menu(self):
+        k = 'Delete Preset'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('close', color=common.Color.Red())
+
+        api = activebookmarks_presets.get_api()
+        presets = api.get_presets(force=True)
+
+        if not presets:
+            self.menu[k][contextmenu.key()] = {
+                'text': 'No presets',
+                'enabled': False,
+            }
+            return
+
+        # Delete all presets
+        self.menu[k][contextmenu.key()] = {
+            'text': 'Delete all presets',
+            'icon': ui.get_icon('close'),
+            'action': self.parent().delete_all_presets,
+        }
+
+        self.separator(menu=self.menu[k])
+
+        for preset in sorted(presets.keys(), key=lambda x: x.lower()):
+            self.menu[k][contextmenu.key()] = {
+                'text': preset,
+                'action': functools.partial(self.parent().delete_preset, preset),
+            }
+
+    def import_preset_menu(self):
+        self.menu[contextmenu.key()] = {
+            'text': 'Import Preset...',
+            'icon': ui.get_icon('arrow_left'),
+            'action': self.parent().import_preset,
+        }
+
+    def export_preset_menu(self):
+        self.menu[contextmenu.key()] = {
+            'text': 'Export Preset...',
+            'icon': ui.get_icon('arrow_right'),
+            'action': self.parent().export_preset,
         }
 
     def expand_all_menu(self):
@@ -814,6 +963,35 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
     def model(self):
         return self.tree_view.model()
 
+    def set_spanned(self):
+        for i in range(self.model().rowCount(self.model().root_index())):
+            self.tree_view.setFirstColumnSpanned(i, self.model().root_index(), True)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def init_data(self):
+        self.model().init_data()
+        self.set_spanned()
+
+    @common.error
+    @common.debug
+    def init_presets(self):
+        api = activebookmarks_presets.get_api()
+        presets = api.get_presets(force=True)
+
+        action = self.apply_preset_action
+        menu = action.menu()
+        menu.clear()
+        if not presets:
+            menu.addAction('No presets...').setEnabled(False)
+            return
+
+        for preset in sorted(presets.keys(), key=lambda x: x.lower()):
+            _action = menu.addAction(preset)
+            _action.triggered.connect(functools.partial(self.activate_preset, preset))
+            menu.addAction(_action)
+
     @QtCore.Slot(str)
     def selection_changed(self, path):
         # Select the item in the tree view
@@ -935,28 +1113,70 @@ class ActiveBookmarksWidget(QtWidgets.QWidget):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def init_data(self):
-        self.model().init_data()
-        self.set_spanned()
+    def delete_all_presets(self):
+        """Removes all presets.
+
+        """
+        api = activebookmarks_presets.get_api()
+        presets = api.get_presets(force=True)
+        if not presets:
+            raise ValueError('No presets to remove.')
+
+        if common.show_message(
+                'Are you sure you want to remove all presets?',
+                body='This action is not undoable.',
+                buttons=[common.YesButton, common.NoButton],
+                modal=True
+        ) == QtWidgets.QDialog.Rejected:
+            return
+
+        api.delete_all_presets()
 
     @common.error
     @common.debug
-    def init_presets(self):
-        api = activebookmarks_presets.get_api()
-        presets = api.get_presets(force=True)
+    @QtCore.Slot()
+    def import_preset(self):
+        """Import a preset from a file.
 
-        action = self.apply_preset_action
-        menu = action.menu()
-        menu.clear()
-        if not presets:
-            menu.addAction('No presets...').setEnabled(False)
+        """
+        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            'Import Preset',
+            QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DesktopLocation),
+            'JSON Files (*.json)'
+        )
+
+        if not file_path:
             return
 
-        for preset in sorted(presets.keys(), key=lambda x: x.lower()):
-            _action = menu.addAction(preset)
-            _action.triggered.connect(functools.partial(self.activate_preset, preset))
-            menu.addAction(_action)
+        # try to read the template name from the JSON file
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+            preset_name = data.get('name', None)
 
-    def set_spanned(self):
-        for i in range(self.model().rowCount(self.model().root_index())):
-            self.tree_view.setFirstColumnSpanned(i, self.model().root_index(), True)
+        if not preset_name:
+            raise ValueError('The preset name could not be read from the file.')
+
+        api = activebookmarks_presets.get_api()
+        try:
+            api.import_preset(preset_name, file_path)
+        except FileExistsError:
+            if common.show_message(
+                    'A template with the same name already exists. Overwrite?',
+                    body='This action not undoable.',
+                    buttons=[common.YesButton, common.NoButton],
+                    modal=True
+            ) == QtWidgets.QDialog.Rejected:
+                return
+
+            api.import_preset(preset_name, file_path, force=True)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def export_preset(self):
+        """Export the current preset to a file.
+
+        """
+        dialog = ExportTemplateDialog(parent=self)
+        dialog.open()

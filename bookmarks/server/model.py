@@ -70,21 +70,18 @@ class Node:
     def parent(self):
         return self._parent
 
-    def exists(self):
-        if self._exists is None:
+    def exists(self, force=False):
+        if self._exists is None or force:
             p = self.path()
             self._exists = os.path.exists(p) if p else False
         return self._exists
 
     def is_bookmarked(self):
-
         bookmarks = ServerAPI.bookmarks()
         if not bookmarks:
             return False
 
         p = self.path()
-        print(p)
-        print([f for f in bookmarks.keys() if f.startswith(p)])
         if [f for f in bookmarks.keys() if f.startswith(p)]:
             return True
 
@@ -409,13 +406,17 @@ class ServerModel(QtCore.QAbstractItemModel):
                 elif node.type == NodeType.LinkNode:
                     return ui.get_icon('link', color=common.Color.Blue(), active_brightness=100)
 
-        if index.column() == 1 and role == QtCore.Qt.DisplayRole:
-            if node.type == NodeType.ServerNode:
-                return 'Server'
-            elif node.type == NodeType.JobNode:
-                return 'Job'
-            elif node.type == NodeType.LinkNode:
-                return 'Link'
+        if index.column() == 1:
+            if role == QtCore.Qt.DisplayRole:
+                if node.type == NodeType.ServerNode:
+                    return 'Server'
+                elif node.type == NodeType.JobNode:
+                    return 'Job'
+                elif node.type == NodeType.LinkNode:
+                    return 'Link'
+            if role == QtCore.Qt.DecorationRole:
+                if node.is_bookmarked():
+                    return ui.get_icon('check', color=common.Color.Green())
 
         if index.column() == 2 and role == QtCore.Qt.DisplayRole:
             if not self.canFetchMore(index):
@@ -698,15 +699,42 @@ class ServerModel(QtCore.QAbstractItemModel):
         for server in list(servers.keys()):
             self.remove_server(server)
 
-    @QtCore.Slot()
-    def reset_children_fetched(self):
-        def _it(parent_index):
-            for i in range(self.rowCount(parent_index)):
-                child_index = self.index(i, 0, parent_index)
-                node = child_index.internalPointer()
-                if node.children_fetched:
-                    node.children_fetched = False
-                _it(child_index)
+    def add_link_to_job(self, job_node, rel_path):
+        # Insert the child node in the model
+        current_roots = [f.root for f in job_node.children()]
+        all_roots = sorted(current_roots + [rel_path], key=lambda s: s.lower())
+        idx = all_roots.index(rel_path)
 
-        index = self.index(0, 0, QtCore.QModelIndex())
-        _it(index)
+        parent_index = self.createIndex(job_node.parent().children().index(job_node), 0, job_node)
+        self.beginInsertRows(parent_index, idx, idx)
+        child_node = Node(server=job_node.server, job=job_node.job, root=rel_path, parent=job_node)
+        job_node.insert_child(idx, child_node)
+        self.endInsertRows()
+
+    def remove_link_from_job(self, link_node):
+        parent_node = link_node.parent()
+        idx = parent_node.children().index(link_node)
+
+        parent_index = self.createIndex(parent_node.parent().children().index(parent_node), 0, parent_node)
+        self.beginRemoveRows(parent_index, idx, idx)
+        parent_node.remove_child(idx)
+        self.endRemoveRows()
+
+    def clear_links_from_job(self, job_node):
+        parent_index = self.createIndex(job_node.parent().children().index(job_node), 0, job_node)
+        count = len(job_node.children())
+        if count > 0:
+            self.beginRemoveRows(parent_index, 0, count - 1)
+            job_node.children().clear()
+            self.endRemoveRows()
+
+    def prune_links_in_job(self, job_node, removed_links):
+        # removed_links are the links that need to be removed
+        parent_index = self.createIndex(job_node.parent().children().index(job_node), 0, job_node)
+
+        # Remove from the end to the start to not shift indexes
+        for link in reversed(removed_links):
+            idx = [c.root for c in job_node.children()].index(link)
+            self.beginRemoveRows(parent_index, idx, idx)
+            job_node.remove_child(idx)
+            self.endRemoveRows()

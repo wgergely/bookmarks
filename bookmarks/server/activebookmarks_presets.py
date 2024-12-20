@@ -275,7 +275,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
 
         for fname in os.listdir(_dir):
             if not fname.endswith('.json'):
-                log.warning(__name__, f'Skipping non-json file: {fname}')
+                log.debug(__name__, f'Skipping non-json file: {fname}')
                 continue
 
             path = os.path.join(_dir, fname)
@@ -297,11 +297,11 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
 
         Args:
             preset_name (str): The desired preset name.
-            source_file (str): Path to the source json file.
-            force (bool): If True, overwrite existing preset.
+            source_file (str): Path to the source JSON file.
+            force (bool): If True, overwrite the existing preset.
 
         Raises:
-            FileNotFoundError: If source_file does not exist.
+            FileNotFoundError: If source_file doesn't exist.
             ValueError/TypeError: If the imported preset is invalid.
             FileExistsError: If preset exists and force=False.
         """
@@ -319,12 +319,12 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
 
         self._save_preset_data(preset_name, data, force)
 
-    def export_preset(self, preset_name, destination_file):
+    def export_preset(self, preset_name, destination_file, force=False):
         """Export a preset to a file.
 
         Args:
             preset_name (str): The preset name.
-            destination_file (str): Path to the destination json file.
+            destination_file (str): Path to the destination JSON file.
 
         Raises:
             FileNotFoundError: If the preset does not exist.
@@ -333,21 +333,28 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
         preset_data = self._get_preset_by_name(preset_name)
         if not preset_data:
             raise FileNotFoundError(f'Preset {preset_name} not found')
+
         out_data = {
             'name': preset_name,
             'data': preset_data
         }
         self._verify_preset(out_data)
+
+        if os.path.exists(destination_file) and not force:
+            raise FileExistsError(f'Destination file {destination_file} already exists')
+
         with open(destination_file, 'w') as f:
             json.dump(out_data, f, indent=4)
 
+        common.signals.activeBookmarksPresetsChanged.emit()
+
     def _save_preset_data(self, preset_name, data, force):
-        """Save given preset data to disk and update internal structure.
+        """Save given preset data to disk and update the internal structure.
 
         Args:
             preset_name (str): The preset name.
             data (dict): The full preset structure with 'name' and 'data'.
-            force (bool): If True, overwrite existing preset.
+            force (bool): If True, overwrite the existing preset.
 
         Raises:
             ValueError/TypeError: If data is invalid.
@@ -370,12 +377,14 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             json.dump(data, f, indent=4)
         self._presets[preset_name] = data['data']
 
+        common.signals.activeBookmarksPresetsChanged.emit()
+
     def save_preset(self, preset_name, force=False):
         """Save a preset to disk by snapshotting the current bookmarks.
 
         Args:
             preset_name (str): The preset name.
-            force (bool): If True, overwrite existing preset.
+            force (bool): If True, overwrite the existing preset.
 
         Raises:
             ValueError/TypeError: If data is invalid.
@@ -389,8 +398,6 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
         }
         self._save_preset_data(preset_name, data, force)
 
-        common.signals.activeBookmarksPresetsChanged.emit()
-
     def delete_preset(self, preset_name):
         """Delete a preset from disk.
 
@@ -398,14 +405,28 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             preset_name (str): The preset name.
         """
         preset_name = sanitize_filename(preset_name)
+
         if preset_name not in self._presets:
-            log.warning(__name__, f'Preset {preset_name} not found')
-            return
+            raise FileNotFoundError(f'Preset {preset_name} not found')
+
         _dir = get_presets_dir()
         path = os.path.join(_dir, f'{preset_name}.json')
-        if os.path.exists(path):
-            os.remove(path)
+        if not os.path.exists(path):
+            raise FileNotFoundError(f'Preset {preset_name} not found')
+
+        os.remove(path)
         del self._presets[preset_name]
+
+        common.signals.activeBookmarksPresetsChanged.emit()
+
+    def delete_all_presets(self):
+        """Delete all presets from disk."""
+        _dir = get_presets_dir()
+        if os.path.exists(_dir):
+            for fname in os.listdir(_dir):
+                if fname.endswith('.json'):
+                    os.remove(os.path.join(_dir, fname))
+        self._presets.clear()
 
         common.signals.activeBookmarksPresetsChanged.emit()
 
@@ -416,7 +437,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             preset_name (str): The preset name.
 
         Raises:
-            FileNotFoundError: If the preset does not exist.
+            FileNotFoundError: If the preset doesn't exist.
         """
         preset_name = sanitize_filename(preset_name)
         preset_data = self._get_preset_by_name(preset_name)
@@ -491,7 +512,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
         Args:
             old_name (str): The old preset name.
             new_name (str): The new preset name.
-            force (bool): If True, overwrite existing preset with new_name if it exists.
+            force (bool): If True, overwrite the existing preset with new_name if it exists.
 
         Raises:
             FileNotFoundError: If the old preset is not found.
@@ -513,6 +534,7 @@ class ActiveBookmarksPresetsAPI(QtCore.QObject):
             if os.path.exists(new_path) and force:
                 os.remove(new_path)
             os.rename(old_path, new_path)
+
         # Update in-memory
         self._presets[new_name] = self._presets[old_name]
         del self._presets[old_name]

@@ -985,8 +985,6 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             for line in ref()[idx][common.FilterTextRole].split('\n'):
                 r.append(self._filter.match_string(line.strip()))
         except Exception as e:
-            from pprint import pprint
-            pprint(ref()[idx])
             raise
 
         return any(r)

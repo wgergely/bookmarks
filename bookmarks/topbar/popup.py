@@ -139,7 +139,6 @@ class FilterPopupDialog(QtWidgets.QDialog):
             index (QtCore.QModelIndex): The index of the selected item.
         """
         selected_item = self._list_view.model().itemFromIndex(index).text()
-        print(f"Selected: {selected_item}")
         self.close()  # Trigger fade-out animation
 
     def showEvent(self, event):

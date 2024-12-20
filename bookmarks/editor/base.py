@@ -364,7 +364,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         for k in keys:
             _k = k.replace('/', '_')
             if not hasattr(self, f'{_k}_editor'):
-                print(f'No editor found for {k}')
+                log.debug(__name__, f'No editor found for {k}')
                 continue
 
             editor = getattr(self, f'{_k}_editor')
@@ -886,7 +886,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         try:
             self.db_source()
         except NotImplementedError:
-            print('Skipping database updates, no db source set.')
+            log.debug(__name__, 'Skipping database updates, no db source set.')
             return
 
         if source != self.db_source():

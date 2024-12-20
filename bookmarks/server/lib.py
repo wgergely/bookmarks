@@ -326,7 +326,7 @@ class ServerAPI:
             common.signals.bookmarksChanged.emit()
 
     @classmethod
-    def bookmark_job_folder(cls, server, job, root):
+    def bookmark_link(cls, server, job, root):
         """Bookmark a job folder."""
         if not os.path.exists(server):
             raise FileNotFoundError(f'Server path {server} does not exist')
@@ -350,7 +350,7 @@ class ServerAPI:
             common.signals.bookmarkAdded.emit(server, job, root)
 
     @classmethod
-    def unbookmark_job_folder(cls, server, job, root):
+    def unbookmark_link(cls, server, job, root):
         """Remove a bookmark from a job folder."""
         if not os.path.exists(server):
             raise FileNotFoundError(f'Server path {server} does not exist')

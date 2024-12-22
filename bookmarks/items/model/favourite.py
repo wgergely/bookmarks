@@ -1,54 +1,15 @@
-"""Classes responsible for viewing and editing items marked as favourites.
-
-"""
 import os
 import weakref
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore
 
-from . import delegate
-from . import files
-from . import models
-from .. import common
-from .. import contextmenu
-from ..threads import threads
+from . import file as filemodel
+from . import base
+from ... import common
+from ...threads import threads
 
 
-class FavouriteItemViewContextMenu(contextmenu.BaseContextMenu):
-    """Context menu associated with :class:`FavouriteItemView`.
-
-    """
-
-    @common.error
-    @common.debug
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.scripts_menu()
-        self.separator()
-        self.control_favourites_menu()
-        if self.index.isValid():
-            self.remove_favourite_menu()
-        self.separator()
-        self.reveal_item_menu()
-        self.copy_menu()
-        self.separator()
-        self.collapse_sequence_menu()
-        self.separator()
-        self.row_size_menu()
-        self.sort_menu()
-        self.list_filter_menu()
-        self.separator()
-        self.refresh_menu()
-        self.separator()
-        self.preferences_menu()
-        self.separator()
-        self.window_menu()
-        self.quit_menu()
-
-
-class FavouriteItemModel(files.FileItemModel):
+class FavouriteItemModel(filemodel.FileItemModel):
     """The model responsible for displaying the saved favourites."""
     queues = (threads.FavouriteInfo, threads.FavouriteThumbnail)
 
@@ -57,7 +18,7 @@ class FavouriteItemModel(files.FileItemModel):
 
     @common.error
     @common.status_bar_message('Loading My Files...')
-    @models.initdata
+    @base.initdata
     def init_data(self):
         """Collects the data needed to populate the favourite item model.
 
@@ -89,7 +50,7 @@ class FavouriteItemModel(files.FileItemModel):
             filename = entry.name
 
             _source_path = '/'.join(source_paths)
-            filepath, ext, file_root, _dir, sort_by_name_role = files.get_path_elements(
+            filepath, ext, file_root, _dir, sort_by_name_role = filemodel.get_path_elements(
                 p,
                 k,
                 filename,
@@ -101,8 +62,8 @@ class FavouriteItemModel(files.FileItemModel):
             for idx, _p in enumerate(source_paths):
                 sort_by_name_role[idx] = _p
 
-            flags = models.DEFAULT_ITEM_FLAGS
-            seq, sequence_path = files.get_sequence_elements(filepath)
+            flags = base.DEFAULT_ITEM_FLAGS
+            seq, sequence_path = filemodel.get_sequence_elements(filepath)
 
             if (seq and (
                     sequence_path in common.favourites or filepath in common.favourites)
@@ -164,7 +125,7 @@ class FavouriteItemModel(files.FileItemModel):
                 # of sequences we add it here
                 if sequence_path not in sequence_data:  # ... and create it if it doesn't exist
                     sequence_name = sequence_path.split('/')[-1]
-                    flags = models.DEFAULT_ITEM_FLAGS
+                    flags = base.DEFAULT_ITEM_FLAGS
 
                     if sequence_path in common.favourites:
                         flags = flags | common.MarkedAsFavourite
@@ -241,7 +202,7 @@ class FavouriteItemModel(files.FileItemModel):
                 v[common.DataTypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
-                flags = models.DEFAULT_ITEM_FLAGS
+                flags = base.DEFAULT_ITEM_FLAGS
                 if filepath in common.favourites:
                     flags = flags | common.MarkedAsFavourite
 
@@ -293,66 +254,9 @@ class FavouriteItemModel(files.FileItemModel):
         """
         return 'favourites'
 
-    def filter_setting_dict_key(self):
+    def filter_setting_key(self):
         """The custom dictionary key used to save filter settings to the user settings
         file.
 
         """
         return 'favourites'
-
-
-class FavouriteItemView(files.FileItemView):
-    """The widget responsible for showing all the items marked as favourites.
-    
-    """
-    Delegate = delegate.FavouriteItemViewDelegate
-    ContextMenu = FavouriteItemViewContextMenu
-
-    queues = (threads.FavouriteInfo, threads.FavouriteThumbnail)
-
-    def __init__(self, icon='favourite', parent=None):
-        super().__init__(
-            icon=icon,
-            parent=parent
-        )
-
-        self.reset_timer = common.Timer(parent=self)
-        self.reset_timer.setInterval(50)
-        self.reset_timer.setSingleShot(True)
-
-        self.reset_timer.timeout.connect(self.execute_queued_reset)
-
-        common.signals.favouritesChanged.connect(self.queue_model_reset)
-
-    def get_source_model(self):
-        return FavouriteItemModel(parent=self)
-
-    @QtCore.Slot()
-    def execute_queued_reset(self):
-        """Make sure to only reset the model when the mouse is no longer pressed.
-
-        """
-        if QtWidgets.QApplication.instance().mouseButtons() != QtCore.Qt.NoButton:
-            self.queue_model_reset()
-            return
-        if self.multi_toggle_items:
-            self.queue_model_reset()
-            return
-        model = self.model().sourceModel()
-        model.reset_data(force=True)
-
-    @QtCore.Slot()
-    def queue_model_reset(self):
-        """Starts/reset the timer responsible for reloading the list of
-        favourite items.
-
-        """
-        self.reset_timer.start(self.reset_timer.interval())
-
-    def get_hint_string(self):
-        """Returns an informative hint text.
-
-        """
-        model = self.model().sourceModel()
-        if not model.rowCount():
-            return 'No favourites yet'

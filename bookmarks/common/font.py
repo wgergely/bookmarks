@@ -110,7 +110,7 @@ class FontDatabase(QtGui.QFontDatabase):
         return common.font_db
 
 
-def _init_font_db():
+def init_font_db():
     """Initialize the font cache and database."""
     for role in common.Font:
         common.font_cache[role] = {}

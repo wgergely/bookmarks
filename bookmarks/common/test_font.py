@@ -15,7 +15,7 @@ class TestFontDatabase(unittest.TestCase):
             cls.app = QtWidgets.QApplication(sys.argv)
         else:
             cls.app = QtWidgets.QApplication.instance()
-        font._init_font_db()
+        font.init_font_db()
 
     def test_fontdb_instance_exists(self):
         self.assertIsNotNone(common.font_db, "FontDatabase instance should be initialized.")

@@ -1,34 +1,30 @@
-"""Base views used to show :mod:`bookmark <bookmarks.items.bookmark_items>`,
-:mod:`asset <bookmarks.items.asset_items>`, and :mod:`file <bookmarks.items.file_items>`
-items.
-
-The view uses :class:`~bookmarks.items.models.ItemModel` for getting the item data,
-:class:`~bookmarks.items.delegate.ItemDelegate` to paint the items.
-
-:class:`BaseItemView` is a customised QListView widget augmented by
-:class:`.InlineIconView` (adds inline icon functionality),
-and :class:`.ThreadedItemView` that implement threading related functionality.
-
-"""
-import collections
 import functools
 import os
 import re
-import weakref
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore, QtGui
 
-from . import delegate
-from . import models
-from .widgets import filter_editor
-from .. import actions
-from .. import common
-from .. import contextmenu
-from .. import database
-from .. import images
-from .. import log
-from .. import ui
-from ..threads import threads
+from . import drag
+from ..delegate import base as delegate
+from ..editor import filter as filtereditor
+from ..model import filter as filtermodel
+from ..model import base as basemodel
+from ... import common, contextmenu, ui, actions, database, log
+from ...threads import threads
+
+
+class ThumbnailsContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with thumbnail actions.
+
+    """
+
+    def setup(self):
+        """Creates the context menu.
+
+        """
+        self.thumbnail_menu()
+        self.separator()
+        self.sg_thumbnail_menu()
 
 
 class DropIndicatorWidget(QtWidgets.QWidget):
@@ -71,305 +67,6 @@ class DropIndicatorWidget(QtWidgets.QWidget):
         """Shows and sets the size of the widget."""
         self.setGeometry(self.parent().geometry())
         super().show()
-
-
-class DragPixmapFactory(QtWidgets.QWidget):
-    """Widget used to define the appearance of an item being dragged."""
-
-    def __init__(self, pixmap, text, parent=None):
-        super().__init__(parent=parent)
-        self._pixmap = pixmap
-        self._text = text
-
-        _, metrics = common.Font.MediumFont(common.Size.MediumText())
-        self._text_width = metrics.horizontalAdvance(text)
-
-        width = self._text_width + common.Size.Margin()
-        width = (
-            common.Size.DefaultWidth() + common.Size.Margin()
-            if width > common.Size.DefaultWidth() else width
-        )
-
-        self.setFixedHeight(common.Size.RowHeight())
-
-        longest_edge = max((pixmap.width(), pixmap.height()))
-        o = common.Size.Indicator()
-        self.setFixedWidth(
-            longest_edge + (o * 2) + width
-        )
-
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.Window)
-        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-        self.adjustSize()
-
-    @classmethod
-    def pixmap(cls, pixmap, text):
-        """Returns the widget as a rendered pixmap."""
-        w = cls(pixmap, text)
-        pixmap = QtGui.QPixmap(w.size() * common.pixel_ratio, )
-        pixmap.setDevicePixelRatio(common.pixel_ratio)
-        pixmap.fill(QtCore.Qt.transparent)
-        painter = QtGui.QPainter(pixmap)
-        w.render(painter, QtCore.QPoint(), QtGui.QRegion())
-        return pixmap
-
-    def paintEvent(self, event):
-        """Event handler.
-
-        """
-        painter = QtGui.QPainter()
-        painter.begin(self)
-
-        painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.Color.DarkBackground())
-        painter.setOpacity(0.6)
-        o = common.Size.Indicator()
-        painter.drawRoundedRect(self.rect(), o, o)
-        painter.setOpacity(1.0)
-
-        pixmap_rect = QtCore.QRect(
-            0, 0, common.Size.RowHeight(), common.Size.RowHeight()
-        )
-        painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
-
-        width = self._text_width + common.Size.Indicator()
-        max_width = common.Size.DefaultWidth()
-        width = max_width if width > max_width else width
-        rect = QtCore.QRect(
-            common.Size.RowHeight() + common.Size.Indicator(),
-            0,
-            width,
-            self.height()
-        )
-        common.draw_aliased_text(
-            painter,
-            common.Font.MediumFont(common.Size.MediumText())[0],
-            rect,
-            self._text,
-            QtCore.Qt.AlignCenter,
-            common.Color.SelectedText()
-        )
-        painter.end()
-
-
-class ItemDrag(QtGui.QDrag):
-    """A utility class used to start a drag operation.
-
-    """
-
-    def __init__(self, index, widget):
-        super().__init__(widget)
-
-        model = index.model().sourceModel()
-        self.setMimeData(model.mimeData([index, ]))
-
-        def _get(s, color=common.Color.Green()):
-            return images.rsc_pixmap(
-                s, color,
-                common.Size.Margin() * common.pixel_ratio
-            )
-
-        # Set drag icon
-        self.setDragCursor(_get('add_circle'), QtCore.Qt.CopyAction)
-        self.setDragCursor(_get('file'), QtCore.Qt.MoveAction)
-        self.setDragCursor(
-            _get('close', color=common.Color.Red()),
-            QtCore.Qt.ActionMask
-        )
-        self.setDragCursor(
-            _get('close', color=common.Color.Red()),
-            QtCore.Qt.IgnoreAction
-        )
-
-        # Set file item apperance
-        if index.data(common.ItemTabRole) in (common.BookmarkTab, common.AssetTab):
-            pixmap = images.rsc_pixmap(
-                'copy',
-                common.Color.DisabledText(),
-                common.Size.RowHeight()
-            )
-            pixmap = DragPixmapFactory.pixmap(pixmap, '< Item Properties >')
-            self.setPixmap(pixmap)
-
-        if index.data(common.ItemTabRole) in (common.FileTab, common.FavouriteTab):
-            source = index.data(common.PathRole)
-
-            modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
-            no_modifier = modifiers == QtCore.Qt.NoModifier
-            alt_modifier = modifiers & QtCore.Qt.AltModifier
-            shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-
-            if no_modifier:
-                source = common.get_sequence_end_path(source)
-                pixmap, _ = images.get_thumbnail(
-                    index.data(common.ParentPathRole)[0],
-                    index.data(common.ParentPathRole)[1],
-                    index.data(common.ParentPathRole)[2],
-                    source,
-                    size=common.Size.RowHeight(),
-                )
-            elif alt_modifier and shift_modifier:
-                pixmap = images.rsc_pixmap(
-                    'folder', common.Color.SecondaryText(),
-                    common.Size.RowHeight()
-                )
-                source = QtCore.QFileInfo(source).dir().path()
-            elif alt_modifier:
-                pixmap = images.rsc_pixmap(
-                    'file', common.Color.SecondaryText(),
-                    common.Size.RowHeight()
-                )
-                source = common.get_sequence_start_path(source)
-            elif shift_modifier:
-                source = common.get_sequence_start_path(source) + ', ++'
-                pixmap = images.rsc_pixmap(
-                    'multiples_files', common.Color.SecondaryText(),
-                    common.Size.RowHeight()
-                )
-            else:
-                return
-
-            if pixmap and not pixmap.isNull():
-                pixmap = DragPixmapFactory.pixmap(pixmap, source)
-                self.setPixmap(pixmap)
-
-
-class ListsWidget(QtWidgets.QStackedWidget):
-    """This stacked widget contains the main :class:`~bookmarks.items.bookmark_items.BookmarkItemView`,
-    :class:`~bookmarks.items.asset_items.AssetItemView`, :class:`~bookmarks.items.file_items.FileItemView` and
-    :class:`~bookmarks.items.favourite_items.FavouriteItemView`.
-    widgets.
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setObjectName('BrowserStackedWidget')
-
-        self.animation_in_progress = False
-
-        common.signals.tabChanged.connect(self.setCurrentIndex)
-
-    def setCurrentIndex(self, idx):
-        """Sets the current index of the ``ListsWidget``.
-
-        Args:
-            idx (int): The index of the widget to set.
-
-        """
-        idx = common.BookmarkTab if idx is None or idx is False else idx
-        idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
-
-        if (
-                not common.active_index(common.BookmarkTab).isValid()
-                and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
-        ):
-            idx = common.BookmarkTab
-
-        if (
-                common.active_index(common.BookmarkTab).isValid()
-                and not common.active_index(common.AssetTab).isValid()
-                and idx in (common.AssetTab, common.FileTab)
-        ):
-            idx = common.AssetTab
-
-        if idx > common.FavouriteTab:
-            idx = common.FavouriteTab
-
-        # Save tab to user settings
-        common.settings.setValue('selection/current_tab', idx)
-
-        current_index = self.currentIndex()
-        if current_index == idx:
-            return
-
-        @QtCore.Slot()
-        def animation_finished(a):
-            anim = a.animationAt(1)
-            if not anim:
-                return
-            if isinstance(anim.targetObject(), QtWidgets.QWidget):
-                _idx = self.indexOf(anim.targetObject())
-                super(ListsWidget, self).setCurrentIndex(_idx)
-                common.signals.tabChanged.emit(_idx)
-
-        @QtCore.Slot()
-        def animation_state_changed(state, old_state):
-            if state == QtCore.QAbstractAnimation.Running:
-                self.animation_in_progress = True
-            if state == QtCore.QAbstractAnimation.Stopped:
-                self.animation_in_progress = False
-
-        animation = QtCore.QParallelAnimationGroup()
-        animation.finished.connect(functools.partial(animation_finished, animation))
-        animation.stateChanged.connect(animation_state_changed)
-
-        duration = 200
-
-        # Create animation for outgoing widget
-        out_anim = QtCore.QPropertyAnimation(self.widget(current_index), b"geometry")
-        out_anim.setEasingCurve(QtCore.QEasingCurve.OutQuad)
-        out_anim.setDuration(duration)
-
-        out_rect = self.currentWidget().geometry()
-        if current_index > idx:
-            out_rect.moveLeft(self.width())
-        else:
-            out_rect.moveLeft(-self.width())
-        out_anim.setStartValue(self.currentWidget().geometry())
-        out_anim.setEndValue(out_rect)
-
-        # Create animation for incoming widget
-        in_anim = QtCore.QPropertyAnimation(self.widget(idx), b"geometry")
-        in_anim.setEasingCurve(QtCore.QEasingCurve.OutQuad)
-        in_anim.setDuration(duration)
-
-        in_rect = self.currentWidget().geometry()
-        if current_index > idx:
-            in_rect.moveLeft(-in_rect.width())
-        else:
-            in_rect.moveLeft(in_rect.width())
-        in_anim.setStartValue(in_rect)
-        in_anim.setEndValue(self.currentWidget().geometry())
-
-        out_op = QtCore.QPropertyAnimation(self.widget(current_index).graphicsEffect(), b"opacity")
-        out_op.setStartValue(1.0)
-        out_op.setEndValue(0.0)
-        in_op = QtCore.QPropertyAnimation(self.widget(idx).graphicsEffect(), b"opacity")
-        in_op.setStartValue(0.0)
-        in_op.setEndValue(1.0)
-
-        animation.addAnimation(out_anim)
-        animation.addAnimation(in_anim)
-        animation.addAnimation(out_op)
-        animation.addAnimation(in_op)
-
-        animation.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
-        self.widget(idx).show()
-
-    def showEvent(self, event):
-        """Event handler.
-
-        """
-        if self.currentWidget():
-            self.currentWidget().setFocus()
-
-
-class ThumbnailsContextMenu(contextmenu.BaseContextMenu):
-    """Context menu associated with thumbnail actions.
-
-    """
-
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.thumbnail_menu()
-        self.separator()
-        self.sg_thumbnail_menu()
 
 
 class ProgressWidget(QtWidgets.QWidget):
@@ -564,7 +261,7 @@ class BaseItemView(QtWidgets.QTableView):
         self.progress_indicator_widget.setHidden(True)
 
         self.filter_indicator_widget = FilterOnOverlayWidget(parent=self)
-        self.filter_editor = filter_editor.TextFilterEditor(parent=self.parent())
+        self.filter_editor = filtereditor.TextFilterEditor(parent=self.parent())
         self.filter_editor.setHidden(True)
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
@@ -613,8 +310,9 @@ class BaseItemView(QtWidgets.QTableView):
 
         self.setItemDelegate(self.Delegate(parent=self))
 
-        self.init_model()
         self._connect_signals()
+
+        self.init_model()
 
     def _connect_signals(self):
         self.resized.connect(self.filter_indicator_widget.setGeometry)
@@ -657,7 +355,7 @@ class BaseItemView(QtWidgets.QTableView):
             return
 
         # Internal property copy
-        if model.can_drop_properties(
+        if model._can_drop_properties(
                 event.mimeData(),
                 event.proposedAction(),
                 index.row(),
@@ -687,9 +385,9 @@ class BaseItemView(QtWidgets.QTableView):
 
         self.drag_source_row = index.row()
 
-        drag = ItemDrag(index, self)
+        _drag = drag.ItemDrag(index, self)
         QtCore.QTimer.singleShot(1, self.viewport().update)
-        drag.exec_(supported_actions)
+        _drag.exec_(supported_actions)
         QtCore.QTimer.singleShot(10, self._reset_drag_indicators)
 
     def dropEvent(self, event):
@@ -1041,7 +739,8 @@ class BaseItemView(QtWidgets.QTableView):
         """Returns the model class associated with this view.
 
         """
-        raise NotImplementedError('Abstract method must be implemented by subclass.')
+        model = basemodel.ItemModel(parent=self)
+        return model
 
     @common.error
     @common.debug
@@ -1080,22 +779,18 @@ class BaseItemView(QtWidgets.QTableView):
         and the view to communicate are made here.
 
         """
-        model = self.get_source_model()
-        proxy = models.FilterProxyModel(parent=self)
-        proxy.setSourceModel(model)
+        proxy = filtermodel.FilterProxyModel(parent=self)
         self.setModel(proxy)
 
+        model = self.get_source_model()
+        proxy.setSourceModel(model)
+
         self.init_buttons_hidden()
-        model.init_sort_values()
-        model.init_row_size()
+
         self.verticalHeader().setDefaultSectionSize(int(model.row_size.height()))
-        proxy.init_filter_values()
 
         proxy.filterTextChanged.connect(self.filter_editor.editor.setText)
 
-        model.modelReset.connect(model.init_sort_values)
-        model.modelReset.connect(proxy.init_filter_values)
-        model.modelReset.connect(model.init_row_size)
         model.modelReset.connect(self.init_buttons_hidden)
         model.modelReset.connect(self.reset_multi_toggle)
         model.modelReset.connect(
@@ -1497,7 +1192,7 @@ class BaseItemView(QtWidgets.QTableView):
 
     def key_space(self):
         """Custom key action.
-        
+
         """
         actions.preview_thumbnail()
 
@@ -1620,7 +1315,7 @@ class BaseItemView(QtWidgets.QTableView):
 
     def key_tab(self):
         """Custom key action
-        
+
         """
         if not self.selectionModel().hasSelection():
             return
@@ -1633,7 +1328,7 @@ class BaseItemView(QtWidgets.QTableView):
 
     def key_enter(self):
         """Custom key action
-        
+
         """
         if self.state() == QtWidgets.QAbstractItemView.EditingState:
             self.key_down()
@@ -1765,7 +1460,7 @@ class BaseItemView(QtWidgets.QTableView):
     @QtCore.Slot()
     def repaint_visible_rows(self):
         """Slot used to repaint all currently visible items.
-        
+
         """
         if QtWidgets.QApplication.instance().mouseButtons() != QtCore.Qt.NoButton:
             return
@@ -1811,10 +1506,10 @@ class BaseItemView(QtWidgets.QTableView):
 
     def set_row_size(self, v):
         """Sets the row size.
-        
+
         Args:
             v (int): The new row size
-            
+
         """
         proxy = self.model()
         model = proxy.sourceModel()
@@ -1905,671 +1600,6 @@ class BaseItemView(QtWidgets.QTableView):
                 )
                 self.save_selection()
                 return
-
-
-class InlineIconView(BaseItemView):
-    """Adds multi-toggle and clickable in-line icons to :class:`BaseItemView`.
-
-    """
-    buttonRectangleEntered = QtCore.Signal(QtCore.QRect)
-    buttonRectangleLeft = QtCore.Signal()
-
-    indicatorColorChanged = QtCore.Signal(QtGui.QColor)
-
-    icons = {
-        common.idx(start=0, reset=True): {
-            'icon': None,
-            'tooltip': 'ShotGrid',
-            'action': actions.reveal_url,
-        },
-        common.idx(): {
-            'icon': 'settings',
-            'tooltip': 'Edit item properties...',
-            'action': actions.edit_item_properties,
-        },
-        common.idx(): {
-            'icon': 'todo',
-            'tooltip': 'Edit item notes...',
-            'action': actions.show_notes,
-        },
-        common.idx(): {
-            'icon': 'folder',
-            'tooltip': 'Show item in file manager...',
-            'action': actions.reveal_selected,
-        },
-        common.idx(): {
-            'icon': 'favourite',
-            'tooltip': 'Mark as favourite',
-            'action': actions.toggle_favourite,
-        },
-        common.idx(): {
-            'icon': 'archivedHidden',
-            'tooltip': 'Archive item',
-            'action': actions.toggle_archived,
-        },
-    }
-
-    def __init__(self, icon='bw_icon', parent=None):
-        super().__init__(icon=icon, parent=parent)
-
-        self._clicked_rect = QtCore.QRect()
-
-        self.multi_toggle_pos = None
-        self.multi_toggle_state = None
-        self.multi_toggle_flag = None
-        self.multi_toggle_item = None
-        self.multi_toggle_items = {}
-
-        self._progress_hidden = True
-
-        self._indicator_link = None
-
-    @QtCore.Slot()
-    def set_indicator_link(self, current, previous):
-        """Sets the indicator color based on the current state.
-
-        """
-        curr_link = self._indicator_link
-
-        index = next((f for f in current.indexes()), QtCore.QModelIndex())
-
-        if not index.isValid():
-            new_link = None
-        elif not index.data(common.PathRole):
-            new_link = None
-        elif not index.data(common.ParentPathRole):
-            new_link = None
-        elif len(index.data(common.ParentPathRole)) != 4:
-            new_link = None
-        elif not index.data(common.AssetLinkRole):
-            new_link = None
-        else:
-            new_link = index.data(common.AssetLinkRole)
-
-        if curr_link == new_link:
-            return
-
-        self._indicator_link = index.data(common.AssetLinkRole)
-        self.itemDelegate().set_indicator_link(new_link)
-        self.viewport().update()
-
-    def set_row_size(self, v):
-        super().set_row_size(v)
-        self.adjust_headers()
-
-    @QtCore.Slot()
-    def adjust_headers(self, *args, **kwargs):
-        if not self.model():
-            return
-        if not self.model().sourceModel():
-            return
-        if not self.model().sourceModel().model_data():
-            return
-
-        self.setColumnHidden(3, self.inline_icons_count() == 0)
-        self.horizontalHeader().setHidden(self._progress_hidden)
-        self.verticalHeader().setHidden(True)
-
-        self.horizontalHeader().setMinimumSectionSize(0)
-
-        # Indicator
-        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
-        self.setColumnWidth(0, common.Size.Indicator())
-
-        # Thumbnail - always the same width as the current row height
-        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        self.setColumnWidth(1, self.model().sourceModel().row_size.height())
-
-        # Name, description, etc column
-        self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-
-        # Control buttons calculated based on the inline_icons_count
-        self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
-
-        if self.inline_icons_count() == 0:
-            self.setColumnWidth(3, 0)
-        else:
-            icon_width = common.Size.Margin()
-            spacing = common.Size.Indicator(2.5)
-            count = self.inline_icons_count()
-            inline_buttons_column_width = (icon_width + spacing) * count + spacing
-            self.setColumnWidth(3, inline_buttons_column_width)
-
-        # Make sure the geometries are up to date after toggling the header
-        self.updateGeometries()
-        self.viewport().update()
-
-    def _connect_signals(self):
-        super()._connect_signals()
-
-        self.buttonRectangleEntered.connect(self.itemDelegate().set_button_candidate_rectangle)
-        self.buttonRectangleLeft.connect(self.itemDelegate().clear_button_candidate_rectangle)
-        self.buttonRectangleLeft.connect(common.signals.clearStatusBarMessage)
-
-    def init_model(self):
-        super().init_model()
-
-        self.model().sourceModel().modelReset.connect(self.adjust_headers)
-
-        self.model().sourceModel().modelAboutToBeReset.connect(self.itemDelegate().clear_rectangles)
-        self.model().sourceModel().modelAboutToBeReset.connect(self.itemDelegate().clear_rectangles)
-        self.model().invalidated.connect(self.itemDelegate().clear_rectangles)
-
-        self.selectionModel().selectionChanged.connect(self.set_indicator_link)
-
-        self.adjust_headers()
-
-    def inline_icons_count(self):
-        """Inline buttons count.
-
-        """
-        if self.columnWidth(2) < common.Size.DefaultWidth(0.66):
-            return 0
-        if self.buttons_hidden():
-            return 0
-        return len(self.icons)
-
-    def reset_multi_toggle(self):
-        """Resets the multi-toggle state.
-        
-        """
-        self.multi_toggle_pos = None
-        self.multi_toggle_state = None
-        self.multi_toggle_flag = None
-        self.multi_toggle_item = None
-        self.multi_toggle_items = {}
-
-    def enterEvent(self, event):
-        """Event handler.
-
-        """
-        QtWidgets.QApplication.instance().restoreOverrideCursor()
-        super().enterEvent(event)
-
-    def leaveEvent(self, event):
-        """Event handler.
-
-        """
-        app = QtWidgets.QApplication.instance()
-        app.restoreOverrideCursor()
-
-    def mousePressEvent(self, event):
-        """The `InlineIconView`'s mousePressEvent initiates multi-row
-        flag toggling.
-
-        This event is responsible for setting ``multi_toggle_pos``, the start
-        position of the toggle, ``multi_toggle_state`` & ``multi_toggle_flag``
-        the modes of the toggle, based on the state of the state and location of
-        the clicked item.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            self.reset_multi_toggle()
-            return
-
-        index = self.indexAt(event.pos())
-
-        if index.column() == 3:
-            if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
-                self._clicked_rect = QtCore.QRect()
-                self.reset_multi_toggle()
-                super().mousePressEvent(event)
-                return
-
-            self.reset_multi_toggle()
-
-            rect, idx = self.itemDelegate().get_button_rectangle(index.data(common.IdRole), event.pos())
-            if not rect:
-                self.reset_multi_toggle()
-                self.buttonRectangleLeft.emit()
-                event.ignore()
-                super().mouseReleaseEvent(event)
-                return
-
-            self.selectionModel().select(
-                index,
-                QtCore.QItemSelectionModel.ClearAndSelect |
-                QtCore.QItemSelectionModel.Rows
-            )
-            self.selectionModel().setCurrentIndex(
-                index,
-                QtCore.QItemSelectionModel.ClearAndSelect |
-                QtCore.QItemSelectionModel.Rows
-            )
-            event.accept()
-
-            self._clicked_rect = rect
-
-            if self.icons[idx]['icon'] == 'favourite':
-                self.multi_toggle_pos = QtCore.QPoint(0, event.pos().y())
-                self.multi_toggle_state = not index.flags() & common.MarkedAsFavourite
-                self.multi_toggle_flag = common.MarkedAsFavourite
-
-            if self.icons[idx]['icon'] == 'archivedHidden':
-                self.multi_toggle_pos = event.pos()
-                self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
-                self.multi_toggle_flag = common.MarkedAsArchived
-
-            return
-
-        event.ignore()
-        super().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        """Concludes `InlineIconView`'s multi-item toggle operation, and
-        resets the associated variables.
-
-        The inline icon actions are triggered based on the position of the
-        click event.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            self.reset_multi_toggle()
-            return
-
-        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
-        alt_modifier = modifiers & QtCore.Qt.AltModifier
-        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-        control_modifier = modifiers & QtCore.Qt.ControlModifier
-
-        index = self.indexAt(event.pos())
-
-        if not index.isValid():
-            self.reset_multi_toggle()
-            super().mouseReleaseEvent(event)
-            return
-
-        if not index.data(common.FlagsRole):
-            self.reset_multi_toggle()
-            super().mouseReleaseEvent(event)
-            return
-
-        if index.column() == 3:
-            if self.multi_toggle_items:
-                event.ignore()
-                self.reset_multi_toggle()
-                super().mouseReleaseEvent(event)
-                self.model().invalidateFilter()
-                return
-
-            event.accept()
-            self.reset_multi_toggle()
-
-            rect, idx = self.itemDelegate().get_button_rectangle(index.data(common.IdRole), event.pos())
-            if not rect:
-                self.reset_multi_toggle()
-                self.buttonRectangleLeft.emit()
-                event.ignore()
-                super().mouseReleaseEvent(event)
-                return
-
-            # Let's make sure the click event is within the clicked rectangle and bail out if not
-            if rect != self._clicked_rect:
-                self.reset_multi_toggle()
-                event.ignore()
-                super().mouseReleaseEvent(event)
-                return
-
-            super().mouseReleaseEvent(event)
-
-            # Trigger action
-            if self.icons[idx]['icon'] == 'folder':
-                if alt_modifier:
-                    actions.reveal_url()
-                    return
-                if shift_modifier:
-                    actions.reveal('/'.join(index.data(common.ParentPathRole)[:2]))
-                    return
-                if control_modifier:
-                    actions.reveal('/'.join(index.data(common.ParentPathRole)[:1]))
-                    return
-
-            func = self.icons[idx]['action']
-            if func:
-                func()
-                self.repaint(self.visualRect(index))
-
-            # Refresh filters
-            if self.icons[idx]['icon'] == 'favourite':
-                if not self.model().filter_flag(common.MarkedAsFavourite):
-                    self.model().invalidateFilter()
-            elif self.icons[idx]['icon'] == 'archivedHidden':
-                if not self.model().filter_flag(common.MarkedAsArchived):
-                    self.model().invalidateFilter()
-
-            self._clicked_rect = QtCore.QRect()
-
-        super().mouseReleaseEvent(event)
-
-    def mouseMoveEvent(self, event):
-        """``InlineIconView``'s mouse move event is responsible for
-        handling the multi-toggle operations and repainting the current index
-        under the mouse.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            super().mouseMoveEvent(event)
-            return
-
-        if self.verticalScrollBar().isSliderDown():
-            super().mouseMoveEvent(event)
-            return
-
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            super().mouseMoveEvent(event)
-            return
-
-        if index.column() == 3:  # Inline icons and multi-toggle
-            rect, idx = self.itemDelegate().get_button_rectangle(index.data(common.IdRole), event.pos())
-
-            if rect:
-                self.buttonRectangleEntered.emit(rect)
-                common.signals.showStatusTipMessage.emit(self.icons[idx]['tooltip'])
-            else:
-                self.buttonRectangleLeft.emit()
-
-            self.repaint(self.visualRect(index))
-
-            # There's no multi-toggle operation in progress - we'll just update the icon and emit the tooltip
-            if self.multi_toggle_pos is None:
-                if rect:
-                    self.buttonRectangleEntered.emit(rect)
-                super().mouseMoveEvent(event)
-                return
-
-            # Ignore operation if no mouse buttons are pressed
-            if event.buttons() == QtCore.Qt.NoButton:
-                super().mouseMoveEvent(event)
-                return
-
-            # Continue with the multi-toggle operation
-            initial_index = self.indexAt(self.multi_toggle_pos)
-            idx = index.row()
-
-            # Exclude the current item
-            if index == self.multi_toggle_item:
-                super().mouseMoveEvent(event)
-                return
-
-            self.multi_toggle_item = index
-
-            favourite = index.flags() & common.MarkedAsFavourite
-            archived = index.flags() & common.MarkedAsArchived
-
-            if idx not in self.multi_toggle_items:
-
-                if self.multi_toggle_flag == common.MarkedAsFavourite:
-                    self.multi_toggle_items[idx] = favourite
-                    self.toggle_item_flag(
-                        index,
-                        common.MarkedAsFavourite,
-                        state=self.multi_toggle_state,
-                        commit_now=False,
-                    )
-                    self.repaint(self.visualRect(index))
-
-                    super().mouseMoveEvent(event)
-                    return
-
-                if self.multi_toggle_flag == common.MarkedAsArchived:
-                    self.multi_toggle_items[idx] = archived
-                    self.toggle_item_flag(
-                        index,
-                        common.MarkedAsArchived,
-                        state=self.multi_toggle_state,
-                        commit_now=False,
-                    )
-                    self.repaint(self.visualRect(index))
-
-                    super().mouseMoveEvent(event)
-                    return
-
-            if index == initial_index:
-                super().mouseMoveEvent(event)
-                return
-
-        super().mouseMoveEvent(event)
-
-
-class ClickableFilterView(InlineIconView):
-    filterRectangleEntered = QtCore.Signal(QtCore.QRect)
-    filterRectangleLeft = QtCore.Signal()
-
-    def _connect_signals(self):
-        super()._connect_signals()
-        self.filterRectangleEntered.connect(self.itemDelegate().set_filter_candidate_rectangle)
-        self.filterRectangleLeft.connect(self.itemDelegate().clear_filter_candidate_rectangle)
-        self.filterRectangleLeft.connect(common.signals.clearStatusBarMessage)
-
-    def mouseMoveEvent(self, event):
-        if not isinstance(event, QtGui.QMouseEvent):
-            super().mouseMoveEvent(event)
-            return
-
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            super().mouseMoveEvent(event)
-            return
-
-        if index.column() != 2:
-            super().mouseMoveEvent(event)
-            return
-
-        rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
-        if not text:
-            self.filterRectangleLeft.emit()
-        else:
-            self.filterRectangleEntered.emit(rect)
-            common.signals.showStatusTipMessage.emit(
-                f'Shift-click to filter by "{text}"  |  Alt-click to exclude "{text}"')
-
-        self.repaint(self.visualRect(index))
-
-        super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        if not isinstance(event, QtGui.QMouseEvent):
-            super().mouseReleaseEvent(event)
-            return
-
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            super().mouseReleaseEvent(event)
-            return
-
-        if index.column() == 2 and not index.flags() & common.MarkedAsArchived:
-            rect, text = self.itemDelegate().get_filter_rectangle(index.data(common.IdRole), event.pos())
-            if not text:
-                super().mouseReleaseEvent(event)
-                return
-
-            modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
-            shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-            alt_modifier = modifiers & QtCore.Qt.AltModifier
-
-            if modifiers == QtCore.Qt.NoModifier:
-                super().mouseReleaseEvent(event)
-                return
-
-            negative_filter_text = f'--"{text}"'
-            positive_filter_text = f'"{text}"'
-
-            if shift_modifier:  # positive filter intent
-                # Remove negative filter
-                if self.model().filter.has_string(negative_filter_text, negative_terms=True):
-                    self.model().filter.remove_filter(negative_filter_text)
-
-                if self.model().filter.has_string(positive_filter_text, positive_terms=True):
-                    self.model().filter.remove_filter(positive_filter_text)
-                else:
-                    self.model().filter.add_filter(positive_filter_text)
-            elif alt_modifier:  # negative filter intent
-                # Remove positive filter
-                if self.model().filter.has_string(positive_filter_text, positive_terms=True):
-                    self.model().filter.remove_filter(positive_filter_text)
-                self.model().filter.add_filter(negative_filter_text)
-
-            self.model().set_filter_text(self.model().filter.filter_string)
-            self.update(index)
-
-            self.filterRectangleLeft.emit()
-
-        return super().mouseReleaseEvent(event)
-
-
-class ThreadedItemView(ClickableFilterView):
-    """Extends the :class:`InlineIconView` with the methods used to interface with
-    threads.
-
-    """
-    workerInitialized = QtCore.Signal(str)
-    refUpdated = QtCore.Signal(weakref.ref)
-    queueItems = QtCore.Signal(list)
-
-    queues = ()
-
-    def __init__(self, icon='bw_icon', parent=None):
-        self.delayed_queue_timer = common.Timer()
-        self.delayed_queue_timer.setInterval(500)
-        self.delayed_queue_timer.setSingleShot(True)
-
-        super().__init__(icon=icon, parent=parent)
-
-        self.update_queue = collections.deque([], common.max_list_items)
-        self.update_queue_timer = common.Timer(parent=self)
-        self.update_queue_timer.setSingleShot(True)
-        self.update_queue_timer.setInterval(20)
-        self.update_queue_timer.timeout.connect(self.queued_row_repaint)
-
-        self.init_threads()
-
-    @common.debug
-    @common.error
-    def init_threads(self):
-        """Starts and connects the threads."""
-        for q in self.queues:
-            thread = threads.get_thread(q)
-            thread.start()
-
-        # Wait for all threads to spin up before continuing
-        n = 0.0
-        import time
-        while not all([threads.get_thread(f).isRunning() for f in self.queues]):
-            n += 0.1
-            time.sleep(0.1)
-            if n > 2.0:
-                break
-
-    @common.error
-    @common.debug
-    def init_model(self, *args, **kwargs):
-        """The methods responsible for connecting the associated item model with the view.
-
-        """
-        super().init_model(*args, **kwargs)
-        self.refUpdated.connect(self.update_row)
-
-        self.delayed_queue_timer.timeout.connect(self.save_visible_rows)
-        self.delayed_queue_timer.timeout.connect(self.queue_visible_indexes)
-
-        self.model().invalidated.connect(self.start_delayed_queue_timer)
-        self.model().sourceModel().modelReset.connect(self.start_delayed_queue_timer)
-
-        self.verticalScrollBar().valueChanged.connect(self.start_delayed_queue_timer)
-        self.verticalScrollBar().sliderReleased.connect(self.start_delayed_queue_timer)
-
-        self.model().filterTextChanged.connect(self.start_delayed_queue_timer)
-        self.model().filterFlagChanged.connect(self.start_delayed_queue_timer)
-
-        common.signals.tabChanged.connect(self.start_delayed_queue_timer)
-
-    @QtCore.Slot()
-    @common.debug
-    def start_delayed_queue_timer(self, *args, **kwargs):
-        """Starts the delayed queue timer.
-
-        """
-        self.delayed_queue_timer.start(self.delayed_queue_timer.interval())
-
-    @common.status_bar_message('Updating items...')
-    @common.debug
-    def queue_visible_indexes(self, *args, **kwargs):
-        """Send all currently visible items to the worker
-        threads for processing.
-
-        """
-        proxy = self.model()
-        if not proxy:
-            return
-        model = proxy.sourceModel()
-        if not model:
-            return
-
-        data = model.model_data()
-
-        show_archived = proxy.filter_flag(common.MarkedAsArchived)
-
-        try:
-            for q in self.queues:
-                role = threads.THREADS[q]['role']
-
-                # Skip queues that have their data already preloaded
-                if threads.THREADS[q]['preload'] and data.loaded:
-                    continue
-
-                refs = []
-                for idx in self.visible_rows['source_rows']:
-
-                    # Item is already loaded, skip
-                    if data[idx][role]:
-                        continue
-
-                    # Check if any of the current items are archived and invalidate
-                    # the filter if it is meant to be hidden
-                    is_archived = data[idx][common.FlagsRole] & common.MarkedAsArchived
-                    if show_archived is False and is_archived:
-                        proxy.invalidateFilter()
-                        return
-
-                    refs.append(weakref.ref(data[idx]))
-                self.queueItems.emit(refs)
-        except KeyError:
-            pass
-        except:
-            raise
-
-    @QtCore.Slot(weakref.ref)
-    def update_row(self, ref):
-        """Queues an update request by the threads for later processing."""
-        if not ref():
-            return
-        if ref not in self.update_queue.copy():
-            self.update_queue.append(ref)
-            self.update_queue_timer.start(self.update_queue_timer.interval())
-
-    def queued_row_repaint(self):
-        """Process a repaint request."""
-        try:
-            ref = self.update_queue.popleft()
-        except IndexError:
-            return
-        if not ref():
-            return
-
-        for row in self.visible_rows['proxy_rows']:
-            index = self.model().index(row, 0)
-            if index.data(common.PathRole) == ref()[common.PathRole]:
-                super().update(index)
-                break
-
-        self.update_queue_timer.start(self.update_queue_timer.interval())
-
-    @QtCore.Slot()
-    def delayed_save_visible_rows(self):
-        self.delayed_save_visible_timer.start(
-            self.delayed_save_visible_timer.interval()
-        )
 
     @QtCore.Slot()
     @common.debug

@@ -1,44 +1,14 @@
-"""Asset items in their simplest sense are file paths made up of ``server``, ``job``, ``root``
-and ``asset`` components.
-
-.. code-block:: python
-    :linenos:
-
-    server, job, root, asset = common.active('asset', args=True)
-    asset = f'{server}/{job}/{root}/{asset}'
-
-The app considers folders found in the root of a bookmark item assets.
-We don't have any notion of asset types (like how some pipelines make a distinction
-between shots and assets), nor do we understand nested assets by default (like a
-``SEQ010/SH010`` structure).
-
-Asset data is queried by :class:`AssetItemModel`, and displayed by
-:class:`AssetItemView`. Any custom logic of how assets are queried should be
-implemented in :meth:`AssetItemModel.item_generator`.
-
-Asset items have their own bespoke list of attributes, stored in the bookmark item's
-database. See :mod:`bookmarks.database` for more details.
-
-"""
 import copy
-import functools
 import os
 import re
 import weakref
 
 from PySide2 import QtCore, QtWidgets
 
-from . import delegate
-from . import models
-from . import views
-from .. import common
-from .. import contextmenu
-from .. import database
-from .. import log
-from .. import progress
-from .. import tokens
-from ..links.lib import LinksAPI
-from ..threads import threads
+from . import base
+from ... import common, log, progress, database, tokens
+from ...links.lib import LinksAPI
+from ...threads import threads
 
 
 @common.error
@@ -86,7 +56,7 @@ def asset_item_generator(path, interrupt_requested=False):
 
                 if common_path != path:
                     log.error(__name__,
-                        f'Asset {asset_root} is outside the source path {path}. Please verify if this is intentional')
+                              f'Asset {asset_root} is outside the source path {path}. Please verify if this is intentional')
 
                 api = LinksAPI(asset_root)
                 links = api.get(force=True)
@@ -103,54 +73,7 @@ def asset_item_generator(path, interrupt_requested=False):
         return
 
 
-class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
-    """The context menu associated with :class:`AssetItemView`."""
-
-    @common.debug
-    @common.error
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.scripts_menu()
-        self.separator()
-        self.show_add_asset_menu()
-        self.add_file_to_asset_menu()
-        self.separator()
-        self.edit_links_menu()
-        self.separator()
-        self.launcher_menu()
-        self.separator()
-        self.sg_url_menu()
-        self.sg_link_assets_menu()
-        self.sg_link_asset_menu()
-        self.separator()
-        self.asset_progress_menu()
-        self.separator()
-        self.bookmark_url_menu()
-        self.asset_url_menu()
-        self.reveal_item_menu()
-        self.copy_menu()
-        self.separator()
-        self.import_export_properties_menu()
-        self.separator()
-        self.edit_active_bookmark_menu()
-        self.edit_selected_asset_menu()
-        self.notes_menu()
-        self.toggle_item_flags_menu()
-        self.separator()
-        self.row_size_menu()
-        self.sort_menu()
-        self.list_filter_menu()
-        self.refresh_menu()
-        self.separator()
-        self.preferences_menu()
-        self.separator()
-        self.window_menu()
-        self.quit_menu()
-
-
-class AssetItemModel(models.ItemModel):
+class AssetItemModel(base.ItemModel):
     """The model containing all item information needed to represent assets.
     Used in conjunction with :class:`.AssetItemView`.
 
@@ -221,7 +144,7 @@ class AssetItemModel(models.ItemModel):
         return flags
 
     @common.status_bar_message('Loading assets...')
-    @models.initdata
+    @base.initdata
     @common.error
     @common.debug
     def init_data(self):
@@ -270,7 +193,7 @@ class AssetItemModel(models.ItemModel):
 
             if common_path != source:
                 log.error(__name__,
-                    f'Asset {filepath} is outside the source path {source}. Please verify if this is intentional.')
+                          f'Asset {filepath} is outside the source path {source}. Please verify if this is intentional.')
 
             # Compute the relative path
             relative_path = os.path.relpath(filepath, source).replace('\\', '/')
@@ -286,7 +209,7 @@ class AssetItemModel(models.ItemModel):
                 filename = filename[2:]
 
             # Set flags efficiently
-            flags = models.DEFAULT_ITEM_FLAGS
+            flags = base.DEFAULT_ITEM_FLAGS
             if filepath in favourites:
                 flags |= common.MarkedAsFavourite
             if active == filename:
@@ -314,7 +237,7 @@ class AssetItemModel(models.ItemModel):
 
             # Optimize role setup by pre-caching and limiting length
             parent_path_role = tuple(p + (filename,))
-            sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
+            sort_by_name_role = base.DEFAULT_SORT_BY_NAME_ROLE.copy()
             for idx, segment in enumerate(re.split(r'[\\/|]', filename)):
                 if idx >= len(sort_by_name_role):
                     break
@@ -372,11 +295,7 @@ class AssetItemModel(models.ItemModel):
             tuple: A tuple of path segments.
 
         """
-        return (
-            common.active('server'),
-            common.active('job'),
-            common.active('root'),
-        )
+        return common.active('root', args=True) or ()
 
     def save_active(self):
         """Saves the active item.
@@ -402,136 +321,9 @@ class AssetItemModel(models.ItemModel):
         """
         return common.FileItem
 
-    def filter_setting_dict_key(self):
+    def filter_setting_key(self):
         """The custom dictionary key used to save filter settings to the user settings
         file.
 
         """
-        v = [common.active(k) for k in ('server', 'job', 'root')]
-        if not all(v):
-            return None
-        return '/'.join(v)
-
-
-class AssetItemView(views.ThreadedItemView):
-    """The view used to display :class:`.AssetItemModel` item.
-
-    """
-    Delegate = delegate.AssetItemViewDelegate
-    ContextMenu = AssetItemViewContextMenu
-
-    queues = (threads.AssetInfo, threads.AssetThumbnail)
-
-    def __init__(self, parent=None):
-        super().__init__(
-            icon='asset',
-            parent=parent
-        )
-
-        common.signals.assetAdded.connect(
-            functools.partial(
-                self.show_item,
-                role=common.PathRole,
-            )
-        )
-        common.signals.assetAdded.connect(self.start_delayed_queue_timer)
-        common.signals.sgAssetsLinked.connect(self.start_delayed_queue_timer)
-
-    def get_source_model(self):
-        return AssetItemModel(parent=self)
-
-    def init_model(self, *args, **kwargs):
-        super().init_model(*args, **kwargs)
-
-        model = self.model().sourceModel()
-        model.modelReset.connect(self.init_progress_hidden)
-
-        self.init_progress_columns()
-        self.init_progress_hidden()
-
-    def init_progress_columns(self):
-        """Tweaks the horizontal header.
-
-        """
-        self.resized.connect(self.adapt_horizontal_header)
-
-        self.horizontalHeader().setHidden(False)
-        self.horizontalHeader().setMinimumSectionSize(common.Size.Section())
-
-        for idx in range(self.model().columnCount()):
-            if idx < 4:
-                continue
-            self.horizontalHeader().setSectionResizeMode(
-                idx, QtWidgets.QHeaderView.Fixed
-            )
-
-    @QtCore.Slot()
-    def adapt_horizontal_header(self, *args, **kwargs):
-        """Slot connected to the resized signal is used to hide the progress columns when
-        the window size is small.
-
-        """
-        min_width = common.Size.DefaultWidth(1.66)
-
-        hidden = self.progress_hidden()
-        hidden = True if self.width() < min_width else hidden
-
-        self.horizontalHeader().setHidden(hidden)
-        for n in range(self.model().columnCount()):
-            if n < 4:
-                continue
-            self.horizontalHeader().setSectionHidden(n, hidden)
-
-    def get_hint_string(self):
-        """Returns an informative hint text.
-
-        """
-        return 'Right-click and select \'Add Asset\' to add items'
-
-    def showEvent(self, event):
-        """Show event handler.
-
-        """
-        source_index = self.model().sourceModel().active_index()
-        if source_index.isValid():
-            index = self.model().mapFromSource(source_index)
-            self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
-            self.selectionModel().setCurrentIndex(
-                index, QtCore.QItemSelectionModel.ClearAndSelect
-            )
-        return super().showEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        cursor_position = event.pos()
-        index = self.indexAt(cursor_position)
-        if not index.isValid():
-            return super().mouseReleaseEvent(event)
-
-        if index.column() < 4:
-            return super().mouseReleaseEvent(event)
-
-        self.edit(index)
-
-    @common.error
-    @common.debug
-    def init_progress_hidden(self):
-        """Restore the previous state of the inline icon buttons.
-
-        """
-        model = self.model().sourceModel()
-        v = model.get_filter_setting('filters/progress')
-        v = False if not v else v
-        self._progress_hidden = v
-
-        self.adapt_horizontal_header()
-
-    def progress_hidden(self):
-        return self._progress_hidden
-
-    def set_progress_hidden(self, val):
-        """Sets the visibility of the progress tracker columns.
-
-        """
-        self.model().sourceModel().set_filter_setting('filters/progress', val)
-        self._progress_hidden = val
-        self.adapt_horizontal_header()
+        return common.active('root', path=True)

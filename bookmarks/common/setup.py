@@ -161,111 +161,104 @@ def initialize_func(
             f'expected one of {", ".join([f"{m}" for m in common.Mode])}.'
         )
 
-    try:
-        from .. import log
-        log.init_log(
-            log_level=log_level,
-            init_console=log_to_console,
-            init_file=log_to_file,
-        )
+    from .. import log
+    log.init_log(
+        log_level=log_level,
+        init_console=log_to_console,
+        init_file=log_to_file,
+    )
 
-        common.init_mode = mode
-        common.item_data = common.DataDict()
+    common.init_mode = mode
+    common.item_data = common.DataDict()
 
-        if not os.path.isdir(common.temp_path()):
-            os.makedirs(os.path.normpath(common.temp_path()))
+    if not os.path.isdir(common.temp_path()):
+        os.makedirs(os.path.normpath(common.temp_path()))
 
-        common.init_signals(connect_signals=mode != common.Mode.Core)
-        common.init_active_mode()
-        common.init_settings()
-        common.init_active()
+    common.init_signals(connect_signals=mode != common.Mode.Core)
+    common.init_active_mode()
+    common.init_settings()
+    common.init_active()
 
-        from .parser import StringParser
-        common.parser = StringParser()
+    from .parser import StringParser
+    common.parser = StringParser()
 
-        from . import color
-        common.init_color_manager()
+    from . import color
+    common.init_color_manager()
 
-        from ..server import activebookmarks_presets
-        activebookmarks_presets.init_active_bookmark_presets()
+    from ..server import activebookmarks_presets
+    activebookmarks_presets.init_active_bookmark_presets()
 
-        if mode == common.Mode.Core:
-            return
+    if mode == common.Mode.Core:
+        return
 
-        from . import ui
-        ui.init_ui_scale()
-        ui.init_dpi()
+    from . import ui
+    ui.init_ui_scale()
+    ui.init_dpi()
 
-        from .. import images
-        images.init_image_cache()
-        images.init_resources()
+    from .. import images
+    images.init_image_cache()
+    images.init_resources()
 
-        from .. import standalone
-        if not QtWidgets.QApplication.instance() and mode == common.Mode.Standalone:
-            standalone.set_application_properties()
+    from .. import standalone
+    if not QtWidgets.QApplication.instance() and mode == common.Mode.Standalone:
+        standalone.set_application_properties()
+        app = QtWidgets.QApplication(sys.argv)
 
-            app = QtWidgets.QApplication(sys.argv)
+        standalone.set_application_properties(app=app)
 
-            standalone.set_application_properties(app=app)
+        app.setApplicationName(common.product.title())
 
-            app.setApplicationName(common.product.title())
+        app.setOrganizationName(common.organization)
 
-            app.setOrganizationName(common.organization)
+        app.setOrganizationDomain(common.organization_domain)
+        app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-            app.setOrganizationDomain(common.organization_domain)
-            app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+        app.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
+        app.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
+        app.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
 
-            app.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
-            app.setEffectEnabled(QtCore.Qt.UI_AnimateToolBox, False)
-            app.setEffectEnabled(QtCore.Qt.UI_AnimateTooltip, False)
+        standalone.set_model_id()
+        standalone.set_window_icon(app)
 
-            standalone.set_model_id()
-            standalone.set_window_icon(app)
+        app.eventFilter = standalone.global_event_filter
+        app.installEventFilter(app)
 
-            app.eventFilter = standalone.global_event_filter
-            app.installEventFilter(app)
+    elif not QtWidgets.QApplication.instance():
+        raise RuntimeError('No QApplication instance found.')
 
-        elif not QtWidgets.QApplication.instance():
-            raise RuntimeError('No QApplication instance found.')
+    images.init_pixel_ratio()
 
-        images.init_pixel_ratio()
+    from . import font
+    font.init_font_db()
+    ui.init_stylesheet()
 
-        from . import font
-        font._init_font_db()
-        ui._init_stylesheet()
+    # if mode == common.Mode.Standalone:
+    #     standalone.init()
+    # elif mode == common.Mode.Embedded:
+    #     from .. import main
+    #     main.init()
 
-        if mode == common.Mode.Standalone:
-            standalone.init()
-        elif mode == common.Mode.Embedded:
-            from .. import main
-            main.init()
+    # Start non-model linked worker threads
+    _threads = []
+    from ..threads import threads
+    thread = threads.get_thread(threads.QueuedDatabaseTransaction)
+    thread.start()
+    _threads.append(thread)
+    thread = threads.get_thread(threads.QueuedSGQuery)
+    thread.start()
+    _threads.append(thread)
 
-        # Start non-model linked worker threads
-        _threads = []
-        from ..threads import threads
-        thread = threads.get_thread(threads.QueuedDatabaseTransaction)
-        thread.start()
-        _threads.append(thread)
-        thread = threads.get_thread(threads.QueuedSGQuery)
-        thread.start()
-        _threads.append(thread)
+    # Wait for all threads to spin up before continuing
+    i = 0.01
+    timeout = time.time() + 10.0
+    while not all(f.isRunning() for f in _threads):
+        time.sleep(i)
+        if time.time() >= timeout:
+            break
 
-        # Wait for all threads to spin up before continuing
-        i = 0.01
-        timeout = time.time() + 10.0
-        while not all(f.isRunning() for f in _threads):
-            time.sleep(i)
-            if time.time() >= timeout:
-                break
-
-        if show_ui_logs:
-            from ..log import view as editor
-            editor.show()
-    except Exception as e:
-        from .. import log
-        log.error(__name__, f'Error during initialization: {e}')
-    finally:
-        return io.BytesIO()
+    if show_ui_logs:
+        from ..log import view as editor
+        editor.show()
 
 
 def shutdown():

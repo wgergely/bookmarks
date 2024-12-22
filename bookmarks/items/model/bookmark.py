@@ -1,120 +1,14 @@
-"""Bookmark items at their core are simple file paths made up of a ``server``, ``job``
-and ``root`` components. We usually store them in the following form:
-
-.. code-block:: python
-    :linenos:
-
-    {
-        '//path/to/my/server/my_job/my_shots': {
-            'server': '//path_to_my/server',
-            'job': 'my_job',
-            'root': 'my_shots'
-        }
-    }
-
-
-:class:`BookmarkItemModel` is responsible for loading saved bookmark items and
-:class:`BookmarkItemView` for displaying them. See
-:meth:`BookmarkItemModel.item_generator` for how the model finds saved bookmark items.
-
-Properties like description, frame-range, frame-rate, or ShotGrid linkage are stored in
-sqlite3 databases located at each bookmark item's root folder. See
-:mod:`bookmarks.database` more details.
-
-Throughout the app, data interfaces usually require a bookmark item, commonly as
-separate server, job, root arguments. See :func:`~bookmarks.common.settings.active` to
-see how active path components can be queried.
-
-Hint:
-    The term "active" refers to items the user has activated, for example, double-clicked. When
-    an item is activated all path components that make up that item will
-    become active.
-
-    .. code-block:: python
-        :linenos:
-
-        server = common.active('server')
-        job = common.active('job')
-        root = common.active('root')
-
-        # Or...
-
-        server, job, root = common.active('root', args=True)
-
-
-
-Model items store their path segments using the
-:attr:`~bookmarks.common.ParentPathRole` role. E.g.:
-
-.. code-block:: python
-    :linenos:
-
-    # ...in case of a QtCore.QModelIndex item:
-    server, job, root = index.data(common.ParentPathRole)[0:3]
-
-
-"""
 import weakref
 
 from PySide2 import QtCore, QtWidgets
 
-from . import delegate
-from . import models
-from . import views
-from .. import common
-from .. import contextmenu
-from .. import database
-from ..server.lib import ServerAPI
-from ..threads import threads
+from . import base
+from ... import common, database
+from ...server.lib import ServerAPI
+from ...threads import threads
 
 
-class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
-    """Context menu associated with the BookmarkItemView.
-
-    Methods:
-        refresh: Refreshes the collector and repopulates the widget.
-
-    """
-
-    @common.debug
-    @common.error
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.scripts_menu()
-        self.separator()
-        self.bookmark_editor_menu()
-        self.add_asset_to_bookmark_menu()
-        self.separator()
-        self.launcher_menu()
-        self.separator()
-        self.sg_url_menu()
-        self.sg_link_bookmark_menu()
-        self.separator()
-        self.bookmark_url_menu()
-        self.asset_url_menu()
-        self.reveal_item_menu()
-        self.copy_menu()
-        self.separator()
-        self.import_export_properties_menu()
-        self.separator()
-        self.edit_selected_bookmark_menu()
-        self.notes_menu()
-        self.toggle_item_flags_menu()
-        self.separator()
-        self.row_size_menu()
-        self.sort_menu()
-        self.list_filter_menu()
-        self.refresh_menu()
-        self.separator()
-        self.preferences_menu()
-        self.separator()
-        self.window_menu()
-        self.quit_menu()
-
-
-class BookmarkItemModel(models.ItemModel):
+class BookmarkItemModel(base.ItemModel):
     """The model used store the data necessary to display bookmark item.
 
     """
@@ -122,6 +16,8 @@ class BookmarkItemModel(models.ItemModel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
+    def _connect_signals(self):
         common.signals.bookmarkAdded.connect(
             lambda *a, **kw: self.reset_data(force=True, emit_active=False)
         )
@@ -133,7 +29,7 @@ class BookmarkItemModel(models.ItemModel):
         )
 
     @common.status_bar_message('Loading Bookmarks...')
-    @models.initdata
+    @base.initdata
     @common.error
     @common.debug
     def init_data(self):
@@ -200,7 +96,7 @@ class BookmarkItemModel(models.ItemModel):
 
             # Mark the item archived if the saved bookmark doesn't refer
             # to an existing file
-            flags = models.DEFAULT_ITEM_FLAGS
+            flags = base.DEFAULT_ITEM_FLAGS
             if not exists:
                 flags |= common.MarkedAsArchived
 
@@ -229,7 +125,7 @@ class BookmarkItemModel(models.ItemModel):
             # Find the entry
             entry = common.get_entry_from_path(file_info.filePath())
 
-            sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
+            sort_by_name_role = base.DEFAULT_SORT_BY_NAME_ROLE.copy()
             sort_by_name_role[0] = display_name.lower()
             sort_by_name_role[1] = server.lower()
             sort_by_name_role[2] = job.lower()
@@ -314,7 +210,7 @@ class BookmarkItemModel(models.ItemModel):
         """
         return common.FileItem
 
-    def filter_setting_dict_key(self):
+    def filter_setting_key(self):
         """The custom dictionary key used to save filter settings to the user settings
         file.
 
@@ -332,30 +228,3 @@ class BookmarkItemModel(models.ItemModel):
         if not alt_modifier:
             flags &= ~QtCore.Qt.ItemIsDragEnabled
         return flags
-
-
-class BookmarkItemView(views.ThreadedItemView):
-    """The view used to display bookmark item.
-
-    See :class:`BookmarkItemModel`.
-
-    """
-    Delegate = delegate.BookmarkItemViewDelegate
-    ContextMenu = BookmarkItemViewContextMenu
-
-    queues = (threads.BookmarkInfo, threads.BookmarkThumbnail)
-
-    def get_source_model(self):
-        return BookmarkItemModel(parent=self)
-
-    def __init__(self, parent=None):
-        super().__init__(
-            icon='bookmark',
-            parent=parent
-        )
-
-    def get_hint_string(self):
-        """Returns an informative hint text.
-
-        """
-        return 'Right-click and select \'Edit Jobs\' to add bookmark items'

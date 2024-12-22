@@ -1,62 +1,12 @@
-"""File items are files found inside an asset item. They're made up of ``server``,
-``job``, ``root``, ``asset``, ``task`` and ``file`` path segments.
-
-.. code-block:: python
-    :linenos:
-
-    # The following file path...
-    my_file = '//my/server/my_job/my_asset/my_task_folder/take1/my_file.psd
-    # ...is constructed like this:
-    my_file = f'{server}/{job}/{root}/{asset}/{task}/take1/my_file.psd'
-    # Note the relative path segment ``take1/my_file.psd``
-
-
-Note the two new path segments file items introduce: ``task`` items, and a relative
-`file` segment, ``take1/my_file.psd``.
-
-:class:`FileItemModel` will always load recursively **all** files found in a specified
-task folder. In the real world, these correspond to workspace folders used by DCCs,
-such as the `scenes`, `cache`, `images`, `render`, etc. folders. These folders are the
-main containers for file items.
-
-The relative file path segment is what :class:`FileItemView` displays.
-This segment often includes a series of subdirectories the view represents as
-interactive labels. These labels can be used to filter the list view.
-
-.. note:
-    In summary , :class:`FileItemModel` will **not** load file items from the root
-    of an asset item, but from subdirectories called ``task`` items. It will load
-    all files from all subdirectories from this folder but provides filter options in the
-    form of interactive labels.
-
-Important to note that :class:`FileItemModel` interacts with two data sets
-simultaneously: a *collapsed* sequence and a regular file data set.
-See the :mod:`~bookmarks.common.sequence` module for details on sequence definitions, and
-:meth:`~bookmarks.items.models.BaseItemModel.model_data`.
-
-"""
 import functools
 import os
 import weakref
 
 from PySide2 import QtWidgets, QtCore
 
-from . import delegate
-from . import models
-from . import views
-from .. import actions, tokens
-from .. import common
-from .. import contextmenu
-from .. import log
-from ..threads import threads
-
-active_keys = {
-    'server',
-    'job',
-    'root',
-    'asset',
-    'task',
-}
+from . import base
+from ... import common, log, tokens
+from ...threads import threads
 
 
 def _add_path_to_mime(mime, path):
@@ -113,62 +63,7 @@ def get_sequence_elements(filepath):
     return seq, sequence_path
 
 
-class FileItemViewContextMenu(contextmenu.BaseContextMenu):
-    """Context menu associated with :class:`FileItemView`.
-
-    """
-
-    @common.error
-    @common.debug
-    def setup(self):
-        """Creates the context menu.
-
-        """
-        self.scripts_menu()
-        self.separator()
-        self.task_folder_toggle_menu()
-        self.separator()
-        self.launcher_menu()
-        self.separator()
-        if self.index and self.index.isValid() and self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.sg_publish_menu()
-            self.publish_menu()
-            self.separator()
-        self.sg_url_menu()
-        self.sg_browse_tasks_menu()
-        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.sg_rv_menu()
-        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.convert_menu()
-        self.separator()
-        self.add_file_menu()
-        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.delete_selected_files_menu()
-        self.separator()
-        self.bookmark_url_menu()
-        self.asset_url_menu()
-        self.reveal_item_menu()
-        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.copy_menu()
-        self.separator()
-        self.edit_active_bookmark_menu()
-        self.edit_active_asset_menu()
-        self.notes_menu()
-        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.toggle_item_flags_menu()
-        self.separator()
-        self.row_size_menu()
-        self.sort_menu()
-        self.list_filter_menu()
-        self.refresh_menu()
-        self.separator()
-        self.preferences_menu()
-        self.separator()
-        self.window_menu()
-        self.quit_menu()
-
-
-class FileItemModel(models.ItemModel):
+class FileItemModel(base.ItemModel):
     """Model used to list files in an asset.
 
     The model will load files from one task folder at any given time. The current
@@ -246,7 +141,7 @@ class FileItemModel(models.ItemModel):
             log.error(__name__, f"Error scanning {path}: {e}")
 
     @common.status_bar_message('Loading Files...')
-    @models.initdata
+    @base.initdata
     @common.error
     @common.debug
     def init_data(self):
@@ -270,7 +165,7 @@ class FileItemModel(models.ItemModel):
         # Initialize variables
         watcher = common.get_watcher(common.FileTab)
         watcher.reset()
-        watch_paths = {source_path,}
+        watch_paths = {source_path, }
         favourites = common.favourites
         disable_filter = self.disable_filter()
 
@@ -325,7 +220,7 @@ class FileItemModel(models.ItemModel):
 
             if common_path != source_path:
                 log.error(__name__,
-                    f'File {filepath} is outside the source path {source_path}. Verify if this is intentional.')
+                          f'File {filepath} is outside the source path {source_path}. Verify if this is intentional.')
 
             # Compute relative path from task folder to file without relative denominators
             relative_path = os.path.relpath(filepath, source_path).replace('\\', '/')
@@ -348,7 +243,7 @@ class FileItemModel(models.ItemModel):
                 )
 
             # Set flags
-            flags = models.DEFAULT_ITEM_FLAGS
+            flags = base.DEFAULT_ITEM_FLAGS
             if filepath in favourites:
                 flags |= common.MarkedAsFavourite
 
@@ -411,7 +306,7 @@ class FileItemModel(models.ItemModel):
 
                     if seq_common_path != source_path:
                         log.error(__name__,
-                            f'Sequence {sequence_path} is outside the source path {source_path}. Verify if this is intentional.')
+                                  f'Sequence {sequence_path} is outside the source path {source_path}. Verify if this is intentional.')
                         seq = None  # Treat as an individual file
                     else:
                         # Compute the relative path for the sequence
@@ -425,7 +320,7 @@ class FileItemModel(models.ItemModel):
 
                         # Initialize sequence data if not already present
                         if sequence_path not in sequence_data:
-                            seq_flags = models.DEFAULT_ITEM_FLAGS
+                            seq_flags = base.DEFAULT_ITEM_FLAGS
                             if sequence_path in favourites:
                                 seq_flags |= common.MarkedAsFavourite
 
@@ -501,7 +396,7 @@ class FileItemModel(models.ItemModel):
                         common.PathRole: filepath,
                         common.DataTypeRole: common.FileItem,
                         common.SortByLastModifiedRole: 0,
-                        common.FlagsRole: models.DEFAULT_ITEM_FLAGS | (
+                        common.FlagsRole: base.DEFAULT_ITEM_FLAGS | (
                             common.MarkedAsFavourite if filepath in favourites else 0
                         ),
                         common.SequenceRole: None,
@@ -551,12 +446,7 @@ class FileItemModel(models.ItemModel):
             tuple: A tuple of path segments.
 
         """
-        return (
-            common.active('server'),
-            common.active('job'),
-            common.active('root'),
-            common.active('asset')
-        )
+        return common.active('asset', args=True) or ()
 
     def save_active(self):
         """Saves the current active item.
@@ -649,18 +539,14 @@ class FileItemModel(models.ItemModel):
         self._datatype[task] = val
         self.endResetModel()
 
-    def filter_setting_dict_key(self):
+    def filter_setting_key(self):
         """The custom dictionary key used to save filter settings to the user settings
         file.
 
         """
-        v = [common.active(k) for k in ('server', 'job', 'root', 'asset', 'task')]
-        if not all(v):
-            return None
+        return common.active('task', path=True)
 
-        return '/'.join(v)
-
-    def can_drop_properties(self, mime, action, row, column, parent=QtCore.QModelIndex()):
+    def _can_drop_properties(self, mime, action, row, column, parent=QtCore.QModelIndex()):
         return False
 
     def mimeData(self, indexes):
@@ -703,99 +589,3 @@ class FileItemModel(models.ItemModel):
                 for path in paths:
                     _add_path_to_mime(mime, path)
         return mime
-
-
-class FileItemView(views.ThreadedItemView):
-    """The view used to display :class:`FileItemModel` items.
-
-    """
-    Delegate = delegate.FileItemViewDelegate
-    ContextMenu = FileItemViewContextMenu
-
-    queues = (threads.FileInfo, threads.FileThumbnail)
-
-    def __init__(self, icon='file', parent=None):
-        super().__init__(
-            icon=icon,
-            parent=parent
-        )
-        common.signals.fileAdded.connect(
-            functools.partial(self.show_item, role=common.PathRole)
-        )
-
-    def get_source_model(self):
-        return FileItemModel(parent=self)
-
-    def inline_icons_count(self):
-        """Inline buttons count.
-
-        """
-        if self.buttons_hidden():
-            return 0
-        return 4
-
-    def key_enter(self):
-        """Custom key action.
-
-        """
-        index = common.get_selected_index(self)
-        if not index.isValid():
-            self.activate(index)
-
-    def get_hint_string(self):
-        """Returns an informative hint text.
-
-        """
-        model = self.model().sourceModel()
-        k = model.task()
-        if not k:
-            return 'No asset folder selected'
-        return f'No files found in "{k}"'
-
-    @common.error
-    @common.debug
-    @QtCore.Slot(str)
-    def show_item(self, v, role=QtCore.Qt.DisplayRole, update=True, limit=10000):
-        """This slot is called by the `itemAdded` signal.
-
-        For instance, when new file is added we'll use this method to reveal it
-        in the files tab.
-
-        """
-        proxy = self.model()
-        model = proxy.sourceModel()
-        k = model.task()
-
-        if not all(model.parent_path()):
-            return
-        source_path = '/'.join(model.parent_path())
-
-        # We probably saved outside the asset, we won't be showing the
-        # file...
-        if source_path not in v:
-            return
-
-        # Show files tab
-        if common.current_tab() != common.FileTab:
-            actions.change_tab(common.FileTab)
-
-        # Change task folder
-        task = v.replace(source_path, '').strip('/').split('/', maxsplit=1)[0]
-        if k != task:
-            common.signals.taskFolderChanged.emit(task)
-
-        data = model.model_data()
-        t = model.data_type()
-        if t == common.SequenceItem:
-            v = common.proxy_path(v)
-
-        # Refresh the model if
-        if len(data) < limit:
-            model.reset_data(force=True)
-
-        # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(
-            300, functools.partial(
-                self.select_item, v, role=role
-            )
-        )

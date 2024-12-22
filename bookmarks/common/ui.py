@@ -46,7 +46,7 @@ def init_dpi():
         common.dpi = 72.0
 
 
-def _init_stylesheet():
+def init_stylesheet():
     """Loads and stores the custom style sheet used by the app.
 
     The style sheet template is stored in the ``rsc/stylesheet.qss`` file, and we use

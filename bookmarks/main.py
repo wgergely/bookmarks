@@ -2,7 +2,7 @@
 
 :class:`.MainWidget` consist of :class:`~bookmarks.topbar.topbar.TopBarWidget`,
 :class:`~bookmarks.statusbar.StatusBar`,
-and :class:`~bookmarks.items.views.ListsWidget`. The latter is the container
+and :class:`~bookmarks.items.views.StackedWidget`. The latter is the container
 for the three main list item widgets:
 :class:`~bookmarks.items.bookmark_items.BookmarkItemView`,
 :class:`~bookmarks.items.asset_items.AssetItemView` and
@@ -36,11 +36,11 @@ from . import common
 from . import images
 from . import shortcuts
 from . import statusbar
-from .items import assets
-from .items import bookmarks
-from .items import favourites
-from .items import files
-from .items import views
+from .items.view import asset
+from .items.view import bookmark
+from .items.view import favourite
+from .items.view import file
+from .items import stackedwidget
 from .topbar import topbar
 
 
@@ -107,13 +107,13 @@ class MainWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
 
         # Main stacked widget used to navigate items
-        self.stacked_widget = views.ListsWidget(parent=self)
+        self.stacked_widget = stackedwidget.StackedWidget(parent=self)
 
         # Item views
-        self.bookmarks_widget = bookmarks.BookmarkItemView(parent=self)
-        self.assets_widget = assets.AssetItemView(parent=self)
-        self.files_widget = files.FileItemView(parent=self)
-        self.favourites_widget = favourites.FavouriteItemView(parent=self)
+        self.bookmarks_widget = bookmark.BookmarkItemView(parent=self)
+        self.assets_widget = asset.AssetItemView(parent=self)
+        self.files_widget = file.FileItemView(parent=self)
+        self.favourites_widget = favourite.FavouriteItemView(parent=self)
 
         # Add items to stacked widget
         self.stacked_widget.addWidget(self.bookmarks_widget)
@@ -161,7 +161,7 @@ class MainWidget(QtWidgets.QWidget):
             idx = common.FavouriteTab
 
         # We'll invoke directly the original setCurrentIndex method
-        super(views.ListsWidget, self.stacked_widget).setCurrentIndex(idx)
+        super(stackedwidget.StackedWidget, self.stacked_widget).setCurrentIndex(idx)
 
     @common.debug
     @common.error

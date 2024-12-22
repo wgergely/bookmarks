@@ -5,7 +5,6 @@ The module provides methods for the models to access, load and reset the cached 
 """
 
 import weakref
-from typing import Tuple, Optional, Any, List, Union
 
 from PySide2 import QtCore
 
@@ -52,43 +51,43 @@ class DataDict(dict):
         self._refresh_needed = v
 
     @property
-    def data_type(self) -> Optional[int]:
+    def data_type(self):
         return self._data_type
 
     @data_type.setter
-    def data_type(self, v: int):
+    def data_type(self, v):
         self._data_type = v
 
     @property
-    def servers(self) -> List[str]:
+    def servers(self):
         role = common.ParentPathRole
         return [v[role][0] for v in self.values() if v.get(role) and len(v[role]) > 1]
 
     @property
-    def jobs(self) -> List[str]:
+    def jobs(self):
         role = common.ParentPathRole
         return [v[role][1] for v in self.values() if v.get(role) and len(v[role]) > 2]
 
     @property
-    def roots(self) -> List[str]:
+    def roots(self):
         role = common.ParentPathRole
         return [v[role][2] for v in self.values() if v.get(role) and len(v[role]) > 3]
 
     @property
-    def assets(self) -> List[str]:
+    def assets(self):
         role = common.ParentPathRole
         return [v[role][3] for v in self.values() if v.get(role) and len(v[role]) > 4]
 
     @property
-    def tasks_folders(self) -> List[str]:
+    def tasks_folders(self):
         role = common.ParentPathRole
         return [v[role][4] for v in self.values() if v.get(role) and len(v[role]) > 5]
 
     @property
-    def relative_folders(self) -> List[str]:
+    def relative_folders(self):
         role = common.ParentPathRole
 
-        def func(val: dict) -> List[str]:
+        def func(val: dict):
             pp = val.get(role)
             if not pp:
                 return []
@@ -103,8 +102,8 @@ class DataDict(dict):
         return list(unique_folders)
 
     @property
-    def file_types(self) -> List[str]:
-        def func(val: dict) -> str:
+    def file_types(self):
+        def func(val: dict):
             path = val.get(common.PathRole, '')
             if '.' not in path.split('/')[-1]:
                 return ''
@@ -114,67 +113,49 @@ class DataDict(dict):
         return list(unique_types)
 
 
-# ---------------------- Internal Helper Functions (No Locking) ----------------------
-
-def _reset_data_no_lock(key: Tuple[str, ...], task: str) -> None:
-    """Internal helper: resets data without acquiring any lock."""
+def _reset_data_no_lock(key):
+    """Reset data for the given key without acquiring any lock."""
     if key not in common.item_data:
         common.item_data[key] = DataDict()
-    common.item_data[key][task] = DataDict()
     for t in (common.FileItem, common.SequenceItem):
-        common.item_data[key][task][t] = DataDict()
-        common.item_data[key][task][t].data_type = t
+        common.item_data[key][t] = DataDict()
+        common.item_data[key][t].data_type = t
 
 
-def _ensure_data_exists_no_lock(key: Tuple[str, ...], task: str, data_type: int) -> None:
+def _ensure_data_exists_no_lock(key, data_type):
     """Ensure the requested data structure exists in common.item_data without locking."""
     if key not in common.item_data:
-        _reset_data_no_lock(key, task)
-    elif task not in common.item_data[key]:
-        _reset_data_no_lock(key, task)
-    elif data_type not in common.item_data[key][task]:
-        _reset_data_no_lock(key, task)
+        _reset_data_no_lock(key)
+    elif data_type not in common.item_data[key]:
+        _reset_data_no_lock(key)
 
 
-def _get_data_no_lock(key: Tuple[str, ...], task: str, data_type: int) -> DataDict:
-    _ensure_data_exists_no_lock(key, task, data_type)
-    return common.item_data[key][task][data_type]
+def _get_data_no_lock(key, data_type):
+    _ensure_data_exists_no_lock(key, data_type)
+    return common.item_data[key][data_type]
 
 
-def _get_task_data_no_lock(key: Tuple[str, ...], task: str) -> DataDict:
-    if key not in common.item_data:
-        _reset_data_no_lock(key, task)
-    elif task not in common.item_data[key]:
-        _reset_data_no_lock(key, task)
-    return common.item_data[key][task]
-
-
-def _get_data_from_value_no_lock(value: Any, data_type: int, role: int, get_container: bool) -> Optional[
-    Union[DataDict, dict]]:
-    for key, tasks_dict in common.item_data.items():
-        for task, types_dict in tasks_dict.items():
-            data = types_dict.get(data_type)
-            if data is None:
-                continue
-            for idx, item in data.items():
-                r = item.get(role)
-                if r == value or (isinstance(r, list) and value in r):
-                    if get_container:
-                        return data
-                    else:
-                        return item
+def _get_data_from_value_no_lock(value, data_type, role, get_container):
+    for _, type_dict in common.item_data.items():
+        data = type_dict.get(data_type)
+        if data is None:
+            continue
+        for _, item in data.items():
+            r = item.get(role)
+            if r == value or (isinstance(r, list) and value in r):
+                return data if get_container else item
     return None
 
 
-def _set_data_no_lock(key: Tuple[str, ...], task: str, data_type: int, data: DataDict) -> DataDict:
-    _ensure_data_exists_no_lock(key, task, data_type)
-    common.item_data[key][task][data_type] = data
-    return common.item_data[key][task][data_type]
+def _set_data_no_lock(key, data_type, data):
+    _ensure_data_exists_no_lock(key, data_type)
+    common.item_data[key][data_type] = data
+    return common.item_data[key][data_type]
 
 
 # ---------------------- Public API Functions (With Locking) ----------------------
 
-def sort_data(ref: weakref.ref, sort_by: int, sort_order: bool) -> DataDict:
+def sort_data(ref, sort_by, sort_order):
     """Sort the given data using `sort_by` and `sort_order`."""
     lock.lockForRead()
     try:
@@ -182,7 +163,7 @@ def sort_data(ref: weakref.ref, sort_by: int, sort_order: bool) -> DataDict:
         if data is None:
             raise RuntimeError('Data reference is no longer valid.')
 
-        def sort_key(_idx: Any) -> Any:
+        def sort_key(_idx):
             item = data.get(_idx)
             if item is None:
                 return None
@@ -207,16 +188,15 @@ def sort_data(ref: weakref.ref, sort_by: int, sort_order: bool) -> DataDict:
         lock.unlock()
 
 
-def get_data(key: Tuple[str, ...], task: str, data_type: int) -> DataDict:
+def get_data(key, data_type):
     lock.lockForWrite()
     try:
-        return _get_data_no_lock(key, task, data_type)
+        return _get_data_no_lock(key, data_type)
     finally:
         lock.unlock()
 
 
-def get_data_from_value(value: Any, data_type: int, role: int = common.PathRole, get_container: bool = True) -> \
-        Optional[Union[DataDict, dict]]:
+def get_data_from_value(value, data_type, role=common.PathRole, get_container=True):
     lock.lockForRead()
     try:
         return _get_data_from_value_no_lock(value, data_type, role, get_container)
@@ -224,45 +204,37 @@ def get_data_from_value(value: Any, data_type: int, role: int = common.PathRole,
         lock.unlock()
 
 
-def get_task_data(key: Tuple[str, ...], task: str) -> DataDict:
+def data_count(key, data_type):
     lock.lockForWrite()
     try:
-        return _get_task_data_no_lock(key, task)
-    finally:
-        lock.unlock()
-
-
-def data_count(key: Tuple[str, ...], task: str, data_type: int) -> int:
-    lock.lockForWrite()
-    try:
-        d = _get_data_no_lock(key, task, data_type)
+        d = _get_data_no_lock(key, data_type)
         return len(d)
     finally:
         lock.unlock()
 
 
-def is_data_loaded(key: Tuple[str, ...], task: str, data_type: int) -> bool:
+def is_data_loaded(key, data_type):
     lock.lockForWrite()
     try:
-        d = _get_data_no_lock(key, task, data_type)
+        d = _get_data_no_lock(key, data_type)
         return bool(d and d.loaded)
     finally:
         lock.unlock()
 
 
-def get_data_ref(key: Tuple[str, ...], task: str, data_type: int) -> Optional[weakref.ref]:
+def get_data_ref(key, data_type):
     lock.lockForWrite()
     try:
-        if not key or not task:
+        if not key:
             return None
-        d = _get_data_no_lock(key, task, data_type)
+        d = _get_data_no_lock(key, data_type)
         return weakref.ref(d)
     finally:
         lock.unlock()
 
 
-def get_ref_from_source_index(index) -> Optional[weakref.ref]:
-    # This function does not read or write from item_data; no lock needed.
+def get_ref_from_source_index(index):
+    """Return a weakref to the data at the model index, if available."""
     if not index.isValid():
         return None
     if not hasattr(index.model(), 'mapFromSource'):
@@ -281,17 +253,17 @@ def get_ref_from_source_index(index) -> Optional[weakref.ref]:
     return None
 
 
-def reset_data(key: Tuple[str, ...], task: str) -> None:
+def reset_data(key):
     lock.lockForWrite()
     try:
-        _reset_data_no_lock(key, task)
+        _reset_data_no_lock(key)
     finally:
         lock.unlock()
 
 
-def set_data(key: Tuple[str, ...], task: str, data_type: int, data: DataDict) -> DataDict:
+def set_data(key, data_type, data):
     lock.lockForWrite()
     try:
-        return _set_data_no_lock(key, task, data_type, data)
+        return _set_data_no_lock(key, data_type, data)
     finally:
         lock.unlock()

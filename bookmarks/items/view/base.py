@@ -742,34 +742,6 @@ class BaseItemView(QtWidgets.QTableView):
         model = basemodel.ItemModel(parent=self)
         return model
 
-    @common.error
-    @common.debug
-    def init_buttons_hidden(self):
-        """Restore the previous state of the inline icon buttons.
-
-        """
-        model = self.model().sourceModel()
-        v = model.get_filter_setting('filters/buttons')
-        v = False if not v else v
-        self._buttons_hidden = v
-
-    def buttons_hidden(self):
-        """Returns the visibility of the inline icon buttons.
-
-        """
-        if self.width() < common.Size.DefaultWidth(0.66):
-            return True
-        return self._buttons_hidden
-
-    @QtCore.Slot(bool)
-    def set_buttons_hidden(self, val):
-        """Sets the visibility of the inline icon buttons.
-
-        """
-        self.model().sourceModel().set_filter_setting('filters/buttons', val)
-        self._buttons_hidden = val
-
-    @common.error
     @common.debug
     def init_model(self):
         """Add a model to the view.
@@ -785,14 +757,12 @@ class BaseItemView(QtWidgets.QTableView):
         model = self.get_source_model()
         proxy.setSourceModel(model)
 
-        self.init_buttons_hidden()
-
         self.verticalHeader().setDefaultSectionSize(int(model.row_size.height()))
 
+        # Connect signals
         proxy.filterTextChanged.connect(self.filter_editor.editor.setText)
 
-        model.modelReset.connect(self.init_buttons_hidden)
-        model.modelReset.connect(self.reset_multi_toggle)
+        model.rowHeightChanged.connect(self.row_size_changed)
         model.modelReset.connect(
             lambda: self.delayed_layout_timer.start(self.delayed_layout_timer.interval())
         )
@@ -804,10 +774,6 @@ class BaseItemView(QtWidgets.QTableView):
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
 
-        model.modelReset.connect(self.delayed_save_visible_rows)
-        proxy.modelReset.connect(self.delayed_save_visible_rows)
-        proxy.invalidated.connect(self.delayed_save_visible_rows)
-
         model.updateIndex.connect(
             self.update, type=QtCore.Qt.DirectConnection
         )
@@ -815,7 +781,7 @@ class BaseItemView(QtWidgets.QTableView):
         common.signals.paintThumbnailBGChanged.connect(
             self.repaint_visible_rows
         )
-        model.rowHeightChanged.connect(self.row_size_changed)
+
 
     @QtCore.Slot(int)
     def row_size_changed(self, v):
@@ -874,7 +840,7 @@ class BaseItemView(QtWidgets.QTableView):
 
     def delay_save_selection(self):
         """Delays saving the current item selection to the user settings file to reduce
-        the number of file writes.
+        the number hits on the file system.
 
         """
         self.delayed_save_selection_timer.start(

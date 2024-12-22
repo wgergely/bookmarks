@@ -48,6 +48,17 @@ class ThreadedItemView(filterview.FilterView):
         common.signals.tabChanged.connect(self.start_delayed_queue_timer)
 
     @common.debug
+    def init_model(self):
+        super().init_model()
+
+        proxy = self.model()
+        model = proxy.sourceModel()
+
+        model.modelReset.connect(self.delayed_save_visible_rows)
+        proxy.modelReset.connect(self.delayed_save_visible_rows)
+        proxy.invalidated.connect(self.delayed_save_visible_rows)
+
+    @common.debug
     @common.error
     def init_threads(self):
         """Starts and connects the threads."""

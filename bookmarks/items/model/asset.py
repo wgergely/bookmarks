@@ -89,7 +89,7 @@ class AssetItemModel(base.ItemModel):
         common.signals.sgAssetsLinked.connect(
             lambda: self.blockSignals(False)
         )
-        common.signals.sgAssetsLinked.connect(self.sort_data)
+        common.signals.sgAssetsLinked.connect(self.sort_model_data)
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         return 4 + len(progress.STAGES)

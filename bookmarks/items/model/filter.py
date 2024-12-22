@@ -48,7 +48,6 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         }
 
         self._connect_signals()
-        self.init_filter_values()
 
     def _connect_signals(self):
         self.filterTextChanged.connect(self.invalidateFilter)
@@ -58,21 +57,20 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.modelReset.connect(self.verify_items.start)
         common.signals.databaseValueChanged.connect(self.verify_items.start)
 
-        self.modelReset.connect(self.invalidateFilter)
+        # self.modelReset.connect(self.invalidateFilter)
+        self.modelReset.connect(common.signals.updateTopBarButtons)
+        self.modelReset.connect(self.init_filter_values)
 
         self.filterTextChanged.connect(self.verify_items.start)
         self.filterFlagChanged.connect(self.verify_items.start)
 
         self.filterTextChanged.connect(common.signals.updateTopBarButtons)
         self.filterFlagChanged.connect(common.signals.updateTopBarButtons)
-        self.modelReset.connect(common.signals.updateTopBarButtons)
 
         self.queued_invalidate_timer.timeout.connect(self.delayed_invalidate)
 
         # Notify the outside world that the filter text has changed
         self.filterTextChanged.connect(common.signals.filterTextChanged)
-
-        self.modelReset.connect(self.init_filter_values)
 
     @property
     def filter(self):
@@ -234,6 +232,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         model = self.sourceModel()
+        if not model:
+            return True  # No model, no filtering :)
+
         p = model.parent_path()
         k = model.task()
         t = model.data_type()

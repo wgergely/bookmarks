@@ -213,8 +213,8 @@ class BaseWorker(QtCore.QObject):
         if threads.THREADS[q]['preload'] and model and widget:
             model.coreDataLoaded.connect(self.coreDataLoaded, cnx)
 
-            self.dataTypeAboutToBeSorted.connect(model.internal_data_about_to_be_sorted, cnx)
-            self.dataTypeSorted.connect(model.internal_data_sorted, cnx)
+            self.dataTypeAboutToBeSorted.connect(model.on_internal_data_about_to_be_sorted, cnx)
+            self.dataTypeSorted.connect(model.on_internal_data_sorted, cnx)
 
             common.signals.databaseValueChanged.connect(self.databaseValueChanged, cnx)
 

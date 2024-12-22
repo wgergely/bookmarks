@@ -61,6 +61,47 @@ class ButtonView(base.BaseItemView):
 
         self._indicator_link = None
 
+    @common.debug
+    def init_model(self):
+        super().init_model()
+
+        model = self.model().sourceModel()
+
+        self.init_buttons_hidden()
+        model.modelReset.connect(self.init_buttons_hidden)
+        model.modelReset.connect(self.reset_multi_toggle)
+
+    @common.debug
+    def init_buttons_hidden(self):
+        """Restore the previous state of the inline icon buttons.
+
+        """
+        if not self.model():
+            raise RuntimeError('Model must be set!')
+        if not self.model().sourceModel():
+            raise RuntimeError('Source model must be set!')
+
+        model = self.model().sourceModel()
+        v = model.get_filter_setting('filters/buttons')
+        v = False if not v else v
+        self._buttons_hidden = v
+
+    def buttons_hidden(self):
+        """Returns the visibility of the inline icon buttons.
+
+        """
+        if self.width() < common.Size.DefaultWidth(0.66):
+            return True
+        return self._buttons_hidden
+
+    @QtCore.Slot(bool)
+    def set_buttons_hidden(self, val):
+        """Sets the visibility of the inline icon buttons.
+
+        """
+        self.model().sourceModel().set_filter_setting('filters/buttons', val)
+        self._buttons_hidden = val
+
     @QtCore.Slot()
     def set_indicator_link(self, current, previous):
         """Sets the indicator color based on the current state.

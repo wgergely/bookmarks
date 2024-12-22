@@ -409,7 +409,7 @@ def toggle_inline_icons():
 
     widget.set_buttons_hidden(state)
 
-    widget.model().sourceModel().sort_data()
+    widget.model().sourceModel().sort_model_data()
 
 
 @common.error
